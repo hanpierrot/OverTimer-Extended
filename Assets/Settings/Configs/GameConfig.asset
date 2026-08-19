@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53c896b55840b1a40aac941a584e14cf, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GameConfig
+  startClock: 120
+  winClock: 600
+  loseClock: 0
+  startMoney: 40
+  exchangeRate: 1
+  meterMinFeed: 10
+  blockPayout: 010000000300000004000000050000000600000008000000090000000a0000000c0000000d000000
+  veinLengthMin: 6
+  veinLengthMax: 10
+  veinRespawn: 1
+  hitDropChance: 0.35
+  handCap: 3
+  blackjackAnte: 20
+  blackjackClockMargin: 15
+  blackjackWinPayout: 100
+  blackjackPushPayout: 50
+  blackjackNaturalPayout: 170
+  blackjackRevealDelay: 0.6
+  blackjackResultDelay: 1.2
+  laptopSwitchTime: 1
+  billInterval: 45
+  billRate: 0.2
+  billMinimum: 20
+  shortfallPenalty: 2
+  ringIntervalMin: 30
+  ringIntervalMax: 60
+  ringEffectMultiplier: 1.5
+  answerTime: 1.5
+  maxRingDuration: 10
+  annoyanceMinGap: 12
+  crankTime: 1
+  timePayout: 3
