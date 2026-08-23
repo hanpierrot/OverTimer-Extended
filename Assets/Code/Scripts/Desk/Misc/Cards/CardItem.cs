@@ -1,36 +1,43 @@
-using System;
 using UnityEngine;
 
 public class CardItem : DeskObject, IPawnable
 {
-    [Header("Click")]
-    [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private Sprite clickedSprite;
-    
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
-    
-    public int PawnValue => pawnValue;
+    [SerializeField] private SpriteRenderer artRenderer;
 
-    private void Start()
+    private CardSO _data;
+    private EffectCardSO _effect;
+    private bool _hasRemoved;
+
+    public int PawnValue => _data != null ? _data.pawnValue : 0;
+
+    public void Setup(CardSO data)
     {
-        CardHandManager.Instance.Register(this);
-    }
+        _data = data;
+        _effect = data as EffectCardSO;
 
-    protected override void OnClicked(Vector2 worldPos)
+        if (artRenderer != null) artRenderer.sprite = data.image;
+
+        _effect?.OnPlaced(this);
+    }
+    
+    public void RemoveSelf() => Destroy(gameObject);
+    
+    public void ScheduleAutoRemove(float seconds)
     {
-        if (spriteRenderer.sprite == clickedSprite) return;
-        
-        spriteRenderer.sprite = clickedSprite;
-        
-        foreach (var effect in GetComponents<ICardEffect>())
-            effect.Apply();
+        if (seconds <= 0f) return;
+        Invoke(nameof(RemoveSelf), seconds);
     }
-
+    
     protected override void OnDragMoved(Vector2 worldPos)
     {
         transform.position = worldPos;
-        transform.rotation = Quaternion.RotateTowards(
-            transform.rotation, Quaternion.identity, 180f * Time.deltaTime);
+    }
+
+    private void OnDestroy()
+    {
+        if (_hasRemoved) return;
+        _hasRemoved = true;
+
+        _effect?.OnRemoved(this);
     }
 }
