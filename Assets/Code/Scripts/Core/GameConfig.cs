@@ -21,6 +21,13 @@ public class GameConfig : ScriptableObject
     public int veinLengthMin = 6;
     public int veinLengthMax = 10;
     public float veinRespawn = 1.5f;
+    
+    [Header("Ticket Stack (§5.3)")]
+    public int tripleMatchCost = 25;
+    public int tripleMatchBaseReward = 55;
+
+    public int luckyNineCost = 80;
+    public int luckyNineBaseReward = 0;
 
     [Header("Card Box (§5.4)")]
     [Range(0f, 1f)] public float hitDropChance = 0.15f;

@@ -12,16 +12,13 @@ public class TicketStack : MonoBehaviour, IPawnable
     
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
-    
     public int PawnValue => pawnValue;
     
     private PointerReceiver receiver;
-    private int ticketRemain;
     
     private void Awake()
     {
         receiver = GetComponent<PointerReceiver>();
-        ticketRemain = ticketPool.Length;
         
         foreach (var ticket in ticketPool)
             ticket.gameObject.SetActive(false); 
@@ -32,16 +29,27 @@ public class TicketStack : MonoBehaviour, IPawnable
 
     private void HandleClick(Vector2 worldPos)
     {
-        if (ticketRemain <= 0) return;
-        
-        ScratchTicket ticket = ticketPool[ticketPool.Length - ticketRemain];
-        ticketRemain--;
+        ScratchTicket ticket = FindFreeTicket();
+        if(ticket ==  null) return;
 
+        // Activate BEFORE purchasing: the pool starts inactive (see Awake),
+        // so each ticket's own Awake() - and its child ScratchWindows' - has
+        // never run yet. TryPurchase()/RollSymbols() calls Populate() on
+        // those windows; calling it while still inactive means Populate()
+        // touches fields ScratchWindow.Awake() hasn't allocated, which is
+        // exactly the "works standalone, breaks through ScratchTicket" bug.
         ticket.transform.position = GetRandomSpawnPosition();
         ticket.gameObject.SetActive(true);
-        
+
         if (!ticket.TryPurchase())
-            ticket.gameObject.SetActive(false);
+            ticket.gameObject.SetActive(false); // couldn't afford it - back to the pool
+    }
+    
+    private ScratchTicket FindFreeTicket()
+    {
+        foreach (var t in ticketPool)
+            if (!t.gameObject.activeSelf) return t;
+        return null;
     }
 
     private Vector2 GetRandomSpawnPosition()
