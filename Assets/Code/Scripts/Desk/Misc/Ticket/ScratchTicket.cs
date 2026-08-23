@@ -14,6 +14,7 @@ public class ScratchTicket : MonoBehaviour
     {
         public Sprite sprite;
         public float weight;
+        public float payoutMultiplier;
     }
     
     [Header("Tier")]
@@ -137,15 +138,21 @@ public class ScratchTicket : MonoBehaviour
 
         foreach (var w in windows) w.Reveal();
 
-        int maxMatch = CountBestMatch();
-        int reward = maxMatch > 1 ? BaseReward * (maxMatch - 1) : 0;
+        int maxMatch = CountBestMatch(out int bestSymbolIndex);
+        int reward = 0;
+        if (maxMatch > 1)
+        {
+            float multiplier = symbolPool[bestSymbolIndex].payoutMultiplier;
+            reward = Mathf.RoundToInt(BaseReward * (maxMatch - 1) * multiplier);
+        }
+        
         if (reward > 0) MoneyService.Instance.Add(reward, "ticket");
 
         if (resultLabel != null)
             resultLabel.text = reward > 0 ? $"+${reward}" : "NO MATCH";
     }
 
-    private int CountBestMatch()
+    private int CountBestMatch(out int bestSymbolIndex)
     {
         var counts = new Dictionary<int, int>();
         foreach (int idx in _activeSymbolIndex)
@@ -155,8 +162,20 @@ public class ScratchTicket : MonoBehaviour
         }
 
         int best = 0;
+        int bestIdx = -1;
         foreach (var kv in counts)
-            if (kv.Value > best) best = kv.Value;
+        {
+            bool better = kv.Value > best 
+                          || (kv.Value == best && bestIdx >= 0 && symbolPool[kv.Key].payoutMultiplier > symbolPool[bestIdx].payoutMultiplier);
+
+            if (better)
+            {
+                best = kv.Value;
+                bestIdx = kv.Key;
+            }
+        }
+        
+        bestSymbolIndex = bestIdx;
         return best;
     }
 }
