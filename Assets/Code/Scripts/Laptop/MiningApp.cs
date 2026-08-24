@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -16,6 +17,9 @@ using UnityEngine.UI;
 /// </summary>
 public class MiningApp : LaptopApp
 {
+    public static MiningApp Instance { get; private set; } //Singleton for CardSO
+    private static bool s_pendingDisabled;
+    
     [Header("Services")]
     [SerializeField] private GameConfig config;
     [SerializeField] private BlockConfig blocks;
@@ -38,6 +42,14 @@ public class MiningApp : LaptopApp
     private int _damageDealt;
     private int _unconfirmed;
     private int _totalReceived;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        
+        if (s_pendingDisabled) pickaxe.gameObject.SetActive(false);
+    }
 
     private void Start()
     {
@@ -136,7 +148,15 @@ public class MiningApp : LaptopApp
         unconfirmedLabel.text = $"Unconfirmed: ${_unconfirmed}";
         receivedLabel.text = $"Received: ${_totalReceived}";
     }
+    
+    public static void SetDisabledStatic(bool disabled)
+    {
+        s_pendingDisabled = disabled;
+        Instance?.SetDisabled(disabled);
+    }
 
+    public void SetDisabled(bool disabled) => pickaxe.gameObject.SetActive(!disabled);
+    
     public override void OnAppClosed()
     {
         _unconfirmed = 0;
