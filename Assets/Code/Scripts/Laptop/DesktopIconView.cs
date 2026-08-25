@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -19,6 +20,9 @@ public class DesktopIconView : MonoBehaviour, IPointerClickHandler
 
     private Image _background;
     private static DesktopIconView _selected;
+    
+    private static readonly Dictionary<string, DesktopIconView> s_icons = new Dictionary<string, DesktopIconView>();
+    private static readonly HashSet<string> s_pendingHidden = new HashSet<string>();
 
     public event Action<string> Opened;
 
@@ -26,11 +30,29 @@ public class DesktopIconView : MonoBehaviour, IPointerClickHandler
     {
         _background = GetComponent<Image>();
         _background.color = normalColor;
+        
+        s_icons[appName] = this;
+        if (s_pendingHidden.Contains(appName)) gameObject.SetActive(false);
     }
 
     private void OnDisable()
     {
         if (_selected == this) _selected = null;
+    }
+
+    private void OnDestroy()
+    {
+        if (s_icons.TryGetValue(appName, out var current) && current == this)
+            s_icons.Remove(appName);
+    }
+    
+    public static void SetVisible(string appName, bool visible)
+    {
+        if (visible) s_pendingHidden.Remove(appName);
+        else s_pendingHidden.Add(appName);
+
+        if (s_icons.TryGetValue(appName, out var icon) && icon != null)
+            icon.gameObject.SetActive(visible);
     }
 
     public void OnPointerClick(PointerEventData eventData)
