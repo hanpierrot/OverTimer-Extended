@@ -91,4 +91,6 @@ public class DragTask : TaskBase, IPawnable
             Instantiate(spawnPrefab, pos, Quaternion.identity);
         }
     }
+    
+    public void OnPawned() => Destroy(gameObject);
 }

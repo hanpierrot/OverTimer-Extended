@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DriverCrash", menuName = "Overtime/Cards/Effects/Driver Crash")]
+[CreateAssetMenu(fileName = "DisableAppIconCard", menuName = "Overtime/Cards/Effects/Disable App Icon")]
 public class DisableAppIconCardSO : EffectCardSO
 {
     [SerializeField] private float duration = 15f;
@@ -8,7 +8,6 @@ public class DisableAppIconCardSO : EffectCardSO
 
     public override void OnPlaced(CardItem card)
     {
-        Debug.Log("Debuff applied!");
         DesktopIconView.SetVisible(targetAppName, false);
         card.ScheduleAutoRemove(duration);
     }

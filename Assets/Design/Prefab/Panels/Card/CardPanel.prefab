@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 9134156023829455794}
   - component: {fileID: 257363572079167631}
   - component: {fileID: 5014196795494543000}
+  - component: {fileID: 7484023117764360588}
   m_Layer: 5
   m_Name: CardPanel
   m_TagString: Untagged
@@ -211,6 +212,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7484023117764360588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295416157532871464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3888dcc6275d9af41ba296e6133ced6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardPanel
+  panel: {fileID: 1295416157532871464}
+  cardImage: {fileID: 4347173755100238930}
+  nameLabel: {fileID: 8808183068340942579}
+  rarityLabel: {fileID: 0}
+  descriptionLabel: {fileID: 5646956787302521655}
+  closeButton: {fileID: 2801571933001899523}
 --- !u!1 &2044600315908131610
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,7 +457,7 @@ GameObject:
   - component: {fileID: 8925129377365157628}
   - component: {fileID: 1819763278534321780}
   m_Layer: 5
-  m_Name: TierLabel
+  m_Name: RarityLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

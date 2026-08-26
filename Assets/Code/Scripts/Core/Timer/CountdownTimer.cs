@@ -54,7 +54,7 @@ public class CountdownTimer : MonoBehaviour
         if (startOnAwake)
         {
             StartCountdown();
-            PauseCountdown();
+            //PauseCountdown();
         }
     }
 

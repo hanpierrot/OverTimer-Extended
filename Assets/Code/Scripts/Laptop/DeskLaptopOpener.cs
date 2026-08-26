@@ -18,4 +18,6 @@ public class DeskLaptopOpener : DeskObject, IPawnable
     {
         laptopPanel.SetActive(true);
     }
+    
+    public void OnPawned() => Destroy(gameObject);
 }

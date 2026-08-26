@@ -2,15 +2,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(DeskObjectFocus))]
 public class CardItem : MonoBehaviour, IPawnable
 {
     [SerializeField] private SpriteRenderer artRenderer;
-    [SerializeField] private GameObject cardPanel;
-    [SerializeField] private Image panelImage;
-    [SerializeField] private TMP_Text panelNameLabel;
-    [SerializeField] private TMP_Text panelTierLabel;
-    [SerializeField] private TMP_Text panelDescriptionLabel;
 
     private PointerReceiver _receiver;
     private CardSO _data;
@@ -19,17 +13,7 @@ public class CardItem : MonoBehaviour, IPawnable
 
     public int PawnValue => _data != null ? _data.pawnValue : 0;
     
-    [Header("Debug (test-only - xoá khi có CardBox thật)")]
-    [SerializeField] private CardSO debugTestCard;
-
-    [ContextMenu("Debug Setup")]
-    private void DebugSetup() => Setup(debugTestCard);
-    
-    private void Awake()
-    {
-        _receiver = GetComponent<PointerReceiver>();
-        DebugSetup();
-    }
+    private void Awake() => _receiver = GetComponent<PointerReceiver>();
 
     private void OnEnable()
     {
@@ -45,30 +29,21 @@ public class CardItem : MonoBehaviour, IPawnable
     
     public void Setup(CardSO data)
     {
-        Debug.Log($"[CardItem] Setup called with data={data}, type={data?.GetType().Name}");
+        _hasEnded = false;
         
         _data = data;
         _effect = data as EffectCardSO;
-        
-        Debug.Log($"[CardItem] _effect resolved to: {(_effect != null ? _effect.GetType().Name : "null")}");
 
         if (artRenderer != null) artRenderer.sprite = data.image;
+        
+        if (CardHandManager.Instance != null) CardHandManager.Instance.Register(this);
 
         _effect?.OnPlaced(this);
     }
 
-    private void HandleCardClicked(Vector2 worldPos)
-    {
-        if (panelImage != null) panelImage.sprite = _data.image;
-        if (panelNameLabel != null) panelNameLabel.text = _data.cardName;
-        if (panelTierLabel != null) panelTierLabel.text = "Rarity: " + _data.rarity;
-        if (panelDescriptionLabel != null) panelDescriptionLabel.text = _data.description;
-    }
+    private void HandleCardClicked(Vector2 worldPos) => CardPanel.Instance?.Show(_data);
 
-    private void HandleDragMoved(Vector2 worldPos)
-    {
-        transform.position = worldPos;
-    }
+    private void HandleDragMoved(Vector2 worldPos) => transform.position = worldPos;
     
     public void EndEffect()
     {
@@ -87,6 +62,19 @@ public class CardItem : MonoBehaviour, IPawnable
     {
         if (seconds <= 0f) return;
         Invoke(nameof(EndEffect), seconds);
+    }
+
+    public void OnPawned()
+    {
+        if (CardHandManager.Instance != null) CardHandManager.Instance.Release(this);
+
+        if (!_hasEnded)
+        {
+            _hasEnded = true;
+            _effect?.OnRemoved(this);
+        }
+
+        gameObject.SetActive(false);
     }
 
     private void OnDestroy()

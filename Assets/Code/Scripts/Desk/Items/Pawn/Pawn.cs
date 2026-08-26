@@ -58,7 +58,7 @@ public class Pawn : MonoBehaviour
         if (other.TryGetComponent(out IPawnable pawnable))
         {
             MoneyService.Instance.Add(pawnable.PawnValue, "pawn");
-            Destroy(other.gameObject);
+            pawnable.OnPawned();
         }
     }
 }

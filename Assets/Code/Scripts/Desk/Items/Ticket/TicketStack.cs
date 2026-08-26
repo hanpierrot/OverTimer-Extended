@@ -58,4 +58,6 @@ public class TicketStack : MonoBehaviour, IPawnable
         float y = (float)(spawnRangeMin.y + RngService.Instance.Random.NextDouble() * (spawnRangeMax.y - spawnRangeMin.y));
         return new Vector2(x, y);
     }
+    
+    public void OnPawned() => Destroy(gameObject);
 }

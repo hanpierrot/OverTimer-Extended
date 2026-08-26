@@ -194,6 +194,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Pawn
   pawnableLayers:
     serializedVersion: 2
-    m_Bits: 72
+    m_Bits: 8
   audioSource: {fileID: 0}
-  pawnSound: {fileID: 0}
+  pawnSound: {fileID: 8300000, guid: b3736e663148a7b47a1676c9ed39e977, type: 3}

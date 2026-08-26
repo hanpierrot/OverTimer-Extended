@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 746d6f0ef26c9494fb9d37954323cb22, type: 3}
-  m_Name: MiningForbidden
-  m_EditorClassIdentifier: Assembly-CSharp::DriverCrashCardSO
-  cardName: Mining Forbidden
-  image: {fileID: -655089573, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cea578695b713a45a27b81117568323, type: 3}
+  m_Name: ClockUp
+  m_EditorClassIdentifier: Assembly-CSharp::ClockSpeedCardSO
+  cardName: Clock Up
+  image: {fileID: 423033766, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -2010778280, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
   rarity: 0
-  weight: 1
+  weight: 0
   pawnValue: 0
   isDebuff: 1
-  duration: 15
-  targetAppName: Mining
+  duration: 5
+  tickMultiplier: 3

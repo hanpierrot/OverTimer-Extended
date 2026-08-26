@@ -91,4 +91,6 @@ public class HoldTask : TaskBase, IPawnable
     {
         CountdownTimer.Instance.AddTime(GameManager.Instance.GameConfig.timePayout);
     }
+    
+    public void OnPawned() => Destroy(gameObject);
 }

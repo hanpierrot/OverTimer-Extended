@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewCard", menuName = "Overtime/Cards/Normal Card")]
+[CreateAssetMenu(fileName = "NewCard", menuName = "Overtime/Cards/Normal")]
 public class CardSO : ScriptableObject
 {
     public enum Rarity { C, R, SR, UR }

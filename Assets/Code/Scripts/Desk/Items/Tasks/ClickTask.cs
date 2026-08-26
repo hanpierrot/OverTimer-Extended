@@ -46,4 +46,6 @@ public class ClickTask : TaskBase, IPawnable
         gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         ResetCompletion();
     }
+    
+    public void OnPawned() => Destroy(gameObject);
 }

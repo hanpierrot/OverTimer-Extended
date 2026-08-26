@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5895191336913235486}
   - component: {fileID: 1472574797615384982}
   - component: {fileID: 6558885769406422587}
-  - component: {fileID: 4486858816545466997}
   - component: {fileID: 5209284957802099301}
   m_Layer: 0
   m_Name: CardItem
@@ -153,19 +152,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab85a167061eb054d9356ec86e6dc3af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PointerReceiver
---- !u!114 &4486858816545466997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7315554476159145002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a54239f79ca428f47940d55fc2e3461c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DeskObjectFocus
-  panel: {fileID: 0}
 --- !u!114 &5209284957802099301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,9 +165,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardItem
   artRenderer: {fileID: 5895191336913235486}
-  cardPanel: {fileID: 0}
-  panelImage: {fileID: 0}
-  panelNameLabel: {fileID: 0}
-  panelTierLabel: {fileID: 0}
-  panelDescriptionLabel: {fileID: 0}
-  _data: {fileID: 11400000, guid: 9e774dd053a5f144faa02960961c0811, type: 2}

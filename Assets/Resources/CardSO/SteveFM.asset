@@ -9,16 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 746d6f0ef26c9494fb9d37954323cb22, type: 3}
-  m_Name: MiningForbidden
-  m_EditorClassIdentifier: Assembly-CSharp::DriverCrashCardSO
-  cardName: Mining Forbidden
-  image: {fileID: -655089573, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  m_Script: {fileID: 11500000, guid: c9f4b76f6608be141bfc0cb37fe4f14f, type: 3}
+  m_Name: SteveFM
+  m_EditorClassIdentifier: Assembly-CSharp::CardSO
+  cardName: Steve - The Forbidden Miner
+  image: {fileID: -324519718, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -2010778280, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
-  rarity: 0
-  weight: 1
+  rarity: 1
+  weight: 4
   pawnValue: 0
-  isDebuff: 1
-  duration: 15
-  targetAppName: Mining
