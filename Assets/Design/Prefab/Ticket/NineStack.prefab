@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3581101186047285463}
   - component: {fileID: 373635118687228832}
   - component: {fileID: 604872547417555739}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: NineStack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,9 +32,7 @@ Transform:
   m_LocalPosition: {x: -1.9734353, y: 1.3962824, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8205025261349932397}
-  - {fileID: 4445192432647178442}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6074892410233895092
@@ -167,162 +165,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TicketStack
   ticketPool:
-  - {fileID: 3515900173453443684}
-  - {fileID: 8981472211147900867}
+  - {fileID: 0}
+  - {fileID: 0}
   spawnRangeMin: {x: -4, y: -3}
   spawnRangeMax: {x: 4, y: 3}
   pawnValue: 20
---- !u!1001 &2127486951568110760
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 19771429023331061}
-    m_Modifications:
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 961.97345
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 538.6037
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809522940718714932, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_Name
-      value: LuckyNine (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809522940718714932, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
---- !u!4 &4445192432647178442 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-  m_PrefabInstance: {fileID: 2127486951568110760}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8981472211147900867 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6999371724034519915, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-  m_PrefabInstance: {fileID: 2127486951568110760}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a539b0a48fe0a8049b31ea71efafbe6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScratchTicket
---- !u!1001 &5902037593533509903
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 19771429023331061}
-    m_Modifications:
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 961.97345
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 538.6037
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809522940718714932, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_Name
-      value: LuckyNine
-      objectReference: {fileID: 0}
-    - target: {fileID: 6809522940718714932, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
---- !u!114 &3515900173453443684 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6999371724034519915, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-  m_PrefabInstance: {fileID: 5902037593533509903}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a539b0a48fe0a8049b31ea71efafbe6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScratchTicket
---- !u!4 &8205025261349932397 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2321083249932008546, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-  m_PrefabInstance: {fileID: 5902037593533509903}
-  m_PrefabAsset: {fileID: 0}

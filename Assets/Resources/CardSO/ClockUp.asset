@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cea578695b713a45a27b81117568323, type: 3}
+  m_Name: ClockUp
+  m_EditorClassIdentifier: Assembly-CSharp::ClockSpeedCardSO
+  cardName: Clock Up
+  image: {fileID: 423033766, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -2010778280, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  description: 
+  rarity: 0
+  weight: 0
+  pawnValue: 0
+  isDebuff: 1
+  duration: 5
+  tickMultiplier: 3

@@ -158,10 +158,18 @@ public class Phone : DeskObject, IPawnable
         if (IsRinging) StopRing();
     }
 
+    public void Unsilence()
+    {
+        silenced = false;
+        silenceTimer = 0f;
+    }
+
     /// <summary>Robocalls debuff - rings roughly twice as often for duration.</summary>
     public void StartRobocalls(float duration)
     {
         robocallsActive = true;
         robocallsTimer = duration;
     }
+    
+    public void OnPawned() => Destroy(gameObject);
 }

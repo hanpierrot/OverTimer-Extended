@@ -22,6 +22,10 @@ MonoBehaviour:
   veinLengthMin: 6
   veinLengthMax: 10
   veinRespawn: 1
+  tripleMatchCost: 25
+  tripleMatchBaseReward: 55
+  luckyNineCost: 55
+  luckyNineBaseReward: 110
   hitDropChance: 0.35
   handCap: 3
   blackjackAnte: 20

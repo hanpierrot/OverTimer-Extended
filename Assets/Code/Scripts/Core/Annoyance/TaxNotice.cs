@@ -76,4 +76,6 @@ public class TaxNotice : DeskObject, IPawnable
         if (noticeVisual) noticeVisual.SetActive(false);
         if (taxPanel != null) taxPanel.Show(pendingAssessment);
     }
+    
+    public void OnPawned() => Destroy(gameObject);
 }

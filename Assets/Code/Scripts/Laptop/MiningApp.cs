@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -136,7 +137,7 @@ public class MiningApp : LaptopApp
         unconfirmedLabel.text = $"Unconfirmed: ${_unconfirmed}";
         receivedLabel.text = $"Received: ${_totalReceived}";
     }
-
+    
     public override void OnAppClosed()
     {
         _unconfirmed = 0;

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7414995341819057335}
   - component: {fileID: 1945674960091034637}
   - component: {fileID: -6690502762919160435}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Taxes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,6 +170,7 @@ MonoBehaviour:
   nagInterval: 2
   taxPanel: {fileID: 0}
   noticeVisual: {fileID: 8706151414547457322}
+  pawnValue: 20
 --- !u!1 &7014478467123181988
 GameObject:
   m_ObjectHideFlags: 0
