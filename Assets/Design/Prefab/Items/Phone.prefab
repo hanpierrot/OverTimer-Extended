@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 6806766470184986008}
   - component: {fileID: 4375484331667737811}
   - component: {fileID: 5781605276870089319}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Phone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452,5 +452,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Phone
   ringingVisual: {fileID: 5744004842502728757}
-  audioSource: {fileID: 0}
   ringSound: {fileID: 8300000, guid: 157de1489c950c240b0fc5b8f2113778, type: 3}
+  audioSource: {fileID: 0}
+  pawnValue: 20

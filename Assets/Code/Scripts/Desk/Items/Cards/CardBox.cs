@@ -4,12 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class CardBox : MonoBehaviour, IPawnable
 {
-    [SerializeField] private int packCost = 35;
     [SerializeField] private int packSize = 3;
     [SerializeField] private CardPackRevealPanel revealPanel;
 
     [Header("Roll pool")]
-    [SerializeField] private RarityWeight[] rarityWeights;
     [SerializeField] private CardSO[] cardPool;
 
     [Header("Pawn")]
@@ -24,40 +22,51 @@ public class CardBox : MonoBehaviour, IPawnable
 
     private void HandleClick(Vector2 worldPos)
     {
-        if (!MoneyService.Instance.TrySpend(packCost, "card pack")) return;
+        if (CardHandManager.Instance != null && !CardHandManager.Instance.HasRoom) return;
+        
+        GameConfig config = GameManager.Instance.GameConfig;
+        
+        if (!MoneyService.Instance.TrySpend(config.packCost, "card pack")) return;
         
         var rolled = new CardSO[packSize];
         for (int i = 0; i < packSize; i++)
-            rolled[i] = RollCard();
+            rolled[i] = RollCard(config);
 
         revealPanel.Begin(rolled);
     }
 
-    private CardSO RollCard()
+    private CardSO RollCard(GameConfig config)
     {
         var rng = RngService.Instance.Random;
-        CardSO.Rarity rarity = RollRarity(rng);
+        CardSO.Rarity rarity = RollRarity(config, rng);
 
         var candidates = System.Array.FindAll(cardPool, c => c.rarity == rarity);
         if (candidates.Length == 0) candidates = cardPool;
-        
+
         return PickWeightedCard(candidates, rng);
     }
 
-    private CardSO.Rarity RollRarity(System.Random rng)
+    private CardSO.Rarity RollRarity(GameConfig config, System.Random rng)
     {
+        var weights = new (CardSO.Rarity rarity, float weight)[]
+        {
+            (CardSO.Rarity.C, config.commonWeight),
+            (CardSO.Rarity.R, config.rareWeight),
+            (CardSO.Rarity.SR, config.superRareWeight),
+            (CardSO.Rarity.UR, config.ultrRareWeight),
+        };
+
         float total = 0f;
-        foreach (var w in rarityWeights) total += w.weight;
+        foreach (var w in weights) total += w.weight;
 
         float roll = (float)(rng.NextDouble() * total);
         float cumulative = 0f;
-        foreach (var w in rarityWeights)
+        foreach (var w in weights)
         {
             cumulative += w.weight;
             if (roll <= cumulative) return w.rarity;
         }
-
-        return rarityWeights[rarityWeights.Length - 1].rarity;
+        return weights[weights.Length - 1].rarity;
     }
 
     private static CardSO PickWeightedCard(CardSO[] pool, System.Random rng)
@@ -76,11 +85,4 @@ public class CardBox : MonoBehaviour, IPawnable
     }
     
     public void OnPawned() => Destroy(gameObject);
-    
-    [System.Serializable]
-    public struct RarityWeight
-    {
-        public CardSO.Rarity rarity;
-        public float weight;
-    }
 }

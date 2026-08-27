@@ -21,7 +21,7 @@ public class ScratchTicket : MonoBehaviour
     [SerializeField] private TicketTierKind tierKind = TicketTierKind.TripleMatch;
     
     [Header("Symbols")]
-    [SerializeField] private SymbolEntry[] symbolPool;
+    [SerializeField] private TicketSymbolConfig symbolConfig;
     
     [Header("Scratch Panel")]
     [SerializeField] private GameObject scratchPanel;
@@ -97,13 +97,13 @@ public class ScratchTicket : MonoBehaviour
     {
         _activeSymbolIndex = new int[windows.Length];
         for (int i = 0; i < windows.Length; i++)
-            _activeSymbolIndex[i] = PickWeightedIndex(symbolPool, RngService.Instance.Random);
+            _activeSymbolIndex[i] = PickWeightedIndex(symbolConfig.symbolPool, RngService.Instance.Random);
     }
 
     private void PopulateWindows()
     {
         for(int i = 0; i <  windows.Length; i++)
-            windows[i].Populate(symbolPool[_activeSymbolIndex[i]].sprite);
+            windows[i].Populate(symbolConfig.symbolPool[_activeSymbolIndex[i]].sprite);
     }
 
     private static int PickWeightedIndex(SymbolEntry[] pool, System.Random rng)
@@ -142,7 +142,7 @@ public class ScratchTicket : MonoBehaviour
         int reward = 0;
         if (maxMatch > 1)
         {
-            float multiplier = symbolPool[bestSymbolIndex].payoutMultiplier;
+            float multiplier = symbolConfig.symbolPool[bestSymbolIndex].payoutMultiplier;
             reward = Mathf.RoundToInt(BaseReward * (maxMatch - 1) * multiplier);
         }
         
@@ -166,7 +166,7 @@ public class ScratchTicket : MonoBehaviour
         foreach (var kv in counts)
         {
             bool better = kv.Value > best 
-                          || (kv.Value == best && bestIdx >= 0 && symbolPool[kv.Key].payoutMultiplier > symbolPool[bestIdx].payoutMultiplier);
+                          || (kv.Value == best && bestIdx >= 0 && symbolConfig.symbolPool[kv.Key].payoutMultiplier > symbolConfig.symbolPool[bestIdx].payoutMultiplier);
 
             if (better)
             {

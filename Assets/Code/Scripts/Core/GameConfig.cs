@@ -30,8 +30,14 @@ public class GameConfig : ScriptableObject
     public int luckyNineBaseReward = 0;
 
     [Header("Card Box (§5.4)")]
-    [Range(0f, 1f)] public float hitDropChance = 0.15f;
-    public int handCap = 3;
+    public int handCap = 5;
+    public int packCost = 35;
+    
+    [Header("Card Box - Rarity Weights (§5.4)")]
+    public float commonWeight = 60f;
+    public float rareWeight = 25f;
+    public float superRareWeight = 12f;
+    public float ultrRareWeight = 3f;
 
     [Header("Blackjack (§5.5 / BLACKJACK.md §4)")]
     public float blackjackAnte = 15f;

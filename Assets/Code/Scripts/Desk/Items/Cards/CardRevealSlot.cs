@@ -57,6 +57,7 @@ public class CardRevealSlot : MonoBehaviour
         bool isDebuff = _card is EffectCardSO effect && effect.isDebuff;
         placeButton.gameObject.SetActive(true);
         collectionButton.gameObject.SetActive(!isDebuff);
+        sellButton.gameObject.SetActive(!isDebuff);
 
         bool hasRoom = isDebuff || CardHandManager.Instance == null || CardHandManager.Instance.HasRoom;
         placeButton.interactable = hasRoom;

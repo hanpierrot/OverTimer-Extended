@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1472574797615384982}
   - component: {fileID: 6558885769406422587}
   - component: {fileID: 5209284957802099301}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CardItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
