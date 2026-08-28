@@ -18,7 +18,10 @@ public class MoneyService : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+    }
 
+    private void Start()
+    {
         Current = GameManager.Instance.GameConfig != null ? GameManager.Instance.GameConfig.startMoney : 0;
     }
 

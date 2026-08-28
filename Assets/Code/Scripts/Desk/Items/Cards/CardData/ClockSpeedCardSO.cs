@@ -8,12 +8,12 @@ public class ClockSpeedCardSO : EffectCardSO
     
     public override void OnPlaced(CardItem card)
     {
-        if (CountdownTimer.Instance != null) CountdownTimer.Instance.TickMultiplier = tickMultiplier;
+        if (ClockService.Instance != null) ClockService.Instance.TickMultiplier = tickMultiplier;
         card.ScheduleAutoRemove(duration);
     }
 
     public override void OnRemoved(CardItem card)
     {
-        if (CountdownTimer.Instance != null) CountdownTimer.Instance.TickMultiplier = 1f;
+        if (ClockService.Instance != null) ClockService.Instance.TickMultiplier = 1f;
     }
 }

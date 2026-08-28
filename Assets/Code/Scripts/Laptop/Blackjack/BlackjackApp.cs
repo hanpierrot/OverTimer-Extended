@@ -15,7 +15,7 @@ public class BlackjackApp : LaptopApp
 {
     [Header("Services")]
     [SerializeField] private GameConfig config;
-    [SerializeField] private CountdownTimer clock;
+    [SerializeField] private ClockService clock;
     [SerializeField] private MoneyService money;
     [SerializeField] private RngService rng;
 

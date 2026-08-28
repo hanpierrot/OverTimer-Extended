@@ -64,20 +64,6 @@ public class InputManager : MonoBehaviour
             if (Mouse.current != null && !Mouse.current.leftButton.isPressed)
                 EndPress(worldPos);
         }
-
-        UpdateMouseSpeed();
-    }
-
-    private void UpdateMouseSpeed()
-    {
-        if (Mouse.current == null) return;
-        
-        Vector2 delta = Mouse.current.delta.ReadValue();
-        
-        float normalizedDelta = delta.magnitude / Screen.height;
-        float speed = normalizedDelta / Time.deltaTime;
-
-        CountdownTimer.Instance.SetSpeedMult(speed);
     }
 
     private void OnClickStarted(InputAction.CallbackContext context)

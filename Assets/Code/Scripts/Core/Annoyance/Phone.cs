@@ -61,7 +61,7 @@ public class Phone : DeskObject, IPawnable
 
     private void Update()
     {
-        if (!CountdownTimer.Instance.IsRunning || CountdownTimer.Instance.IsGameOver) return;
+        if (!ClockService.Instance.IsRunning || ClockService.Instance.IsGameOver) return;
 
         if (silenced)
         {
@@ -109,7 +109,7 @@ public class Phone : DeskObject, IPawnable
         IsRinging = true;
         ringElapsed = 0f;
         answeringElapsed = -1f;
-        CountdownTimer.Instance.TickMultiplier = GameManager.Instance.GameConfig.ringEffectMultiplier;
+        ClockService.Instance.TickMultiplier = GameManager.Instance.GameConfig.ringEffectMultiplier;
 
         if (ringingVisual) ringingVisual.SetActive(true);
         PlayRingSound();
@@ -119,7 +119,7 @@ public class Phone : DeskObject, IPawnable
     private void StopRing()
     {
         IsRinging = false;
-        CountdownTimer.Instance.TickMultiplier = 1f;
+        ClockService.Instance.TickMultiplier = 1f;
 
         if (ringingVisual) ringingVisual.SetActive(false);
         StopRingSound();

@@ -16,7 +16,10 @@ public class CardPackRevealPanel : MonoBehaviour
     {
         packButton.onClick.AddListener(OnPackClicked);
         foreach (var slot in slots)
+        {
             slot.Resolved += OnSlotResolved;
+            slot.CollectedToCollection += OnSlotCollected;
+        }
     }
 
     public void Begin(CardSO[] cards)
@@ -43,6 +46,12 @@ public class CardPackRevealPanel : MonoBehaviour
             panel.SetActive(false);
     }
     
+    private void OnSlotCollected(CardSO card)
+    {
+        foreach (var slot in slots)
+            slot.HideCollectionButtonIfSameCard(card);
+    }
+    
     public bool TryPlaceCard(CardSO card)
     {
         CardItem instance = CardHandManager.Instance != null ? CardHandManager.Instance.TryGetFreeCard() : null;
@@ -50,6 +59,10 @@ public class CardPackRevealPanel : MonoBehaviour
 
         instance.gameObject.SetActive(true);
         instance.Setup(card);
+        
+        if (CardHandManager.Instance != null)
+            instance.transform.position = CardHandManager.Instance.GetRandomPlacementPosition();
+        
         return true;
     }
 }

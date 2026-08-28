@@ -89,7 +89,7 @@ public class HoldTask : TaskBase, IPawnable
 
     protected override void ApplyReward()
     {
-        CountdownTimer.Instance.AddTime(GameManager.Instance.GameConfig.timePayout);
+        ClockService.Instance.AddTime(GameManager.Instance.GameConfig.timePayout);
     }
     
     public void OnPawned() => Destroy(gameObject);

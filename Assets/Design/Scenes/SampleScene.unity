@@ -715,12 +715,6 @@ MonoBehaviour:
   startOnAwake: 1
   countdownText: {fileID: 408900637}
   timeFormat: mm\:ss
-  risingThresholds:
-  - 1.5
-  - 3
-  fallingThresholds:
-  - 1.2
-  - 2.5
 --- !u!114 &273796701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -820,6 +814,8 @@ MonoBehaviour:
   - {fileID: 1096339247}
   - {fileID: 1447052565}
   - {fileID: 1911225826}
+  placementCornerA: {x: 0, y: 0}
+  placementCornerB: {x: 6, y: -4}
 --- !u!114 &293740337 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2376319785544766669, guid: eeb889a61f700824b83c7d8be034665e, type: 3}
