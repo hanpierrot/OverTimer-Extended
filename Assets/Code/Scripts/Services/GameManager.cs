@@ -26,8 +26,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        CountdownTimer.Instance.OnTimeChanged += HandleTimeChanged;
-        CountdownTimer.Instance.OnCountdownFinished += HandleCountdownFinished;
+        ClockService.Instance.OnTimeChanged += HandleTimeChanged;
+        ClockService.Instance.OnCountdownFinished += HandleCountdownFinished;
     }
 
     private void Update()

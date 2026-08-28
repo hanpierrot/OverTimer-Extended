@@ -48,7 +48,7 @@ public class Meter : MonoBehaviour
         if (MoneyService.Instance.TrySpend(current, "meter"))
         {
             float seconds = current * config.exchangeRate;
-            CountdownTimer.Instance.AddSeconds(seconds, "meter");
+            ClockService.Instance.AddSeconds(seconds, "meter");
         }
     }
 

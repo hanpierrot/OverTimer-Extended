@@ -51,7 +51,7 @@ public class DragTask : TaskBase, IPawnable
         if (IsCompleted) return;
         pointerStartWPos = worldPos;
         
-        CountdownTimer.Instance.PauseCountdown();
+        ClockService.Instance.PauseCountdown();
     }
 
     public void HandleDragUpdate(Vector2 worldPos)
@@ -72,7 +72,7 @@ public class DragTask : TaskBase, IPawnable
 
     public void HandleDragEnd(Vector2 worldPos)
     {
-        CountdownTimer.Instance.ResumeCountdown();
+        ClockService.Instance.ResumeCountdown();
         
         if (IsCompleted) return;
 

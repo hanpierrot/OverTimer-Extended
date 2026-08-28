@@ -70,7 +70,7 @@ public class ITRSService : MonoBehaviour
 
     private void Update()
     {
-        if (!CountdownTimer.Instance.IsRunning || CountdownTimer.Instance.IsGameOver) return;
+        if (!ClockService.Instance.IsRunning || ClockService.Instance.IsGameOver) return;
 
         timer += Time.deltaTime;
         if (timer >= GameManager.Instance.GameConfig.billInterval)
@@ -82,13 +82,6 @@ public class ITRSService : MonoBehaviour
 
     private void TryIssueAssessment()
     {
-        if (skipNextBill)
-        {
-            skipNextBill = false;
-            earnedSinceLastBill = 0;
-            return;
-        }
-
         // Also covers "a notice is already pending" - AnnoyanceManager stays busy
         // until Pay/Ignore resolves it, so this naturally retries instead of piling up.
         if (AnnoyanceManager.Instance != null && !AnnoyanceManager.Instance.TryBegin("itrs"))
@@ -105,7 +98,16 @@ public class ITRSService : MonoBehaviour
         int earned = earnedSinceLastBill;
         earnedSinceLastBill = 0;
 
-        int amountDue = Mathf.Max(GameManager.Instance.GameConfig.billMinimum, Mathf.RoundToInt(earned * GameManager.Instance.GameConfig.billRate));
+        int amountDue;
+        if (skipNextBill)
+        {
+            skipNextBill = false;
+            amountDue = 0;
+        }
+        else
+        {
+            amountDue = Mathf.Max(GameManager.Instance.GameConfig.billMinimum, Mathf.RoundToInt(earned * GameManager.Instance.GameConfig.billRate));
+        }
 
         CurrentAssessment = new Assessment(earned, GameManager.Instance.GameConfig.billRate, GameManager.Instance.GameConfig.billMinimum, amountDue, GameManager.Instance.GameConfig.shortfallPenalty);
         HasPendingAssessment = true;
@@ -117,7 +119,7 @@ public class ITRSService : MonoBehaviour
     public bool Pay()
     {
         if (!HasPendingAssessment) return false;
-        if (!MoneyService.Instance.TrySpend(CurrentAssessment.amountDue, "ITRS bill")) return false;
+        if (CurrentAssessment.amountDue > 0 && !MoneyService.Instance.TrySpend(CurrentAssessment.amountDue, "ITRS bill")) return false;
 
         Resolve();
         return true;
@@ -128,7 +130,7 @@ public class ITRSService : MonoBehaviour
     {
         if (!HasPendingAssessment) return;
 
-        CountdownTimer.Instance.Spend(CurrentAssessment.amountDue * CurrentAssessment.penaltyPerDollar, "ITRS shortfall");
+        ClockService.Instance.Spend(CurrentAssessment.amountDue * CurrentAssessment.penaltyPerDollar, "ITRS shortfall");
         Resolve();
     }
 
