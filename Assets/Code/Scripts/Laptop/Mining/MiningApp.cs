@@ -39,6 +39,14 @@ public class MiningApp : LaptopApp
     private int _damageDealt;
     private int _unconfirmed;
     private int _totalReceived;
+    
+    private static float _pendingNextVeinMultiplier = 1f;
+    private static bool _pendingNextVeinSlip;
+    
+    public static event Action OnNextVeinEffectResolved;
+
+    public static void QueueNextVeinMultiplier(float multiplier) => _pendingNextVeinMultiplier = multiplier;
+    public static void QueueNextVeinSlip() => _pendingNextVeinSlip = true;
 
     private void Start()
     {
@@ -109,10 +117,25 @@ public class MiningApp : LaptopApp
 
     private void BankVein()
     {
-        money.Add(_unconfirmed, "mining vein");
-        _totalReceived += _unconfirmed;
-        _unconfirmed = 0;
+        bool hadPendingEffect = _pendingNextVeinSlip || _pendingNextVeinMultiplier != 1f;
+
+        if (_pendingNextVeinSlip)
+        {
+            _pendingNextVeinSlip = false;
+            _unconfirmed = 0;
+        }
+        else
+        {
+            int payout = Mathf.RoundToInt(_unconfirmed * _pendingNextVeinMultiplier);
+            _pendingNextVeinMultiplier = 1f;
+            money.Add(payout, "mining vein"); 
+            _totalReceived += _unconfirmed; 
+            _unconfirmed = 0;
+        }
+        
         RefreshLabels();
+        
+        if (hadPendingEffect) OnNextVeinEffectResolved?.Invoke();
     }
 
     private IEnumerator RespawnAfterDelay()

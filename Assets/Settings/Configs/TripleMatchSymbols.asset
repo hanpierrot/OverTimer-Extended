@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12fef5bb52b81154f979f0eb40bcb86f, type: 3}
+  m_Name: TripleMatchSymbols
+  m_EditorClassIdentifier: Assembly-CSharp::TicketSymbolConfig
+  symbolPool:
+  - sprite: {fileID: -5845097627645897301, guid: 712c64d933603684cb296447ffa03842, type: 3}
+    weight: 5
+    payoutMultiplier: 0.8
+  - sprite: {fileID: -5829013172946887655, guid: 712c64d933603684cb296447ffa03842, type: 3}
+    weight: 4
+    payoutMultiplier: 1
+  - sprite: {fileID: -212253941, guid: 712c64d933603684cb296447ffa03842, type: 3}
+    weight: 1
+    payoutMultiplier: 1.25

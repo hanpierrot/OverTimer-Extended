@@ -32,6 +32,7 @@ public class ITRSService : MonoBehaviour
 
     /// <summary>Fired when a new bill needs the player's attention.</summary>
     public event Action<Assessment> OnAssessmentIssued;
+    public event Action OnAssessmentResolved;
 
     public bool HasPendingAssessment { get; private set; }
     public Assessment CurrentAssessment { get; private set; }
@@ -138,6 +139,7 @@ public class ITRSService : MonoBehaviour
     {
         HasPendingAssessment = false;
         AnnoyanceManager.Instance?.End("itrs");
+        OnAssessmentResolved?.Invoke();
     }
 
     /// <summary>Tax Exemption buff - the next scheduled bill is skipped entirely.</summary>
@@ -149,5 +151,15 @@ public class ITRSService : MonoBehaviour
         if (HasPendingAssessment) return; // don't stomp a notice already awaiting the player
         timer = 0f;
         IssueAssessment();
+    }
+
+    public void DoubleCurrentBill()
+    {
+        if (!HasPendingAssessment) return;
+
+        var a = CurrentAssessment;
+        CurrentAssessment = new Assessment(a.earnedSinceNotice, a.rate, a.minimum, a.amountDue * 2, a.penaltyPerDollar);
+
+        OnAssessmentIssued?.Invoke(CurrentAssessment);
     }
 }

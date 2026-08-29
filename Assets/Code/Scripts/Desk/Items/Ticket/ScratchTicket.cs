@@ -29,17 +29,29 @@ public class ScratchTicket : MonoBehaviour
     [SerializeField] private TMP_Text resultLabel;
     [SerializeField] private Button closeButton;
     
-    [Header("Resolve")]
-    [SerializeField, Range(0f, 1f)] private float resolveThreshold = 0.8f;
-    
     private int[] _activeSymbolIndex;
     private bool _isResolved;
     private bool _isPurchased;
     private bool _isBeingViewed;
     private PointerReceiver _receiver;
     
+    private bool _hasPreRevealWindow;
+    
+    private static bool _pendingPreRevealWindow;
+    public static event Action OnPreRevealDelivered;
+    public static void QueuePreRevealWindow() => _pendingPreRevealWindow = true;
+    
     private GameConfig Config => GameManager.Instance.GameConfig;
-    private int Cost => tierKind == TicketTierKind.TripleMatch ? Config.tripleMatchCost : Config.luckyNineCost;
+
+    private int Cost
+    {
+        get
+        {
+            int baseCost = tierKind == TicketTierKind.TripleMatch ? Config.tripleMatchCost : Config.luckyNineCost;
+            float mult = CostModifierService.Instance != null ? CostModifierService.Instance.GetMultiplier(CostModifierService.Target.Ticket) : 1f;
+            return Mathf.RoundToInt(baseCost * mult);
+        }
+    }
     private int BaseReward => tierKind == TicketTierKind.TripleMatch ? Config.tripleMatchBaseReward : Config.luckyNineBaseReward;
 
     private void Awake()
@@ -47,10 +59,17 @@ public class ScratchTicket : MonoBehaviour
         _receiver = GetComponent<PointerReceiver>();
     }
 
-    private void OnEnable() => _receiver.ClickDown += HandleTicketClicked;
+    private void OnEnable() 
+    {
+        _receiver.ClickDown += HandleTicketClicked;
+        
+        foreach (var w in windows) w.OnRevealed += HandleWindowRevealed;
+    }
     private void OnDisable()
     {
         _receiver.ClickDown -= HandleTicketClicked;
+        
+        foreach (var w in windows) w.OnRevealed -= HandleWindowRevealed;
         
         if (closeButton != null) closeButton.onClick.RemoveListener(CashOut);
     }
@@ -68,11 +87,18 @@ public class ScratchTicket : MonoBehaviour
     public bool TryPurchase()
     {
         if (!MoneyService.Instance.TrySpend(Cost, "ticket")) return false;
-
+        
         _isPurchased = true;
         _isResolved = false;
+
+        if (_pendingPreRevealWindow)
+        {
+            _pendingPreRevealWindow = false;
+            _hasPreRevealWindow = true;
+        }
+        
         RollSymbols();
-        if (resultLabel != null) resultLabel.text = "";
+        if (resultLabel != null) resultLabel.text = "0$";
 
         return true;
     }
@@ -104,6 +130,24 @@ public class ScratchTicket : MonoBehaviour
     {
         for(int i = 0; i <  windows.Length; i++)
             windows[i].Populate(symbolConfig.symbolPool[_activeSymbolIndex[i]].sprite);
+        
+        if (_hasPreRevealWindow)
+        {
+            _hasPreRevealWindow = false;
+            int idx = RngService.Instance.Random.Next(windows.Length);
+            windows[idx].Reveal();
+            OnPreRevealDelivered?.Invoke();
+        }
+    }
+    
+    private void HandleWindowRevealed(ScratchWindow window) => RefreshLiveResult();
+    
+    private void RefreshLiveResult()
+    {
+        if (_isResolved || resultLabel == null) return;
+
+        int reward = ComputeCurrentReward();
+        resultLabel.text = reward > 0 ? $"+${reward}" : "$0";
     }
 
     private static int PickWeightedIndex(SymbolEntry[] pool, System.Random rng)
@@ -125,38 +169,45 @@ public class ScratchTicket : MonoBehaviour
     {
         if (!_isBeingViewed || _isResolved) return;
 
-        float sum = 0f;
-        foreach (var w in windows) sum += w.ScratchedPercent;
+        foreach (var w in windows)
+            if (!w.IsRevealed) return;
 
-        if (sum / windows.Length >= resolveThreshold)
-            Resolve();
+        Resolve();
     }
 
     private void Resolve()
     {
+        if (_isResolved) return;
         _isResolved = true;
 
+        int reward = ComputeCurrentReward();
+        
         foreach (var w in windows) w.Reveal();
 
-        int maxMatch = CountBestMatch(out int bestSymbolIndex);
-        int reward = 0;
-        if (maxMatch > 1)
-        {
-            float multiplier = symbolConfig.symbolPool[bestSymbolIndex].payoutMultiplier;
-            reward = Mathf.RoundToInt(BaseReward * (maxMatch - 1) * multiplier);
-        }
-        
         if (reward > 0) MoneyService.Instance.Add(reward, "ticket");
 
         if (resultLabel != null)
-            resultLabel.text = reward > 0 ? $"+${reward}" : "NO MATCH";
+            resultLabel.text = reward > 0 ? $"+${reward}" : "$0";
+    }
+    
+    private int ComputeCurrentReward()
+    {
+        int maxMatch = CountBestMatch(out int bestSymbolIndex);
+        if (maxMatch <= 1) return 0;
+
+        float multiplier = symbolConfig.symbolPool[bestSymbolIndex].payoutMultiplier;
+        return Mathf.RoundToInt(BaseReward * (maxMatch - 1) * multiplier);
     }
 
     private int CountBestMatch(out int bestSymbolIndex)
     {
         var counts = new Dictionary<int, int>();
-        foreach (int idx in _activeSymbolIndex)
+        
+        for (int i = 0; i < windows.Length; i++)
         {
+            if (!windows[i].IsRevealed) continue;
+
+            int idx = _activeSymbolIndex[i];
             counts.TryGetValue(idx, out int c);
             counts[idx] = c + 1;
         }
