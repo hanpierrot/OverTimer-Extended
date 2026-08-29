@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TicketSymbolConfig
   symbolPool:
   - sprite: {fileID: -5845097627645897301, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 5
-    payoutMultiplier: 0.8
+    weight: 75
+    payoutMultiplier: 0.25
   - sprite: {fileID: -5829013172946887655, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 4
-    payoutMultiplier: 1
+    weight: 20
+    payoutMultiplier: 0.6
   - sprite: {fileID: -212253941, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 1
-    payoutMultiplier: 1.25
+    weight: 5
+    payoutMultiplier: 2
