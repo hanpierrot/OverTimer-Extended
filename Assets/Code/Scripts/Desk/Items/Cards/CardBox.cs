@@ -26,7 +26,11 @@ public class CardBox : MonoBehaviour, IPawnable
         
         GameConfig config = GameManager.Instance.GameConfig;
         
-        if (!MoneyService.Instance.TrySpend(config.packCost, "card pack")) return;
+        int packCost = config.packCost;
+        if (CostModifierService.Instance != null)
+            packCost = Mathf.RoundToInt(packCost * CostModifierService.Instance.GetMultiplier(CostModifierService.Target.CardPack));
+
+        if (!MoneyService.Instance.TrySpend(packCost, "card pack")) return;
         
         var rolled = new CardSO[packSize];
         for (int i = 0; i < packSize; i++)

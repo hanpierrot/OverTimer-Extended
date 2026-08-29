@@ -170,6 +170,12 @@ public class Phone : DeskObject, IPawnable
         robocallsActive = true;
         robocallsTimer = duration;
     }
+
+    public void StopRobocalls()
+    {
+        robocallsActive = false;
+        robocallsTimer = 0f;
+    }
     
     public void OnPawned() => Destroy(gameObject);
 }

@@ -916,22 +916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScratchTicket
   tierKind: 1
-  symbolPool:
-  - sprite: {fileID: -5845097627645897301, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 5
-    payoutMultiplier: 0.7
-  - sprite: {fileID: -5829013172946887655, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 4
-    payoutMultiplier: 1
-  - sprite: {fileID: -212253941, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 3
-    payoutMultiplier: 1.2
-  - sprite: {fileID: -3547726454438742596, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 2
-    payoutMultiplier: 1.5
-  - sprite: {fileID: -8723400120016341181, guid: 712c64d933603684cb296447ffa03842, type: 3}
-    weight: 1
-    payoutMultiplier: 2
+  symbolConfig: {fileID: 11400000, guid: 91bcc36e189d12047b79e829f05f79b9, type: 2}
   scratchPanel: {fileID: 0}
   windows:
   - {fileID: 0}

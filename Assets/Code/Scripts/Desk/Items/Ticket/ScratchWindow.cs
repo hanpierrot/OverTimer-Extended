@@ -101,6 +101,7 @@ public class ScratchWindow : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
         _interactable = true;
         _hasLastPoint = false;
         _clearedCount = 0;
+        Array.Clear(_cleared, 0, _cleared.Length);
 
         ResetPixelsToInitialFoil();
         _maskTexture.SetPixels32(_pixels);
