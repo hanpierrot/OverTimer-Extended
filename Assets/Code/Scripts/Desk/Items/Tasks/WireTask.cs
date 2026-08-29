@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(PointerReceiver))]
 public class WireTask : TaskBase, IPawnable
 {
     [Header("Refs")]
@@ -20,15 +21,16 @@ public class WireTask : TaskBase, IPawnable
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
     public int PawnValue => pawnValue;
-    
-    protected override bool ResetAfterComplete => true;
 
+    private PointerReceiver _receiver;
     private bool[] _connected;
     private int _connectedCount;
     private WirePlug _activePlug;
     
     private void Awake()
     {
+        _receiver = GetComponent<PointerReceiver>();
+        
         plugGameObject.SetActive(false);
         _connected = new bool[plugs.Length];
         
@@ -122,7 +124,14 @@ public class WireTask : TaskBase, IPawnable
     {
         if (laptopController != null) laptopController.Disabled = false;
         if(plugGameObject != null) plugGameObject.SetActive(true);
+        
+        _receiver.SetInteractable(false);
     }
 
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned()
+    {
+        if (laptopController != null) laptopController.Disabled = true;
+
+        Destroy(gameObject);
+    }
 }
