@@ -277,7 +277,8 @@ MonoBehaviour:
   foilImage: {fileID: 3791885055132822529}
   foilArt: {fileID: 2800000, guid: 48696fc43008d7d418fb552a6f84a43f, type: 3}
   maskResolution: 96
-  foilColor: {r: 1, g: 1, b: 1, a: 1}
+  foilColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  circularWindow: 1
   brushRadius: 9
   edgeSoftness: 0.35
   clearedAlphaThreshold: 40

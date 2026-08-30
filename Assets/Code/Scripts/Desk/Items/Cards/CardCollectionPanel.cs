@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class CardCollectionPanel : MonoBehaviour
 {
     [SerializeField] private CardCatalogSO catalog;
-    [SerializeField] private int cardsPerPage = 6;
     
     [SerializeField] private CardCollectionSlot[] leftPageSlots;
     [SerializeField] private CardCollectionSlot[] rightPageSlots;
@@ -16,7 +15,8 @@ public class CardCollectionPanel : MonoBehaviour
 
     private int _currentSpread;
 
-    private int TotalPages => Mathf.Max(1, Mathf.CeilToInt((float)catalog.allCards.Length / cardsPerPage));
+    private int CardsPerPage => leftPageSlots.Length;
+    private int TotalPages => Mathf.Max(1, Mathf.CeilToInt((float)catalog.allCards.Length / CardsPerPage));
     private int TotalSpreads => Mathf.CeilToInt(TotalPages / 2f);
 
     private void Awake()
@@ -46,7 +46,7 @@ public class CardCollectionPanel : MonoBehaviour
 
     private void FillPage(CardCollectionSlot[] slots, int index)
     {
-        int start = index * cardsPerPage;
+        int start = index * CardsPerPage;
         bool pageExists = index < TotalPages;
 
         for (int i = 0; i < slots.Length; i++)

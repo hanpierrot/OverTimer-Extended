@@ -96,7 +96,10 @@ public class InputManager : MonoBehaviour
         if (isDragging)
             currentTarget.OnDragEnd(worldPos);
         else
+        {
             currentTarget.OnClickDown(pressWorldPos);
+            ClickFeedbackService.Instance?.PlayAt(pressWorldPos);
+        }
 
         currentTarget = null;
     }
