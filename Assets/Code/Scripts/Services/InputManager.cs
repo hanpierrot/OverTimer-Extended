@@ -52,6 +52,8 @@ public class InputManager : MonoBehaviour
         {
             Vector2 worldPos = GetPointerWorldPos();
             
+            currentTarget.OnPressUpdate(worldPos);
+            
             if (!isDragging && Vector2.Distance(worldPos, pressWorldPos) >= dragThreshold)
             {
                 isDragging = true;
@@ -81,6 +83,8 @@ public class InputManager : MonoBehaviour
             currentTarget = handler;
             pressWorldPos = worldPos;
             isDragging = false;
+            
+            currentTarget.OnPressStart(worldPos);
         }
     }
 
@@ -93,6 +97,8 @@ public class InputManager : MonoBehaviour
     
     private void EndPress(Vector2 worldPos)
     {
+        currentTarget.OnPressEnd(worldPos);
+        
         if (isDragging)
             currentTarget.OnDragEnd(worldPos);
         else
