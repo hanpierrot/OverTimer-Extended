@@ -28,16 +28,16 @@ public class HoldTask : TaskBase, IPawnable
 
     protected virtual void OnEnable()
     {
-        receiver.DragStart += HandleHoldStart;
-        receiver.DragUpdate += HandleHoldUpdate;
-        receiver.DragEnd += HandleHoldEnd;
+        receiver.PressStart += HandleHoldStart;
+        receiver.PressUpdate += HandleHoldUpdate;
+        receiver.PressEnd += HandleHoldEnd; 
     }
 
     protected virtual void OnDisable()
     {
-        receiver.DragStart -= HandleHoldStart;
-        receiver.DragUpdate -= HandleHoldUpdate;
-        receiver.DragEnd -= HandleHoldEnd;
+        receiver.PressStart -= HandleHoldStart;
+        receiver.PressUpdate -= HandleHoldUpdate;
+        receiver.PressEnd -= HandleHoldEnd;
     }
 
     private void HandleHoldStart(Vector2 worldPos)

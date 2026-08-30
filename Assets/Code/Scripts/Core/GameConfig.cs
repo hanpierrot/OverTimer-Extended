@@ -73,4 +73,11 @@ public class GameConfig : ScriptableObject
     public int clickTaskMinClicks = 3;
     public int clickTaskMaxClicks = 8;
     public float clickTaskLockDuration = 3f;
+    
+    [Header("Cat")]
+    public float catSitDurationMin = 3f;
+    public float catSitDurationMax = 8f;
+    public float catBlockChance = 0.4f;
+    public float catBlockDurationMin = 4f;
+    public float catBlockDurationMax = 8f;
 }
