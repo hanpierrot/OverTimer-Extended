@@ -8,6 +8,7 @@ using UnityEngine;
 public class DeskLaptopOpener : DeskObject, IPawnable
 {
     [SerializeField] private GameObject laptopPanel;
+    [SerializeField] private LaptopController laptopController;
     
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
@@ -16,6 +17,8 @@ public class DeskLaptopOpener : DeskObject, IPawnable
 
     protected override void OnClicked(Vector2 worldPos)
     {
+        if (laptopController != null && laptopController.Disabled) return;
+        
         laptopPanel.SetActive(true);
     }
     

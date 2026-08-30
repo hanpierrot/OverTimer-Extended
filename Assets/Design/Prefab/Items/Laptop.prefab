@@ -82,9 +82,9 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 5314295972940195684, guid: 72263edd404494e41bbca5f022b2ddf4, type: 3}
+  m_Sprite: {fileID: -7773165393155189300, guid: c77391afbeedf4945a4adbee08004af9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -132,13 +132,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.625, y: 2.0625}
+    oldSize: {x: 6.25, y: 4.6875}
     newSize: {x: 0.58, y: 0.33}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.625, y: 2.0625}
+  m_Size: {x: 6, y: 4.6}
   m_EdgeRadius: 0
 --- !u!114 &1224820256954286734
 MonoBehaviour:
@@ -165,4 +165,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeskLaptopOpener
   laptopPanel: {fileID: 0}
+  laptopController: {fileID: 0}
   pawnValue: 20

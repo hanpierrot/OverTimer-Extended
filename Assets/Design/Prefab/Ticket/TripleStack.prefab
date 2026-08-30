@@ -82,7 +82,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6467537029916428044, guid: 57d21df582628d74288a10e18dbfc84b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -167,6 +167,6 @@ MonoBehaviour:
   ticketPool:
   - {fileID: 0}
   - {fileID: 0}
-  spawnRangeMin: {x: -4, y: -3}
-  spawnRangeMax: {x: 4, y: 3}
+  spawnRangeMin: {x: -4, y: -2}
+  spawnRangeMax: {x: 4, y: 0}
   pawnValue: 20
