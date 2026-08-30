@@ -43,6 +43,8 @@ public class WireTask : TaskBase, IPawnable
 
         foreach (var s in sockets)
             s.Dropped += HandleSocketDropped;
+        
+        if (laptopController != null) laptopController.Disabled = true;
     }
 
     public void BeginPuzzle()

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf669b7b4496dd94d8f81b1b19b4a082, type: 3}
   m_Name: TaskCostModifier
   m_EditorClassIdentifier: Assembly-CSharp::TaskCostModifierCardSO
-  cardName: 
+  cardName: TaskCostMult
   image: {fileID: -1263880189, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -2010778280, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 

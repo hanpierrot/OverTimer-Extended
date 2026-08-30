@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d39ab414f7674a4cafb614fc472a2eb, type: 3}
   m_Name: Butterfingers
   m_EditorClassIdentifier: Assembly-CSharp::ButterfingersCardSO
-  cardName: 
+  cardName: ButterFingers
   image: {fileID: 423033766, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -2010778280, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
