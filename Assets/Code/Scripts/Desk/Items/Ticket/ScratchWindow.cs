@@ -12,7 +12,7 @@ public class ScratchWindow : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
     [Header("Mask")]
     [SerializeField] private int maskResolution = 96;
-    [SerializeField] private Color foilColor = new Color(0.72f, 0.74f, 0.76f, 1f);
+    [SerializeField] private Color foilColor = new Color(0.2f, 0.2f, 0.2f, 1f);
     [SerializeField] private bool circularWindow = true;
 
     [Header("Brush")]

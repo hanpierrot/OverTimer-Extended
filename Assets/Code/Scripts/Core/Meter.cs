@@ -1,23 +1,21 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// The ONLY money -> clock time converter in the game (DESIGN.md I3).
 /// $1 = 1s via GameConfig.exchangeRate. Nothing else may add clock seconds
 /// from money - route new systems through this instead of CountdownTimer directly.
 /// </summary>
-[RequireComponent(typeof(PointerReceiver))]
-[RequireComponent(typeof(Collider2D))]
 public class Meter : MonoBehaviour
 {
+    [SerializeField] private Button feedButton;
     [SerializeField] private TextMeshProUGUI moneyText;
-    
-    private PointerReceiver receiver;
     
     private void Awake()
     {
-        receiver = GetComponent<PointerReceiver>();
+        feedButton.onClick.AddListener(HandleFeedClicked);
     }
 
     private void Start()
@@ -27,18 +25,16 @@ public class Meter : MonoBehaviour
     
     private void OnEnable()
     {
-        receiver.ClickDown += HandleClick;
         MoneyService.Instance.OnMoneyChanged += HandleMoneyChanged;
     }
 
     private void OnDisable()
     {
-        receiver.ClickDown -= HandleClick;
         if (MoneyService.Instance != null)
             MoneyService.Instance.OnMoneyChanged -= HandleMoneyChanged;
     }
-    
-    private void HandleClick(Vector2 worldPos)
+
+    private void HandleFeedClicked()
     {
         GameConfig config = GameManager.Instance.GameConfig;
         int current = MoneyService.Instance.Current;

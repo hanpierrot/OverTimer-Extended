@@ -68,4 +68,9 @@ public class GameConfig : ScriptableObject
     [Header("Egg Timer (§5.8)")]
     public float crankTime = 2f;
     public float timePayout = 3f;
+    
+    [Header("Click Task")]
+    public int clickTaskMinClicks = 3;
+    public int clickTaskMaxClicks = 8;
+    public float clickTaskLockDuration = 3f;
 }
