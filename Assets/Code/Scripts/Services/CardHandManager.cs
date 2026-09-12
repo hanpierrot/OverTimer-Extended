@@ -15,6 +15,10 @@ public class CardHandManager : MonoBehaviour
     private readonly HashSet<CardItem> _placed = new HashSet<CardItem>();
 
     public bool HasRoom => _placed.Count < GameManager.Instance.GameConfig.handCap;
+    
+    public event Action<CardSO> CardPlaced;
+    public event Action<CardSO> CardRemoved;
+    public IReadOnlyCollection<CardItem> Placed => _placed;
 
     private void Awake()
     {
@@ -32,8 +36,17 @@ public class CardHandManager : MonoBehaviour
         return null;
     }
     
-    public void Register(CardItem card) => _placed.Add(card);
-    public void Release(CardItem card) => _placed.Remove(card);
+    public void Register(CardItem card)
+    {
+        _placed.Add(card);
+        CardPlaced?.Invoke(card.Data);
+    }
+
+    public void Release(CardItem card)
+    {
+        _placed.Remove(card);
+        CardRemoved?.Invoke(card.Data);
+    }
     
     public Vector2 GetRandomPlacementPosition()
     {

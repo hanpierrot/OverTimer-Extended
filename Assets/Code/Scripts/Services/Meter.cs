@@ -10,11 +10,18 @@ using UnityEngine.UI;
 /// </summary>
 public class Meter : MonoBehaviour
 {
+    public static Meter Instance { get; private set; } 
+    
     [SerializeField] private Button feedButton;
     [SerializeField] private TextMeshProUGUI moneyText;
     
+    public bool IsLocked { get; private set; }
+    public void SetLocked(bool locked) => IsLocked = locked;
+    
     private void Awake()
     {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
         feedButton.onClick.AddListener(HandleFeedClicked);
     }
 
@@ -36,6 +43,8 @@ public class Meter : MonoBehaviour
 
     private void HandleFeedClicked()
     {
+        if (IsLocked) return;
+        
         GameConfig config = GameManager.Instance.GameConfig;
         int current = MoneyService.Instance.Current;
 

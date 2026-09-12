@@ -12,6 +12,8 @@ public class CardItem : MonoBehaviour, IPawnable
     private bool _hasEnded;
 
     public int PawnValue => _data != null ? _data.pawnValue : 0;
+    public bool CanBePawned => _effect == null || !_effect.BlocksPawning;
+    public CardSO Data => _data;
     
     private void Awake() => _receiver = GetComponent<PointerReceiver>();
 

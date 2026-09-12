@@ -57,6 +57,8 @@ public class Pawn : MonoBehaviour
 
         if (other.TryGetComponent(out IPawnable pawnable))
         {
+            if (!pawnable.CanBePawned) return;
+            
             MoneyService.Instance.Add(pawnable.PawnValue, "pawn");
             pawnable.OnPawned();
         }

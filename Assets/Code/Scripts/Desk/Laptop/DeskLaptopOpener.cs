@@ -14,6 +14,7 @@ public class DeskLaptopOpener : DeskObject, IPawnable
     [SerializeField] private int pawnValue = 20;
     
     public int PawnValue => pawnValue;
+    public bool CanBePawned => true;
 
     protected override void OnClicked(Vector2 worldPos)
     {
