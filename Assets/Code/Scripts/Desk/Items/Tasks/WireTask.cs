@@ -21,6 +21,7 @@ public class WireTask : TaskBase, IPawnable
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
     public int PawnValue => pawnValue;
+    public bool CanBePawned => true;
 
     private PointerReceiver _receiver;
     private bool[] _connected;

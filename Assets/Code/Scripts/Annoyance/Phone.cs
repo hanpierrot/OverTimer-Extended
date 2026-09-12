@@ -9,18 +9,13 @@ using UnityEngine;
 /// so it never lands within annoyanceMinGap of another interruption (I8).
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
-public class Phone : DeskObject, IPawnable
+public class Phone : DeskObject
 {
     public static Phone Instance { get; private set; }
 
     [SerializeField] private GameObject ringingVisual;
     [SerializeField] private AudioClip ringSound;
     [SerializeField] private AudioSource audioSource;
-    
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
-    
-    public int PawnValue => pawnValue;
 
     public bool IsRinging { get; private set; }
     public event Action OnRingStart;

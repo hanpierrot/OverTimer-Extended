@@ -12,6 +12,7 @@ public class ClickTask : TaskBase, IPawnable
     
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
+    public bool CanBePawned => true;
     
     private int MinClicks => GameManager.Instance.GameConfig.clickTaskMinClicks;
     private int MaxClicks => GameManager.Instance.GameConfig.clickTaskMaxClicks;

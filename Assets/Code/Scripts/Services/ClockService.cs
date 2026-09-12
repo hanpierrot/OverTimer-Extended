@@ -20,6 +20,10 @@ public class ClockService : MonoBehaviour
     public bool IsGameOver { get; private set; }
 
     public float CurrentSeconds => RemainingTime;
+    
+    public bool HasFinalCountdownIntercept { get; private set; }
+    private float _finalCountdownResetSeconds;
+    public event Action OnFinalCountdownTriggered;
 
     /// <summary>
     /// Multiplies tick speed on top of the existing mouse-speed multiplier.
@@ -76,8 +80,18 @@ public class ClockService : MonoBehaviour
 
         if (RemainingTime <= 0f)
         {
-            RemainingTime = 0f;
-            EndCountdown();
+            if (HasFinalCountdownIntercept)
+            {
+                HasFinalCountdownIntercept = false;
+                RemainingTime = _finalCountdownResetSeconds;
+                OnFinalCountdownTriggered?.Invoke();
+            }
+            else
+            {
+                RemainingTime = 0f;
+                EndCountdown();
+            }
+            
         }
         
         OnTimeChanged?.Invoke(RemainingTime);
@@ -118,6 +132,14 @@ public class ClockService : MonoBehaviour
         IsGameOver = true;
         OnCountdownFinished?.Invoke();
     }
+
+    public void ArmFinalCountdownIntercept(float resetSeconds)
+    {
+        HasFinalCountdownIntercept = true;
+        _finalCountdownResetSeconds = resetSeconds;
+    }
+    
+    public void DisarmFinalCountdownIntercept() => HasFinalCountdownIntercept = false;
 
     private void UpdateDisplay()
     {

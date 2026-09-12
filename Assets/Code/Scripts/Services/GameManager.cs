@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
         Lose();
     }
     
-    private void Win()
+    public void Win()
     {
         IsGameOver = true;
         InputManager.Instance.IsInputEnabled = false;
@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
         if (winScreen != null) winScreen.SetActive(true);
     }
 
-    private void Lose()
+    public void Lose()
     {
         IsGameOver = true;
         InputManager.Instance.IsInputEnabled = false;

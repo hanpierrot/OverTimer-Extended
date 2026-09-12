@@ -12,6 +12,7 @@ public class HoldTask : TaskBase, IPawnable
     [SerializeField] private int pawnValue = 20;
     
     public int PawnValue => pawnValue;
+    public bool CanBePawned => true;
 
     private PointerReceiver receiver;
     private float holdTimer;
