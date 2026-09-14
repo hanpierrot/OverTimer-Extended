@@ -10,8 +10,12 @@ public class CameraVerticalScroller : MonoBehaviour
 
     [SerializeField] private HoldButton upButton;
     [SerializeField] private HoldButton downButton;
+    
+    private bool _inputAllowed = true;
 
     private int _direction;
+    
+    public void SetButtonsEnabled(bool enabled) => _inputAllowed = enabled;
     
     private void Awake()
     {
@@ -42,7 +46,7 @@ public class CameraVerticalScroller : MonoBehaviour
         bool atTop = cameraTransform.position.y >= maxY;
         bool atBottom = cameraTransform.position.y <= minY;
 
-        upButton.gameObject.SetActive(!atTop);
-        downButton.gameObject.SetActive(!atBottom);
+        upButton.gameObject.SetActive(_inputAllowed && !atTop);
+        downButton.gameObject.SetActive(_inputAllowed && !atBottom);
     }
 }

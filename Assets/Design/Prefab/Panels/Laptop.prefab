@@ -162,7 +162,7 @@ RectTransform:
   m_GameObject: {fileID: 2165303424871902996}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5375887451890919782}
@@ -913,7 +913,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11389eb4353f03e499469023ed6dc7c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LaptopController
-  config: {fileID: 11400000, guid: 7ea21df957282fd4c81d0d031ab47a59, type: 2}
   apps:
   - {fileID: 0}
   - {fileID: 0}
