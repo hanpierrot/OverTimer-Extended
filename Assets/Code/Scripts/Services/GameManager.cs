@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     
     [Header("Input Blockers")]
     [SerializeField] private GameObject[] inputBlockers;
+    
+    [Header("Camera")]
+    [SerializeField] private CameraVerticalScroller cameraScroller;
 
     public GameConfig GameConfig => config;
     public bool IsGameOver { get; private set; }
@@ -45,6 +48,7 @@ public class GameManager : MonoBehaviour
         }
 
         InputManager.Instance.IsInputEnabled = !anyBlockerActive;
+        if (cameraScroller != null) cameraScroller.SetButtonsEnabled(!anyBlockerActive);
     }
 
     private void HandleTimeChanged(float currentSeconds)
