@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class CardCollectionPanel : MonoBehaviour
 {
-    [SerializeField] private CardCatalogSO catalog;
+    [SerializeField] private string cardResourcesPath = "Cards";
     
     [SerializeField] private CardCollectionSlot[] leftPageSlots;
     [SerializeField] private CardCollectionSlot[] rightPageSlots;
@@ -13,14 +13,18 @@ public class CardCollectionPanel : MonoBehaviour
     [SerializeField] private Button prevButton;
     [SerializeField] private Button nextButton;
 
+    private CardSO[] _allCards;
     private int _currentSpread;
 
     private int CardsPerPage => leftPageSlots.Length;
-    private int TotalPages => Mathf.Max(1, Mathf.CeilToInt((float)catalog.allCards.Length / CardsPerPage));
+    private int TotalPages => Mathf.Max(1, Mathf.CeilToInt((float)_allCards.Length / CardsPerPage));
     private int TotalSpreads => Mathf.CeilToInt(TotalPages / 2f);
 
     private void Awake()
     {
+        _allCards = Resources.LoadAll<CardSO>(cardResourcesPath);
+        System.Array.Sort(_allCards, (a, b) => string.Compare(a.name, b.name));
+        
         if (prevButton != null) prevButton.onClick.AddListener(PrevSpread);
         if (nextButton != null) nextButton.onClick.AddListener(NextSpread);
     }
@@ -52,9 +56,9 @@ public class CardCollectionPanel : MonoBehaviour
         for (int i = 0; i < slots.Length; i++)
         {
             int cardIndex = start + i;
-            if (pageExists && cardIndex < catalog.allCards.Length)
+            if (pageExists && cardIndex < _allCards.Length)
             {
-                CardSO card =  catalog.allCards[cardIndex];
+                CardSO card =  _allCards[cardIndex];
                 bool collected = CardCollectionManager.Instance != null && CardCollectionManager.Instance.IsCollected(card);
                 slots[i].Setup(card, collected);
                 slots[i].gameObject.SetActive(true);

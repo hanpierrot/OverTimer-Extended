@@ -8,7 +8,7 @@ public class CardBox : MonoBehaviour, IPawnable
     [SerializeField] private CardPackRevealPanel revealPanel;
 
     [Header("Roll pool")]
-    [SerializeField] private CardCatalogSO catalog;
+    [SerializeField] private string cardResourcesPath = "Cards";
 
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
@@ -16,8 +16,14 @@ public class CardBox : MonoBehaviour, IPawnable
     public bool CanBePawned => true;
 
     private PointerReceiver _receiver;
+    private CardSO[] _allCards;
 
-    private void Awake() => _receiver = GetComponent<PointerReceiver>();
+    private void Awake()
+    {
+        _receiver = GetComponent<PointerReceiver>();
+        _allCards = Resources.LoadAll<CardSO>(cardResourcesPath);
+    }
+    
     private void OnEnable() => _receiver.ClickDown += HandleClick;
     private void OnDisable() => _receiver.ClickDown -= HandleClick;
 
@@ -45,9 +51,8 @@ public class CardBox : MonoBehaviour, IPawnable
         var rng = RngService.Instance.Random;
         CardSO.Rarity rarity = RollRarity(config, rng);
 
-        var pool = catalog.allCards;
-        var candidates = System.Array.FindAll(catalog.allCards, c => c.rarity == rarity);
-        if (candidates.Length == 0) candidates = catalog.allCards;
+        var candidates = System.Array.FindAll(_allCards, c => c.rarity == rarity);
+        if (candidates.Length == 0) candidates = _allCards;
 
         return PickWeightedCard(candidates, rng);
     }
