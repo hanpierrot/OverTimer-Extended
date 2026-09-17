@@ -1,29 +1,31 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CardCollectionPanel : MonoBehaviour
 {
-    [SerializeField] private string cardResourcesPath = "Cards";
+    [SerializeField] private string cardResourcesPath = "CardSO";
     
     [SerializeField] private CardCollectionSlot[] leftPageSlots;
     [SerializeField] private CardCollectionSlot[] rightPageSlots;
     
     [SerializeField] private Button prevButton;
     [SerializeField] private Button nextButton;
-
-    private CardSO[] _allCards;
+    
+    private CardSO[] _rawCards;
+    private CardSO[] _visibleCards;
     private int _currentSpread;
 
     private int CardsPerPage => leftPageSlots.Length;
-    private int TotalPages => Mathf.Max(1, Mathf.CeilToInt((float)_allCards.Length / CardsPerPage));
+    private int TotalPages => Mathf.Max(1, Mathf.CeilToInt((float)_visibleCards.Length / CardsPerPage));
     private int TotalSpreads => Mathf.CeilToInt(TotalPages / 2f);
 
     private void Awake()
     {
-        _allCards = Resources.LoadAll<CardSO>(cardResourcesPath);
-        System.Array.Sort(_allCards, (a, b) => string.Compare(a.name, b.name));
+        _rawCards = Resources.LoadAll<CardSO>(cardResourcesPath);
+        System.Array.Sort(_rawCards, (a, b) => string.Compare(a.name, b.name));
         
         if (prevButton != null) prevButton.onClick.AddListener(PrevSpread);
         if (nextButton != null) nextButton.onClick.AddListener(NextSpread);
@@ -31,8 +33,21 @@ public class CardCollectionPanel : MonoBehaviour
 
     private void OnEnable()
     {
+        RefreshVisibleCards();
         _currentSpread = 0;
         RefreshSpread();
+    }
+    
+    private void RefreshVisibleCards()
+    {
+        var list = new List<CardSO>();
+        foreach (var card in _rawCards)
+        {
+            bool collected = CardCollectionManager.Instance != null && CardCollectionManager.Instance.IsCollected(card);
+            if (card.hideUntilCollected && !collected) continue;
+            list.Add(card);
+        }
+        _visibleCards = list.ToArray();
     }
 
     private void RefreshSpread()
@@ -56,9 +71,9 @@ public class CardCollectionPanel : MonoBehaviour
         for (int i = 0; i < slots.Length; i++)
         {
             int cardIndex = start + i;
-            if (pageExists && cardIndex < _allCards.Length)
+            if (pageExists && cardIndex < _visibleCards.Length)
             {
-                CardSO card =  _allCards[cardIndex];
+                CardSO card =  _visibleCards[cardIndex];
                 bool collected = CardCollectionManager.Instance != null && CardCollectionManager.Instance.IsCollected(card);
                 slots[i].Setup(card, collected);
                 slots[i].gameObject.SetActive(true);

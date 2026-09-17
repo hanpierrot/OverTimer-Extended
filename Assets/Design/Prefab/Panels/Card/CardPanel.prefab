@@ -227,7 +227,7 @@ MonoBehaviour:
   panel: {fileID: 1295416157532871464}
   cardImage: {fileID: 4347173755100238930}
   nameLabel: {fileID: 8808183068340942579}
-  rarityLabel: {fileID: 0}
+  rarityLabel: {fileID: 1819763278534321780}
   descriptionLabel: {fileID: 5646956787302521655}
   closeButton: {fileID: 2801571933001899523}
 --- !u!1 &2044600315908131610

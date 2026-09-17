@@ -8,7 +8,7 @@ public class CardBox : MonoBehaviour, IPawnable
     [SerializeField] private CardPackRevealPanel revealPanel;
 
     [Header("Roll pool")]
-    [SerializeField] private string cardResourcesPath = "Cards";
+    [SerializeField] private string cardResourcesPath = "CardSO";
 
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
