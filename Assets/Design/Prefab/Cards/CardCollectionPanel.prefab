@@ -688,7 +688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 291f5c5789654ce42bfdffb9bc49f992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardCollectionPanel
-  catalog: {fileID: 11400000, guid: 8c2b8a8b27fda2f48a09d06182a64a0a, type: 2}
+  cardResourcesPath: CardSO
   leftPageSlots:
   - {fileID: 6420091904208771584}
   - {fileID: 12705637564465710}

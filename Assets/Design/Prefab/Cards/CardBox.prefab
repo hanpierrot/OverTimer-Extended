@@ -166,5 +166,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardBox
   packSize: 3
   revealPanel: {fileID: 0}
-  catalog: {fileID: 11400000, guid: 8c2b8a8b27fda2f48a09d06182a64a0a, type: 2}
+  cardResourcesPath: CardSO
   pawnValue: 20

@@ -17,4 +17,7 @@ public class CardSO : ScriptableObject
     
     [Header("Value")]
     public int pawnValue;
+    
+    [Header("Collection Visibility")]
+    public bool hideUntilCollected;
 }

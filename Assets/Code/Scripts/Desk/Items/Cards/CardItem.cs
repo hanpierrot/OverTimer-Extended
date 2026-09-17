@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +12,7 @@ public class CardItem : MonoBehaviour, IPawnable
     private CardSO _data;
     private EffectCardSO _effect;
     private bool _hasEnded;
+    private Coroutine _repeatRoutine;
 
     public int PawnValue => _data != null ? _data.pawnValue : 0;
     public bool CanBePawned => _effect == null || !_effect.BlocksPawning;
@@ -46,6 +49,31 @@ public class CardItem : MonoBehaviour, IPawnable
     private void HandleCardClicked(Vector2 worldPos) => CardPanel.Instance?.Show(_data);
 
     private void HandleDragMoved(Vector2 worldPos) => transform.position = worldPos;
+    
+    public void SetArt(Sprite sprite)
+    {
+        if (artRenderer != null) artRenderer.sprite = sprite;
+    }
+    
+    public void ScheduleRepeating(Action callback, float interval)
+    {
+        if (_repeatRoutine != null) StopCoroutine(_repeatRoutine);
+        _repeatRoutine = StartCoroutine(RepeatRoutine(callback, interval));
+    }
+    
+    private IEnumerator RepeatRoutine(Action callback, float interval)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(interval);
+            callback?.Invoke();
+        }
+    }
+    
+    public void CancelRepeating()
+    {
+        if (_repeatRoutine != null) { StopCoroutine(_repeatRoutine); _repeatRoutine = null; }
+    }
     
     public void EndEffect()
     {
