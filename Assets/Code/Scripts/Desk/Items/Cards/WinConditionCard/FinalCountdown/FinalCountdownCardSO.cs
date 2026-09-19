@@ -25,7 +25,7 @@ public class FinalCountdownCardSO : EffectCardSO
                 break;
 
             case FinalCountdownTracker.Phase.Armed:
-                GameManager.Instance.Lose();
+                GameManager.Instance.GameOver(EndReason.FinalCountdownLoss);
                 break;
 
             case FinalCountdownTracker.Phase.Triggered:

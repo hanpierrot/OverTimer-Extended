@@ -83,7 +83,7 @@ MeshRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7845466853898931403
@@ -266,7 +266,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_MaskInteraction: 0
   m_Sprite: {fileID: -282030900105959813, guid: 17c2c186065e0974b98870fc5244e495, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -454,4 +454,3 @@ MonoBehaviour:
   ringingVisual: {fileID: 5744004842502728757}
   ringSound: {fileID: 8300000, guid: 157de1489c950c240b0fc5b8f2113778, type: 3}
   audioSource: {fileID: 0}
-  pawnValue: 20

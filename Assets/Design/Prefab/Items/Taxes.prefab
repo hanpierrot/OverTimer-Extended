@@ -170,7 +170,6 @@ MonoBehaviour:
   nagInterval: 2
   taxPanel: {fileID: 0}
   noticeVisual: {fileID: 8706151414547457322}
-  pawnValue: 20
 --- !u!1 &7014478467123181988
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,7 +253,7 @@ MeshRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &5457030985863646628
@@ -437,7 +436,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_MaskInteraction: 0
   m_Sprite: {fileID: -7391732989476765411, guid: 17c2c186065e0974b98870fc5244e495, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
