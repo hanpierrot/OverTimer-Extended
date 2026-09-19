@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,9 +9,9 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] private GameConfig config;
     
-    [Header("Win/Lose UI")]
-    [SerializeField] private GameObject winScreen;
-    [SerializeField] private GameObject loseScreen;
+    [Header("End Game UI")]
+    [SerializeField] private GameObject endGamePanel;
+    [SerializeField] private TMP_Text endGameText;
     
     [Header("Input Blockers")]
     [SerializeField] private GameObject[] inputBlockers;
@@ -20,6 +21,9 @@ public class GameManager : MonoBehaviour
 
     public GameConfig GameConfig => config;
     public bool IsGameOver { get; private set; }
+    public EndReason LastEndReason { get; private set; }
+    
+    public event Action<EndReason> OnGameOver;
     
     private void Awake()
     {
@@ -56,32 +60,45 @@ public class GameManager : MonoBehaviour
         if (IsGameOver) return;
 
         if (currentSeconds >= config.winClock)
-        {
-            Win();
-        }
+            GameOver(EndReason.ClockWin);
     }
 
     private void HandleCountdownFinished()
     {
         if (IsGameOver) return;
 
-        Lose();
+        GameOver(EndReason.ClockLoss);
     }
     
-    public void Win()
+    public void GameOver(EndReason reason)
     {
         IsGameOver = true;
+        LastEndReason = reason;
         InputManager.Instance.IsInputEnabled = false;
+        ClockService.Instance.PauseCountdown();
 
-        if (winScreen != null) winScreen.SetActive(true);
+        ShowEndGame(reason);
+        OnGameOver?.Invoke(reason);
     }
-
-    public void Lose()
+    
+    private void ShowEndGame(EndReason reason)
     {
-        IsGameOver = true;
-        InputManager.Instance.IsInputEnabled = false;
-
-        if (loseScreen != null) loseScreen.SetActive(true);
+        if (endGamePanel != null) endGamePanel.SetActive(true);
+        if (endGameText != null) endGameText.text = GetEndGameText(reason);
+    }
+    
+    private string GetEndGameText(EndReason reason)
+    {
+        switch (reason)
+        {
+            case EndReason.ClockWin: return "The Timer reaches 10 minutes.";
+            case EndReason.SetCompletionWin: return "The MASCH make you win!";
+            case EndReason.FinalCountdownWin: return "You beat the Final Countdown!";
+            case EndReason.ClockLoss: return "Time out.";
+            case EndReason.FinalCountdownLoss: return "The countdown betrayed you.";
+            case EndReason.CreepyJesterLoss: return "The Pierrot found you...";
+            default: return "";
+        }
     }
 
     public void Restart()

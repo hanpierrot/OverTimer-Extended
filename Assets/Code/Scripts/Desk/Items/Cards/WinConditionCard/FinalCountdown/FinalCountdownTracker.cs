@@ -47,6 +47,6 @@ public class FinalCountdownTracker : MonoBehaviour
     public void RegisterWin(CardSO card)
     {
         CardCollectionManager.Instance?.Register(card);
-        GameManager.Instance.Win();
+        GameManager.Instance.GameOver(EndReason.FinalCountdownWin);
     }
 }

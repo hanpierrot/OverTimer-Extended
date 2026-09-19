@@ -22,7 +22,7 @@ public class CreepyJesterCardSO : EffectCardSO
                 card.CancelRepeating();
                 PlayerPrefs.DeleteAll();
                 PlayerPrefs.Save();
-                GameManager.Instance.Lose();
+                GameManager.Instance.GameOver(EndReason.CreepyJesterLoss);
             }
         }, intervalSeconds);
     }

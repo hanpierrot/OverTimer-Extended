@@ -89,6 +89,6 @@ public class SetCompletionTracker : MonoBehaviour
                 CardCollectionManager.Instance?.Register(satisfied);
         }
 
-        GameManager.Instance.Win();
+        GameManager.Instance.GameOver(EndReason.SetCompletionWin);
     }
 }

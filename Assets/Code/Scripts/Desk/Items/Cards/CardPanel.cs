@@ -10,6 +10,7 @@ public class CardPanel : MonoBehaviour
     [SerializeField] private Image cardImage;
     [SerializeField] private TMP_Text nameLabel;
     [SerializeField] private TMP_Text rarityLabel;
+    [SerializeField] private TMP_Text pawnValueLabel;
     [SerializeField] private TMP_Text descriptionLabel;
     [SerializeField] private Button closeButton;
 
@@ -29,6 +30,7 @@ public class CardPanel : MonoBehaviour
         cardImage.sprite = data.image;
         nameLabel.text = data.cardName;
         rarityLabel.text = "Rarity: " + data.rarity;
+        pawnValueLabel.text = data.pawnValue + "$";
         descriptionLabel.text = data.description;
 
         if (panel != null) panel.SetActive(true);

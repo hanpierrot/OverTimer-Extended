@@ -14,6 +14,7 @@ public class CardRevealSlot : MonoBehaviour
     
     public event Action<CardRevealSlot> Resolved;
     public event Action<CardSO> CollectedToCollection;
+    public static event Action CardRevealed;
 
     private CardSO _card;
     private bool _revealed;
@@ -53,6 +54,7 @@ public class CardRevealSlot : MonoBehaviour
     private void Reveal()
     {
         _revealed = true;
+        CardRevealed?.Invoke();
         cardImage.sprite = _card.image;
 
         bool isDebuff = _card is EffectCardSO effect && effect.isDebuff;
