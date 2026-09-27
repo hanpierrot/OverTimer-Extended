@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: BEFDragon
   m_EditorClassIdentifier: Assembly-CSharp::CardSO
   cardName: Blue-Eyes Fool Dragon
-  image: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  backSprite: {fileID: 0}
+  image: {fileID: -655089573, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: '[Dragon]
 
     This dragon is cute, right?'
   rarity: 3
   weight: 1
-  pawnValue: 20
+  pawnValue: 75
+  hideUntilCollected: 0
