@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cea578695b713a45a27b81117568323, type: 3}
   m_Name: SnailSpeed
   m_EditorClassIdentifier: Assembly-CSharp::ClockSpeedCardSO
-  cardName: Time Scarab
-  image: {fileID: 0}
-  backSprite: {fileID: 0}
+  cardName: Snail Speed
+  image: {fileID: -593292709, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
   rarity: 0
   weight: 0

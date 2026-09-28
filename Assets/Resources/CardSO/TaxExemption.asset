@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1be2d42b040460649aedb3ee60174dda, type: 3}
   m_Name: TaxExemption
   m_EditorClassIdentifier: Assembly-CSharp::TaxExemptionCardSO
-  cardName: 
-  image: {fileID: 0}
-  backSprite: {fileID: 0}
+  cardName: Fvck The Tax
+  image: {fileID: -727848643, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
   rarity: 0
   weight: 0

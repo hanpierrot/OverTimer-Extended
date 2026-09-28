@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: DeeKay
   m_EditorClassIdentifier: Assembly-CSharp::CardSO
   cardName: Kamen Soldier DK
-  image: {fileID: 0}
-  backSprite: {fileID: 0}
+  image: {fileID: 314265086, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
   rarity: 0
   weight: 0

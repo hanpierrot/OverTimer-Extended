@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: DisableShop
   m_EditorClassIdentifier: Assembly-CSharp::DisableAppIconCardSO
   cardName: Close The Shop
-  image: {fileID: 0}
-  backSprite: {fileID: 0}
+  image: {fileID: -1257777806, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
   rarity: 0
   weight: 0

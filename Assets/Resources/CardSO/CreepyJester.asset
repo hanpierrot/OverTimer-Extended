@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: CreepyJester
   m_EditorClassIdentifier: Assembly-CSharp::CreepyJesterCardSO
   cardName: Han - The Pierrot
-  image: {fileID: 0}
-  backSprite: {fileID: 0}
+  image: {fileID: 1243808975, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
   rarity: 0
   weight: 0
   pawnValue: 0
   hideUntilCollected: 0
   _isDebuff: 0
-  artPool: []
+  artPool:
+  - {fileID: -1790652869, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  - {fileID: -22538087, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  - {fileID: -2147342469, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  - {fileID: -1076034808, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   intervalSeconds: 20

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Mei
   m_EditorClassIdentifier: Assembly-CSharp::SetCompletionCardSO
   cardName: Mei - The Tester
-  image: {fileID: 0}
-  backSprite: {fileID: 0}
+  image: {fileID: -1793797828, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 
   rarity: 0
   weight: 0
