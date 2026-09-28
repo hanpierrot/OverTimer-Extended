@@ -15,11 +15,11 @@ MonoBehaviour:
   cardName: Time Scarab
   image: {fileID: -2010778280, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  description: 
-  rarity: 0
+  description: Freeze the time in 20s.
+  rarity: 2
   weight: 0
-  pawnValue: 0
+  pawnValue: 14
   hideUntilCollected: 0
   _isDebuff: 0
-  duration: 15
-  tickMultiplier: 0.75
+  duration: 20
+  tickMultiplier: 0

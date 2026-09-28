@@ -15,8 +15,10 @@ MonoBehaviour:
   cardName: Sybil - The Caster
   image: {fileID: -1263880189, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  description: 
+  description: '[Spellcaster/Xyz]
+
+    A caster but not talk too much.'
   rarity: 0
   weight: 0
-  pawnValue: 0
+  pawnValue: 2
   hideUntilCollected: 0

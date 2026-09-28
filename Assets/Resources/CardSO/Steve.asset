@@ -15,8 +15,10 @@ MonoBehaviour:
   cardName: The Forbidden Steve
   image: {fileID: 995285556, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  description: 
-  rarity: 0
+  description: '[Miner/Ritual]
+
+    A legendary miner who was sealed away.'
+  rarity: 2
   weight: 0
-  pawnValue: 0
+  pawnValue: 35
   hideUntilCollected: 0

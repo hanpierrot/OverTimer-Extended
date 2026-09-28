@@ -15,11 +15,11 @@ MonoBehaviour:
   cardName: No More Mining
   image: {fileID: 255401542, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  description: 
-  rarity: 0
+  description: Disable Mining app on Laptop in 30s.
+  rarity: 1
   weight: 0
-  pawnValue: 0
+  pawnValue: 6
   hideUntilCollected: 0
-  _isDebuff: 0
-  duration: 15
+  _isDebuff: 1
+  duration: 30
   targetAppName: Mining

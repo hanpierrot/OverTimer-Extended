@@ -15,10 +15,14 @@ MonoBehaviour:
   cardName: Mei - The Tester
   image: {fileID: -1793797828, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  description: 
-  rarity: 0
+  description: '[Tester/Fusion/Effect]
+
+    If you have ''Han - The Pierrot'', ''Ari
+    - The Gambler'', ''Sybil - The Caster'', ''CtrlZ - The Boy Skull'' in addition
+    to this card on the desk, win the game.'
+  rarity: 1
   weight: 0
-  pawnValue: 0
+  pawnValue: 5
   hideUntilCollected: 0
   _isDebuff: 0
   pieces: []

@@ -15,9 +15,9 @@ MonoBehaviour:
   cardName: Butter Finger
   image: {fileID: -21034716, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  description: 
+  description: Your next vein payout becomes 0$.
   rarity: 0
   weight: 0
-  pawnValue: 0
+  pawnValue: 4
   hideUntilCollected: 0
-  _isDebuff: 0
+  _isDebuff: 1

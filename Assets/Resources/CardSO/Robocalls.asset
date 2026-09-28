@@ -15,10 +15,10 @@ MonoBehaviour:
   cardName: Spam Robocall
   image: {fileID: -254701788, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  description: 
-  rarity: 0
+  description: "Phone rings 2\xD7 as often in 30s."
+  rarity: 1
   weight: 0
-  pawnValue: 0
+  pawnValue: 6
   hideUntilCollected: 0
-  _isDebuff: 0
+  _isDebuff: 1
   duration: 30
