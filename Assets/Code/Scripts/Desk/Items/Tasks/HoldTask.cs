@@ -4,18 +4,15 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(PointerReceiver))]
 public class HoldTask : TaskBase, IPawnable
 {
-    [Header("Sprite Animation")]
-    [SerializeField] protected SpriteRenderer spriteRenderer;
-    [SerializeField] private Sprite[] holdSprites;
-    
     [Header("Pawn")]
     [SerializeField] private int pawnValue = 20;
     
+    protected virtual float CrankTime => GameManager.Instance.GameConfig.crankTime;
     public int PawnValue => pawnValue;
     public bool CanBePawned => true;
 
-    private PointerReceiver receiver;
-    private float holdTimer;
+    protected PointerReceiver receiver;
+    protected float holdTimer;
     private bool isHolding;
 
     protected override bool ResetAfterComplete => true;
@@ -53,7 +50,7 @@ public class HoldTask : TaskBase, IPawnable
         holdTimer += Time.deltaTime;
         UpdateHoldSprite();
 
-        if (holdTimer >= GameManager.Instance.GameConfig.crankTime)
+        if (holdTimer >= CrankTime)
         {
             isHolding = false;
             CompleteTask();
@@ -66,20 +63,13 @@ public class HoldTask : TaskBase, IPawnable
         if(ResetProgressOnRelease)
         {
             holdTimer = 0f;
-            
-            if (spriteRenderer != null && holdSprites.Length > 0)
-                spriteRenderer.sprite = holdSprites[0];
+            OnHoldReset();
         }
     }
+    
+    protected virtual void OnHoldReset() { }
 
-    private void UpdateHoldSprite()
-    {
-        if (spriteRenderer == null || holdSprites.Length == 0) return;
-
-        float progress = Mathf.Clamp01(holdTimer / GameManager.Instance.GameConfig.crankTime);
-        int index = Mathf.Min(Mathf.FloorToInt(progress * holdSprites.Length), holdSprites.Length - 1);
-        spriteRenderer.sprite = holdSprites[index];
-    }
+    protected virtual void UpdateHoldSprite() { }
     
     protected void ResetHoldState()
     {

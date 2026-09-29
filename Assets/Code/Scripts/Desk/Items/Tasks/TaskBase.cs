@@ -5,8 +5,6 @@ public abstract class TaskBase : MonoBehaviour
 {
     // Renamed from timeReward: tasks pay MONEY now. Only the Meter converts
     // money -> clock time (DESIGN.md I3) - see MoneyService.
-    [FormerlySerializedAs("timeReward")]
-    [SerializeField] private int moneyReward = 5;
 
     public bool IsCompleted { get;  private set; }
     protected virtual bool ResetAfterComplete => false;
@@ -24,10 +22,7 @@ public abstract class TaskBase : MonoBehaviour
     
     protected void ResetCompletion() => IsCompleted = false;
     
-    protected virtual void ApplyReward()
-    {
-        MoneyService.Instance.Add(moneyReward, "task");
-    }
+    protected abstract void ApplyReward();
 
     protected virtual void OnTaskCompleted() { }
 }
