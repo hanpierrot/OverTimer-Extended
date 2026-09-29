@@ -69,15 +69,29 @@ public class GameConfig : ScriptableObject
     public float crankTime = 2f;
     public float timePayout = 3f;
     
-    [Header("Click Task")]
-    public int clickTaskMinClicks = 3;
-    public int clickTaskMaxClicks = 8;
-    public float clickTaskLockDuration = 3f;
-    
     [Header("Cat")]
     public float catSitDurationMin = 3f;
     public float catSitDurationMax = 8f;
     public float catBlockChance = 0.4f;
     public float catBlockDurationMin = 4f;
     public float catBlockDurationMax = 8f;
+    
+    [Header("Click Task")]
+    public int clickTaskMinClicks = 3;
+    public int clickTaskMaxClicks = 8;
+    public float clickTaskLockDuration = 3f;
+    public int clickTaskMoneyReward = 5;
+
+    [Header("Picture Click Task")]
+    public int pictureClickTaskMinClicks = 3;
+    public int pictureClickTaskMaxClicks = 8;
+    public float pictureClickTaskLockDuration = 3f;
+    public int pictureClickTaskMoneyReward = 5;
+
+    [Header("Power Bank Task")]
+    public float powerBankCrankTime = 2f;
+    public int powerBankMoneyReward = 8;
+    
+    [Header("Wire Task")]
+    public int wireTaskMoneyReward = 20;
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3472341762601470726}
   - component: {fileID: 4104949027403663724}
   - component: {fileID: 439550290239436310}
-  - component: {fileID: 8898514950895613529}
+  - component: {fileID: 3212747497556712805}
   m_Layer: 0
   m_Name: Picture
   m_TagString: Untagged
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab85a167061eb054d9356ec86e6dc3af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PointerReceiver
---- !u!114 &8898514950895613529
+--- !u!114 &3212747497556712805
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,11 +161,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 4962157898269455889}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89e3f47419060ef498bf700915a702ad, type: 3}
+  m_Script: {fileID: 11500000, guid: 188b4d1cb4f164d428a1cdddb0a9d42f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ClickTask
+  m_EditorClassIdentifier: Assembly-CSharp::PictureClickTask
   moneyReward: 5
   wobbleAngle: 5
   wobbleDuration: 0.4
   wobbleCycles: 3
   pawnValue: 20
+  spriteRenderer: {fileID: 3472341762601470726}
+  normalSprite: {fileID: 7082200727899390915, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}
+  reactSprite: {fileID: -412419664, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}

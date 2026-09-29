@@ -1437,8 +1437,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraVerticalScroller
   cameraTransform: {fileID: 519420032}
   scrollSpeed: 5
-  minY: -8.2
-  maxY: 8.2
+  minY: -5
+  maxY: 6
   upButton: {fileID: 441165477}
   downButton: {fileID: 425543757}
 --- !u!4 &402659839 stripped
@@ -1978,6 +1978,7 @@ Transform:
   - {fileID: 2132232671}
   - {fileID: 1329593520}
   - {fileID: 1684667111}
+  - {fileID: 1124327961}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
@@ -2086,7 +2087,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2111,7 +2112,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3168,6 +3169,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f49558473b7ea45ad6003c8890727a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardItem
+--- !u!4 &1124327961 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+  m_PrefabInstance: {fileID: 1431491759421334817}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1135012313
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5091,6 +5097,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebb975a0162b687478dedb3446ef3fa5, type: 3}
+--- !u!1001 &1431491759421334817
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 518587556}
+    m_Modifications:
+    - target: {fileID: 4886033490656459473, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_Name
+      value: PowerBank
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
 --- !u!1 &1810917781076956491 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7513017406703926678, guid: fdc2a0180b0605d49b4e8e44a5e7d472, type: 3}

@@ -14,9 +14,9 @@ public class ClickTask : TaskBase, IPawnable
     [SerializeField] private int pawnValue = 20;
     public bool CanBePawned => true;
     
-    private int MinClicks => GameManager.Instance.GameConfig.clickTaskMinClicks;
-    private int MaxClicks => GameManager.Instance.GameConfig.clickTaskMaxClicks;
-    private float LockDuration => GameManager.Instance.GameConfig.clickTaskLockDuration;
+    protected virtual int MinClicks => GameManager.Instance.GameConfig.clickTaskMinClicks;
+    protected virtual int MaxClicks => GameManager.Instance.GameConfig.clickTaskMaxClicks;
+    protected virtual float LockDuration => GameManager.Instance.GameConfig.clickTaskLockDuration;
     
     public int PawnValue => pawnValue;
     
@@ -42,8 +42,16 @@ public class ClickTask : TaskBase, IPawnable
         currentClicks++;
         
         PlayWobble();
+        OnClicked();
         
         if(currentClicks >= requiredClicks) CompleteTask();
+    }
+    
+    protected virtual void OnClicked() { }
+
+    protected override void ApplyReward()
+    {
+        MoneyService.Instance.Add(GameManager.Instance.GameConfig.clickTaskMoneyReward, "click task");
     }
     
     private void PlayWobble()
@@ -66,11 +74,14 @@ public class ClickTask : TaskBase, IPawnable
         
         transform.localEulerAngles = Vector3.zero;
         wobbleRoutine = null;
+        OnWobbleFinished();
     }
+    
+    protected virtual void OnWobbleFinished() { }
 
     protected override void OnTaskCompleted()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = Color.gray2;
+        gameObject.GetComponent<SpriteRenderer>().color = Color.gray6;
         StartCoroutine(UnlockAfterDelay());
     }
 

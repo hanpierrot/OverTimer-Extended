@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6094388511469660298}
   - component: {fileID: 7195199661853746846}
   - component: {fileID: 3811783535577434176}
-  - component: {fileID: 4536030664219926477}
+  - component: {fileID: 6121239979663772902}
   m_Layer: 0
   m_Name: EggTimer
   m_TagString: Untagged
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab85a167061eb054d9356ec86e6dc3af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PointerReceiver
---- !u!114 &4536030664219926477
+--- !u!114 &6121239979663772902
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,10 +151,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 9030890606130479279}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b28510f9e9b09b4f93f9d469276a67b, type: 3}
+  m_Script: {fileID: 11500000, guid: 1199c486f6137844085e34d1686a487e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HoldTask
-  moneyReward: 5
+  m_EditorClassIdentifier: Assembly-CSharp::EggTimerTask
+  pawnValue: 120
   spriteRenderer: {fileID: 6094388511469660298}
   holdSprites:
   - {fileID: -105724935, guid: d386967dad74a9f4492dac04659e991a, type: 3}
@@ -163,4 +163,3 @@ MonoBehaviour:
   - {fileID: 576724043, guid: d386967dad74a9f4492dac04659e991a, type: 3}
   - {fileID: -1728830657, guid: d386967dad74a9f4492dac04659e991a, type: 3}
   - {fileID: -2115625119, guid: d386967dad74a9f4492dac04659e991a, type: 3}
-  pawnValue: 120

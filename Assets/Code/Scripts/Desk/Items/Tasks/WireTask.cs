@@ -130,6 +130,11 @@ public class WireTask : TaskBase, IPawnable
         
         _receiver.SetInteractable(false);
     }
+    
+    protected override void ApplyReward()
+    {
+        MoneyService.Instance.Add(GameManager.Instance.GameConfig.wireTaskMoneyReward, "wire task");
+    }
 
     public void OnPawned()
     {
