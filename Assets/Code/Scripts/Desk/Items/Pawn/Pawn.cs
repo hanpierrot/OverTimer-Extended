@@ -10,12 +10,14 @@ public class Pawn : MonoBehaviour
     [SerializeField] private AudioClip pawnSound;
 
     private PointerReceiver receiver;
+    private Vector3 _initialPosition;
     
     private void Awake()
     {
         receiver = GetComponent<PointerReceiver>();
         GetComponent<Collider2D>().isTrigger = true;
         GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+        _initialPosition = transform.position;
     }
 
     private void OnEnable()
@@ -49,6 +51,7 @@ public class Pawn : MonoBehaviour
     private void HandleDragEnd(Vector2 worldPos)
     {
         if (audioSource != null) audioSource.Stop();
+        transform.position = _initialPosition;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
