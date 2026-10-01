@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: bff6e740ee18b9e429a23ddcbfdd317f
+guid: 3ae19483bd6e3f34991b933df31ef7f5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1955448553306655712
-    second: Background_0
+      213: 4693792977596894205
+    second: Bear_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 10.8
+  spritePixelsToUnits: 12
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,89 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Background_0
+      name: Bear_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 288
-        height: 288
+        x: 7
+        y: 8
+        width: 32
+        height: 37
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 024fa93b6e9dcd4e0800000000000000
-      internalID: -1955448553306655712
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Background_1
-      rect:
-        serializedVersion: 2
-        x: 288
-        y: 0
-        width: 288
-        height: 288
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1e89eb05390f3164090dc9bfc0429943
-      internalID: 60947570
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Background_2
-      rect:
-        serializedVersion: 2
-        x: 576
-        y: 0
-        width: 288
-        height: 288
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4f497898087a5054682652e803670426
-      internalID: 425212378
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Background_3
-      rect:
-        serializedVersion: 2
-        x: 864
-        y: 0
-        width: 288
-        height: 288
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ab5b2689caee62e43b386379cd22ca6d
-      internalID: -1868414675
+      spriteID: dfbc2e628d3b32140800000000000000
+      internalID: 4693792977596894205
       vertices: []
       indices: 
       edges: []
@@ -217,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ca4570eca8dfec848a614c268ce20dfe
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -225,14 +159,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":1.0},"gridSpriteSize":{"x":288.0,"y":288.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Background_0: -1955448553306655712
-      Background_1: 60947570
-      Background_2: 425212378
-      Background_3: -1868414675
+      Bear_0: 4693792977596894205
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

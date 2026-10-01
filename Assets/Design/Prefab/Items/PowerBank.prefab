@@ -186,7 +186,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_MaskInteraction: 0
   m_Sprite: {fileID: -4772196473395250836, guid: e7807c1fa12fd654188d783f475daa36, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -268,8 +268,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c33ad4c6db67447a16ea6fc0905b95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerBankTask
-  spriteRenderer: {fileID: 0}
-  holdSprites: []
   pawnValue: 20
   fillImage: {fileID: 2454982095582613300}
   cooldownDuration: 5

@@ -82,7 +82,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7082200727899390915, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -164,7 +164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 188b4d1cb4f164d428a1cdddb0a9d42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PictureClickTask
-  moneyReward: 5
   wobbleAngle: 5
   wobbleDuration: 0.4
   wobbleCycles: 3
