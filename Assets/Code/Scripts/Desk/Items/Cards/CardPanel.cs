@@ -23,11 +23,11 @@ public class CardPanel : MonoBehaviour
         if (panel != null) panel.SetActive(false);
     }
     
-    public void Show(CardSO data)
+    public void Show(CardSO data, Sprite spriteOverride = null)
     {
         if (data == null) return;
 
-        cardImage.sprite = data.image;
+        cardImage.sprite = spriteOverride != null ? spriteOverride : data.image;
         nameLabel.text = data.cardName;
         rarityLabel.text = "Rarity: " + data.rarity;
         pawnValueLabel.text = data.pawnValue + "$";

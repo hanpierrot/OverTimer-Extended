@@ -15,15 +15,17 @@ public class CardCollectionManager : MonoBehaviour
     private Dictionary<string, CardSO> _cardById;
     public event Action<CardSO> NewCardRegistered;
     
+    public IReadOnlyCollection<CardSO> AllCards => _cardById.Values;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        BuildLookup();
     }
     
     private void Start()
     {
-        BuildLookup();
         LoadPersisted();
     }
     

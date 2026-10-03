@@ -46,7 +46,16 @@ public class CardItem : MonoBehaviour, IPawnable
         _effect?.OnPlaced(this);
     }
 
-    private void HandleCardClicked(Vector2 worldPos) => CardPanel.Instance?.Show(_data);
+    private void HandleCardClicked(Vector2 worldPos)
+    {
+        if (_data == null) return;
+        
+        Sprite current = artRenderer != null ? artRenderer.sprite : null;
+        
+        if (_data.backSprite != null && current == _data.backSprite) return;
+        
+        CardPanel.Instance?.Show(_data, current);
+    }
 
     private void HandleDragMoved(Vector2 worldPos) => transform.position = worldPos;
     
