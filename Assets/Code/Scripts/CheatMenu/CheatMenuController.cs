@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,6 @@ public class CheatMenuController : MonoBehaviour
     [SerializeField] private Button giveTimeButton;
 
     [Header("Card")]
-    [SerializeField] private string cardResourcesPath = "CardSO";
     [SerializeField] private CardPackRevealPanel revealPanel;
     [SerializeField] private Transform cardButtonContainer;
     [SerializeField] private Button cardButtonPrefab;
@@ -22,10 +22,13 @@ public class CheatMenuController : MonoBehaviour
     {
         giveMoneyButton.onClick.AddListener(GiveMoney);
         giveTimeButton.onClick.AddListener(GiveTime);
+    }
 
+    private void Start()
+    {
         BuildCardButtons();
     }
-    
+
     private void GiveMoney()
     {
         if (int.TryParse(moneyAmountInput.text, out int amount) && amount > 0)
@@ -40,8 +43,9 @@ public class CheatMenuController : MonoBehaviour
 
     private void BuildCardButtons()
     {
-        var cards = Resources.LoadAll<CardSO>(cardResourcesPath);
-        foreach (var card in cards)
+        if (CardCollectionManager.Instance == null) return;
+        
+        foreach (var card in CardCollectionManager.Instance.AllCards)
         {
             Button btn = Instantiate(cardButtonPrefab, cardButtonContainer);
 
