@@ -31,4 +31,10 @@ public class CreepyJesterCardSO : EffectCardSO
     {
         card.CancelRepeating();
     }
+    
+    public override void OnPawned(CardItem card)
+    {
+        if (artPool.Length > 0 && card.CurrentArt != image)
+            CardCollectionManager.Instance?.Register(this);
+    }
 }

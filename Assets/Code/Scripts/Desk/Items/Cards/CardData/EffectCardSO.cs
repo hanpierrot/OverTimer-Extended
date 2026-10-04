@@ -13,4 +13,5 @@ public abstract class EffectCardSO : CardSO
     
     public abstract void OnPlaced(CardItem card);
     public abstract void OnRemoved(CardItem card);
+    public virtual void OnPawned(CardItem card) { }
 }

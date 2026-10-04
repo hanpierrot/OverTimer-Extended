@@ -58,7 +58,8 @@ public class CardRevealSlot : MonoBehaviour
         cardImage.sprite = _card.image;
 
         bool isDebuff = _card is EffectCardSO effect && effect.isDebuff;
-        bool alreadyCollected = CardCollectionManager.Instance != null && CardCollectionManager.Instance.IsCollected(_card);
+        bool alreadyCollected = CardCollectionManager.Instance != null
+                                && CardCollectionManager.Instance.IsCollected(_card.CollectionTarget);
         
         placeButton.gameObject.SetActive(true);
         collectionButton.gameObject.SetActive(!isDebuff && !alreadyCollected);
@@ -82,15 +83,16 @@ public class CardRevealSlot : MonoBehaviour
 
     private void OnCollectionClicked()
     {
-        if (CardCollectionManager.Instance != null) CardCollectionManager.Instance.Register(_card);
-        CollectedToCollection?.Invoke(_card);
+        CardSO target = _card.CollectionTarget;
+        if (CardCollectionManager.Instance != null) CardCollectionManager.Instance.Register(target);
+        CollectedToCollection?.Invoke(target);
         Resolve();
     }
     
     public void HideCollectionButtonIfSameCard(CardSO card)
     {
         if (_resolved || !_revealed) return;
-        if (_card != card) return;
+        if (_card.CollectionTarget != card.CollectionTarget) return;
 
         collectionButton.gameObject.SetActive(false);
     }

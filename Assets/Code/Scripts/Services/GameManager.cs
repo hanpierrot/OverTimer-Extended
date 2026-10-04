@@ -76,9 +76,12 @@ public class GameManager : MonoBehaviour
         LastEndReason = reason;
         InputManager.Instance.IsInputEnabled = false;
         ClockService.Instance.PauseCountdown();
-
-        ShowEndGame(reason);
+        
         OnGameOver?.Invoke(reason);
+        bool playing = CutsceneController.Instance != null
+                       && CutsceneController.Instance.PlayEnding(reason, () => ShowEndGame(reason));
+
+        if(!playing) ShowEndGame(reason);
     }
     
     private void ShowEndGame(EndReason reason)

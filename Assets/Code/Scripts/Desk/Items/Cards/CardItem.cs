@@ -17,6 +17,7 @@ public class CardItem : MonoBehaviour, IPawnable
     public int PawnValue => _data != null ? _data.pawnValue : 0;
     public bool CanBePawned => _effect == null || !_effect.BlocksPawning;
     public CardSO Data => _data;
+    public Sprite CurrentArt => artRenderer != null ? artRenderer.sprite : null;
     
     private void Awake() => _receiver = GetComponent<PointerReceiver>();
 
@@ -106,6 +107,8 @@ public class CardItem : MonoBehaviour, IPawnable
     public void OnPawned()
     {
         if (CardHandManager.Instance != null) CardHandManager.Instance.Release(this);
+        
+        _effect?.OnPawned(this);
 
         if (!_hasEnded)
         {

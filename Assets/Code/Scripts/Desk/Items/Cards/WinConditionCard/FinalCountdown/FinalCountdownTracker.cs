@@ -42,6 +42,8 @@ public class FinalCountdownTracker : MonoBehaviour
         CurrentPhase = Phase.Triggered;
         if (ClockService.Instance != null) ClockService.Instance.OnFinalCountdownTriggered -= HandleTriggered;
         if (Meter.Instance != null) Meter.Instance.SetLocked(false);
+        
+        CutsceneController.Instance?.PlayFinalCountdownIntro();
     }
     
     public void RegisterWin(CardSO card)

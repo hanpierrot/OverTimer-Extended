@@ -20,4 +20,9 @@ public class CardSO : ScriptableObject
     
     [Header("Collection Visibility")]
     public bool hideUntilCollected;
+    
+    [Tooltip("Replaced by that one.")]
+    public CardSO collectionRegisterAs;
+
+    public CardSO CollectionTarget => collectionRegisterAs != null ? collectionRegisterAs : this;
 }

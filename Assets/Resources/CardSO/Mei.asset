@@ -25,4 +25,13 @@ MonoBehaviour:
   pawnValue: 5
   hideUntilCollected: 0
   _isDebuff: 0
-  pieces: []
+  pieces:
+  - alternatives:
+    - {fileID: 11400000, guid: d230bb18439d25543af6461f29217be5, type: 2}
+    - {fileID: 11400000, guid: ac764d16c8319d344a13d60887775033, type: 2}
+  - alternatives:
+    - {fileID: 11400000, guid: 5a4268683e517f14c86c56404fcedbff, type: 2}
+  - alternatives:
+    - {fileID: 11400000, guid: 9e6ded9b074de3148ba11a37071c4a76, type: 2}
+  - alternatives:
+    - {fileID: 11400000, guid: c87fb4ba8757f844f868e2b4c6d22a56, type: 2}
