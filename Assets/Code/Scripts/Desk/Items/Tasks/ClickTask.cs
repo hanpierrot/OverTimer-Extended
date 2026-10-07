@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(PointerReceiver))]
@@ -23,7 +24,6 @@ public class ClickTask : TaskBase, IPawnable
     private int currentClicks = 0;
     private int requiredClicks;
     private PointerReceiver receiver;
-    private Coroutine wobbleRoutine;
     
     private void Awake() => receiver = GetComponent<PointerReceiver>();
 
@@ -47,34 +47,22 @@ public class ClickTask : TaskBase, IPawnable
         if(currentClicks >= requiredClicks) CompleteTask();
     }
     
+    private void PlayWobble()
+    {
+        DOTween.Kill(this, true);
+        transform
+            .DOPunchRotation(new Vector3(0f, 0f, wobbleAngle), wobbleDuration, wobbleCycles * 2, 1f)
+            .SetId(this)
+            .OnComplete(OnWobbleFinished);
+    }
+
+    private void OnDestroy() => DOTween.Kill(this);
+    
     protected virtual void OnClicked() { }
 
     protected override void ApplyReward()
     {
         MoneyService.Instance.Add(GameManager.Instance.GameConfig.clickTaskMoneyReward, "click task");
-    }
-    
-    private void PlayWobble()
-    {
-        if (wobbleRoutine != null) StopCoroutine(wobbleRoutine);
-        wobbleRoutine = StartCoroutine(WobbleRoutine());
-    }
-
-    private IEnumerator WobbleRoutine()
-    {
-        float t = 0f;
-        while (t < wobbleDuration)
-        {
-            t += Time.deltaTime;
-            float decay = 1f - (t / wobbleDuration);
-            float angle = Mathf.Sin(t / wobbleDuration * wobbleCycles * Mathf.PI * 2f) * wobbleAngle * decay;
-            transform.localEulerAngles = new Vector3(0, 0, angle);
-            yield return null;
-        }
-        
-        transform.localEulerAngles = Vector3.zero;
-        wobbleRoutine = null;
-        OnWobbleFinished();
     }
     
     protected virtual void OnWobbleFinished() { }

@@ -6,6 +6,7 @@ public class CardRevealSlot : MonoBehaviour
 {
     [SerializeField] private CardPackRevealPanel panel;
     [SerializeField] private Image cardImage;
+    [SerializeField] private CardFlip flip;
     [SerializeField] private Button cardButton;
     [SerializeField] private Button sellButton;
     [SerializeField] private Button placeButton;
@@ -34,7 +35,8 @@ public class CardRevealSlot : MonoBehaviour
         _revealed = false;
         _resolved = false;
 
-        cardImage.sprite = card.backSprite != null ? card.backSprite : card.image;
+        cardImage.sprite = card.image;
+        flip.SetFaceDown(true); 
         placeButton.gameObject.SetActive(false);
         collectionButton.gameObject.SetActive(false);
         sellButton.gameObject.SetActive(true);
@@ -55,7 +57,7 @@ public class CardRevealSlot : MonoBehaviour
     {
         _revealed = true;
         CardRevealed?.Invoke();
-        cardImage.sprite = _card.image;
+        flip.FlipTo(false);
 
         bool isDebuff = _card is EffectCardSO effect && effect.isDebuff;
         bool alreadyCollected = CardCollectionManager.Instance != null

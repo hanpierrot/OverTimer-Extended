@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1472574797615384982}
   - component: {fileID: 6558885769406422587}
   - component: {fileID: 5209284957802099301}
+  - component: {fileID: 1170754121049995540}
   m_Layer: 3
   m_Name: CardItem
   m_TagString: Untagged
@@ -61,7 +62,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: a1f6436a80018c24bba5ec9285efaa5d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -165,3 +166,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardItem
   artRenderer: {fileID: 5895191336913235486}
+  flip: {fileID: 1170754121049995540}
+--- !u!114 &1170754121049995540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7315554476159145002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbd3da7ed95d8774faa2899fe8c66d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardFlip
+  spriteRenderer: {fileID: 5895191336913235486}
+  image: {fileID: 0}
+  uiFlipMaterial: {fileID: 0}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  edgeDarken: 0.35

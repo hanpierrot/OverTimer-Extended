@@ -8,7 +8,6 @@ public class CardSO : ScriptableObject
     [Header("Identity")]
     public string cardName;
     public Sprite image;
-    public Sprite backSprite;
     [TextArea] public string description;
     
     [Header("Drop")]

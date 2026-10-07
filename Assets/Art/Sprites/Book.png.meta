@@ -528,7 +528,7 @@ TextureImporter:
         width: 16
         height: 15
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -550,7 +550,7 @@ TextureImporter:
         width: 16
         height: 15
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -559,6 +559,28 @@ TextureImporter:
       bones: []
       spriteID: dbd5ba63686e1574cbd75e1e3c72ac1c
       internalID: 1864333344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Book_6
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 80
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 364f0a858d3a7274199adb6af01200bd
+      internalID: -7111211
       vertices: []
       indices: 
       edges: []
@@ -585,6 +607,7 @@ TextureImporter:
       Book_3: -457584462
       Book_4: 979639452
       Book_5: 1864333344
+      Book_6: -7111211
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

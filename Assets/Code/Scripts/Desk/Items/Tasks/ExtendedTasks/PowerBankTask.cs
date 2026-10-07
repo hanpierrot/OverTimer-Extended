@@ -6,6 +6,7 @@ public class PowerBankTask : HoldTask
 {
     [Header("Power Bank Fill")]
     [SerializeField] private Image fillImage;
+    [SerializeField] private float fullHoldDelay = 1.5f;
     [SerializeField] private float cooldownDuration = 5f;
     
     protected override bool ResetProgressOnRelease => false;
@@ -31,6 +32,8 @@ public class PowerBankTask : HoldTask
     private IEnumerator CooldownRoutine()
     {
         if (receiver != null) receiver.SetInteractable(false);
+        
+        yield return new WaitForSeconds(fullHoldDelay);
         
         float startFill = holdTimer;
         float t = 0f;

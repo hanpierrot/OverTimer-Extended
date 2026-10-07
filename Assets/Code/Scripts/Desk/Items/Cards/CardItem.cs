@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class CardItem : MonoBehaviour, IPawnable
 {
     [SerializeField] private SpriteRenderer artRenderer;
+    [SerializeField] private CardFlip flip;
 
     private PointerReceiver _receiver;
     private CardSO _data;
@@ -18,6 +19,7 @@ public class CardItem : MonoBehaviour, IPawnable
     public bool CanBePawned => _effect == null || !_effect.BlocksPawning;
     public CardSO Data => _data;
     public Sprite CurrentArt => artRenderer != null ? artRenderer.sprite : null;
+    public bool IsFaceDown => flip != null && flip.IsShowingBack;
     
     private void Awake() => _receiver = GetComponent<PointerReceiver>();
 
@@ -42,6 +44,9 @@ public class CardItem : MonoBehaviour, IPawnable
 
         if (artRenderer != null) artRenderer.sprite = data.image;
         
+        if (flip != null)
+            flip.ResetFlip();
+        
         if (CardHandManager.Instance != null) CardHandManager.Instance.Register(this);
 
         _effect?.OnPlaced(this);
@@ -49,13 +54,9 @@ public class CardItem : MonoBehaviour, IPawnable
 
     private void HandleCardClicked(Vector2 worldPos)
     {
-        if (_data == null) return;
+        if (_data == null || IsFaceDown) return;
         
-        Sprite current = artRenderer != null ? artRenderer.sprite : null;
-        
-        if (_data.backSprite != null && current == _data.backSprite) return;
-        
-        CardPanel.Instance?.Show(_data, current);
+        CardPanel.Instance?.Show(_data, artRenderer != null ? artRenderer.sprite : null);
     }
 
     private void HandleDragMoved(Vector2 worldPos) => transform.position = worldPos;
@@ -92,8 +93,7 @@ public class CardItem : MonoBehaviour, IPawnable
 
         _effect?.OnRemoved(this);
 
-        if (artRenderer != null && _data != null && _data.backSprite != null)
-            artRenderer.sprite = _data.backSprite;
+        if (flip != null) flip.FlipTo(true);
 
         if (_data != null) CardCollectionManager.Instance?.Register(_data);
     }

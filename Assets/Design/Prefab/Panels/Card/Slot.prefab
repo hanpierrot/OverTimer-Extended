@@ -94,6 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardRevealSlot
   panel: {fileID: 0}
   cardImage: {fileID: 5326774870037796337}
+  flip: {fileID: 2541493387158708964}
   cardButton: {fileID: 8008897202354957472}
   sellButton: {fileID: 6299616635864369587}
   placeButton: {fileID: 8116940896098262907}
@@ -250,6 +251,7 @@ GameObject:
   - component: {fileID: 8300537766294774420}
   - component: {fileID: 5326774870037796337}
   - component: {fileID: 8008897202354957472}
+  - component: {fileID: 2541493387158708964}
   m_Layer: 5
   m_Name: CardImage
   m_TagString: Untagged
@@ -296,7 +298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: b2ee5ddc75502a34f980fe72f0c50108, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -358,6 +360,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2541493387158708964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3584344465841984455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbd3da7ed95d8774faa2899fe8c66d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardFlip
+  spriteRenderer: {fileID: 0}
+  image: {fileID: 5326774870037796337}
+  uiFlipMaterial: {fileID: 2100000, guid: b2ee5ddc75502a34f980fe72f0c50108, type: 2}
+  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
+  edgeDarken: 0.35
 --- !u!1 &4965977562906164965
 GameObject:
   m_ObjectHideFlags: 0
