@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClockSpeedCardSO
   cardName: Clock Up!
   image: {fileID: -1490199678, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: 'Increase the time speed in 20s. '
   rarity: 1
-  weight: 0
+  weight: 10
   pawnValue: 6
   hideUntilCollected: 0
+  collectionRegisterAs: {fileID: 0}
   _isDebuff: 1
   duration: 20
   tickMultiplier: 1.5

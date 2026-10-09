@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoNotDisturbCardSO
   cardName: Cable Eater
   image: {fileID: -233913850, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: '[Aqua/Pendulum/Effect]
 
     Disable phone call in 30s.'
   rarity: 1
-  weight: 0
+  weight: 20
   pawnValue: 6
   hideUntilCollected: 0
+  collectionRegisterAs: {fileID: 0}
   _isDebuff: 0
   duration: 30

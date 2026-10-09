@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DisableAppIconCardSO
   cardName: Not Valid 8-Ball
   image: {fileID: 1385508149, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: Disable Billiards app on Laptop in 30s.
   rarity: 0
-  weight: 0
+  weight: 8
   pawnValue: 2
   hideUntilCollected: 0
+  collectionRegisterAs: {fileID: 0}
   _isDebuff: 1
   duration: 30
   targetAppName: Billiards

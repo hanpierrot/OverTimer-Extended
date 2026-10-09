@@ -18,7 +18,7 @@ MonoBehaviour:
   startMoney: 40
   exchangeRate: 1
   meterMinFeed: 10
-  blockPayout: 010000000300000004000000050000000600000008000000090000000a0000000c0000000d000000
+  blockPayout: 01000000020000000400000005000000070000000a0000000c0000000f0000001100000015000000
   veinLengthMin: 6
   veinLengthMax: 10
   veinRespawn: 1
@@ -26,13 +26,17 @@ MonoBehaviour:
   tripleMatchBaseReward: 55
   luckyNineCost: 55
   luckyNineBaseReward: 110
-  hitDropChance: 0.35
-  handCap: 3
+  handCap: 5
+  packCost: 35
+  commonWeight: 60
+  rareWeight: 25
+  superRareWeight: 12
+  ultrRareWeight: 3
   blackjackAnte: 20
   blackjackClockMargin: 15
-  blackjackWinPayout: 100
-  blackjackPushPayout: 50
-  blackjackNaturalPayout: 170
+  blackjackWinPayout: 40
+  blackjackPushPayout: 20
+  blackjackNaturalPayout: 50
   blackjackRevealDelay: 0.6
   blackjackResultDelay: 1.2
   laptopSwitchTime: 1
@@ -48,3 +52,19 @@ MonoBehaviour:
   annoyanceMinGap: 12
   crankTime: 1
   timePayout: 3
+  catSitDurationMin: 3
+  catSitDurationMax: 8
+  catBlockChance: 0.4
+  catBlockDurationMin: 4
+  catBlockDurationMax: 8
+  clickTaskMinClicks: 3
+  clickTaskMaxClicks: 8
+  clickTaskLockDuration: 3
+  clickTaskMoneyReward: 5
+  pictureClickTaskMinClicks: 3
+  pictureClickTaskMaxClicks: 8
+  pictureClickTaskLockDuration: 3
+  pictureClickTaskMoneyReward: 5
+  powerBankCrankTime: 2
+  powerBankMoneyReward: 8
+  wireTaskMoneyReward: 20
