@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TaxExemptionCardSO
   cardName: Fvck The Tax
   image: {fileID: -727848643, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: Your next tax bill becomes 0$.
   rarity: 2
-  weight: 0
+  weight: 18
   pawnValue: 28
   hideUntilCollected: 0
+  collectionRegisterAs: {fileID: 0}
   _isDebuff: 0

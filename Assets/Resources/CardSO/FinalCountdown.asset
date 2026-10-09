@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FinalCountdownCardSO
   cardName: Final Countdown
   image: {fileID: -1380272430, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: "The first time the timer reach\xE9 0, set it to 180s, but you can
     not use the Meter. Then, if you place another 'Final Countdown' card on the desk,
     win the game.\nIf you place another 'Final Countdown' card before the timer reaches
     0, lose the game."
   rarity: 2
-  weight: 0
+  weight: 16
   pawnValue: 5
   hideUntilCollected: 0
+  collectionRegisterAs: {fileID: 0}
   _isDebuff: 0
   resetSeconds: 180

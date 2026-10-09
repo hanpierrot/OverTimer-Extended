@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TaskCostModifierCardSO
   cardName: High Risk, High Reward
   image: {fileID: -39872109, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
-  backSprite: {fileID: -6555575649291838755, guid: 366aafacd41634b43a3b6e20d669af43, type: 3}
   description: One and a half times the cost of any Billiards turn in 20s.
   rarity: 0
-  weight: 0
+  weight: 12
   pawnValue: 0
   hideUntilCollected: 0
+  collectionRegisterAs: {fileID: 0}
   _isDebuff: 1
   target: 0
   costMultiplier: 1.5
