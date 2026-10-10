@@ -16,6 +16,11 @@ public class CutsceneController : MonoBehaviour
     [SerializeField] private GameObject cutsceneRoot;
     [SerializeField] private EndCutscene[] endCutscenes;
     [SerializeField] private PlayableDirector finalCountdownDirector;
+    
+    [Header("Clock End")]
+    [SerializeField] private GameObject clockEndRoot;
+    [SerializeField] private TimerTicker clockTicker;
+    [SerializeField] private int clockExtraSeconds = 3;
 
     private readonly Dictionary<EndReason, PlayableDirector> _endDirectors = new();
     private PlayableDirector _current;
@@ -43,8 +48,29 @@ public class CutsceneController : MonoBehaviour
     
     public bool PlayEnding(EndReason reason, Action onFinished)
     {
+        if (reason == EndReason.ClockWin || reason == EndReason.ClockLoss)
+            return PlayClockEnding(reason, onFinished);
+        
         if (!_endDirectors.TryGetValue(reason, out var director)) return false;
         Play(director, onFinished);
+        return true;
+    }
+
+    private bool PlayClockEnding(EndReason reason, Action onFinished)
+    {
+        if (clockEndRoot == null || clockTicker == null) return false;
+        
+        var config = GameManager.Instance.GameConfig;
+        bool win = reason == EndReason.ClockWin;
+        int end = Mathf.RoundToInt(win ? config.winClock : config.loseClock);
+        int start = win ? end - clockExtraSeconds : end + clockExtraSeconds;
+        
+        clockEndRoot.SetActive(true);
+        clockTicker.Play(start, end, () =>
+        {
+            clockEndRoot.SetActive(false);
+            onFinished?.Invoke();
+        });
         return true;
     }
     
