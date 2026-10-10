@@ -1,43 +1,36 @@
+using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TimerTicker : MonoBehaviour
 {
-    [SerializeField] private Image target;
-    [SerializeField] private Sprite[] sprites;
-    [SerializeField] private float switchInterval = 0.08f;
-    [SerializeField] private float cycleDuration = 2f;
-    
+    [SerializeField] private TMP_Text target;
+    [SerializeField] private float secondsPerStep = 1f;
+    [SerializeField] private float holdAfter = 0.6f;
+    [SerializeField] private string timeFormat = "mm\\:ss";
+
     private Coroutine _routine;
 
-    public void Begin()
+    public void Play(int fromSeconds, int toSeconds, Action onFinished)
     {
-        if (target == null || sprites == null || sprites.Length == 0) return;
         if (_routine != null) StopCoroutine(_routine);
-        _routine = StartCoroutine(CycleRoutine());
+        _routine = StartCoroutine(Run(fromSeconds, toSeconds, onFinished));
     }
 
-    private IEnumerator CycleRoutine()
+    private IEnumerator Run(int from, int to, Action onFinished)
     {
-        int pool = Mathf.Max(1, sprites.Length);
-        int previous = -1;
-        float elapsed = 0f;
+        int sign = to >= from ? 1 : -1;
+        int steps = Mathf.Abs(to - from);
 
-        while (elapsed < cycleDuration)
+        for (int i = 0; i <= steps; i++)
         {
-            int index;
-            do index = Random.Range(0, pool);
-            while (pool > 1 && index == previous);
-            
-            previous = index;
-            target.sprite = sprites[index];
-            
-            yield return new WaitForSecondsRealtime(switchInterval);
-            elapsed += switchInterval;
+            target.text = TimeSpan.FromSeconds(from + sign * i).ToString(timeFormat);
+            if (i < steps) yield return new WaitForSecondsRealtime(secondsPerStep);
         }
-        
-        target.sprite = sprites[sprites.Length - 1];
+
+        yield return new WaitForSecondsRealtime(holdAfter);
         _routine = null;
+        onFinished?.Invoke();
     }
 }
