@@ -5876,12 +5876,14 @@ PlayableDirector:
   m_GameObject: {fileID: 1966545543}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 0}
+  m_PlayableAsset: {fileID: 11400000, guid: 4098ac2d18037a04a9e0f02b2fe446be, type: 2}
   m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 2
   m_InitialTime: 0
-  m_SceneBindings: []
+  m_SceneBindings:
+  - key: {fileID: -6805807906725673453, guid: 4098ac2d18037a04a9e0f02b2fe446be, type: 2}
+    value: {fileID: 1296766812}
   m_ExposedReferences:
     m_References: []
 --- !u!1 &1977983689
@@ -5902,7 +5904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1977983690
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6011,8 +6013,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 0, y: -180}
+  m_SizeDelta: {x: 200, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1980932090
 MonoBehaviour:
@@ -6034,7 +6036,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Loss \nby excess luck"
+  m_text: "The End\n \nExcess luck"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57ce48763bc6d9740821542c007b8282, type: 2}
   m_sharedMaterial: {fileID: 4678111990872634675, guid: 57ce48763bc6d9740821542c007b8282, type: 2}
@@ -6197,8 +6199,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -160}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 0, y: -180}
+  m_SizeDelta: {x: 240, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2006104405
 MonoBehaviour:
@@ -6220,7 +6222,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: FINAL COUNTDOWN
+  m_text: 'Second Chance
+
+
+    Set Timer to 3:00'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57ce48763bc6d9740821542c007b8282, type: 2}
   m_sharedMaterial: {fileID: 4678111990872634675, guid: 57ce48763bc6d9740821542c007b8282, type: 2}
