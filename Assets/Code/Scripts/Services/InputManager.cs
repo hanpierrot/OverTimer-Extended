@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
@@ -21,6 +23,8 @@ public class InputManager : MonoBehaviour
     private IPointerInputHandler currentTarget;
     private Vector2 pressWorldPos;
     private bool isDragging;
+    
+    private static readonly List<RaycastResult> UiHits = new();
 
     private void Awake()
     {
@@ -67,10 +71,25 @@ public class InputManager : MonoBehaviour
                 EndPress(worldPos);
         }
     }
+    
+    private bool IsPointerOverUI()
+    {
+        if (EventSystem.current == null) return false;
+
+        var data = new PointerEventData(EventSystem.current)
+        {
+            position = pointAction.ReadValue<Vector2>()
+        };
+
+        UiHits.Clear();
+        EventSystem.current.RaycastAll(data, UiHits);
+        return UiHits.Count > 0;
+    }
 
     private void OnClickStarted(InputAction.CallbackContext context)
     {
         if (!IsInputEnabled) return;
+        if (IsPointerOverUI()) return;
         
         Vector2 worldPos = GetPointerWorldPos();
         Collider2D hit = Physics2D.OverlapPoint(worldPos, interactableLayers);

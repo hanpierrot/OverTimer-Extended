@@ -4,17 +4,24 @@ using UnityEngine.UI;
 
 public class PowerBankTask : HoldTask
 {
-    [Header("Power Bank Fill")]
-    [SerializeField] private Image fillImage;
+    [Header("Charge Frames")]
+    [SerializeField] private SpriteRenderer chargeRenderer;
+    [SerializeField] private Sprite[] chargeSprites;
     
     protected override int ConfigPawnValue => GameManager.Instance.GameConfig.powerBankPawnValue;
     protected override bool ResetProgressOnRelease => false;
     protected override float CrankTime => GameManager.Instance.GameConfig.powerBankCrankTime;
     
+    private void Start() => UpdateHoldSprite();
+    
     protected override void UpdateHoldSprite()
     {
-        if (fillImage == null) return;
-        fillImage.fillAmount = Mathf.Clamp01(holdTimer / CrankTime);
+        if (chargeRenderer == null || chargeSprites == null || chargeSprites.Length == 0) return;
+
+        float progress = Mathf.Clamp01(holdTimer / CrankTime);
+        int index = Mathf.RoundToInt(progress * (chargeSprites.Length - 1));
+        
+        chargeRenderer.sprite = chargeSprites[index];
     }
 
     protected override void ApplyReward()
@@ -46,6 +53,9 @@ public class PowerBankTask : HoldTask
 
         holdTimer = 0f;
         UpdateHoldSprite();
+        
+        yield return new WaitForSeconds(config.powerBankRestTime);
+        
         if (receiver != null) receiver.SetInteractable(true);
     }
 }

@@ -90,9 +90,10 @@ public class GameConfig : ScriptableObject
 
     [Header("Power Bank Task")]
     public float powerBankCrankTime = 2f;
-    public int powerBankMoneyReward = 8;
+    public int powerBankMoneyReward = 10;
     public float powerBankFullHoldDelay = 1.5f;
     public float powerBankCooldown = 5f;
+    public float powerBankRestTime = 2f;
     
     [Header("Wire Task")]
     public int wireTaskMoneyReward = 20;

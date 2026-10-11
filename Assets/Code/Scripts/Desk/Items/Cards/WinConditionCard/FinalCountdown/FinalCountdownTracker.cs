@@ -22,7 +22,6 @@ public class FinalCountdownTracker : MonoBehaviour
             ClockService.Instance.ArmFinalCountdownIntercept(resetSeconds);
             ClockService.Instance.OnFinalCountdownTriggered += HandleTriggered;
         }
-        if (Meter.Instance != null) Meter.Instance.SetLocked(true);
     }
     
     public void Disarm()
@@ -34,14 +33,13 @@ public class FinalCountdownTracker : MonoBehaviour
             ClockService.Instance.DisarmFinalCountdownIntercept();
             ClockService.Instance.OnFinalCountdownTriggered -= HandleTriggered;
         }
-        if (Meter.Instance != null) Meter.Instance.SetLocked(false);
     }
 
     private void HandleTriggered()
     {
         CurrentPhase = Phase.Triggered;
         if (ClockService.Instance != null) ClockService.Instance.OnFinalCountdownTriggered -= HandleTriggered;
-        if (Meter.Instance != null) Meter.Instance.SetLocked(false);
+        if (Meter.Instance != null) Meter.Instance.SetLocked(true);
         
         CutsceneController.Instance?.PlayFinalCountdownIntro();
     }
