@@ -169,6 +169,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Border_Panel_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 16, y: 16, z: 16, w: 16}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 092d1ccbac60c814fb5740fd5013af80
+      internalID: 2010885132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -185,6 +207,7 @@ TextureImporter:
     nameFileIdTable:
       Border_Panel_0: -2024991046417600438
       Border_Panel_1: 771794061
+      Border_Panel_2: 2010885132
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

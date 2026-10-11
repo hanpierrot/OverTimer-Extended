@@ -2,13 +2,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(PointerReceiver))]
-public class HoldTask : TaskBase, IPawnable
+public abstract class HoldTask : TaskBase, IPawnable
 {
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
-    
     protected virtual float CrankTime => GameManager.Instance.GameConfig.crankTime;
-    public int PawnValue => pawnValue;
+    protected abstract int ConfigPawnValue { get; }
+    public int PawnValue => ConfigPawnValue;
     public bool CanBePawned => true;
 
     protected PointerReceiver receiver;
@@ -17,7 +15,6 @@ public class HoldTask : TaskBase, IPawnable
 
     protected override bool ResetAfterComplete => true;
     protected virtual bool ResetProgressOnRelease => true;
-    public void SetHoldDuration(float duration) => GameManager.Instance.GameConfig.crankTime = duration;
     
     protected virtual void Awake()
     {

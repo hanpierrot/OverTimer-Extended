@@ -11,21 +11,22 @@ public class ClickTask : TaskBase, IPawnable
     [SerializeField] private float wobbleDuration = 0.4f;
     [SerializeField] private int wobbleCycles = 3;
     
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
     public bool CanBePawned => true;
     
     protected virtual int MinClicks => GameManager.Instance.GameConfig.clickTaskMinClicks;
     protected virtual int MaxClicks => GameManager.Instance.GameConfig.clickTaskMaxClicks;
     protected virtual float LockDuration => GameManager.Instance.GameConfig.clickTaskLockDuration;
     
-    public int PawnValue => pawnValue;
+    protected virtual int ConfigPawnValue => GameManager.Instance.GameConfig.clickTaskPawnValue;
+    public int PawnValue => ConfigPawnValue;
     
     private int currentClicks = 0;
     private int requiredClicks;
     private PointerReceiver receiver;
     
     private void Awake() => receiver = GetComponent<PointerReceiver>();
+    
+    private void Start() => RollRequiredClicks();
 
     private void OnEnable() => receiver.ClickDown += HandleClick;
 

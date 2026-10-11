@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -52,8 +53,33 @@ public class CutsceneController : MonoBehaviour
             return PlayClockEnding(reason, onFinished);
         
         if (!_endDirectors.TryGetValue(reason, out var director)) return false;
-        Play(director, onFinished);
+        PlayAndHold(director, onFinished);
         return true;
+    }
+
+    public void StopAll()
+    {
+        var callback = _current != null ? _onFinished : null;
+        
+        StopAllCoroutines();
+        if(_current != null) _current.stopped -= HandleStopped;
+        _current = null;
+        _onFinished = null;
+
+        foreach (var d in _endDirectors.Values)
+            ResetDirector(d);
+        if (finalCountdownDirector != null) ResetDirector(finalCountdownDirector);
+
+        if (cutsceneRoot != null) cutsceneRoot.SetActive(false);
+        if (clockEndRoot != null) clockEndRoot.SetActive(false);
+        
+        callback?.Invoke();
+    }
+
+    private static void ResetDirector(PlayableDirector director)
+    {
+        director.Stop();
+        director.time = 0;
     }
 
     private bool PlayClockEnding(EndReason reason, Action onFinished)
@@ -66,11 +92,7 @@ public class CutsceneController : MonoBehaviour
         int start = win ? end - clockExtraSeconds : end + clockExtraSeconds;
         
         clockEndRoot.SetActive(true);
-        clockTicker.Play(start, end, () =>
-        {
-            clockEndRoot.SetActive(false);
-            onFinished?.Invoke();
-        });
+        clockTicker.Play(start, end, () => onFinished?.Invoke());
         return true;
     }
     
@@ -101,6 +123,29 @@ public class CutsceneController : MonoBehaviour
         director.stopped += HandleStopped;
         director.time = 0;
         director.Play();
+    }
+
+    private void PlayAndHold(PlayableDirector director, Action onFinished)
+    {
+        if (_current != null)
+        {
+            _current.stopped -= HandleStopped;
+            _current.Stop();
+            _current = null;
+        }
+        
+        if(cutsceneRoot != null) cutsceneRoot.SetActive(true);
+        
+        director.extrapolationMode = DirectorWrapMode.Hold;
+        director.time = 0;
+        director.Play();
+        StartCoroutine(WaitForEnd(director, onFinished));
+    }
+
+    private IEnumerator WaitForEnd(PlayableDirector director, Action onFinished)
+    {
+        yield return new WaitUntil(() => director.time >= director.duration - 0.02f);
+        onFinished?.Invoke();
     }
 
     private void HandleStopped(PlayableDirector director)

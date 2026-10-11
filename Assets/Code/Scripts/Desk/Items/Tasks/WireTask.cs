@@ -18,9 +18,7 @@ public class WireTask : TaskBase, IPawnable
     [SerializeField] private WireLineView dragPreviewLine;
     [SerializeField] private Color[] wireColors;
     
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
-    public int PawnValue => pawnValue;
+    public int PawnValue => GameManager.Instance.GameConfig.wireTaskPawnValue;
     public bool CanBePawned => true;
 
     private PointerReceiver _receiver;

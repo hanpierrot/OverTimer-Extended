@@ -91,7 +91,24 @@ public class GameConfig : ScriptableObject
     [Header("Power Bank Task")]
     public float powerBankCrankTime = 2f;
     public int powerBankMoneyReward = 8;
+    public float powerBankFullHoldDelay = 1.5f;
+    public float powerBankCooldown = 5f;
     
     [Header("Wire Task")]
     public int wireTaskMoneyReward = 20;
+    
+    [Header("Pawn Value")]
+    public int eggTimerPawnValue = 150;
+    public int cardBoxPawnValue = 180;
+    public int powerBankPawnValue = 45;
+    public int clickTaskPawnValue = 40;
+    public int pictureClickTaskPawnValue = 40;
+    public int wireTaskPawnValue = 15;
+    public int tripleStackPawnValue = 50;
+    public int nineStackPawnValue = 100;
+    public int junkSmallPawnValue = 5;
+    public int junkMediumPawnValue = 15;
+    public int junkLargePawnValue = 30;
+    public int unrevealedCardSellValue = 10;
+    public int laptopPawnValue = 300;
 }

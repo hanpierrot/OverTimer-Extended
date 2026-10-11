@@ -151,4 +151,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49e0a07545f6b4846b9fae3fdcd0c6d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JunkItem
-  pawnValue: 5
+  tier: 1

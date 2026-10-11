@@ -5,6 +5,8 @@ public class EggTimerTask : HoldTask
     [Header("Sprite Animation")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite[] holdSprites;
+    
+    protected override int ConfigPawnValue => GameManager.Instance.GameConfig.eggTimerPawnValue;
 
     protected override void UpdateHoldSprite()
     {

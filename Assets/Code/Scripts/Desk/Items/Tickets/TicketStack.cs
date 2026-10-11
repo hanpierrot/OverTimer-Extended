@@ -9,10 +9,17 @@ public class TicketStack : MonoBehaviour, IPawnable
     [SerializeField] private ScratchTicket[] ticketPool;
     [SerializeField] private Vector2 spawnRangeMin = new Vector2(-4f, -3f);
     [SerializeField] private Vector2 spawnRangeMax = new Vector2(4f, 3f);
-    
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
-    public int PawnValue => pawnValue;
+
+    public int PawnValue
+    {
+        get
+        {
+            var config = GameManager.Instance.GameConfig;
+            bool isNine = ticketPool != null && ticketPool.Length > 0
+                                             && ticketPool[0].TierKind == TicketTierKind.LuckyNine;
+            return isNine ? config.nineStackPawnValue : config.tripleStackPawnValue;
+        }
+    }
     public bool CanBePawned => true;
     
     private PointerReceiver receiver;

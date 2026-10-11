@@ -39,6 +39,8 @@ public class ScratchTicket : MonoBehaviour
     
     private static bool _pendingPreRevealWindow;
     public static event Action OnPreRevealDelivered;
+    
+    public TicketTierKind TierKind => tierKind;
     public static void QueuePreRevealWindow() => _pendingPreRevealWindow = true;
     
     private GameConfig Config => GameManager.Instance.GameConfig;

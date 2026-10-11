@@ -6,11 +6,9 @@ public class PowerBankTask : HoldTask
 {
     [Header("Power Bank Fill")]
     [SerializeField] private Image fillImage;
-    [SerializeField] private float fullHoldDelay = 1.5f;
-    [SerializeField] private float cooldownDuration = 5f;
     
+    protected override int ConfigPawnValue => GameManager.Instance.GameConfig.powerBankPawnValue;
     protected override bool ResetProgressOnRelease => false;
-    
     protected override float CrankTime => GameManager.Instance.GameConfig.powerBankCrankTime;
     
     protected override void UpdateHoldSprite()
@@ -31,16 +29,17 @@ public class PowerBankTask : HoldTask
 
     private IEnumerator CooldownRoutine()
     {
+        var config = GameManager.Instance.GameConfig;
         if (receiver != null) receiver.SetInteractable(false);
         
-        yield return new WaitForSeconds(fullHoldDelay);
+        yield return new WaitForSeconds(config.powerBankFullHoldDelay);
         
         float startFill = holdTimer;
         float t = 0f;
-        while (t < cooldownDuration)
+        while (t < config.powerBankCooldown)
         {
             t += Time.deltaTime;
-            holdTimer = Mathf.Lerp(startFill, 0f, t / cooldownDuration);
+            holdTimer = Mathf.Lerp(startFill, 0f, t / config.powerBankCooldown);
             UpdateHoldSprite();
             yield return null;
         }

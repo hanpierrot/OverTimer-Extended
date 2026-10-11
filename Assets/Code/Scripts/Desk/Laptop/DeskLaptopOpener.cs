@@ -10,10 +10,7 @@ public class DeskLaptopOpener : DeskObject, IPawnable
     [SerializeField] private GameObject laptopPanel;
     [SerializeField] private LaptopController laptopController;
     
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
-    
-    public int PawnValue => pawnValue;
+    public int PawnValue => GameManager.Instance.GameConfig.laptopPawnValue;
     public bool CanBePawned => true;
 
     protected override void OnClicked(Vector2 worldPos)

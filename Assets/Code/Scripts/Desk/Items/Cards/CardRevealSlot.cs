@@ -11,7 +11,6 @@ public class CardRevealSlot : MonoBehaviour
     [SerializeField] private Button sellButton;
     [SerializeField] private Button placeButton;
     [SerializeField] private Button collectionButton;
-    [SerializeField] private int sellUnrevealedValue = 10;
     
     public event Action<CardRevealSlot> Resolved;
     public event Action<CardSO> CollectedToCollection;
@@ -73,7 +72,7 @@ public class CardRevealSlot : MonoBehaviour
     
     private void OnSellClicked()
     {
-        int value = _revealed ? _card.pawnValue : sellUnrevealedValue;
+        int value = _revealed ? _card.pawnValue : GameManager.Instance.GameConfig.unrevealedCardSellValue;
         MoneyService.Instance.Add(value, "card sale");
         Resolve();
     }

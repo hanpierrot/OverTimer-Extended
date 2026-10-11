@@ -10,9 +10,7 @@ public class CardBox : MonoBehaviour, IPawnable
     [Header("Roll pool")]
     [SerializeField] private string cardResourcesPath = "CardSO";
 
-    [Header("Pawn")]
-    [SerializeField] private int pawnValue = 20;
-    public int PawnValue => pawnValue;
+    public int PawnValue => GameManager.Instance.GameConfig.cardBoxPawnValue;
     public bool CanBePawned => true;
 
     private PointerReceiver _receiver;

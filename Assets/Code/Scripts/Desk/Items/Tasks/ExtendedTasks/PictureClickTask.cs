@@ -7,6 +7,7 @@ public class PictureClickTask : ClickTask
     [SerializeField] private Sprite normalSprite;
     [SerializeField] private Sprite reactSprite;
     
+    protected override int ConfigPawnValue => GameManager.Instance.GameConfig.pictureClickTaskPawnValue;
     protected override int MinClicks => GameManager.Instance.GameConfig.pictureClickTaskMinClicks;
     protected override int MaxClicks => GameManager.Instance.GameConfig.pictureClickTaskMaxClicks;
     protected override float LockDuration => GameManager.Instance.GameConfig.pictureClickTaskLockDuration;

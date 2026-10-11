@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,6 +14,8 @@ public class GameManager : MonoBehaviour
     [Header("End Game UI")]
     [SerializeField] private GameObject endGamePanel;
     [SerializeField] private TMP_Text endGameText;
+    [SerializeField] private float endPanelDelay = 1f;
+    [SerializeField] private float endPanelFadeDuration = 0.6f;
     
     [Header("Input Blockers")]
     [SerializeField] private GameObject[] inputBlockers;
@@ -29,6 +33,7 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        Time.timeScale = 1f;
     }
 
     private void Start()
@@ -76,18 +81,46 @@ public class GameManager : MonoBehaviour
         LastEndReason = reason;
         InputManager.Instance.IsInputEnabled = false;
         ClockService.Instance.PauseCountdown();
+        Time.timeScale = 0f;
         
         OnGameOver?.Invoke(reason);
         bool playing = CutsceneController.Instance != null
-                       && CutsceneController.Instance.PlayEnding(reason, () => ShowEndGame(reason));
+                       && CutsceneController.Instance.PlayEnding(reason, () => StartCoroutine(ShowEndGameDelayed(reason)));;
 
         if(!playing) ShowEndGame(reason);
     }
     
+    private IEnumerator ShowEndGameDelayed(EndReason reason)
+    {
+        yield return new WaitForSecondsRealtime(endPanelDelay);
+        ShowEndGame(reason);
+    }
+    
     private void ShowEndGame(EndReason reason)
     {
-        if (endGamePanel != null) endGamePanel.SetActive(true);
-        if (endGameText != null) endGameText.text = GetEndGameText(reason);
+        if(endGameText != null) endGameText.text = GetEndGameText(reason);
+        if (endGamePanel == null) return;
+        
+        if(!endGamePanel.TryGetComponent(out CanvasGroup group))
+            group = endGamePanel.AddComponent<CanvasGroup>();
+
+        group.alpha = 0f;
+        group.interactable = false;
+        group.blocksRaycasts = false;
+        if(endGameText != null) endGameText.transform.localScale = Vector3.one * 0.85f;
+        endGamePanel.SetActive(true);
+        
+        Sequence fade = DOTween.Sequence().SetUpdate(true);
+        fade.Join(group.DOFade(1f, endPanelFadeDuration));
+        if (endGameText != null)
+        {
+            fade.Join(endGameText.transform.DOScale(1f, endPanelFadeDuration).SetEase(Ease.OutBack));
+            fade.OnComplete(() =>
+            {
+                group.interactable = true;
+                group.blocksRaycasts = true;
+            });
+        }
     }
     
     private string GetEndGameText(EndReason reason)
@@ -106,6 +139,7 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
