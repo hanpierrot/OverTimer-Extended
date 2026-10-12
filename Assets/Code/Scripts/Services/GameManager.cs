@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         Time.timeScale = 1f;
+        AudioListener.pause = false;
     }
 
     private void Start()
@@ -82,6 +83,7 @@ public class GameManager : MonoBehaviour
         InputManager.Instance.IsInputEnabled = false;
         ClockService.Instance.PauseCountdown();
         Time.timeScale = 0f;
+        AudioListener.pause = true;
         
         OnGameOver?.Invoke(reason);
         bool playing = CutsceneController.Instance != null
@@ -140,6 +142,7 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1f;
+        AudioListener.pause = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

@@ -16,6 +16,11 @@ public class ImageCycler : MonoBehaviour
 
     private Coroutine _routine;
 
+    private void Awake()
+    {
+        if (audioSource != null) audioSource.ignoreListenerPause = true;
+    }
+
     private void OnEnable() => Begin();
 
     public void Begin()
