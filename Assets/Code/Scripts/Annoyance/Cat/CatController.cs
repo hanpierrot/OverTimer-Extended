@@ -123,8 +123,10 @@ public class CatController : MonoBehaviour
     {
         _blockTimer = (float)(BlockDurationMin + RngService.Instance.Random.NextDouble() * (BlockDurationMax - BlockDurationMin));
         
-        if (_blockedTarget != null) _blockedTarget.SetInteractable(false);
-        
+        if (_blockedTarget != null) _blockedTarget.SetInteractable(false, HintId.CatBlocking);
+
+        HintService.Instance?.ShowOnce(HintId.CatFirstBlock);
+
         PlayAnimation("Idle");
     }
     

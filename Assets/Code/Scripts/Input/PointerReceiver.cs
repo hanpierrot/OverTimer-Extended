@@ -12,14 +12,37 @@ public class PointerReceiver : MonoBehaviour, IPointerInputHandler
     public event Action<Vector2> PressStart;
     public event Action<Vector2> PressUpdate;
     public event Action<Vector2> PressEnd;
+    
+    public event Action<HintId> ClickRejected;
+    public static event Action<HintId> AnyClickRejected;
 
     // One mechanism for debuffs, the cat, and pawning (DESIGN.md §7.2
     // DeskObject.SetEnabled). Every interactable already has a PointerReceiver,
     // so gating input here covers all of them without a new base class.
-    public bool IsInteractable { get; private set; } = true;
-    public void SetInteractable(bool value) => IsInteractable = value;
+    
+    private HintId? _blockedReason;
 
-    public void OnClickDown(Vector2 worldPos) { if (IsInteractable) ClickDown?.Invoke(worldPos); }
+    public bool IsInteractable { get; private set; } = true;
+    public void SetInteractable(bool value, HintId? reason = null)
+    {
+        IsInteractable = value;
+        _blockedReason = value ? null : reason;
+    }
+
+    public void OnClickDown(Vector2 worldPos)
+    {
+        if (IsInteractable)
+        {
+            ClickDown?.Invoke(worldPos);
+            return;
+        }
+        
+        if (_blockedReason.HasValue)
+        {
+            ClickRejected?.Invoke(_blockedReason.Value);
+            AnyClickRejected?.Invoke(_blockedReason.Value);
+        }
+    }
     public void OnDragStart(Vector2 worldPos) { if (IsInteractable) DragStart?.Invoke(worldPos); }
     public void OnDragUpdate(Vector2 worldPos) { if (IsInteractable) DragUpdate?.Invoke(worldPos); }
     public void OnDragEnd(Vector2 worldPos) { if (IsInteractable) DragEnd?.Invoke(worldPos); }

@@ -108,6 +108,7 @@ public class Phone : DeskObject
 
         if (ringingVisual) ringingVisual.SetActive(true);
         PlayRingSound();
+        HintService.Instance?.ShowOnce(HintId.PhoneFirstRing);
         OnRingStart?.Invoke();
     }
 

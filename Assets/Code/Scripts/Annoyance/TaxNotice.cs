@@ -43,6 +43,7 @@ public class TaxNotice : DeskObject
         nagTimer = 0f;
         if (noticeVisual) noticeVisual.SetActive(true);
         PlayNastySound();
+        HintService.Instance?.ShowOnce(HintId.MailTrayFirstBill);
     }
 
     private void Update()

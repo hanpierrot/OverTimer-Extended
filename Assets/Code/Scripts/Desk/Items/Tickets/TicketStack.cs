@@ -38,7 +38,11 @@ public class TicketStack : MonoBehaviour, IPawnable
     private void HandleClick(Vector2 worldPos)
     {
         ScratchTicket ticket = FindFreeTicket();
-        if(ticket ==  null) return;
+        if (ticket == null)
+        {
+            HintService.Instance?.Show(HintId.TooManyTickets);
+            return;
+        }
 
         // Activate BEFORE purchasing: the pool starts inactive (see Awake),
         // so each ticket's own Awake() - and its child ScratchWindows' - has
@@ -50,7 +54,10 @@ public class TicketStack : MonoBehaviour, IPawnable
         ticket.gameObject.SetActive(true);
 
         if (!ticket.TryPurchase())
-            ticket.gameObject.SetActive(false); // couldn't afford it - back to the pool
+        {
+            ticket.gameObject.SetActive(false);
+            HintService.Instance?.Show(HintId.NotEnoughMoney);
+        }
     }
     
     private ScratchTicket FindFreeTicket()

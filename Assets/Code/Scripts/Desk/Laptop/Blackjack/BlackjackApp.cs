@@ -13,12 +13,6 @@ using Overtime.Blackjack;
 /// </summary>
 public class BlackjackApp : LaptopApp
 {
-    [Header("Services")]
-    [SerializeField] private GameConfig config;
-    [SerializeField] private ClockService clock;
-    [SerializeField] private MoneyService money;
-    [SerializeField] private RngService rng;
-
     [Header("UI")]
     [SerializeField] private Button dealButton;
     [SerializeField] private Button hitButton;
@@ -41,15 +35,28 @@ public class BlackjackApp : LaptopApp
     [SerializeField] private GameObject dealerWinLabel;
     [SerializeField] private TMP_Text winningOutcomeLabel;
 
+    private GameConfig config => GameManager.Instance.GameConfig;
+
     private BlackjackGame _game;
     private bool _resolving;
     private float _totalSpent;
     private int _totalReceived;
     private string _payoutInfoText;
 
+    private float CurrentAnte
+    {
+        get
+        {
+            float mult = CostModifierService.Instance != null
+                ? CostModifierService.Instance.GetMultiplier(CostModifierService.Target.Blackjack)
+                : 1f;
+            return Mathf.Round(config.blackjackAnte * mult);
+        }
+    }
+    
     // Disabled by the "Connection Lost" debuff. Does NOT disable mining.
     public bool Banned { get; private set; }
-
+    
     private void Start() => EnsureInitialized();
 
     /// <summary>
@@ -66,7 +73,7 @@ public class BlackjackApp : LaptopApp
     {
         if (_game != null) return;
 
-        _game = new BlackjackGame(rng.Random);
+        _game = new BlackjackGame(RngService.Instance.Random);
 
         dealButton.onClick.AddListener(OnDeal);
         hitButton.onClick.AddListener(OnHit);
@@ -76,7 +83,6 @@ public class BlackjackApp : LaptopApp
         // Static for the session - ante/payouts don't change mid-run.
         _payoutInfoText = $"win ${config.blackjackWinPayout} · push ${config.blackjackPushPayout} · bj ${config.blackjackNaturalPayout}";
         winningOutcomeLabel.text = _payoutInfoText;
-        doubleButtonLabel.text = $"DOUBLE -{config.blackjackAnte:0}s";
 
         HideWinBadges();
     }
@@ -88,7 +94,7 @@ public class BlackjackApp : LaptopApp
     /// Requires a margin above the ante so a loss is survivable.
     /// </summary>
     private bool CanAffordAnte =>
-        clock.CurrentSeconds >= config.blackjackAnte + config.blackjackClockMargin;
+        ClockService.Instance.CurrentSeconds >= CurrentAnte + config.blackjackClockMargin;
 
     private bool Available => !Banned && !_resolving;
 
@@ -100,11 +106,13 @@ public class BlackjackApp : LaptopApp
         if (!CanAffordAnte)
         {
             Flash("NOT ENOUGH TIME");
+            HintService.Instance?.Show(HintId.NotEnoughTime, Mathf.CeilToInt(CurrentAnte + config.blackjackClockMargin));
             return;
         }
 
-        clock.Spend(config.blackjackAnte, "blackjack ante");
-        _totalSpent += config.blackjackAnte;
+        ClockService.Instance.Spend(CurrentAnte, "blackjack ante");
+        _totalSpent += CurrentAnte;
+        HintService.Instance?.ShowOnce(HintId.BlackjackLeaveMidHand);
         HideWinBadges();
         winningOutcomeLabel.text = _payoutInfoText; // clear any lingering flash/warning
         _game.Deal();
@@ -142,11 +150,12 @@ public class BlackjackApp : LaptopApp
         if (!CanAffordAnte)
         {
             Flash("NOT ENOUGH TIME");
+            HintService.Instance?.Show(HintId.NotEnoughTime, Mathf.CeilToInt(CurrentAnte + config.blackjackClockMargin));
             return;
         }
 
-        clock.Spend(config.blackjackAnte, "blackjack double");
-        _totalSpent += config.blackjackAnte;
+        ClockService.Instance.Spend(CurrentAnte, "blackjack double");
+        _totalSpent += CurrentAnte;
         _game.DoubleDown();
         StartCoroutine(Resolve());
         Refresh();
@@ -170,7 +179,7 @@ public class BlackjackApp : LaptopApp
 
         if (payout > 0)
         {
-            money.Add(payout, "blackjack");
+            MoneyService.Instance.Add(payout, "blackjack");
             _totalReceived += payout;
         }
 
@@ -191,25 +200,12 @@ public class BlackjackApp : LaptopApp
         Refresh();
     }
 
-    // ---------- Debuff hook ----------
-
-    /// <summary>Called by the card system. Blocks blackjack ONLY, never mining.</summary>
-    public void ApplyBan(float seconds) => StartCoroutine(BanRoutine(seconds));
-
-    private IEnumerator BanRoutine(float seconds)
-    {
-        Banned = true;
-        Refresh();
-        yield return new WaitForSeconds(seconds);
-        Banned = false;
-        Refresh();
-    }
-
     // ---------- App lifecycle ----------
 
     public override void OnAppOpened()
     {
         EnsureInitialized();
+        HintService.Instance?.ShowOnce(HintId.BlackjackOpen);
         Refresh();
     }
 
@@ -243,14 +239,15 @@ public class BlackjackApp : LaptopApp
         standButton.gameObject.SetActive(playing);
         doubleButton.gameObject.SetActive(playing);
 
-        dealButton.interactable   = idle && Available && CanAffordAnte;
+        dealButton.interactable   = idle && Available;
         hitButton.interactable    = playing && _game.CanHit;
         standButton.interactable  = playing;
-        doubleButton.interactable = playing && _game.CanDouble && CanAffordAnte;
+        doubleButton.interactable = playing && _game.CanDouble;
 
         anteLabel.text = Banned
             ? "CONNECTION LOST"
-            : $"ANTE {config.blackjackAnte:0}s";
+            : $"ANTE {CurrentAnte:0}s"; 
+        doubleButtonLabel.text = $"DOUBLE -{CurrentAnte:0}s";
 
         spentLabel.text = $"Spent {_totalSpent:0}s";
         receivedLabel.text = $"Received ${_totalReceived}";
