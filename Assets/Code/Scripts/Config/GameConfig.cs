@@ -112,4 +112,52 @@ public class GameConfig : ScriptableObject
     public int junkLargePawnValue = 30;
     public int unrevealedCardSellValue = 10;
     public int laptopPawnValue = 300;
+
+    [Header("Billiards - economy")]
+    public int     billiardsBetMin  = 10;
+    public int     billiardsBetMax  = 40;
+    public int     billiardsBetStep = 5;
+    public int[]   billiardsParOffsets = { 4, 2, 0 };                    // easy, medium, hard
+    [Tooltip("Expected NET dollars per second of play, losses included, by difficulty (easy, medium, hard)")]
+    public float[] billiardsTargetRate = { 1.5f, 3f, 4f };
+    [Tooltip("Assumed chance of winning a table, by difficulty. A guess until Phase 9 measures it; lower = bigger payout")]
+    public float[] billiardsAssumedWinRate = { 0.85f, 0.65f, 0.5f };
+    [Tooltip("Guess. Measure in Phase 9 and update.")]
+    public float   billiardsSecondsPerShot = 7f;
+    public AimAssistLevel[] billiardsAssist =
+        { AimAssistLevel.FullGhost, AimAssistLevel.ContactPoint, AimAssistLevel.DirectionOnly };
+
+    [Header("Billiards - rules (Q2)")]
+    public bool billiardsStrictFirstContact   = true;
+    public bool billiardsFinalWrongPocketFails = true;
+
+    [Header("Billiards - physics. Changing ANY of these invalidates stored solutions: re-run the verifier.")]
+    [Tooltip("Table units; felt is 2 x 1. TBD from art once Q1 is answered: (ballCanvasPx / 2) / feltCanvasWidth * 2")]
+    public float billiardsBallRadius         = 0.0714f;  // assumed Q1 default: felt 588 wide, 42 px ball
+    public float billiardsCornerPocketRadius = 0.09f;    // TBD from art (Q1)
+    public float billiardsSidePocketRadius   = 0.075f;   // TBD from art (Q1)
+    [Tooltip("Must satisfy maxShotSpeed / 120 < ballRadius or balls can tunnel through cushions")]
+    public float billiardsMaxShotSpeed       = 5f;       // table units per second at power 1
+    public float billiardsRollingDecel       = 1.2f;     // table units per second squared
+    public float billiardsBallRestitution    = 0.95f;
+    public float billiardsCushionRestitution = 0.75f;
+    public float billiardsStopSpeed          = 0.01f;    // below this a ball snaps to rest
+    public float billiardsMaxShotSeconds     = 20f;      // safety cap: force-settle a shot after this long
+
+    /// Call once at app start. Catches arrays resized wrong in the Inspector.
+    public bool ValidateBilliards(out string problem)
+    {
+        problem = null;
+        if (billiardsParOffsets == null || billiardsParOffsets.Length != 3) problem = "billiardsParOffsets needs 3 entries";
+        else if (billiardsTargetRate == null || billiardsTargetRate.Length != 3) problem = "billiardsTargetRate needs 3 entries";
+        else if (billiardsAssumedWinRate == null || billiardsAssumedWinRate.Length != 3) problem = "billiardsAssumedWinRate needs 3 entries";
+        else if (billiardsAssumedWinRate[0] <= 0f || billiardsAssumedWinRate[1] <= 0f || billiardsAssumedWinRate[2] <= 0f
+              || billiardsAssumedWinRate[0] > 1f || billiardsAssumedWinRate[1] > 1f || billiardsAssumedWinRate[2] > 1f) problem = "billiardsAssumedWinRate entries must be in (0, 1]";
+        else if (billiardsAssist == null || billiardsAssist.Length != 3) problem = "billiardsAssist needs 3 entries";
+        else if (billiardsBetMin <= 0 || billiardsBetMax < billiardsBetMin) problem = "bet min/max invalid";
+        else if (billiardsMaxShotSpeed / 120f >= billiardsBallRadius) problem = "maxShotSpeed / 120 must be < ballRadius (tunneling)";
+        return problem == null;
+    }
 }
+
+public enum AimAssistLevel { DirectionOnly, ContactPoint, FullGhost }

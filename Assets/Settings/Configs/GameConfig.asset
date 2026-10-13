@@ -67,4 +67,45 @@ MonoBehaviour:
   pictureClickTaskMoneyReward: 5
   powerBankCrankTime: 2
   powerBankMoneyReward: 8
+  powerBankFullHoldDelay: 1.5
+  powerBankCooldown: 5
+  powerBankRestTime: 2
   wireTaskMoneyReward: 20
+  eggTimerPawnValue: 150
+  cardBoxPawnValue: 180
+  powerBankPawnValue: 45
+  clickTaskPawnValue: 40
+  pictureClickTaskPawnValue: 40
+  wireTaskPawnValue: 15
+  tripleStackPawnValue: 50
+  nineStackPawnValue: 100
+  junkSmallPawnValue: 5
+  junkMediumPawnValue: 15
+  junkLargePawnValue: 30
+  unrevealedCardSellValue: 10
+  laptopPawnValue: 300
+  billiardsBetMin: 10
+  billiardsBetMax: 40
+  billiardsBetStep: 5
+  billiardsParOffsets: 040000000200000000000000
+  billiardsTargetRate:
+  - 1.5
+  - 3
+  - 4
+  billiardsAssumedWinRate:
+  - 0.85
+  - 0.65
+  - 0.5
+  billiardsSecondsPerShot: 7
+  billiardsAssist: 020000000100000000000000
+  billiardsStrictFirstContact: 1
+  billiardsFinalWrongPocketFails: 1
+  billiardsBallRadius: 0.0714
+  billiardsCornerPocketRadius: 0.09
+  billiardsSidePocketRadius: 0.075
+  billiardsMaxShotSpeed: 5
+  billiardsRollingDecel: 1.2
+  billiardsBallRestitution: 0.95
+  billiardsCushionRestitution: 0.75
+  billiardsStopSpeed: 0.01
+  billiardsMaxShotSeconds: 20

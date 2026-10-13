@@ -151,15 +151,15 @@ PrefabInstance:
     - target: {fileID: 13783206174779, guid: ee4de36cc8e49694ba7213538630890f, type: 3}
       propertyPath: rng
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 800245316}
     - target: {fileID: 13783206174779, guid: ee4de36cc8e49694ba7213538630890f, type: 3}
       propertyPath: clock
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 800245318}
     - target: {fileID: 13783206174779, guid: ee4de36cc8e49694ba7213538630890f, type: 3}
       propertyPath: money
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 800245317}
     - target: {fileID: 195141190146058864, guid: ee4de36cc8e49694ba7213538630890f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4307,11 +4307,11 @@ PrefabInstance:
     - target: {fileID: 1578982179992678027, guid: 7ea829890604b2f4e97ddd4f9979ef0f, type: 3}
       propertyPath: rng
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 800245316}
     - target: {fileID: 1578982179992678027, guid: 7ea829890604b2f4e97ddd4f9979ef0f, type: 3}
       propertyPath: money
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 800245317}
     - target: {fileID: 1725386337180387238, guid: 7ea829890604b2f4e97ddd4f9979ef0f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1

@@ -1,0 +1,13 @@
+{
+  "id": "straight_test",
+  "name": "Straight Test",
+  "par": 1,
+  "balls": [
+    { "id": "cue", "x": 0.6, "y": 0.6 },
+    { "id": "1", "x": 0.8, "y": 0.8 }
+  ],
+  "order": ["1"],
+  "solution": [
+    { "angle": 26.6, "power": 0.5 }
+  ]
+}

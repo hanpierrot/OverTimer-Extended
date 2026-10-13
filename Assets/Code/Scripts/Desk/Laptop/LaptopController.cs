@@ -17,6 +17,7 @@ public class LaptopController : MonoBehaviour
 
     private LaptopApp _current;
     private bool _switching;
+    private Coroutine _switchRoutine;
 
     // Set by a whole-laptop debuff, if one is ever added. Default design does
     // NOT use this - see BLACKJACK.md §2.1 (Dead Battery split into two apps).
@@ -39,7 +40,7 @@ public class LaptopController : MonoBehaviour
     {
         if (app == null || Disabled || _switching) return;
         if (app == _current && app.gameObject.activeSelf) return;
-        StartCoroutine(SwitchRoutine(app));
+        _switchRoutine = StartCoroutine(SwitchRoutine(app));
     }
 
     public void RequestOpen(string appName)
@@ -51,7 +52,8 @@ public class LaptopController : MonoBehaviour
     /// <summary>Closes whichever app is open and drops back to the home screen (Apps grid). Free - unlike switching between apps, going home isn't a paid action.</summary>
     public void CloseCurrentApp()
     {
-        if (_current == null || _switching) return;
+        if (_switching) { CancelSwitch(); return; }
+        if (_current == null) return;
 
         _current.OnAppClosed();
         _current.gameObject.SetActive(false);
@@ -70,6 +72,27 @@ public class LaptopController : MonoBehaviour
     {
         CloseCurrentApp();
         gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Abort a switch in progress. The previous app was already closed and
+    /// hidden when the switch began, so the laptop falls back to the home
+    /// screen. Without this, deactivating the laptop mid-switch killed the
+    /// coroutine before it could clear _switching, and every later RequestOpen
+    /// returned early.
+    /// </summary>
+    private void CancelSwitch()
+    {
+        if (_switchRoutine != null) StopCoroutine(_switchRoutine);
+        _switchRoutine = null;
+        _switching = false;
+        _current = null;
+        if (switchingOverlay != null) switchingOverlay.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        if (_switching) CancelSwitch();
     }
 
     /// <summary>
@@ -93,6 +116,7 @@ public class LaptopController : MonoBehaviour
 
         if (switchingOverlay != null) switchingOverlay.SetActive(false);
         _switching = false;
+        _switchRoutine = null;
     }
 
     private void OpenImmediate(LaptopApp app)

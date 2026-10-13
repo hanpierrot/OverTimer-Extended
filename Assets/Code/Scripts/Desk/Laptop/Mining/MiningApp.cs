@@ -54,6 +54,14 @@ public class MiningApp : LaptopApp
         StartVein();
     }
 
+    private void OnEnable()
+    {
+        // Deactivating the app kills RespawnAfterDelay, and Start won't run
+        // again, so a vein finished just before closing would never restart.
+        // On the very first activation _vein is still null and Start handles it.
+        if (_vein != null && _blockIndex >= _vein.Count) StartVein();
+    }
+
     private void StartVein()
     {
         int length = rng.Random.Next(config.veinLengthMin, config.veinLengthMax + 1);
