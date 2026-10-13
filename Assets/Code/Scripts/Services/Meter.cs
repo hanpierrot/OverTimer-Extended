@@ -43,12 +43,20 @@ public class Meter : MonoBehaviour
 
     private void HandleFeedClicked()
     {
-        if (IsLocked) return;
-        
+        if (IsLocked)
+        {
+            HintService.Instance?.Show(HintId.MeterLocked);
+            return;
+        }
+
         GameConfig config = GameManager.Instance.GameConfig;
         int current = MoneyService.Instance.Current;
 
-        if (current < config.meterMinFeed) return;
+        if (current < config.meterMinFeed)
+        {
+            HintService.Instance?.Show(HintId.MeterMinFeed, config.meterMinFeed);
+            return;
+        }
 
         if (MoneyService.Instance.TrySpend(current, "meter"))
         {

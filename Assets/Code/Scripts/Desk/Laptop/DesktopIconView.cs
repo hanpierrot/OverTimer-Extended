@@ -63,6 +63,7 @@ public class DesktopIconView : MonoBehaviour, IPointerClickHandler
             return;
         }
 
+        HintService.Instance?.ShowOnce(HintId.LaptopIconDoubleClick);
         Select();
     }
 

@@ -120,7 +120,11 @@ public class ITRSService : MonoBehaviour
     public bool Pay()
     {
         if (!HasPendingAssessment) return false;
-        if (CurrentAssessment.amountDue > 0 && !MoneyService.Instance.TrySpend(CurrentAssessment.amountDue, "ITRS bill")) return false;
+        if (CurrentAssessment.amountDue > 0 && !MoneyService.Instance.TrySpend(CurrentAssessment.amountDue, "ITRS bill"))
+        {
+            HintService.Instance?.Show(HintId.TaxCannotAfford);
+            return false;
+        }
 
         Resolve();
         return true;

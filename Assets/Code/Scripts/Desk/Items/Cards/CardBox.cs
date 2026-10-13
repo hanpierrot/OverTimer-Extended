@@ -27,15 +27,23 @@ public class CardBox : MonoBehaviour, IPawnable
 
     private void HandleClick(Vector2 worldPos)
     {
-        if (CardHandManager.Instance != null && !CardHandManager.Instance.HasRoom) return;
-        
         GameConfig config = GameManager.Instance.GameConfig;
+
+        if (CardHandManager.Instance != null && !CardHandManager.Instance.HasRoom)
+        {
+            HintService.Instance?.Show(HintId.HandFull, config.handCap);
+            return;
+        }
         
         int packCost = config.packCost;
         if (CostModifierService.Instance != null)
             packCost = Mathf.RoundToInt(packCost * CostModifierService.Instance.GetMultiplier(CostModifierService.Target.CardPack));
 
-        if (!MoneyService.Instance.TrySpend(packCost, "card pack")) return;
+        if (!MoneyService.Instance.TrySpend(packCost, "card pack"))
+        {
+            HintService.Instance?.Show(HintId.NotEnoughMoney);
+            return;
+        }
         
         var rolled = new CardSO[packSize];
         for (int i = 0; i < packSize; i++)

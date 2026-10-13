@@ -112,4 +112,9 @@ public class GameConfig : ScriptableObject
     public int junkLargePawnValue = 30;
     public int unrevealedCardSellValue = 10;
     public int laptopPawnValue = 300;
+    
+    [Header("Hints (§5.16)")]
+    public float hintHoldSeconds = 2.5f;
+    public float hintFadeSeconds = 0.5f;
+    public float hintRepeatCooldown = 3f;
 }

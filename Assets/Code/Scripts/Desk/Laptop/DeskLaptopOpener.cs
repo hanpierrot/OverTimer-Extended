@@ -15,7 +15,11 @@ public class DeskLaptopOpener : DeskObject, IPawnable
 
     protected override void OnClicked(Vector2 worldPos)
     {
-        if (laptopController != null && laptopController.Disabled) return;
+        if (laptopController != null && laptopController.Disabled)
+        {
+            HintService.Instance?.Show(HintId.LaptopNoPower);
+            return;
+        }
         
         laptopPanel.SetActive(true);
     }
