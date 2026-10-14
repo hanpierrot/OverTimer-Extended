@@ -66,8 +66,7 @@ public class CardRevealSlot : MonoBehaviour
         collectionButton.gameObject.SetActive(!isDebuff && !alreadyCollected);
         sellButton.gameObject.SetActive(!isDebuff);
 
-        bool hasRoom = isDebuff || CardHandManager.Instance == null || CardHandManager.Instance.HasRoom;
-        placeButton.interactable = hasRoom;
+        placeButton.interactable = true;
     }
     
     private void OnSellClicked()
@@ -79,7 +78,10 @@ public class CardRevealSlot : MonoBehaviour
 
     private void OnPlaceClicked()
     {
-        if (panel != null && panel.TryPlaceCard(_card)) Resolve();
+        if (panel == null) return;
+
+        if (panel.TryPlaceCard(_card)) Resolve();
+        else HintService.Instance?.Show(HintId.NoRoomToPlace);
     }
 
     private void OnCollectionClicked()

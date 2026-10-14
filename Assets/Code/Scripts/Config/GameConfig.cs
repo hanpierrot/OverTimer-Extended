@@ -162,6 +162,11 @@ public class GameConfig : ScriptableObject
         else if (billiardsSidePocketRadius < 1.4f * billiardsBallRadius) problem = "sidePocketRadius must be >= 1.4 x ballRadius (jaws would bounce balls out of side pockets)";
         return problem == null;
     }
+    
+    [Header("Hints (§5.16)")]
+    public float hintHoldSeconds = 2.5f;
+    public float hintFadeSeconds = 0.5f;
+    public float hintRepeatCooldown = 3f;
 }
 
 public enum AimAssistLevel { DirectionOnly, ContactPoint, FullGhost }

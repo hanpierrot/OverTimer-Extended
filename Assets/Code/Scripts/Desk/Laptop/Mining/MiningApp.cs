@@ -17,11 +17,8 @@ using UnityEngine.UI;
 /// </summary>
 public class MiningApp : LaptopApp
 {
-    [Header("Services")]
-    [SerializeField] private GameConfig config;
+    [Header("Data")]
     [SerializeField] private BlockConfig blocks;
-    [SerializeField] private MoneyService money;
-    [SerializeField] private RngService rng;
 
     [Header("UI")]
     [SerializeField] private PickaxeView pickaxe;
@@ -31,6 +28,8 @@ public class MiningApp : LaptopApp
     [SerializeField] private TMP_Text receivedLabel;
     [SerializeField] private Color filledColor = new Color(0f, 0.29644084f, 0.82641506f, 1f);
     [SerializeField] private Color unfilledColor = new Color(0.85f, 0.85f, 0.85f, 1f);
+
+    private GameConfig config => GameManager.Instance.GameConfig;
 
     private List<BlockTypeDefinition> _vein;
     private int _blockIndex;
@@ -47,7 +46,7 @@ public class MiningApp : LaptopApp
 
     public static void QueueNextVeinMultiplier(float multiplier) => _pendingNextVeinMultiplier = multiplier;
     public static void QueueNextVeinSlip() => _pendingNextVeinSlip = true;
-
+    
     private void Start()
     {
         pickaxe.Hit += OnHit;
@@ -64,7 +63,7 @@ public class MiningApp : LaptopApp
 
     private void StartVein()
     {
-        int length = rng.Random.Next(config.veinLengthMin, config.veinLengthMax + 1);
+        int length = RngService.Instance.Random.Next(config.veinLengthMin, config.veinLengthMax + 1);
         length = Mathf.Min(length, blocks.blocks.Length, statusNodes.Length);
 
         _vein = new List<BlockTypeDefinition>(length);
@@ -106,6 +105,7 @@ public class MiningApp : LaptopApp
         {
             int payoutIndex = Mathf.Min(_blockIndex, config.blockPayout.Length - 1);
             _unconfirmed += config.blockPayout[payoutIndex];
+            HintService.Instance?.ShowOnce(HintId.MiningCloseLosesOre);
             _blockIndex++;
 
             if (_blockIndex >= _vein.Count)
@@ -136,7 +136,7 @@ public class MiningApp : LaptopApp
         {
             int payout = Mathf.RoundToInt(_unconfirmed * _pendingNextVeinMultiplier);
             _pendingNextVeinMultiplier = 1f;
-            money.Add(payout, "mining vein"); 
+            MoneyService.Instance.Add(payout, "mining vein");
             _totalReceived += _unconfirmed; 
             _unconfirmed = 0;
         }
@@ -169,6 +169,8 @@ public class MiningApp : LaptopApp
         receivedLabel.text = $"Received: ${_totalReceived}";
     }
     
+    public override void OnAppOpened() => HintService.Instance?.ShowOnce(HintId.MiningOpen);
+
     public override void OnAppClosed()
     {
         _unconfirmed = 0;

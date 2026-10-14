@@ -21,6 +21,6 @@ MonoBehaviour:
   hideUntilCollected: 0
   collectionRegisterAs: {fileID: 0}
   _isDebuff: 1
-  target: 2
+  target: 3
   costMultiplier: 1.5
   duration: 20

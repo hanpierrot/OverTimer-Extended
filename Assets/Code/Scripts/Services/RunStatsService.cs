@@ -4,6 +4,9 @@ using UnityEngine;
 public class RunStatsService : MonoBehaviour
 {
     public static RunStatsService Instance { get; private set; }
+    
+    public RunRecord LastRecord { get; private set; }
+    public bool HasLastRecord { get; private set; }
 
     private const int HistorySize = 20;
     
@@ -66,8 +69,9 @@ public class RunStatsService : MonoBehaviour
             newCardsToCollection = _newCardsToCollection,
         };
 
+        LastRecord = record;
+        HasLastRecord = true;
         SaveRecord(record);
-        EndGameSummaryUI.Instance?.Show(record);
     }
     
     private void SaveRecord(RunRecord record)

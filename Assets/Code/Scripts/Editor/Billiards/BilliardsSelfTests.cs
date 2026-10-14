@@ -319,9 +319,10 @@ public static class BilliardsSelfTests
         BilliardsPendingEffects.Reset();
         Check(BallSprites.Matches("A1_0", "1") && BallSprites.Matches("C - 3_0", "11") && BallSprites.Matches("H8", "8") && !BallSprites.Matches("A1_0", "9"), "sprite match accepts Multiple-mode _0 suffix");
 
-        // --- Task 1.4: CostModifierService enum is append-only
-        Check((int)CostModifierService.Target.Ticket == 0 && (int)CostModifierService.Target.CardPack == 1 && (int)CostModifierService.Target.Billiards == 2,
-            "CostModifierService.Target: Ticket=0, CardPack=1, Billiards=2 (existing card assets keep their meaning)");
+        // --- Task 1.4: CostModifierService enum values match what the card assets store (main added Blackjack at 2)
+        Check((int)CostModifierService.Target.Ticket == 0 && (int)CostModifierService.Target.CardPack == 1
+              && (int)CostModifierService.Target.Blackjack == 2 && (int)CostModifierService.Target.Billiards == 3,
+            "CostModifierService.Target: Ticket=0, CardPack=1, Blackjack=2, Billiards=3 (card assets keep their meaning)");
 
         // --- Tasks 1.6 / 1.7: shipped presets, loaded through the real library
         var all = BilliardsPresetLibrary.All;

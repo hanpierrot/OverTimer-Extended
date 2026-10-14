@@ -80,7 +80,9 @@ public class ScratchTicket : MonoBehaviour
     {
         if (!_isPurchased || _isBeingViewed) return;
         _isBeingViewed = true;
-        
+
+        HintService.Instance?.ShowOnce(HintId.TicketOpen);
+
         if (closeButton != null) closeButton.onClick.AddListener(CashOut);
         
         PopulateWindows();

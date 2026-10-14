@@ -39,7 +39,11 @@ public class ClickTask : TaskBase, IPawnable
     
     private void HandleClick(Vector2 worldPos)
     {
-        if(IsCompleted) return;
+        if (IsCompleted)
+        {
+            HintService.Instance?.Show(HintId.ClickCooling);
+            return;
+        }
         currentClicks++;
         
         PlayWobble();

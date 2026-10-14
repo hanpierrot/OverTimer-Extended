@@ -37,7 +37,7 @@ public class PowerBankTask : HoldTask
     private IEnumerator CooldownRoutine()
     {
         var config = GameManager.Instance.GameConfig;
-        if (receiver != null) receiver.SetInteractable(false);
+        if (receiver != null) receiver.SetInteractable(false, HintId.PowerBankRecharging);
         
         yield return new WaitForSeconds(config.powerBankFullHoldDelay);
         

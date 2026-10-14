@@ -48,6 +48,7 @@ public class WireTask : TaskBase, IPawnable
 
     public void BeginPuzzle()
     {
+        HintService.Instance?.ShowOnce(HintId.WireOpen);
         ResetCompletion();
         _connectedCount = 0;
         Array.Clear(_connected, 0, _connected.Length);
