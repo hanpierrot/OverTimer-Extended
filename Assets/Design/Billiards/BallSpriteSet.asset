@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993c861ad123d5d48bed3af20b52401f, type: 3}
+  m_Name: BallSpriteSet
+  m_EditorClassIdentifier: Assembly-CSharp::BallSpriteSet
+  sprites:
+  - {fileID: -5434472166234975192, guid: 9cef7a3f1db464c47b6e728475f4defc, type: 3}
+  - {fileID: 7839472567634266479, guid: 9d445fe1695da294894ccdc9dfa1cbb7, type: 3}
+  - {fileID: -4645683575930941925, guid: fce6de5ad81efac41b57a96e0152048a, type: 3}
+  - {fileID: -22777379820428541, guid: 9cf173740303bac47a74e1bbad290733, type: 3}
+  - {fileID: 2348458413254256317, guid: 59c2e69da0e745249bbf1b24fab76bf0, type: 3}
+  - {fileID: 6021978654463231455, guid: 1767cd68e81eb1344ba3da487615ab37, type: 3}
+  - {fileID: 1455216074831392217, guid: 6c11ee2736bb33f40b34bcfdd0476539, type: 3}
+  - {fileID: -5137186597705132312, guid: e3b90a71d97707142b57dcb94687a98d, type: 3}
+  - {fileID: -5331698205089488213, guid: 457a37705adefcf48ba2053bd95e6cab, type: 3}
+  - {fileID: -8071369769190055137, guid: 48d08ca17797da6479c7702c7053678b, type: 3}
+  - {fileID: -8749400621723635973, guid: a94cb453dee3911458839997825543a6, type: 3}
+  - {fileID: -4745145993920381378, guid: cf57298b7dede8f49b5c607332022361, type: 3}
+  - {fileID: 6184791886883837419, guid: 7ccfa01d513d9a84dbff56c8a6c5818e, type: 3}
+  - {fileID: 3457386680280418162, guid: b93c0fc567fd55c48b6bca4349d46304, type: 3}
+  - {fileID: -4851624661015030125, guid: a8a8898c99c545e4d9db25177a06b347, type: 3}
+  - {fileID: -346116410210271412, guid: f3530e242c443d04a99a5280dfd3afee, type: 3}

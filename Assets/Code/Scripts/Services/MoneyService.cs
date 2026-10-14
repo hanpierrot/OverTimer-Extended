@@ -8,7 +8,13 @@ using UnityEngine;
 public class MoneyService : MonoBehaviour
 {
     public static MoneyService Instance { get; private set; }
-    
+
+    /// <summary>
+    /// Reason for money that is only a player's own stake coming back (e.g. a won Billiards bet).
+    /// It is not income: ITRS does not tax it and the run stats do not count it as earned.
+    /// </summary>
+    public const string StakeRefundReason = "stake refund";
+
     public int Current { get; private set; }
 
     /// <summary>Fired after every change. reason feeds the balance log (DESIGN.md §7.2).</summary>

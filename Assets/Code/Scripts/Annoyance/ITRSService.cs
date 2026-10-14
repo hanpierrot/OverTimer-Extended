@@ -66,7 +66,7 @@ public class ITRSService : MonoBehaviour
     {
         int delta = current - lastKnownMoney;
         lastKnownMoney = current;
-        if (delta > 0) earnedSinceLastBill += delta;
+        if (delta > 0 && reason != MoneyService.StakeRefundReason) earnedSinceLastBill += delta;
     }
 
     private void Update()

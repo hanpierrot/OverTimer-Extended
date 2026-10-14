@@ -48,7 +48,7 @@ public class RunStatsService : MonoBehaviour
     {
         int delta = current - _lastMoney;
         _lastMoney = current;
-        if (delta > 0) _totalMoneyEarned += delta; 
+        if (delta > 0 && reason != MoneyService.StakeRefundReason) _totalMoneyEarned += delta;
     }
     
     private void HandleCardRevealed() => _cardsOpened++;
