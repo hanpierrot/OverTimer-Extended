@@ -41,6 +41,153 @@ public static class BilliardsSelfTests
 
     static GameConfig NewConfig() => ScriptableObject.CreateInstance<GameConfig>();
 
+    static BilliardsPreset Table(params (string id, float x, float y)[] balls)
+    {
+        var spawns = new BallSpawn[balls.Length];
+        for (int i = 0; i < balls.Length; i++) spawns[i] = new BallSpawn { id = balls[i].id, x = balls[i].x, y = balls[i].y };
+        return new BilliardsPreset { id = "scenario", par = 1, balls = spawns, order = new[] { balls[balls.Length - 1].id } };
+    }
+
+    // ---- Phase 2 scenarios S1-S8 (+ respot checks). Run through the real sim with the default GameConfig values. ----
+    static void RunScenarios(GameConfig cfg, BilliardsPreset straight, BilliardsPreset four)
+    {
+        var prm = BilliardsSimParams.FromConfig(cfg);
+        float dt = BilliardsSim.FixedDt;
+        float r = prm.ballRadius;
+
+        // S1: the stored straight_test solution still wins. The angle is exact by construction; only the power was tuned.
+        var row = BilliardsPresetVerifier.VerifyPreset(straight, cfg);
+        Check(row.pass, "S1 straight_test solution wins on its last shot: " + row.reason);
+        var rows = BilliardsPresetVerifier.VerifyAll(cfg);
+        var fourRow = rows.Find(x => x.id == "four_in_order_01");
+        Check(fourRow != null && fourRow.skipped, "verifier skips four_in_order_01 (no solution yet): " + (fourRow != null ? fourRow.reason : "missing"));
+
+        // S2: head-on hit. First contact is the object ball, which takes almost all the speed.
+        var sim = new BilliardsSim(Table(("cue", 0.25f, 0.5f), ("1", 0.5f, 0.5f)), prm);
+        sim.Shoot(ShotInput.Quantized(0f, 0.5f));
+        for (int k = 0; k < 3000 && sim.Report.firstContact == null; k++) sim.Step();
+        sim.Step();
+        float cueSpeed = sim.Velocity(sim.IndexOf("cue")).magnitude, objSpeed = sim.Velocity(sim.IndexOf("1")).magnitude;
+        Check(sim.Report.firstContact == "1" && objSpeed > 10f * cueSpeed,
+            $"S2 head-on: first contact '1', object ball speed {objSpeed:0.00} vs cue {cueSpeed:0.000} just after impact");
+
+        // S3: lone cue into the bottom cushion. Only the normal component is reversed and scaled by the cushion restitution
+        // (the tangential component is kept), so the outgoing ANGLE is steeper than a mirror image by design.
+        sim = new BilliardsSim(Table(("cue", 0.25f, 0.5f)), prm);
+        int ci = sim.IndexOf("cue");
+        sim.Shoot(ShotInput.Quantized(-30f, 0.4f));
+        Vector2 prev = sim.Velocity(ci), after = default; bool bounced = false;
+        for (int k = 0; k < 3000 && !bounced; k++)
+        {
+            if (!sim.Step()) break;
+            Vector2 v = sim.Velocity(ci);
+            if (prev.y < 0f && v.y > 0f) { bounced = true; after = v; } else prev = v;
+        }
+        float speedBefore = prev.magnitude, keep = (speedBefore - prm.rollingDecel * dt) / speedBefore;   // friction runs before the cushion in the same step
+        float wantY = -prm.cushionRestitution * prev.y * keep, wantX = prev.x * keep;
+        Check(bounced && Math.Abs(after.y - wantY) < 0.01f * Math.Abs(wantY) + 1e-4f && Math.Abs(after.x - wantX) < 0.01f * Math.Abs(wantX) + 1e-4f,
+            $"S3 cushion: vy {prev.y:0.000} -> {after.y:0.000} (x{-after.y / (prev.y * keep):0.00}, restitution {prm.cushionRestitution}), vx kept ({prev.x * keep:0.000} -> {after.x:0.000})");
+        Check(sim.Report.firstContact == null, "S3 a cushion hit is not a first contact");
+
+        // S4: cue fired straight at the TR pocket drops, touching nothing on the way.
+        sim = new BilliardsSim(Table(("cue", 0.6f, 0.6f)), prm);
+        sim.Shoot(ShotInput.Quantized(26.6f, 0.6f));
+        var rep = sim.RunToRest();
+        Check(rep.cueScratched && rep.firstContact == null && rep.pots.Count == 1 && rep.pots[0].pocket == Pocket.TR,
+            "S4 cue straight into TR: scratched, first contact null, dropped in " + (rep.pots.Count > 0 ? rep.pots[0].pocket.ToString() : "nothing"));
+
+        // S5: 200 seeded random shots on the four_in_order_01 layout. Nothing leaves the felt, no pair stays overlapped,
+        // every shot settles before the safety cap. After each shot everything that dropped is put back.
+        var rng = new System.Random(1234);
+        sim = new BilliardsSim(four, prm);
+        int capSteps = (int)Math.Ceiling(prm.maxShotSeconds / dt);
+        float worstOut = 0f, worstOverlap = 0f; int slowest = 0; bool allSettled = true; int totalPots = 0;
+        void Inspect()
+        {
+            int n = sim.BallCount;
+            for (int i = 0; i < n; i++)
+            {
+                if (sim.IsPotted(i)) continue;
+                Vector2 pi = sim.Position(i);
+                float outside = Math.Max(Math.Max(-pi.x, pi.x - FeltMapper.TableW), Math.Max(-pi.y, pi.y - FeltMapper.TableH));
+                if (outside > worstOut) worstOut = outside;
+                for (int j = i + 1; j < n; j++)
+                {
+                    if (sim.IsPotted(j)) continue;
+                    Vector2 pj = sim.Position(j);
+                    float dx = pj.x - pi.x, dy = pj.y - pi.y;
+                    float overlap = 2f * r - (float)Math.Sqrt(dx * dx + dy * dy);
+                    if (overlap > worstOverlap) worstOverlap = overlap;
+                }
+            }
+        }
+        for (int s = 0; s < 200; s++)
+        {
+            float ang = (float)(rng.NextDouble() * 360.0 - 180.0), pw = (float)(0.05 + rng.NextDouble() * 0.95);
+            sim.Shoot(ShotInput.Quantized(ang, pw));
+            while (sim.Step()) Inspect();
+            Inspect();
+            if (sim.StepsThisShot >= capSteps) allSettled = false;
+            if (sim.StepsThisShot > slowest) slowest = sim.StepsThisShot;
+            var down = new List<string>();
+            for (int i = 0; i < sim.BallCount; i++) if (sim.IsPotted(i)) down.Add(sim.IdOf(i));
+            totalPots += down.Count;
+            sim.ApplyRespots(down);
+        }
+        Check(worstOut <= 1e-3f, $"S5 no ball outside the felt (worst overshoot {worstOut:0.00000}), {totalPots} drops over 200 shots");
+        Check(worstOverlap <= 0.01f * r, $"S5 no pair overlapping (worst {worstOverlap:0.00000} = {worstOverlap / r * 100f:0.0}% of a radius, limit 1%)");
+        Check(allSettled, $"S5 every shot settled before the safety cap (slowest {slowest} of {capSteps} steps)");
+
+        // S6: same shot twice gives the same state; a Clone behaves identically and shares nothing.
+        long RunHash(BilliardsSim s0) { s0.Shoot(ShotInput.Quantized(12.3f, 0.8f)); s0.RunToRest(); return s0.StateHash(); }
+        long h1 = RunHash(new BilliardsSim(four, prm)), h2 = RunHash(new BilliardsSim(four, prm));
+        Check(h1 == h2, "S6 same shot twice: identical StateHash");
+        var original = new BilliardsSim(four, prm);
+        long before = original.StateHash();
+        var clone = original.Clone();
+        long hc = RunHash(clone);
+        Check(original.StateHash() == before, "S6 running a Clone does not touch the original");
+        Check(hc == h1 && RunHash(original) == h1, "S6 Clone and original give the same StateHash for the same shot");
+
+        // S7: a fake frame loop (random frame times, <= 8 steps per frame, leftover carried) ends in the exact same state as RunToRest.
+        var frng = new System.Random(77);
+        var framed = new BilliardsSim(four, prm);
+        framed.Shoot(ShotInput.Quantized(5f, 0.9f));
+        double acc = 0.0; bool done = false; int frames = 0;
+        while (!done && frames < 200000)
+        {
+            frames++;
+            acc += 1.0 / 240.0 + frng.NextDouble() * (1.0 / 20.0 - 1.0 / 240.0);
+            int steps = 0;
+            while (acc >= dt && steps < 8) { acc -= dt; steps++; if (!framed.Step()) { done = true; break; } }
+            if (acc > 8 * dt) acc = 8 * dt;
+        }
+        var direct = new BilliardsSim(four, prm);
+        direct.Shoot(ShotInput.Quantized(5f, 0.9f)); direct.RunToRest();
+        Check(done && framed.StateHash() == direct.StateHash(), $"S7 frame loop ({frames} frames) ends in the same StateHash as RunToRest");
+
+        // S8: with no friction the shot never rests by itself, so the safety cap must end it. No hang.
+        var noFriction = prm; noFriction.rollingDecel = 0f; noFriction.maxShotSeconds = 2f;
+        var endless = new BilliardsSim(Table(("cue", 0.35f, 0.5f)), noFriction);
+        endless.Shoot(ShotInput.Quantized(25f, 1f));                          // 25 deg never reaches a pocket in 2 s (checked by scanning angles)
+        endless.RunToRest();
+        int wantSteps = (int)Math.Ceiling(2f / dt);
+        Check(!endless.IsMoving && endless.StepsThisShot == wantSteps, $"S8 rollingDecel 0: settled by the safety cap at step {endless.StepsThisShot} (cap {wantSteps})");
+
+        // Respot: straight_test drops ball 1 in TR and leaves the cue touching its spawn spot, so the ring search kicks in.
+        var rs = new BilliardsSim(Table(("cue", 0.6f, 0.6f), ("1", 0.8f, 0.8f)), prm);
+        rs.Shoot(ShotInput.Quantized(26.6f, 0.5f)); rs.RunToRest();
+        int ball = rs.IndexOf("1"), cue = rs.IndexOf("cue");
+        Check(rs.IsPotted(ball) && !rs.IsPotted(cue), "respot setup: ball 1 dropped, cue stayed up");
+        Vector2 spawn = new Vector2(1.6f, 0.8f), cuePos = rs.Position(cue);
+        bool spawnFree = Math.Sqrt((cuePos.x - spawn.x) * (cuePos.x - spawn.x) + (cuePos.y - spawn.y) * (cuePos.y - spawn.y)) >= 2f * r + 0.001f;
+        rs.ApplyRespots(new[] { "1" });
+        Vector2 back = rs.Position(ball);
+        Vector2 want = spawnFree ? spawn : new Vector2(spawn.x + 2.2f * r, spawn.y);                        // ring 1, candidate 0 (angle 0)
+        Check(!rs.IsPotted(ball) && Math.Abs(back.x - want.x) < 1e-4f && Math.Abs(back.y - want.y) < 1e-4f,
+            $"respot: ball 1 back at ({back.x:0.0000}, {back.y:0.0000}), expected {(spawnFree ? "its own spot" : "ring 1 / angle 0")} ({want.x:0.0000}, {want.y:0.0000})");
+    }
+
     /// Returns the number of failed checks. `log` receives one line per check.
     public static int RunAll(Action<string> log)
     {
@@ -150,6 +297,10 @@ public static class BilliardsSelfTests
         var gc = NewConfig(); Check(gc.ValidateBilliards(out _), "default billiards config valid");
         gc.billiardsBallRadius = 0.035f; gc.billiardsMaxShotSpeed = 6f;
         Check(!gc.ValidateBilliards(out var why), "earlier r=0.035/speed=6 rejected: " + why);
+        gc = NewConfig(); gc.billiardsCornerPocketRadius = 0.09f;
+        Check(!gc.ValidateBilliards(out var whyC), "corner pocket 0.09 (too tight for the jaws) rejected: " + whyC);
+        gc = NewConfig(); gc.billiardsSidePocketRadius = 0.075f;
+        Check(!gc.ValidateBilliards(out var whyS), "side pocket 0.075 (too tight for the jaws) rejected: " + whyS);
         gc = NewConfig(); gc.billiardsAssumedWinRate = new[] { 0.8f, 0f, 0.5f };
         Check(!gc.ValidateBilliards(out var why2), "win rate of 0 rejected (would divide by zero): " + why2);
         gc = NewConfig(); gc.billiardsAssumedWinRate = new[] { 0.8f, 0.5f };
@@ -185,6 +336,8 @@ public static class BilliardsSelfTests
         Check(straight != null && straight.par == 1, "straight_test: par == 1");
         foreach (var p in all)
             Check(BilliardsPresetValidator.Validate(p, cfg.billiardsParOffsets), $"validator clean for preset '{p.id}'");
+
+        if (four != null && straight != null) RunScenarios(cfg, straight, four);
 
 #if !BILLIARDS_HARNESS
         // --- Task 1.3 / 1.2: the real GameConfig asset

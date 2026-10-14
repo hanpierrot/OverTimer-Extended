@@ -101,8 +101,8 @@ MonoBehaviour:
   billiardsStrictFirstContact: 1
   billiardsFinalWrongPocketFails: 1
   billiardsBallRadius: 0.0714
-  billiardsCornerPocketRadius: 0.09
-  billiardsSidePocketRadius: 0.075
+  billiardsCornerPocketRadius: 0.15
+  billiardsSidePocketRadius: 0.12
   billiardsMaxShotSpeed: 5
   billiardsRollingDecel: 1.2
   billiardsBallRestitution: 0.95

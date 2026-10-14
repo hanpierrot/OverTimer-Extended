@@ -134,8 +134,10 @@ public class GameConfig : ScriptableObject
     [Header("Billiards - physics. Changing ANY of these invalidates stored solutions: re-run the verifier.")]
     [Tooltip("Table units; felt is 2 x 1. TBD from art once Q1 is answered: (ballCanvasPx / 2) / feltCanvasWidth * 2")]
     public float billiardsBallRadius         = 0.0714f;  // assumed Q1 default: felt 588 wide, 42 px ball
-    public float billiardsCornerPocketRadius = 0.09f;    // TBD from art (Q1)
-    public float billiardsSidePocketRadius   = 0.075f;   // TBD from art (Q1)
+    [Tooltip("Corner pocket capture radius. Needs >= 1.9 x ballRadius or the jaws bounce balls out of straight shots")]
+    public float billiardsCornerPocketRadius = 0.15f;
+    [Tooltip("Side pocket capture radius. Needs >= 1.4 x ballRadius")]
+    public float billiardsSidePocketRadius   = 0.12f;
     [Tooltip("Must satisfy maxShotSpeed / 120 < ballRadius or balls can tunnel through cushions")]
     public float billiardsMaxShotSpeed       = 5f;       // table units per second at power 1
     public float billiardsRollingDecel       = 1.2f;     // table units per second squared
@@ -156,6 +158,8 @@ public class GameConfig : ScriptableObject
         else if (billiardsAssist == null || billiardsAssist.Length != 3) problem = "billiardsAssist needs 3 entries";
         else if (billiardsBetMin <= 0 || billiardsBetMax < billiardsBetMin) problem = "bet min/max invalid";
         else if (billiardsMaxShotSpeed / 120f >= billiardsBallRadius) problem = "maxShotSpeed / 120 must be < ballRadius (tunneling)";
+        else if (billiardsCornerPocketRadius < 1.9f * billiardsBallRadius) problem = "cornerPocketRadius must be >= 1.9 x ballRadius (jaws would bounce balls out of corner pockets)";
+        else if (billiardsSidePocketRadius < 1.4f * billiardsBallRadius) problem = "sidePocketRadius must be >= 1.4 x ballRadius (jaws would bounce balls out of side pockets)";
         return problem == null;
     }
 }

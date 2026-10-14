@@ -35,6 +35,16 @@ Companion to `BILLIARDS_IMPLEMENTATION.md` (Ari's plan, kept outside the repo). 
 - `GameConfig.asset` was re-serialized by Unity (`ForceReserializeAssets`) so every field is written, including the refactor's pawn-value fields. Only additions, no live value changed.
 - Par-4 table, 7 s/shot, win payout: Easy $121 / Medium $223 / Hard $304 at a $40 bet; $30 / $56 / $76 at $10. (Replaces the plan's 82/145/180 and 20/36/45.)
 
+## Phase 2 notes (2026-10-14)
+
+- **Pocket radii changed (physics constants):** corner `0.09 -> 0.15`, side `0.075 -> 0.12` (ball radius 0.0714 unchanged). Reason: with the plan's placeholder values the jaw points bounce a ball back out of a corner pocket before it counts as dropped, even on a straight-in shot (`straight_test` potted at no power at all with 0.09). A sweep of approach angles showed corner >= 0.14 drops every angle 10-80 deg and side >= 0.12 drops every angle 20-160 deg. `GameConfig.ValidateBilliards()` now also rejects corner < 1.9 x ball radius and side < 1.4 x ball radius, so art-derived radii (Q1) can't silently undo this. **Any later change to the radii needs a verifier run.**
+- **Ball-ball step repeats (max 4 passes per tick, stops early) and a position-only cleanup after the cushion step (max 3 passes).** Not in the plan's step list. Reason: the plan's own S5 limit (no pair overlapping by more than 1% of a radius) was missed by up to 13% in tight clusters with the plain single pass. Now 0.0-0.2%. A pair that is already separating gets no second impulse, so a simple two-ball hit is unchanged.
+- **S3 expectation corrected.** The plan says the outgoing cushion angle mirrors the incoming angle, but its own sim spec reverses only the normal component and scales it by the restitution, which makes the outgoing angle steeper (tan out = 0.75 tan in). The sim spec is the physics we keep; S3 now checks vy flips and scales by the restitution while vx is unchanged. **Phase 5's reflected assist line must use the same rule, not a mirror image.**
+- **S2 uses valid coordinates** (the plan's cue 0.5 / ball 1.0 would put the ball on the cushion): cue (0.25, 0.5), ball (0.5, 0.5) in preset space.
+- Public additions to `BilliardsSim` beyond the A11 contract: `Velocity(int)` and `StepsThisShot` (tests and later previews need them).
+- `straight_test` needed no power tuning: 0.5 drops ball 1 in TR, and so does anything from 0.3 to 1.0.
+- Editor vs. plain .NET: the same 200-shot S5 sequence gave 74 drops in the Unity Editor but 85 in a .NET 8 run of the same code. Both runs pass every check; it is a real example of the Editor/WebGL determinism worry (plan P4), because the chaotic multi-ball shots amplify tiny float differences. Stored solutions must keep passing the verifier in the target runtime.
+
 ## Still open
 
 - Q1 (usable app area; shell measured at 600×375 canvas units), Q3 (art density), Q6 (who owns Phase 8 card work).
