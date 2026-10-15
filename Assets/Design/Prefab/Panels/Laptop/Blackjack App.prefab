@@ -3301,6 +3301,7 @@ GameObject:
   - component: {fileID: 7711845605451857346}
   - component: {fileID: 7944678342390160536}
   - component: {fileID: 13783206174779}
+  - component: {fileID: 7751886486213627592}
   m_Layer: 5
   m_Name: Blackjack App
   m_TagString: Untagged
@@ -4697,3 +4698,15 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7751886486213627592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5915671283442665506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d2f7a9c41b84e63a0c8e1f3b7d94a26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputBlocker

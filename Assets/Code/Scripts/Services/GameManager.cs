@@ -17,9 +17,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float endPanelDelay = 1f;
     [SerializeField] private float endPanelFadeDuration = 0.6f;
     
-    [Header("Input Blockers")]
-    [SerializeField] private GameObject[] inputBlockers;
-    
     [Header("Camera")]
     [SerializeField] private CameraVerticalScroller cameraScroller;
 
@@ -28,37 +25,56 @@ public class GameManager : MonoBehaviour
     public EndReason LastEndReason { get; private set; }
     
     public event Action<EndReason> OnGameOver;
-    
+
+    private int _pauseRequests;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
+        Freeze(false);
     }
 
     private void Start()
     {
         ClockService.Instance.OnTimeChanged += HandleTimeChanged;
         ClockService.Instance.OnCountdownFinished += HandleCountdownFinished;
+
+        InputGate.BlockedChanged += HandleInputBlockedChanged;
+        HandleInputBlockedChanged(InputGate.IsBlocked);
     }
 
-    private void Update()
+    private void OnDestroy()
+    {
+        InputGate.BlockedChanged -= HandleInputBlockedChanged;
+    }
+
+    private void HandleInputBlockedChanged(bool blocked)
     {
         if (IsGameOver) return;
-        
-        bool anyBlockerActive = false;
-        foreach (var go in inputBlockers)
-        {
-            if (go != null && go.activeInHierarchy)
-            {
-                anyBlockerActive = true;
-                break;
-            }
-        }
 
-        InputManager.Instance.IsInputEnabled = !anyBlockerActive;
-        if (cameraScroller != null) cameraScroller.SetButtonsEnabled(!anyBlockerActive);
+        if (InputManager.Instance != null) InputManager.Instance.IsInputEnabled = !blocked;
+        if (cameraScroller != null) cameraScroller.SetButtonsEnabled(!blocked);
+    }
+
+    public void PauseGame()
+    {
+        _pauseRequests++;
+        if (_pauseRequests == 1) Freeze(true);
+    }
+
+    public void ResumeGame()
+    {
+        if (_pauseRequests == 0) return;
+
+        _pauseRequests--;
+        if (_pauseRequests == 0 && !IsGameOver) Freeze(false);
+    }
+
+    private void Freeze(bool frozen)
+    {
+        Time.timeScale = frozen ? 0f : 1f;
+        AudioListener.pause = frozen;
     }
 
     private void HandleTimeChanged(float currentSeconds)
@@ -82,9 +98,8 @@ public class GameManager : MonoBehaviour
         LastEndReason = reason;
         InputManager.Instance.IsInputEnabled = false;
         ClockService.Instance.PauseCountdown();
-        Time.timeScale = 0f;
-        AudioListener.pause = true;
-        
+        Freeze(true);
+
         OnGameOver?.Invoke(reason);
         bool playing = CutsceneController.Instance != null
                        && CutsceneController.Instance.PlayEnding(reason, () => StartCoroutine(ShowEndGameDelayed(reason)));;
@@ -141,8 +156,8 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
-        Time.timeScale = 1f;
-        AudioListener.pause = false;
+        _pauseRequests = 0;
+        Freeze(false);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

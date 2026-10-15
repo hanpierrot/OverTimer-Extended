@@ -98,33 +98,29 @@ public class ClockService : MonoBehaviour
         UpdateDisplay();
     }
 
-    public void AddTime(float time)
+    /// <summary>ClockService.AddSeconds(s, reason) of DESIGN.md §7.2 - Meter and egg timer only.</summary>
+    public void AddSeconds(float seconds, string reason)
     {
-        if(IsGameOver || time <= 0f) return;
+        if(IsGameOver || seconds <= 0f) return;
         
-        RemainingTime += time;
+        RemainingTime += seconds;
         
         OnTimeChanged?.Invoke(RemainingTime);
         UpdateDisplay();
     }
 
-    public void SubstractTime(float time)
+    /// <summary>ClockService.Spend(s, reason) of DESIGN.md §7.2 - blackjack ante, penalties.</summary>
+    public void Spend(float seconds, string reason)
     {
-        if (IsGameOver || time <= 0f) return;
+        if (IsGameOver || seconds <= 0f) return;
         
-        RemainingTime = Mathf.Max(0f, RemainingTime - time);
+        RemainingTime = Mathf.Max(0f, RemainingTime - seconds);
         OnTimeChanged?.Invoke(RemainingTime);
         UpdateDisplay();
 
         if (RemainingTime <= GameManager.Instance.GameConfig.loseClock)
             EndCountdown();
     }
-
-    /// <summary>ClockService.AddSeconds(s, reason) of DESIGN.md §7.2 - Meter and egg timer only.</summary>
-    public void AddSeconds(float seconds, string reason) => AddTime(seconds);
-
-    /// <summary>ClockService.Spend(s, reason) of DESIGN.md §7.2 - blackjack ante, penalties.</summary>
-    public void Spend(float seconds, string reason) => SubstractTime(seconds);
 
     private void EndCountdown()
     {

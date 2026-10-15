@@ -73,5 +73,5 @@ public class TaxNotice : DeskObject
         if (taxPanel != null) taxPanel.Show(pendingAssessment);
     }
     
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned() => gameObject.SetActive(false);
 }

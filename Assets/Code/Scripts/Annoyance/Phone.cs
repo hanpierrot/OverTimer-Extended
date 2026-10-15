@@ -173,5 +173,5 @@ public class Phone : DeskObject
         robocallsTimer = 0f;
     }
     
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned() => gameObject.SetActive(false);
 }
