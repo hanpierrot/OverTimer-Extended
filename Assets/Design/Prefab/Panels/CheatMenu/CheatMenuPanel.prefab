@@ -1133,6 +1133,7 @@ GameObject:
   - component: {fileID: 8884510524321107279}
   - component: {fileID: 1988849222587548169}
   - component: {fileID: 4254429220851465614}
+  - component: {fileID: 3520299539311204068}
   m_Layer: 5
   m_Name: CheatMenuPanel
   m_TagString: Untagged
@@ -1223,6 +1224,20 @@ MonoBehaviour:
   cardButtonContainer: {fileID: 2908737701483860573}
   cardButtonPrefab: {fileID: 1490183428902693429, guid: 6ed74a07608fa8c4e8a08f4744a59c81, type: 3}
   cutsceneButtonContainer: {fileID: 2042878260591111479}
+--- !u!114 &3520299539311204068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3051231930290425391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91156c7b9694f0b4da7941b6e215493c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BilliardsCheats
+  buttonContainer: {fileID: 2042878260591111479}
+  buttonPrefab: {fileID: 1490183428902693429, guid: 6ed74a07608fa8c4e8a08f4744a59c81, type: 3}
 --- !u!1 &3653833752565952021
 GameObject:
   m_ObjectHideFlags: 0

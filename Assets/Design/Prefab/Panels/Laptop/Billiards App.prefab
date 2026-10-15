@@ -2257,6 +2257,7 @@ RectTransform:
   - {fileID: 782119421282588056}
   - {fileID: 2322994346991454012}
   - {fileID: 6978100736788950431}
+  - {fileID: 2858911123434546505}
   m_Father: {fileID: 8416748405879071681}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2465,6 +2466,54 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &3477874662254930431
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2858911123434546505}
+  - component: {fileID: 3130712089041454094}
+  m_Layer: 5
+  m_Name: DebugOverlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &2858911123434546505
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477874662254930431}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8058302183687621153}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3130712089041454094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477874662254930431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f04448f883b964eb62c3575243a7b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BilliardsDebugOverlay
 --- !u!1 &3563580818515990896
 GameObject:
   m_ObjectHideFlags: 0
@@ -3775,6 +3824,8 @@ MonoBehaviour:
   ballSprites: {fileID: 11400000, guid: e09282a73c0e64640ac7e744b932fa00, type: 2}
   tableView: {fileID: 6546288836017480189}
   aim: {fileID: 1351642008828340368}
+  debugOverlay: {fileID: 3130712089041454094}
+  ballArtPixel: 1
   layoutRoot: {fileID: 5276452263334532379}
   infoLabel: {fileID: 4484222800674645561}
   queueView: {fileID: 6411698858597336297}

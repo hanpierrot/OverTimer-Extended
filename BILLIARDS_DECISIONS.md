@@ -79,6 +79,19 @@ Ari: "add the table first so the game looks natural, the rest we should postpone
 - **Postponed, nothing wired in:** debug overlay (pockets, cushions, jaw points, ball radius rings), pot/respot tweens, snap-to-art-pixel drawing, cheat buttons for forcing a mirror and toggling the overlay, the four-mirror and alignment screenshots, and the profiler check of the nested canvas. Drafts of the overlay and the tweened `BallView` were written and then pulled back out; the design is in the plan (4.2, 4.3, 4.4, 4.5), they are quick to redo. Only whole-pixel ball size (`Mathf.Round`) was kept.
 - **Not measured:** that no main-canvas rebuild happens while balls roll. It holds by construction (the table is a nested Canvas), but it was not profiled.
 
+## Phase 4, postponed part done (2026-10-15)
+
+Ari: "the part that we postponed, you may continue."
+
+- **Debug overlay** (4.2): `BilliardsDebugOverlay` under `Felt` (last sibling, inactive) draws pocket capture discs (red), cushion segments (yellow), jaw points (magenta) and every ball at its exact simulated position and physical radius (blue). Needed one addition to the sim: `BilliardsSim.GetTableGeometry` (static, reads the same `BuildWalls`; no behaviour change). Disc sprite is made in code, no asset.
+- **Switches:** `BilliardsDebug` (static, session-only: overlay on/off, mirror Random/None/X/Y/XY). Reached from the cheat menu (`BilliardsCheats` component on `CheatMenuPanel`, adds two buttons to the existing cutscene list so Han's `CheatMenuController` is untouched) and from `Tools/OverTimer/Billiards/Toggle Debug Overlay` and `Mirror/...`. A forced mirror applies live to a table nobody has played yet (Racked); a round in progress keeps what it was dealt.
+- **Pot / re-spot tweens** (4.4): `BallView.Sync`. Pot = 0.15 s move to the nearest pocket centre while scaling to 0, then hidden; re-spot = punch scale. They follow `Time.timeScale` (no `SetUpdate(true)`), so a game over freezes them like everything else. Closing the app or clearing a table cancels them (`BallView.Hide`).
+- **Snap to art pixel** (4.3): balls are drawn on whole multiples of `BilliardsApp.ballArtPixel` (1 canvas unit, serialized), snapped by their bottom-left corner so even and odd diameters both stay crisp. The sim keeps its exact position; the overlay shows the exact one.
+- **Config changed by Ari in the meantime:** ball radius 0.0614 (36 px, was 42), corner pocket 0.12, side pocket 0.09. Validator still passes. Note the ball sprites are 42 px native, so they now draw at 36/42 = 0.857x (point filter, so a fixed pattern but some art pixels are dropped); a 36 px set or radius 0.0714 gives 1:1.
+- **Checked in play mode:** felt 588x294; overlay lines up (drawn pocket hole within 0.72 units of the capture radius, 1 art pixel is 3 units); cue and object balls at rest sit on whole units; a potted ball tweens into the TR pocket and ends hidden with scale 1; pot and re-spot tweens start (`DOTween.IsTweening`); the four mirrors of `four_in_order_01` render correctly and switch live; self-tests 72/72; no console errors; scene untouched. Screenshots are in `BilliardsScreenshots/` (outside Assets).
+- **Not done:** the profiler capture. The Unity profiler's recorded file could not be loaded into the analysis tools here. The nested Canvas on `Table` is the by-construction guarantee; check `Canvas.BuildBatch` in the Profiler window while a shot rolls if you want it measured.
+- **Play-mode quirk:** with the Unity window unfocused the editor sometimes pauses itself after an MCP call (`EditorApplication.isPaused`); setting it false from `execute_code` resumes.
+
 ## Still open
 
 - Q1 (usable app area; shell measured at 600×375 canvas units), Q3 (art density), Q6 (who owns Phase 8 card work).

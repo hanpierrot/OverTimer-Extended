@@ -135,6 +135,17 @@ public sealed class BilliardsSim
         return walls;
     }
 
+    /// What the simulation treats as cushion, in table space: the straight segments (the felt edge, where a ball's own
+    /// edge bounces) and the jaw points at their ends. For the debug overlay only; reads nothing from a live sim.
+    public static void GetTableGeometry(BilliardsSimParams p, List<(Vector2 a, Vector2 b)> cushions, List<Vector2> jaws)
+    {
+        var walls = BuildWalls(p, out float[] jawX, out float[] jawY);
+        foreach (var w in walls)
+            cushions.Add(w.horizontal ? (new Vector2(w.lo, w.line), new Vector2(w.hi, w.line))
+                                      : (new Vector2(w.line, w.lo), new Vector2(w.line, w.hi)));
+        for (int i = 0; i < jawX.Length; i++) jaws.Add(new Vector2(jawX[i], jawY[i]));
+    }
+
     public int BallCount => _ids.Length;
     public string IdOf(int index) => _ids[index];
     public int IndexOf(string id) => id != null && _index.TryGetValue(id, out int i) ? i : -1;
