@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +23,17 @@ public class CardPanel : MonoBehaviour
         if (closeButton != null) closeButton.onClick.AddListener(Hide);
         if (panel != null) panel.SetActive(false);
     }
-    
+
+    private void OnEnable()
+    {
+        if (GameManager.Instance != null) GameManager.Instance.PauseGame();
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
+    }
+
     public void Show(CardSO data, Sprite spriteOverride = null)
     {
         if (data == null) return;

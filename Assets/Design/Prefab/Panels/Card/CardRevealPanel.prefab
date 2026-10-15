@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6312924683048090497}
   - component: {fileID: 827415392583003868}
   - component: {fileID: 6606297596549602350}
+  - component: {fileID: 2323845309232116962}
   m_Layer: 5
   m_Name: CardRevealPanel
   m_TagString: Untagged
@@ -647,3 +648,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb60a7dd4382c2641be3655591ba471e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardRevealSlot
+--- !u!114 &2323845309232116962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4516957705520182252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d2f7a9c41b84e63a0c8e1f3b7d94a26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputBlocker

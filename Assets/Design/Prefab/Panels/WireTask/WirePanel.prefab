@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2459872349789437671}
   - component: {fileID: 925855465231627730}
   - component: {fileID: 6746959638503092062}
+  - component: {fileID: 5223943606919263402}
   m_Layer: 5
   m_Name: WirePanel
   m_TagString: Untagged
@@ -1970,3 +1971,15 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4815836722757738869, guid: cd8b5635a918e434f82aa07690f7bfc0, type: 3}
   m_PrefabInstance: {fileID: 9088490596264204926}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5223943606919263402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291695601060767997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d2f7a9c41b84e63a0c8e1f3b7d94a26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputBlocker

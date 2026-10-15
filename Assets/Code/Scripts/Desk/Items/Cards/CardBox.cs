@@ -101,5 +101,5 @@ public class CardBox : MonoBehaviour, IPawnable
         return pool[pool.Length - 1];
     }
     
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned() => gameObject.SetActive(false);
 }

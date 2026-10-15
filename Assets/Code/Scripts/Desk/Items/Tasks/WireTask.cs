@@ -139,6 +139,6 @@ public class WireTask : TaskBase, IPawnable
     {
         if (laptopController != null) laptopController.Disabled = true;
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }
