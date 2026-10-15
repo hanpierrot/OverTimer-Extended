@@ -28,6 +28,17 @@ public sealed class BilliardsRound
                                        cfg.billiardsStrictFirstContact, cfg.billiardsFinalWrongPocketFails);
     }
 
+    BilliardsRound(BilliardsRound o)
+    {
+        Preset = o.Preset; Mirror = o.Mirror; Difficulty = o.Difficulty; Bet = o.Bet;
+        ShotsLeft = o.ShotsLeft; IsOver = o.IsOver;
+        Sim = o.Sim.Clone();
+        Referee = o.Referee.Clone();
+    }
+
+    /// An independent copy in the same state (for solvers and the robustness check).
+    public BilliardsRound Clone() => new BilliardsRound(this);
+
     public void Fire(ShotInput quantizedShot)
     {
         if (IsOver || ShotsLeft <= 0) return;

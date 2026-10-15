@@ -39,11 +39,14 @@ public static class BilliardsPresetLibrary
     }
 
     /// Random table + random mirror. excludeId avoids repeating the table just played (pass null to allow).
-    public static (BilliardsPreset preset, TableMirror mirror) Draw(System.Random rng, string excludeId)
+    public static (BilliardsPreset preset, TableMirror mirror) Draw(System.Random rng, string excludeId, string forceId = null)
     {
         var all = All;
         if (all.Count == 0) return (null, default);
-        int i = rng.Next(all.Count);
+        int i = rng.Next(all.Count);                               // always consumed, so forcing a table never changes the rest of the seed
+        if (!string.IsNullOrEmpty(forceId))
+            for (int k = 0; k < all.Count; k++)
+                if (all[k].id == forceId) return (all[k], TableMirror.Roll(rng));
         if (all.Count > 1 && all[i].id == excludeId) i = (i + 1 + rng.Next(all.Count - 1)) % all.Count;
         return (all[i], TableMirror.Roll(rng));
     }

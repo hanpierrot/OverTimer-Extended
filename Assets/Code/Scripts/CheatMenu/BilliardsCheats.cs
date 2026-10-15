@@ -2,8 +2,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// Billiards test buttons for the cheat menu: the debug overlay and a forced table mirror. Adds its buttons to the
-/// same list the cutscene buttons use, so CheatMenuController itself is not touched. State lives in BilliardsDebug.
+/// Billiards test buttons for the cheat menu: the debug overlay, a forced table mirror, a forced table and the preset
+/// verifier. Adds its buttons to the same list the cutscene buttons use, so CheatMenuController itself is not touched.
+/// State lives in BilliardsDebug. The verifier is the same pure-C# code the Editor menu runs, so it works in a build.
 public class BilliardsCheats : MonoBehaviour
 {
     [SerializeField] private Transform buttonContainer;
@@ -11,6 +12,9 @@ public class BilliardsCheats : MonoBehaviour
 
     private TMP_Text _overlayLabel;
     private TMP_Text _mirrorLabel;
+    private TMP_Text _tableLabel;
+    private TMP_Text _verifyLabel;
+    private int _tableIndex = -1;                                 // -1 = random draw
 
     private void Start()
     {
@@ -18,8 +22,11 @@ public class BilliardsCheats : MonoBehaviour
 
         _overlayLabel = AddButton(ToggleOverlay);
         _mirrorLabel = AddButton(CycleMirror);
+        _tableLabel = AddButton(CycleTable);
+        _verifyLabel = AddButton(VerifyPresets);
         BilliardsDebug.Changed += Refresh;
         Refresh();
+        if (_verifyLabel != null) _verifyLabel.text = "Billiards: verify presets";
     }
 
     private void OnDestroy() => BilliardsDebug.Changed -= Refresh;
@@ -36,9 +43,35 @@ public class BilliardsCheats : MonoBehaviour
     private static void CycleMirror() =>
         BilliardsDebug.Mirror = (BilliardsDebug.MirrorMode)(((int)BilliardsDebug.Mirror + 1) % 5);
 
+    /// Random, then each table in turn, then random again.
+    private void CycleTable()
+    {
+        var all = BilliardsPresetLibrary.All;
+        _tableIndex++;
+        if (_tableIndex >= all.Count) _tableIndex = -1;
+        BilliardsDebug.PresetId = _tableIndex < 0 ? null : all[_tableIndex].id;
+    }
+
+    private void VerifyPresets()
+    {
+        var gm = GameManager.Instance;
+        var cfg = gm != null ? gm.GameConfig : null;
+        if (cfg == null || !cfg.ValidateBilliards(out string problem))
+        {
+            if (_verifyLabel != null) _verifyLabel.text = "Billiards verify: config invalid";
+            return;
+        }
+        var rows = BilliardsPresetVerifier.VerifyAll(cfg);
+        string report = BilliardsPresetVerifier.Report(rows, out int pass, out int fail, out int skipped, out int knife);
+        Debug.Log("[Billiards] Verify Presets (in-game)\n" + report);          // full per-table report goes to the console
+        if (_verifyLabel != null)
+            _verifyLabel.text = $"Verify: {pass} pass, {fail} fail, {knife} knife-edge, {skipped} skipped";
+    }
+
     private void Refresh()
     {
         if (_overlayLabel != null) _overlayLabel.text = "Billiards overlay: " + (BilliardsDebug.Overlay ? "ON" : "off");
         if (_mirrorLabel != null) _mirrorLabel.text = "Billiards mirror: " + BilliardsDebug.Mirror;
+        if (_tableLabel != null) _tableLabel.text = "Billiards table: " + (BilliardsDebug.PresetId ?? "random");
     }
 }

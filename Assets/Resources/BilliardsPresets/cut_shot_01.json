@@ -1,0 +1,18 @@
+{
+  "id": "cut_shot_01",
+  "name": "Cut It Fine",
+  "par": 2,
+  "shots": [0, 0, 0],
+  "balls": [
+    { "id": "cue", "x": 0.2, "y": 0.5 },
+    { "id": "1", "x": 0.6, "y": 0.35 },
+    { "id": "3", "x": 0.75, "y": 0.7 }
+  ],
+  "order": ["1", "3"],
+  "forbidden": [],
+  "called": [],
+  "solution": [
+    { "angle": -9.0, "power": 1.00 },
+    { "angle": 70.0, "power": 1.00 }
+  ]
+}

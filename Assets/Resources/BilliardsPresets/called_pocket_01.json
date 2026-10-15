@@ -1,0 +1,21 @@
+{
+  "id": "called_pocket_01",
+  "name": "Call Your Pocket",
+  "par": 2,
+  "shots": [0, 0, 0],
+  "balls": [
+    { "id": "cue", "x": 0.545, "y": 0.42 },
+    { "id": "1", "x": 0.28, "y": 0.7 },
+    { "id": "5", "x": 0.75, "y": 0.28 }
+  ],
+  "order": ["1", "5"],
+  "forbidden": [],
+  "called": [
+    { "ball": "1", "pocket": "TL" },
+    { "ball": "5", "pocket": "BR" }
+  ],
+  "solution": [
+    { "angle": 151.5, "power": 0.60 },
+    { "angle": -24.5, "power": 0.90 }
+  ]
+}

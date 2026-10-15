@@ -45,6 +45,67 @@ public static class AimAssist
     }
 }
 
+/// What a straight shot is going to do first, in TABLE space. Pockets are ignored on purpose: this is a guide to the
+/// first contact, not a promise of the whole shot.
+public struct AimPrediction
+{
+    public Vector2 start;           // cue ball centre
+    public Vector2 end;             // where the cue ball centre is when it first touches a ball or a cushion
+    public bool hitsBall;
+    public int ballIndex;           // sim index of the first ball hit
+    public Vector2 objectDir;       // that ball's direction after the hit
+    public Vector2 cueDir;          // the cue ball's direction after the hit
+    public float cut;               // 1 = full-ball hit, 0 = thinnest cut
+    public bool hitsCushion;        // a cushion comes first (or no ball is in the way)
+    public Vector2 reflectedDir;    // direction after bouncing off that cushion
+}
+
+public static class AimPredictor
+{
+    private static readonly List<Vector2> Positions = new List<Vector2>();
+    private static readonly List<int> Indices = new List<int>();
+
+    /// dir must be a unit vector. Returns false when there is no cue ball on the table.
+    public static bool Predict(BilliardsSim sim, Vector2 dir, out AimPrediction p)
+    {
+        p = default;
+        int cue = sim.IndexOf("cue");
+        if (cue < 0 || sim.IsPotted(cue)) return false;
+
+        float r = sim.BallRadius;
+        Vector2 start = sim.Position(cue);
+        Positions.Clear(); Indices.Clear();
+        for (int i = 0; i < sim.BallCount; i++)
+        {
+            if (i == cue || sim.IsPotted(i)) continue;
+            Positions.Add(sim.Position(i));
+            Indices.Add(i);
+        }
+
+        float tx = dir.x > 0f ? (FeltMapper.TableW - r - start.x) / dir.x : dir.x < 0f ? (r - start.x) / dir.x : float.MaxValue;
+        float ty = dir.y > 0f ? (FeltMapper.TableH - r - start.y) / dir.y : dir.y < 0f ? (r - start.y) / dir.y : float.MaxValue;
+        float tWall = Mathf.Min(tx, ty);
+
+        p.start = start;
+        bool ball = AimAssist.FirstBallContact(start, dir, Positions, r, out int hit, out float tBall);
+        if (ball && tBall <= tWall)
+        {
+            Vector2 ghost = start + dir * tBall;
+            Vector2 target = Positions[hit];
+            p.hitsBall = true;
+            p.ballIndex = Indices[hit];
+            p.end = ghost;
+            AimAssist.Deflections(ghost, target, dir, out p.objectDir, out p.cueDir, out p.cut);
+            return true;
+        }
+
+        p.hitsCushion = true;
+        p.end = start + dir * tWall;
+        p.reflectedDir = tx <= ty ? new Vector2(-dir.x, dir.y) : new Vector2(dir.x, -dir.y);
+        return true;
+    }
+}
+
 public static class UiSegment
 {
     /// Stretch an Image into a line from a to b. RectTransform pivot must be (0, 0.5).

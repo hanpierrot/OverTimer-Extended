@@ -24,6 +24,15 @@ public static class BilliardsDebug
         set { if (_mirror == value) return; _mirror = value; Changed?.Invoke(); }
     }
 
+    private static string _presetId;
+
+    /// A table id to deal every time (for testing and screenshots), or null for the normal random draw.
+    public static string PresetId
+    {
+        get => _presetId;
+        set { if (_presetId == value) return; _presetId = value; Changed?.Invoke(); }
+    }
+
     /// The mirror to draw a table with: the forced one, or the rolled one when no mirror is forced.
     public static TableMirror Apply(TableMirror rolled)
     {
