@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ public class CueAimController : MonoBehaviour, IPointerDownHandler, IDragHandler
     [SerializeField] private RectTransform aimLayer;             // stretched over the felt; the stick, lines and ghost live here
     [SerializeField] private PowerBarView powerBar;
     [SerializeField] private Sprite ghostSprite;                 // the cue ball sprite, drawn at low alpha
+    [SerializeField] private BallSpriteSet ballSprites;          // for the Trick Shot preview (one faint ball per ball)
     [SerializeField] private Sprite stickSprite;                 // optional; a plain placeholder is generated when empty
     [SerializeField, Range(0.2f, 1f)] private float maxPullFraction = 0.6f;   // of the felt height
     [SerializeField, Range(0f, 0.3f)] private float minPower = 0.05f;
@@ -25,6 +27,10 @@ public class CueAimController : MonoBehaviour, IPointerDownHandler, IDragHandler
     [SerializeField] private float stickThickness = 6f;
     [SerializeField] private float stickGap = 4f;                // between the stick tip and the ball when idle
     [SerializeField] private float stickPullBack = 40f;          // extra distance at full power
+
+    [Header("Trick Shot card")]
+    [SerializeField] private float previewInterval = 0.1f;       // seconds between simulations while the pointer moves
+    [SerializeField, Range(0f, 1f)] private float previewAlpha = 0.5f;
 
     [Header("Assist (canvas units)")]
     [SerializeField] private float predictionLength = 90f;       // object ball line at a full hit / cue line at the thinnest cut
@@ -137,6 +143,73 @@ public class CueAimController : MonoBehaviour, IPointerDownHandler, IDragHandler
 
         if (powerBar != null) powerBar.Set(shot.power, minPower);
         DrawAssist(dirTable, dirFelt, cueFelt, radius);
+
+        if (BilliardsPendingEffects.TrickShotPending) DrawTrickPreview(shot);
+        else HidePreviews();
+    }
+
+    // ================= Trick Shot card =================
+
+    private readonly List<Image> _previews = new List<Image>();
+    private ShotInput _previewShot;
+    private float _previewAt = -1f;
+
+    /// Runs this exact shot on a COPY of the simulation and shows every ball where it ends up (a ball that drops is shown
+    /// in its pocket). At most previewInterval apart, and not at all again for an unchanged shot.
+    private void DrawTrickPreview(ShotInput shot)
+    {
+        if (ballSprites == null) return;
+        bool same = _previewShot != null && _previewShot.angle == shot.angle && _previewShot.power == shot.power;
+        if (same || Time.unscaledTime - _previewAt < previewInterval) return;
+
+        var sim = _sim();
+        if (sim == null) return;
+        var copy = sim.Clone();
+        copy.Shoot(shot);
+        copy.RunToRest();
+
+        int used = 0;
+        for (int i = 0; i < copy.BallCount; i++)
+        {
+            if (sim.IsPotted(i)) continue;                        // already off the table before this shot
+            string id = copy.IdOf(i);
+            Vector2 where = copy.Position(i);
+            bool dropped = copy.IsPotted(i);
+            if (dropped)
+                foreach (var pot in copy.Report.pots)
+                    if (pot.ball == id) where = BilliardsSim.PocketCentre(pot.pocket);
+
+            Image img = Preview(used++);
+            img.sprite = ballSprites.Get(id);
+            img.color = new Color(dropped ? 0.65f : 1f, dropped ? 0.65f : 1f, dropped ? 0.65f : 1f, previewAlpha);
+            img.rectTransform.sizeDelta = Vector2.one * _ballDiameter;
+            img.rectTransform.anchoredPosition = _mapper.TableToFelt(where);
+            img.gameObject.SetActive(true);
+        }
+        for (int i = used; i < _previews.Count; i++) _previews[i].gameObject.SetActive(false);
+
+        _previewShot = shot;
+        _previewAt = Time.unscaledTime;
+    }
+
+    private Image Preview(int index)
+    {
+        while (_previews.Count <= index)
+        {
+            var go = NewImage("TrickShotBall" + _previews.Count, aimLayer != null ? aimLayer : felt);
+            go.transform.SetAsFirstSibling();                     // under the assist lines, the ghost ball and the stick
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = rt.anchorMax = Vector2.zero;
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            _previews.Add(go.GetComponent<Image>());
+        }
+        return _previews[index];
+    }
+
+    private void HidePreviews()
+    {
+        foreach (var img in _previews) if (img != null) img.gameObject.SetActive(false);
+        _previewShot = null;
     }
 
     private void DrawAssist(Vector2 dirTable, Vector2 dirFelt, Vector2 cueFelt, float radius)
@@ -189,6 +262,7 @@ public class CueAimController : MonoBehaviour, IPointerDownHandler, IDragHandler
         if (_stick != null) _stick.gameObject.SetActive(false);
         if (_ghost != null) _ghost.gameObject.SetActive(false);
         for (int i = 0; i < _lines.Length; i++) if (_lines[i] != null) _lines[i].gameObject.SetActive(false);
+        HidePreviews();
         if (powerBar != null) powerBar.Set(0f, minPower);
     }
 

@@ -14,6 +14,7 @@ public class BilliardsCheats : MonoBehaviour
     private TMP_Text _mirrorLabel;
     private TMP_Text _tableLabel;
     private TMP_Text _verifyLabel;
+    private TMP_Text _logLabel;
     private int _tableIndex = -1;                                 // -1 = random draw
 
     private void Start()
@@ -24,9 +25,24 @@ public class BilliardsCheats : MonoBehaviour
         _mirrorLabel = AddButton(CycleMirror);
         _tableLabel = AddButton(CycleTable);
         _verifyLabel = AddButton(VerifyPresets);
+        _logLabel = AddButton(ShowRoundLog);
         BilliardsDebug.Changed += Refresh;
         Refresh();
         if (_verifyLabel != null) _verifyLabel.text = "Billiards: verify presets";
+        if (_logLabel != null) _logLabel.text = "Billiards: round log";
+    }
+
+    /// Phase 9 playtest log (dev builds only): the full summary goes to the console, the button shows the totals.
+    private void ShowRoundLog()
+    {
+        var rounds = BilliardsRoundLog.LoadAll();
+        Debug.Log("[Billiards] Round log summary (" + BilliardsRoundLog.FilePath + ")\n" + BilliardsRoundLog.Summarize(rounds));
+        if (_logLabel == null) return;
+        int wins = 0;
+        foreach (var e in rounds) if (e.outcome == "Win") wins++;
+        _logLabel.text = !BilliardsRoundLog.Enabled ? "Round log: dev builds only"
+                       : rounds.Count == 0 ? "Round log: no rounds yet"
+                       : $"Round log: {rounds.Count} rounds, {wins * 100 / rounds.Count}% won";
     }
 
     private void OnDestroy() => BilliardsDebug.Changed -= Refresh;

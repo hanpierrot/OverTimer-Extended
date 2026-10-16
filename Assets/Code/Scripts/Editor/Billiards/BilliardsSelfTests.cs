@@ -385,14 +385,58 @@ public static class BilliardsSelfTests
         Check(BallSprites.SpriteNameFor("cue") == "Ball-White" && BallSprites.SpriteNameFor("1") == "A1" && BallSprites.SpriteNameFor("7") == "G7", "solid sprite names");
         Check(BallSprites.SpriteNameFor("8") == "H8" && BallSprites.SpriteNameFor("9") == "A - 1" && BallSprites.SpriteNameFor("11") == "C - 3" && BallSprites.SpriteNameFor("15") == "G - 7", "8-ball and stripe sprite names");
 
-        // --- Pending effects reset clears values and listeners
-        int fired = 0; BilliardsPendingEffects.ExtraShots = 2; BilliardsPendingEffects.ExtraShotsConsumed += () => fired++;
-        Check(BilliardsPendingEffects.TakeExtraShots() == 2 && fired == 1 && BilliardsPendingEffects.ExtraShots == 0, "extra shots consumed once, event fired");
-        BilliardsPendingEffects.CueSlip = true; BilliardsPendingEffects.Reset();
-        BilliardsPendingEffects.ExtraShots = 1; BilliardsPendingEffects.TakeExtraShots();
-        Check(!BilliardsPendingEffects.CueSlip && fired == 1, "Reset clears flags and old listeners (no leak into next run)");
+        // --- Card effects (Phase 8): grants are owned by their card; using one ends the card, withdrawing one is a pawn
         BilliardsPendingEffects.Reset();
+        var cardA = new GameObject("test card A").AddComponent<CardItem>();      // not Awake()d in edit mode: no scene needed
+        var cardB = new GameObject("test card B").AddComponent<CardItem>();
+        var cardC = new GameObject("test card C").AddComponent<CardItem>();
+        int changes = 0; BilliardsPendingEffects.Changed += () => changes++;
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.ExtraShots, 1, cardA);
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.ExtraShots, 2, cardB);
+        Check(BilliardsPendingEffects.ExtraShots == 3 && changes == 2, "P8 two Chalk Up grants add up (1 + 2), each change is announced");
+        BilliardsPendingEffects.Withdraw(cardA);
+        Check(BilliardsPendingEffects.ExtraShots == 2, "P8 withdrawing a card (pawn) drops only ITS shots");
+        Check(BilliardsPendingEffects.TakeExtraShots() == 2 && BilliardsPendingEffects.ExtraShots == 0 && BilliardsPendingEffects.TakeExtraShots() == 0,
+            "P8 extra shots are taken all at once, once");
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.CueSlip, 0.15f, cardA);
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.CueSlip, 0.10f, cardB);
+        Check(BilliardsPendingEffects.CueSlipPending && Mathf.Approximately(BilliardsPendingEffects.TakeCueSlip(), 0.15f) && BilliardsPendingEffects.CueSlipPending,
+            "P8 cue slip: ONE per shot (two cards = two shots), the first card's jitter first");
+        Check(Mathf.Approximately(BilliardsPendingEffects.TakeCueSlip(), 0.10f) && !BilliardsPendingEffects.CueSlipPending && BilliardsPendingEffects.TakeCueSlip() == 0f,
+            "P8 cue slip: the second shot uses the second card, then nothing is left");
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.TrickShot, 1f, cardC);
+        Check(BilliardsPendingEffects.TrickShotPending && BilliardsPendingEffects.TakeTrickShot() && !BilliardsPendingEffects.TrickShotPending && !BilliardsPendingEffects.TakeTrickShot(),
+            "P8 trick shot: used up by one shot");
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.ExtraShots, 1, cardA);
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.CueSlip, 0.15f, cardB);
+        BilliardsPendingEffects.Reset();
+        Check(BilliardsPendingEffects.ExtraShots == 0 && !BilliardsPendingEffects.CueSlipPending && !BilliardsPendingEffects.TrickShotPending,
+            "P8 Reset (every scene load = Restart) clears every pending effect and listener");
+        changes = 0; BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.TrickShot, 1f, cardC);
+        Check(changes == 0, "P8 Reset also dropped the old Changed listeners (no leak into the next run)");
+        BilliardsPendingEffects.Reset();
+        UnityEngine.Object.DestroyImmediate(cardA.gameObject); UnityEngine.Object.DestroyImmediate(cardB.gameObject); UnityEngine.Object.DestroyImmediate(cardC.gameObject);
         Check(BallSprites.Matches("A1_0", "1") && BallSprites.Matches("C - 3_0", "11") && BallSprites.Matches("H8", "8") && !BallSprites.Matches("A1_0", "9"), "sprite match accepts Multiple-mode _0 suffix");
+
+        // --- Phase 9: the round log (kept out of the real playtest file)
+        bool wasWriting = BilliardsRoundLog.WriteToFile;
+        BilliardsRoundLog.WriteToFile = false;
+        BilliardsRoundLog.ClearSession();
+        BilliardsRoundLog.Begin("t1", "Medium", 20, 30, 4);                                  // a card made it cost 30
+        BilliardsRoundLog.AimStarted(); BilliardsRoundLog.ShotFired(); BilliardsRoundLog.ShotJudged();
+        BilliardsRoundLog.ShotFired(); BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Win, 64);
+        var logged = BilliardsRoundLog.Entries.Count == 1 ? BilliardsRoundLog.Entries[0] : null;
+        Check(logged != null && logged.shotsUsed == 2 && logged.net == 34 && logged.outcome == "Win" && logged.charge == 30 && logged.presetId == "t1",
+            "P9 round log: a won round records its shots, outcome and net (payout 64 - charge 30 = +34)");
+        BilliardsRoundLog.Begin("t2", "Hard", 10, 10, 2);
+        BilliardsRoundLog.AimStarted(); BilliardsRoundLog.ShotFired(); BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Forfeit, 0);
+        BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Abandoned, 0);                        // nothing active: must not add a second line
+        Check(BilliardsRoundLog.Entries.Count == 2 && BilliardsRoundLog.Entries[1].net == -10 && BilliardsRoundLog.Entries[1].outcome == "Forfeit",
+            "P9 round log: a forfeit is -charge, and ending twice logs once");
+        string summary = BilliardsRoundLog.Summarize(BilliardsRoundLog.Entries);
+        Check(summary.Contains("2 round(s)") && summary.Contains("Medium") && summary.Contains("Hard"), "P9 round log: the summary covers the logged difficulties");
+        BilliardsRoundLog.ClearSession();
+        BilliardsRoundLog.WriteToFile = wasWriting;
 
         // --- Task 1.4: CostModifierService enum values match what the card assets store (main added Blackjack at 2)
         Check((int)CostModifierService.Target.Ticket == 0 && (int)CostModifierService.Target.CardPack == 1

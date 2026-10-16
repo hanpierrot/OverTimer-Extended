@@ -2319,6 +2319,7 @@ MonoBehaviour:
   aimLayer: {fileID: 6978100736788950431}
   powerBar: {fileID: 6602730167997806111}
   ghostSprite: {fileID: -5434472166234975192, guid: 9cef7a3f1db464c47b6e728475f4defc, type: 3}
+  ballSprites: {fileID: 11400000, guid: e09282a73c0e64640ac7e744b932fa00, type: 2}
   stickSprite: {fileID: 0}
   maxPullFraction: 0.6
   minPower: 0.05
@@ -2326,6 +2327,8 @@ MonoBehaviour:
   stickThickness: 6
   stickGap: 4
   stickPullBack: 40
+  previewInterval: 0.1
+  previewAlpha: 0.5
   predictionLength: 90
   reflectLength: 45
   pathColor: {r: 1, g: 1, b: 1, a: 0.9}

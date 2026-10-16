@@ -71,8 +71,10 @@ public class BilliardsApp : LaptopApp
     private FeltMapper _mapper;
     private string _lastPlayedId;
     private string _notice;
+    private string _shotNote;                                    // what a card did to the shot in flight (cue slip), shown with the result
+    private float _shownMultiplier = 1f;                         // the cost multiplier the racked screen was last drawn with
     private NoticeKind _noticeKind;
-    private bool _noticeFresh;                                   // the status line just changed: give it a little punch
+    private bool _noticeFresh;                                  // the status line just changed: give it a little punch
     private IReadOnlyList<string> _pendingPopped, _pendingRespot; // what the last shot did, handed to the queue strip once
     private readonly HashSet<string> _pocketed = new HashSet<string>();
     private Color _statusBase, _shotsBase;
@@ -138,6 +140,7 @@ public class BilliardsApp : LaptopApp
                 // The shot is already out: walking away now would be a free reset after a miss.
                 _notice = "You left mid-shot. That bet is lost.";
                 _noticeKind = NoticeKind.Bad;
+                BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Forfeit, 0);
                 ClearTable();
                 break;
             case State.Won:
@@ -147,6 +150,8 @@ public class BilliardsApp : LaptopApp
             // Racked and Aiming keep the table exactly as it is.
         }
     }
+
+    private void OnDestroy() => BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Abandoned, 0);   // Restart with a round on the table
 
     private void OnDisable()
     {
@@ -385,8 +390,16 @@ public class BilliardsApp : LaptopApp
 
         _charge = charge;
         _payoutOnWin = BilliardsPayout.OnWin(_bet, _difficulty, _preset, _cfg);             // from the BASE bet, not the charge
-        _round = new BilliardsRound(_preset, _mirror, _difficulty, _bet, _cfg);
-        _notice = null;
+        // Chalk Up cards: taken only now, after the bet was really paid, so a refused Play never uses one up. The payout
+        // stays the one for the difficulty's normal shots: extra shots are the card's gift, not a cheaper table.
+        int extraShots = BilliardsPendingEffects.TakeExtraShots();
+        _round = new BilliardsRound(_preset, _mirror, _difficulty, _bet, _cfg, extraShots);
+        _notice = extraShots > 0 ? $"Chalk Up: +{extraShots} extra {(extraShots == 1 ? "shot" : "shots")}" : null;
+        _noticeKind = NoticeKind.Good;
+        _noticeFresh = extraShots > 0;
+        _shotNote = null;
+        BilliardsRoundLog.Begin(_preset.id, _difficulty.ToString(), _bet, charge, _round.ShotsLeft);
+        BilliardsRoundLog.AimStarted();
         _state = State.Aiming;
         BindTable();
         ShowState();
@@ -407,8 +420,23 @@ public class BilliardsApp : LaptopApp
         if (_state != State.Aiming || _round == null || IsGameOver()) return;
         if (_round.ShotsLeft <= 0) return;
 
+        // Card effects that act on the shot itself. Cue Slip changes the power BEFORE quantizing (random draw from the
+        // run's seeded RngService), so the simulation still receives one exact, replayable input.
+        _shotNote = null;
+        float slip = BilliardsPendingEffects.TakeCueSlip();
+        if (slip > 0f)
+        {
+            var rng = RngService.Instance;
+            float factor = 1f + (rng != null ? (float)(rng.Random.NextDouble() * 2.0 - 1.0) : 0f) * slip;
+            var slipped = ShotInput.Quantized(shot.angle, shot.power * factor);
+            _shotNote = $"Cue slip! power {shot.power:0.00} became {slipped.power:0.00}";
+            shot = slipped;
+        }
+        BilliardsPendingEffects.TakeTrickShot();                                    // the preview was available for this shot: used up
+
         _headBeforeShot = _round.Referee.Head;
         _round.Fire(shot);
+        BilliardsRoundLog.ShotFired();
         _pocketed.Clear();
         _acc = 0f;
         _state = State.Rolling;
@@ -422,8 +450,12 @@ public class BilliardsApp : LaptopApp
         if (IsGameOver())                                         // freeze: no input, no money, nothing moves
         {
             if (aim != null) aim.SetActive(false);
+            BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Abandoned, 0);
             return;
         }
+        // A cost-modifier card can arrive or run out while the racked screen is open: redraw the price when it changes.
+        if (_state == State.Racked && _preset != null && !Mathf.Approximately(CostMultiplier(), _shownMultiplier)) RefreshRacked();
+
         if (_state != State.Rolling || _round == null) return;
 
         _acc += Time.deltaTime;
@@ -465,17 +497,27 @@ public class BilliardsApp : LaptopApp
             _state = State.Won;
             if (resultLabel != null) resultLabel.text = $"TABLE CLEARED!\n+${profit} profit  (${_payoutOnWin} back)";
             OnWin?.Invoke(profit);
+            BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Win, _payoutOnWin);
         }
         else if (result.verdict == Verdict.Fail)
         {
             _state = State.Lost;
             if (resultLabel != null) resultLabel.text = $"TABLE LOST\n{result.failReason}";
             OnFail?.Invoke(result.failReason);
+            BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Lost, 0);
         }
         else
         {
             _state = State.Aiming;
             if (result.foul) OnFoul?.Invoke(message);
+            BilliardsRoundLog.ShotJudged();
+        }
+        if (_shotNote != null)                                    // a card changed this shot: say so, whatever happened
+        {
+            if ((_state == State.Won || _state == State.Lost) && resultLabel != null) resultLabel.text += "\n" + _shotNote;
+            message = string.IsNullOrEmpty(message) ? _shotNote : _shotNote + "  ·  " + message;
+            if (_noticeKind == NoticeKind.Info) _noticeKind = NoticeKind.Bad;
+            _shotNote = null;
         }
         _notice = message;
         _noticeFresh = !string.IsNullOrEmpty(message);
@@ -563,7 +605,9 @@ public class BilliardsApp : LaptopApp
             if (_state == State.Racked) statusLabel.text = _notice ?? "Pick a difficulty to start";
             else if (_state == State.Won || _state == State.Lost) statusLabel.text = "";
             else statusLabel.text = !string.IsNullOrEmpty(_notice) ? _notice
-                                  : _state == State.Aiming ? "Drag back from the table and release to shoot" : "";
+                                  : _state == State.Aiming ? (BilliardsPendingEffects.TrickShotPending
+                                        ? "Trick Shot ready: the faint balls show where everything ends up"
+                                        : "Drag back from the table and release to shoot") : "";
 
             bool coloured = hasNotice || (_state == State.Racked && !string.IsNullOrEmpty(_notice));
             statusLabel.color = !coloured ? _statusBase
@@ -611,6 +655,7 @@ public class BilliardsApp : LaptopApp
     {
         if (_state != State.Racked || _preset == null || !_available) return;
 
+        _shownMultiplier = CostMultiplier();
         int cap = MaxAffordableBet();
         bool canPlay = cap >= _cfg.billiardsBetMin;
         _bet = Mathf.Clamp(_bet, _cfg.billiardsBetMin, Mathf.Max(_cfg.billiardsBetMin, Mathf.Min(_cfg.billiardsBetMax, cap)));

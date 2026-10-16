@@ -41,11 +41,62 @@ public class MiningApp : LaptopApp
     
     private static float _pendingNextVeinMultiplier = 1f;
     private static bool _pendingNextVeinSlip;
-    
+
+    // The cards that queued each effect. The app ends them when it uses the effect, and a card that goes away first
+    // (pawned) withdraws its effect: before, the effect stayed queued and the card's event handler stayed subscribed, so
+    // "pawn it, keep the effect" worked and a stale handler could end an unrelated card that reused the same CardItem.
+    private static readonly List<CardItem> _multiplierCards = new List<CardItem>();
+    private static readonly List<CardItem> _slipCards = new List<CardItem>();
+
+    /// Still raised when a queued effect is used; the cards no longer rely on it (they are ended directly).
     public static event Action OnNextVeinEffectResolved;
 
-    public static void QueueNextVeinMultiplier(float multiplier) => _pendingNextVeinMultiplier = multiplier;
-    public static void QueueNextVeinSlip() => _pendingNextVeinSlip = true;
+    public static void QueueNextVeinMultiplier(float multiplier, CardItem owner = null)
+    {
+        _pendingNextVeinMultiplier = multiplier;
+        if (owner != null && !_multiplierCards.Contains(owner)) _multiplierCards.Add(owner);
+    }
+
+    public static void QueueNextVeinSlip(CardItem owner = null)
+    {
+        _pendingNextVeinSlip = true;
+        if (owner != null && !_slipCards.Contains(owner)) _slipCards.Add(owner);
+    }
+
+    /// A card's OnRemoved: whatever it queued and the app has not used yet is dropped (the last card of a kind clears the effect).
+    public static void WithdrawNextVeinEffects(CardItem owner)
+    {
+        if (owner == null) return;
+        if (_multiplierCards.Remove(owner) && _multiplierCards.Count == 0) _pendingNextVeinMultiplier = 1f;
+        if (_slipCards.Remove(owner) && _slipCards.Count == 0) _pendingNextVeinSlip = false;
+    }
+
+    private static void EndOwners(List<CardItem> owners)
+    {
+        var done = owners.ToArray();
+        owners.Clear();                                           // cleared first: EndEffect -> OnRemoved -> Withdraw must find nothing
+        foreach (var card in done) if (card != null) card.EndEffect();
+    }
+
+    /// Restart is a scene reload and statics survive it: without this an unused card's effect (and its listeners) leaked into the next run.
+    public static void ResetPending()
+    {
+        _pendingNextVeinMultiplier = 1f;
+        _pendingNextVeinSlip = false;
+        _multiplierCards.Clear();
+        _slipCards.Clear();
+        OnNextVeinEffectResolved = null;
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void HookPendingReset()
+    {
+        ResetPending();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoadedReset;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoadedReset;
+    }
+
+    private static void OnSceneLoadedReset(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => ResetPending();
     
     private void Start()
     {
@@ -127,22 +178,29 @@ public class MiningApp : LaptopApp
     {
         bool hadPendingEffect = _pendingNextVeinSlip || _pendingNextVeinMultiplier != 1f;
 
+        bool slipUsed = false, multiplierUsed = false;
         if (_pendingNextVeinSlip)
         {
             _pendingNextVeinSlip = false;
             _unconfirmed = 0;
+            slipUsed = true;
         }
         else
         {
+            multiplierUsed = _pendingNextVeinMultiplier != 1f;
             int payout = Mathf.RoundToInt(_unconfirmed * _pendingNextVeinMultiplier);
             _pendingNextVeinMultiplier = 1f;
             MoneyService.Instance.Add(payout, "mining vein");
-            _totalReceived += _unconfirmed; 
+            _totalReceived += _unconfirmed;
             _unconfirmed = 0;
         }
-        
+
         RefreshLabels();
-        
+
+        // End exactly the cards whose effect was just used (a slip no longer ends a Lucky Ruby that is still waiting).
+        if (slipUsed) EndOwners(_slipCards);
+        if (multiplierUsed) EndOwners(_multiplierCards);
+
         if (hadPendingEffect) OnNextVeinEffectResolved?.Invoke();
     }
 
