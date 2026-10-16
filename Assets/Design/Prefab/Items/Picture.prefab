@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4104949027403663724}
   - component: {fileID: 439550290239436310}
   - component: {fileID: 3212747497556712805}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Picture
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,7 +167,6 @@ MonoBehaviour:
   wobbleAngle: 5
   wobbleDuration: 0.4
   wobbleCycles: 3
-  pawnValue: 20
   spriteRenderer: {fileID: 3472341762601470726}
   normalSprite: {fileID: 7082200727899390915, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}
   reactSprite: {fileID: -412419664, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}

@@ -93,7 +93,25 @@ public class CatController : MonoBehaviour
 
     private void HandleDragUpdate(Vector2 worldPos) => transform.position = worldPos;
 
-    private void HandleDragEnd(Vector2 worldPos) => _sm.ChangeState(CatState.Wandering);
+    private void HandleDragEnd(Vector2 worldPos)
+    {
+        KeepInsideArea();
+        _sm.ChangeState(CatState.Wandering);
+    }
+
+    private void KeepInsideArea()
+    {
+        Vector3 pos = transform.position;
+
+        bool inside = pos.x >= areaMin.x && pos.x <= areaMax.x
+                                         && pos.y >= areaMin.y && pos.y <= areaMax.y;
+        if (inside) return;
+
+        transform.position = new Vector3(
+            Mathf.Clamp(pos.x, areaMin.x, areaMax.x),
+            Mathf.Clamp(pos.y, areaMin.y, areaMax.y),
+            pos.z);
+    }
 
     private void EnterDragged()
     {
