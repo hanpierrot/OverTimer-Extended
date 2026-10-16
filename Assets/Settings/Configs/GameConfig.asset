@@ -52,11 +52,11 @@ MonoBehaviour:
   annoyanceMinGap: 12
   crankTime: 1
   timePayout: 3
-  catSitDurationMin: 3
-  catSitDurationMax: 8
+  catSitDurationMin: 6
+  catSitDurationMax: 14
   catBlockChance: 0.4
-  catBlockDurationMin: 4
-  catBlockDurationMax: 8
+  catBlockDurationMin: 3
+  catBlockDurationMax: 6
   clickTaskMinClicks: 3
   clickTaskMaxClicks: 8
   clickTaskLockDuration: 3
@@ -112,3 +112,13 @@ MonoBehaviour:
   hintHoldSeconds: 2.5
   hintFadeSeconds: 0.5
   hintRepeatCooldown: 3
+  ratingOutcomeWeight: 0.5
+  ratingSurvivalWeight: 0.3
+  ratingMoneyWeight: 0.2
+  ratingMoneyHalfPoint: 300
+  ratingClockWin: 1
+  ratingSetCompletionWin: 0.95
+  ratingFinalCountdownWin: 0.95
+  ratingClockLoss: 0
+  ratingFinalCountdownLoss: 0.1
+  ratingCreepyJesterLoss: 0

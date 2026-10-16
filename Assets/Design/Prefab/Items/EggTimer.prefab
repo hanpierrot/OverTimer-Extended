@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7195199661853746846}
   - component: {fileID: 3811783535577434176}
   - component: {fileID: 6121239979663772902}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: EggTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,7 +154,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1199c486f6137844085e34d1686a487e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EggTimerTask
-  pawnValue: 120
   spriteRenderer: {fileID: 6094388511469660298}
   holdSprites:
   - {fileID: -105724935, guid: d386967dad74a9f4492dac04659e991a, type: 3}
