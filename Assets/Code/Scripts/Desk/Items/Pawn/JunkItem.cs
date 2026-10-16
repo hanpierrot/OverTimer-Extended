@@ -23,5 +23,5 @@ public class JunkItem : MonoBehaviour, IPawnable
     
     public bool CanBePawned => true;
 
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned() => gameObject.SetActive(false);
 }

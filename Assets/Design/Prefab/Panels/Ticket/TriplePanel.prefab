@@ -89,6 +89,7 @@ GameObject:
   - component: {fileID: 5731415642426492631}
   - component: {fileID: 3561408369032394233}
   - component: {fileID: 9219746418664909779}
+  - component: {fileID: 7856961533550379417}
   m_Layer: 5
   m_Name: TriplePanel
   m_TagString: Untagged
@@ -719,3 +720,15 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2743356900814001434, guid: ecf6fa0ef7614b74da9cc0c04adf0ec0, type: 3}
   m_PrefabInstance: {fileID: 5865503609548338113}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7856961533550379417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4441626549428542317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d2f7a9c41b84e63a0c8e1f3b7d94a26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputBlocker

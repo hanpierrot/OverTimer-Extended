@@ -74,5 +74,5 @@ public class TicketStack : MonoBehaviour, IPawnable
         return new Vector2(x, y);
     }
     
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned() => gameObject.SetActive(false);
 }

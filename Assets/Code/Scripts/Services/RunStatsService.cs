@@ -67,8 +67,10 @@ public class RunStatsService : MonoBehaviour
             totalMoneyEarned = _totalMoneyEarned,
             cardsOpened = _cardsOpened,
             newCardsToCollection = _newCardsToCollection,
+            runNumber = PlayerPrefs.GetInt("RunHistory_Total", 0) + 1,
         };
 
+        PlayerPrefs.SetInt("RunHistory_Total", record.runNumber);
         LastRecord = record;
         HasLastRecord = true;
         SaveRecord(record);

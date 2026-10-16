@@ -88,5 +88,9 @@ public class ClickTask : TaskBase, IPawnable
         ResetCompletion();
     }
     
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned()
+    {
+        DOTween.Kill(this);
+        gameObject.SetActive(false);
+    }
 }

@@ -8,4 +8,5 @@ public struct RunRecord
     public int totalMoneyEarned;
     public int cardsOpened;
     public int newCardsToCollection;
+    public int runNumber;
 }

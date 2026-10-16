@@ -77,8 +77,8 @@ public abstract class HoldTask : TaskBase, IPawnable
 
     protected override void ApplyReward()
     {
-        ClockService.Instance.AddTime(GameManager.Instance.GameConfig.timePayout);
+        ClockService.Instance.AddSeconds(GameManager.Instance.GameConfig.timePayout, "hold task");
     }
     
-    public void OnPawned() => Destroy(gameObject);
+    public void OnPawned() => gameObject.SetActive(false);
 }

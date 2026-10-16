@@ -36,14 +36,20 @@ public class CheatMenuController : MonoBehaviour
 
     private void GiveMoney()
     {
-        if (int.TryParse(moneyAmountInput.text, out int amount) && amount > 0)
-            MoneyService.Instance.Add(amount, "cheat");
+        if (int.TryParse(moneyAmountInput.text, out int amount))
+            if(amount > 0f)
+                MoneyService.Instance.Add(amount, "cheat");
+            else
+                MoneyService.Instance.TrySpend(amount, "cheat");
     }
 
     private void GiveTime()
     {
-        if (float.TryParse(timeAmountInput.text, out float seconds) && seconds > 0f)
-            ClockService.Instance.AddSeconds(seconds, "cheat");
+        if (float.TryParse(timeAmountInput.text, out float seconds))
+            if(seconds > 0f)
+                ClockService.Instance.AddSeconds(seconds, "cheat");
+            else
+                ClockService.Instance.Spend(seconds, "cheat");
     }
 
     private void BuildCardButtons()

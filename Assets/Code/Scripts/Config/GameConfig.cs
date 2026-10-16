@@ -167,6 +167,18 @@ public class GameConfig : ScriptableObject
     public float hintHoldSeconds = 2.5f;
     public float hintFadeSeconds = 0.5f;
     public float hintRepeatCooldown = 3f;
+
+    [Header("Run Rating")]
+    public float ratingOutcomeWeight = 0.5f;
+    public float ratingSurvivalWeight = 0.3f;
+    public float ratingMoneyWeight = 0.2f;
+    public float ratingMoneyHalfPoint = 300f;
+    public float ratingClockWin = 1f;
+    public float ratingSetCompletionWin = 0.95f;
+    public float ratingFinalCountdownWin = 0.95f;
+    public float ratingClockLoss = 0f;
+    public float ratingFinalCountdownLoss = 0.1f;
+    public float ratingCreepyJesterLoss = 0f;
 }
 
 public enum AimAssistLevel { DirectionOnly, ContactPoint, FullGhost }
