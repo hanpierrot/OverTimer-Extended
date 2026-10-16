@@ -41,7 +41,40 @@ public class ScratchTicket : MonoBehaviour
     public static event Action OnPreRevealDelivered;
     
     public TicketTierKind TierKind => tierKind;
-    public static void QueuePreRevealWindow() => _pendingPreRevealWindow = true;
+    // Cards that queued the window and have not been served yet. A ticket takes them when it is bought and ends them when
+    // the window is delivered; a card that goes away first withdraws (see MiningApp for why).
+    private static readonly List<CardItem> _preRevealCards = new List<CardItem>();
+    private CardItem[] _windowOwners = System.Array.Empty<CardItem>();
+
+    public static void QueuePreRevealWindow(CardItem owner = null)
+    {
+        _pendingPreRevealWindow = true;
+        if (owner != null && !_preRevealCards.Contains(owner)) _preRevealCards.Add(owner);
+    }
+
+    public static void WithdrawPreRevealWindow(CardItem owner)
+    {
+        if (owner == null) return;
+        if (_preRevealCards.Remove(owner) && _preRevealCards.Count == 0) _pendingPreRevealWindow = false;
+    }
+
+    /// Restart is a scene reload and statics survive it: without this an unused Insider Tip leaked into the next run.
+    public static void ResetPending()
+    {
+        _pendingPreRevealWindow = false;
+        _preRevealCards.Clear();
+        OnPreRevealDelivered = null;
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void HookPendingReset()
+    {
+        ResetPending();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoadedReset;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoadedReset;
+    }
+
+    private static void OnSceneLoadedReset(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => ResetPending();
     
     private GameConfig Config => GameManager.Instance.GameConfig;
 
@@ -99,6 +132,8 @@ public class ScratchTicket : MonoBehaviour
         {
             _pendingPreRevealWindow = false;
             _hasPreRevealWindow = true;
+            _windowOwners = _preRevealCards.ToArray();            // this ticket now owes the window to these cards
+            _preRevealCards.Clear();
         }
         
         RollSymbols();
@@ -140,6 +175,9 @@ public class ScratchTicket : MonoBehaviour
             _hasPreRevealWindow = false;
             int idx = RngService.Instance.Random.Next(windows.Length);
             windows[idx].Reveal();
+            var served = _windowOwners;
+            _windowOwners = System.Array.Empty<CardItem>();
+            foreach (var card in served) if (card != null) card.EndEffect();
             OnPreRevealDelivered?.Invoke();
         }
     }

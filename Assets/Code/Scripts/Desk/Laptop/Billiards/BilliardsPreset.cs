@@ -55,7 +55,8 @@ public class BilliardsPreset
 
 public static class BilliardsPresetValidator
 {
-    public static bool Validate(BilliardsPreset p, int[] parOffsets)
+    /// physics: when given, also checks that no two balls overlap at the start and none starts inside a pocket.
+    public static bool Validate(BilliardsPreset p, int[] parOffsets, BilliardsSimParams? physics = null)
     {
         bool ok = true;
         void Warn(string msg) { Debug.LogWarning($"[Billiards:{p.id}] {msg}"); ok = false; }
@@ -78,6 +79,29 @@ public static class BilliardsPresetValidator
             if (b.x < 0f || b.x > 1f || b.y < 0f || b.y > 1f) Warn($"ball {b.id} is off the felt ({b.x}, {b.y})");
         }
         if (cues != 1) Warn($"need exactly one cue ball, found {cues}");
+
+        if (physics.HasValue && p.balls != null)
+        {
+            float r = physics.Value.ballRadius;
+            for (int i = 0; i < p.balls.Length; i++)
+            {
+                var a = p.balls[i];
+                Vector2 pa = new Vector2(a.x * FeltMapper.TableW, a.y * FeltMapper.TableH);   // preset space is stretched 2:1
+                for (int j = i + 1; j < p.balls.Length; j++)
+                {
+                    var b = p.balls[j];
+                    float d = Vector2.Distance(pa, new Vector2(b.x * FeltMapper.TableW, b.y * FeltMapper.TableH));
+                    if (d < 2f * r) Warn($"balls {a.id} and {b.id} overlap at the start (centres {d:0.000} apart, need {2f * r:0.000})");
+                }
+                foreach (Pocket pk in Enum.GetValues(typeof(Pocket)))
+                {
+                    bool side = pk == Pocket.TM || pk == Pocket.BM;
+                    float rad = side ? physics.Value.sidePocketRadius : physics.Value.cornerPocketRadius;
+                    if (Vector2.Distance(pa, BilliardsSim.PocketCentre(pk)) < rad + r)
+                        Warn($"ball {a.id} starts too close to pocket {pk}");
+                }
+            }
+        }
         if (p.order == null || p.order.Length == 0) Warn("order is empty");
         foreach (var id in p.order ?? Array.Empty<string>())     if (!ids.Contains(id)) Warn($"order names missing ball '{id}'");
         foreach (var id in p.forbidden ?? Array.Empty<string>()) if (!ids.Contains(id)) Warn($"forbidden names missing ball '{id}'");

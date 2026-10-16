@@ -58,9 +58,11 @@ public static class BilliardsSelfTests
         // S1: the stored straight_test solution still wins. The angle is exact by construction; only the power was tuned.
         var row = BilliardsPresetVerifier.VerifyPreset(straight, cfg);
         Check(row.pass, "S1 straight_test solution wins on its last shot: " + row.reason);
-        var rows = BilliardsPresetVerifier.VerifyAll(cfg);
-        var fourRow = rows.Find(x => x.id == "four_in_order_01");
-        Check(fourRow != null && fourRow.skipped, "verifier skips four_in_order_01 (no solution yet): " + (fourRow != null ? fourRow.reason : "missing"));
+        // Every shipped table, against the REAL GameConfig asset: solutions are recorded against its physics (this file's
+        // NewConfig() uses the code defaults, which differ), and none may be a knife-edge.
+        var realCfg = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Settings/Configs/GameConfig.asset");
+        foreach (var vr in BilliardsPresetVerifier.VerifyAll(realCfg))
+            Check(vr.skipped || (vr.pass && !vr.knifeEdge), $"verifier (real config) {vr.id}: {vr.reason}{(vr.checkedRobustness ? $"; robust {vr.robust * 100:0}%" : "")}");
 
         // S2: head-on hit. First contact is the object ball, which takes almost all the speed.
         var sim = new BilliardsSim(Table(("cue", 0.25f, 0.5f), ("1", 0.5f, 0.5f)), prm);
@@ -186,6 +188,79 @@ public static class BilliardsSelfTests
         Vector2 want = spawnFree ? spawn : new Vector2(spawn.x + 2.2f * r, spawn.y);                        // ring 1, candidate 0 (angle 0)
         Check(!rs.IsPotted(ball) && Math.Abs(back.x - want.x) < 1e-4f && Math.Abs(back.y - want.y) < 1e-4f,
             $"respot: ball 1 back at ({back.x:0.0000}, {back.y:0.0000}), expected {(spawnFree ? "its own spot" : "ring 1 / angle 0")} ({want.x:0.0000}, {want.y:0.0000})");
+
+        // --- Phase 5: the assist's prediction against the real simulation
+        // 20 seeded aims at four_in_order_01: whenever the prediction says a ball is hit first, that ball must be Report.firstContact.
+        // Most aims are pointed at a random ball (+-12 degrees) so most of them really do hit one; every 4th is a free aim.
+        var aimRng = new System.Random(20261015);
+        int predicted = 0, agreed = 0, cushionFirst = 0;
+        for (int k = 0; k < 20; k++)
+        {
+            var layout = new BilliardsSim(four, prm);
+            Vector2 from = layout.Position(layout.IndexOf("cue"));
+            float bearing = (float)(aimRng.NextDouble() * 360.0 - 180.0);
+            if (k % 4 != 3)
+            {
+                int pick; do { pick = aimRng.Next(layout.BallCount); } while (pick == layout.IndexOf("cue"));
+                Vector2 toBall = layout.Position(pick) - from;
+                bearing = Mathf.Atan2(toBall.y, toBall.x) * Mathf.Rad2Deg + (float)(aimRng.NextDouble() * 24.0 - 12.0);
+            }
+            var shot = ShotInput.Quantized(bearing, 1f);
+            bool ok = AimPredictor.Predict(layout, shot.Direction, out AimPrediction pr);
+            layout.Shoot(shot); layout.RunToRest();
+            if (!ok) continue;
+            if (!pr.hitsBall) { cushionFirst++; continue; }
+            predicted++;
+            string firstId = layout.Report.firstContact;
+            if (firstId == layout.IdOf(pr.ballIndex)) agreed++;
+            else _log($"  aim {k}: angle {shot.angle:0.0} predicted '{layout.IdOf(pr.ballIndex)}', report says '{firstId ?? "nothing"}'");
+        }
+        Check(predicted > 0 && agreed == predicted, $"P5 prediction: {agreed}/{predicted} predicted first contacts match Report.firstContact ({cushionFirst} aims went to a cushion first)");
+
+        // The ball the prediction names leaves along the predicted direction (equal masses, no spin) - checked on a clean one-ball layout.
+        int dirOk = 0, dirTried = 0;
+        foreach (float a in new[] { -11f, -5f, 0f, 7f, 11f })
+        {
+            var one = new BilliardsSim(Table(("cue", 0.2f, 0.5f), ("1", 0.5f, 0.5f)), prm);
+            var sh = ShotInput.Quantized(a, 0.6f);
+            if (!AimPredictor.Predict(one, sh.Direction, out AimPrediction pr1) || !pr1.hitsBall) continue;
+            one.Shoot(sh);
+            int target = one.IndexOf("1");
+            for (int i = 0; i < 4000 && one.Step(); i++)
+            {
+                Vector2 v = one.Velocity(target);
+                if (v.sqrMagnitude <= 1e-8f) continue;
+                dirTried++;
+                if (Vector2.Angle(v, pr1.objectDir) < 1.0f) dirOk++;
+                else _log($"  cut {a:0.0}: ball left at {Vector2.SignedAngle(Vector2.right, v):0.0} deg, predicted {Vector2.SignedAngle(Vector2.right, pr1.objectDir):0.0} deg");
+                break;
+            }
+        }
+        Check(dirTried == 5 && dirOk == dirTried, $"P5 prediction: object ball leaves along the predicted line in {dirOk}/{dirTried} cuts (within 1 degree)");
+
+        // --- Phase 7: clone isolation, overlap validation, robustness
+        var baseRound = new BilliardsRound(four, new TableMirror(false, false), BilliardsDifficulty.Easy, 10, cfg);
+        long baseHash = baseRound.Sim.StateHash();
+        var copyRound = baseRound.Clone();
+        copyRound.Fire(ShotInput.Quantized(12.3f, 0.8f)); copyRound.Sim.RunToRest(); copyRound.Resolve();
+        Check(baseRound.Sim.StateHash() == baseHash && baseRound.ShotsLeft == copyRound.ShotsLeft + 1 && baseRound.Referee.Queue.Count == 4,
+            "P7 Round.Clone: playing the clone leaves the original untouched");
+
+        var overlapping = new BilliardsPreset { id = "overlap", par = 1, shots = new[] { 0, 0, 0 },
+            balls = new[] { new BallSpawn { id = "cue", x = 0.3f, y = 0.5f }, new BallSpawn { id = "1", x = 0.31f, y = 0.5f } }, order = new[] { "1" } };
+        Check(!BilliardsPresetValidator.Validate(overlapping, cfg.billiardsParOffsets, prm), "P7 validator: two balls overlapping at the start is rejected");
+        var inPocket = new BilliardsPreset { id = "inpocket", par = 1, shots = new[] { 0, 0, 0 },
+            balls = new[] { new BallSpawn { id = "cue", x = 0.3f, y = 0.5f }, new BallSpawn { id = "1", x = 0.01f, y = 0.02f } }, order = new[] { "1" } };
+        Check(!BilliardsPresetValidator.Validate(inPocket, cfg.billiardsParOffsets, prm), "P7 validator: a ball starting in a pocket is rejected");
+
+        var solved = new BilliardsPreset { id = "robust_test", par = 1, shots = new[] { 0, 0, 0 },
+            balls = new[] { new BallSpawn { id = "cue", x = 0.6f, y = 0.6f }, new BallSpawn { id = "1", x = 0.8f, y = 0.8f } },
+            order = new[] { "1" }, solution = new[] { ShotInput.Quantized(26.6f, 0.5f) } };
+        BilliardsPresetVerifier.Robustness(solved, cfg, out float[] perShot, out float blind);
+        Check(perShot.Length == 1 && perShot[0] >= 0.9f && blind >= 0.9f, $"P7 robustness: a short straight pot is forgiving (per shot {perShot[0] * 100:0}%, blind replay {blind * 100:0}%)");
+        // robustness is repeatable: same table, same numbers
+        BilliardsPresetVerifier.Robustness(solved, cfg, out float[] again, out float blindAgain);
+        Check(again[0] == perShot[0] && blindAgain == blind, "P7 robustness: seeded, so a second run gives identical numbers");
     }
 
     /// Returns the number of failed checks. `log` receives one line per check.
@@ -310,14 +385,58 @@ public static class BilliardsSelfTests
         Check(BallSprites.SpriteNameFor("cue") == "Ball-White" && BallSprites.SpriteNameFor("1") == "A1" && BallSprites.SpriteNameFor("7") == "G7", "solid sprite names");
         Check(BallSprites.SpriteNameFor("8") == "H8" && BallSprites.SpriteNameFor("9") == "A - 1" && BallSprites.SpriteNameFor("11") == "C - 3" && BallSprites.SpriteNameFor("15") == "G - 7", "8-ball and stripe sprite names");
 
-        // --- Pending effects reset clears values and listeners
-        int fired = 0; BilliardsPendingEffects.ExtraShots = 2; BilliardsPendingEffects.ExtraShotsConsumed += () => fired++;
-        Check(BilliardsPendingEffects.TakeExtraShots() == 2 && fired == 1 && BilliardsPendingEffects.ExtraShots == 0, "extra shots consumed once, event fired");
-        BilliardsPendingEffects.CueSlip = true; BilliardsPendingEffects.Reset();
-        BilliardsPendingEffects.ExtraShots = 1; BilliardsPendingEffects.TakeExtraShots();
-        Check(!BilliardsPendingEffects.CueSlip && fired == 1, "Reset clears flags and old listeners (no leak into next run)");
+        // --- Card effects (Phase 8): grants are owned by their card; using one ends the card, withdrawing one is a pawn
         BilliardsPendingEffects.Reset();
+        var cardA = new GameObject("test card A").AddComponent<CardItem>();      // not Awake()d in edit mode: no scene needed
+        var cardB = new GameObject("test card B").AddComponent<CardItem>();
+        var cardC = new GameObject("test card C").AddComponent<CardItem>();
+        int changes = 0; BilliardsPendingEffects.Changed += () => changes++;
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.ExtraShots, 1, cardA);
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.ExtraShots, 2, cardB);
+        Check(BilliardsPendingEffects.ExtraShots == 3 && changes == 2, "P8 two Chalk Up grants add up (1 + 2), each change is announced");
+        BilliardsPendingEffects.Withdraw(cardA);
+        Check(BilliardsPendingEffects.ExtraShots == 2, "P8 withdrawing a card (pawn) drops only ITS shots");
+        Check(BilliardsPendingEffects.TakeExtraShots() == 2 && BilliardsPendingEffects.ExtraShots == 0 && BilliardsPendingEffects.TakeExtraShots() == 0,
+            "P8 extra shots are taken all at once, once");
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.CueSlip, 0.15f, cardA);
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.CueSlip, 0.10f, cardB);
+        Check(BilliardsPendingEffects.CueSlipPending && Mathf.Approximately(BilliardsPendingEffects.TakeCueSlip(), 0.15f) && BilliardsPendingEffects.CueSlipPending,
+            "P8 cue slip: ONE per shot (two cards = two shots), the first card's jitter first");
+        Check(Mathf.Approximately(BilliardsPendingEffects.TakeCueSlip(), 0.10f) && !BilliardsPendingEffects.CueSlipPending && BilliardsPendingEffects.TakeCueSlip() == 0f,
+            "P8 cue slip: the second shot uses the second card, then nothing is left");
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.TrickShot, 1f, cardC);
+        Check(BilliardsPendingEffects.TrickShotPending && BilliardsPendingEffects.TakeTrickShot() && !BilliardsPendingEffects.TrickShotPending && !BilliardsPendingEffects.TakeTrickShot(),
+            "P8 trick shot: used up by one shot");
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.ExtraShots, 1, cardA);
+        BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.CueSlip, 0.15f, cardB);
+        BilliardsPendingEffects.Reset();
+        Check(BilliardsPendingEffects.ExtraShots == 0 && !BilliardsPendingEffects.CueSlipPending && !BilliardsPendingEffects.TrickShotPending,
+            "P8 Reset (every scene load = Restart) clears every pending effect and listener");
+        changes = 0; BilliardsPendingEffects.Add(BilliardsPendingEffects.Kind.TrickShot, 1f, cardC);
+        Check(changes == 0, "P8 Reset also dropped the old Changed listeners (no leak into the next run)");
+        BilliardsPendingEffects.Reset();
+        UnityEngine.Object.DestroyImmediate(cardA.gameObject); UnityEngine.Object.DestroyImmediate(cardB.gameObject); UnityEngine.Object.DestroyImmediate(cardC.gameObject);
         Check(BallSprites.Matches("A1_0", "1") && BallSprites.Matches("C - 3_0", "11") && BallSprites.Matches("H8", "8") && !BallSprites.Matches("A1_0", "9"), "sprite match accepts Multiple-mode _0 suffix");
+
+        // --- Phase 9: the round log (kept out of the real playtest file)
+        bool wasWriting = BilliardsRoundLog.WriteToFile;
+        BilliardsRoundLog.WriteToFile = false;
+        BilliardsRoundLog.ClearSession();
+        BilliardsRoundLog.Begin("t1", "Medium", 20, 30, 4);                                  // a card made it cost 30
+        BilliardsRoundLog.AimStarted(); BilliardsRoundLog.ShotFired(); BilliardsRoundLog.ShotJudged();
+        BilliardsRoundLog.ShotFired(); BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Win, 64);
+        var logged = BilliardsRoundLog.Entries.Count == 1 ? BilliardsRoundLog.Entries[0] : null;
+        Check(logged != null && logged.shotsUsed == 2 && logged.net == 34 && logged.outcome == "Win" && logged.charge == 30 && logged.presetId == "t1",
+            "P9 round log: a won round records its shots, outcome and net (payout 64 - charge 30 = +34)");
+        BilliardsRoundLog.Begin("t2", "Hard", 10, 10, 2);
+        BilliardsRoundLog.AimStarted(); BilliardsRoundLog.ShotFired(); BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Forfeit, 0);
+        BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Abandoned, 0);                        // nothing active: must not add a second line
+        Check(BilliardsRoundLog.Entries.Count == 2 && BilliardsRoundLog.Entries[1].net == -10 && BilliardsRoundLog.Entries[1].outcome == "Forfeit",
+            "P9 round log: a forfeit is -charge, and ending twice logs once");
+        string summary = BilliardsRoundLog.Summarize(BilliardsRoundLog.Entries);
+        Check(summary.Contains("2 round(s)") && summary.Contains("Medium") && summary.Contains("Hard"), "P9 round log: the summary covers the logged difficulties");
+        BilliardsRoundLog.ClearSession();
+        BilliardsRoundLog.WriteToFile = wasWriting;
 
         // --- Task 1.4: CostModifierService enum values match what the card assets store (main added Blackjack at 2)
         Check((int)CostModifierService.Target.Ticket == 0 && (int)CostModifierService.Target.CardPack == 1

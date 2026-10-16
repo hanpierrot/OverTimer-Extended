@@ -46,6 +46,16 @@ public sealed class BilliardsReferee
         _finalWrongPocketFails = finalWrongPocketFails;
     }
 
+    // Clone support: only the queue changes during a round, the rule sets are shared.
+    BilliardsReferee(BilliardsReferee o)
+    {
+        _queue = new List<string>(o._queue);
+        _forbidden = o._forbidden; _called = o._called;
+        _strictFirstContact = o._strictFirstContact; _finalWrongPocketFails = o._finalWrongPocketFails;
+    }
+
+    public BilliardsReferee Clone() => new BilliardsReferee(this);
+
     public ShotResult Judge(ShotReport r)
     {
         var res = new ShotResult();

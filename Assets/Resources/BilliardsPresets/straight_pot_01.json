@@ -1,0 +1,18 @@
+{
+  "id": "straight_pot_01",
+  "name": "Straight Shot",
+  "par": 2,
+  "shots": [0, 0, 0],
+  "balls": [
+    { "id": "cue", "x": 0.4, "y": 0.4 },
+    { "id": "1", "x": 0.7, "y": 0.7 },
+    { "id": "2", "x": 0.3, "y": 0.78 }
+  ],
+  "order": ["1", "2"],
+  "forbidden": [],
+  "called": [],
+  "solution": [
+    { "angle": 27.0, "power": 0.45 },
+    { "angle": -140.5, "power": 1.00 }
+  ]
+}

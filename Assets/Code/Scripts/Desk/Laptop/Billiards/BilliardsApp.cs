@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,6 +31,8 @@ public class BilliardsApp : LaptopApp
     [SerializeField] private BallSpriteSet ballSprites;
     [SerializeField] private TableView tableView;                // rails, felt look and the pocket holes
     [SerializeField] private CueAimController aim;
+    [SerializeField] private BilliardsDebugOverlay debugOverlay; // test only: shown by the cheat menu
+    [SerializeField] private float ballArtPixel = 1f;            // balls are drawn on whole multiples of this many canvas units
 
     [Header("HUD")]
     [SerializeField] private RectTransform layoutRoot;           // rebuilt once on first open so the felt has its real size
@@ -60,12 +64,32 @@ public class BilliardsApp : LaptopApp
 
     private State _state = State.Racked;
     private BilliardsPreset _preset;
-    private TableMirror _mirror;
-    private BilliardsSim _previewSim;                            // draws the racked table before any round exists
+    private TableMirror _mirror;                                 // what is drawn: the rolled mirror, or the one a cheat forces
+    private TableMirror _rolledMirror;
+    private BilliardsSim _previewSim;                           // draws the racked table before any round exists
     private BilliardsRound _round;
     private FeltMapper _mapper;
     private string _lastPlayedId;
     private string _notice;
+    private string _shotNote;                                    // what a card did to the shot in flight (cue slip), shown with the result
+    private float _shownMultiplier = 1f;                         // the cost multiplier the racked screen was last drawn with
+    private NoticeKind _noticeKind;
+    private bool _noticeFresh;                                  // the status line just changed: give it a little punch
+    private IReadOnlyList<string> _pendingPopped, _pendingRespot; // what the last shot did, handed to the queue strip once
+    private readonly HashSet<string> _pocketed = new HashSet<string>();
+    private Color _statusBase, _shotsBase;
+
+    private enum NoticeKind { Info, Good, Bad }
+
+    [Header("Feedback")]
+    [SerializeField] private Color goodColor = new Color32(40, 140, 60, 255);
+    [SerializeField] private Color badColor = new Color32(190, 45, 35, 255);
+
+    // Sound hooks: no clips yet. Whoever adds audio subscribes to these; nothing else needs to change.
+    public event Action<string> OnPocket;                        // a ball dropped (its id), as it happens during the roll
+    public event Action<int> OnWin;                              // the table was cleared (profit)
+    public event Action<string> OnFail;                          // the table was lost (reason)
+    public event Action<string> OnFoul;                          // a foul that did not end the round (the message shown)
 
     private int _bet;
     private BilliardsDifficulty _difficulty;
@@ -93,16 +117,20 @@ public class BilliardsApp : LaptopApp
 
         var money = MoneyService.Instance;
         if (money != null) { money.OnMoneyChanged -= HandleMoneyChanged; money.OnMoneyChanged += HandleMoneyChanged; }
+        BilliardsDebug.Changed -= HandleDebugChanged;
+        BilliardsDebug.Changed += HandleDebugChanged;
 
         if (_preset == null) DrawTable();
         else BindTable();                                        // coming back to a kept table
         ShowState();
+        ApplyOverlay();
     }
 
     public override void OnAppClosed()
     {
         var money = MoneyService.Instance;
         if (money != null) money.OnMoneyChanged -= HandleMoneyChanged;
+        BilliardsDebug.Changed -= HandleDebugChanged;
         if (aim != null) aim.Cancel();
         if (!_initialized) return;
 
@@ -111,6 +139,8 @@ public class BilliardsApp : LaptopApp
             case State.Rolling:
                 // The shot is already out: walking away now would be a free reset after a miss.
                 _notice = "You left mid-shot. That bet is lost.";
+                _noticeKind = NoticeKind.Bad;
+                BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Forfeit, 0);
                 ClearTable();
                 break;
             case State.Won:
@@ -121,10 +151,18 @@ public class BilliardsApp : LaptopApp
         }
     }
 
+    private void OnDestroy() => BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Abandoned, 0);   // Restart with a round on the table
+
     private void OnDisable()
     {
         var money = MoneyService.Instance;
         if (money != null) money.OnMoneyChanged -= HandleMoneyChanged;
+        BilliardsDebug.Changed -= HandleDebugChanged;
+        if (statusLabel != null)                                  // no tween left running on a hidden app
+        {
+            DOTween.Kill(statusLabel.rectTransform);
+            statusLabel.rectTransform.localScale = Vector3.one;
+        }
     }
 
     // ================= setup =================
@@ -141,6 +179,8 @@ public class BilliardsApp : LaptopApp
         if (_cfg != null && !_available) Debug.LogWarning("[Billiards] unavailable: " + problem);
         if (!_available) return;
 
+        if (statusLabel != null) _statusBase = statusLabel.color;
+        if (shotsLabel != null) _shotsBase = shotsLabel.color;
         _bet = _cfg.billiardsBetMin;
         if (betMinusButton != null) betMinusButton.onClick.AddListener(() => ChangeBet(-_cfg.billiardsBetStep));
         if (betPlusButton != null) betPlusButton.onClick.AddListener(() => ChangeBet(_cfg.billiardsBetStep));
@@ -154,7 +194,9 @@ public class BilliardsApp : LaptopApp
 
         if (ballTemplate != null) ballTemplate.gameObject.SetActive(false);
         if (layoutRoot != null) LayoutRebuilder.ForceRebuildLayoutImmediate(layoutRoot);   // felt size must be real before it is measured
-        if (tableView != null) tableView.Layout(BilliardsSimParams.FromConfig(_cfg), felt.rect.width);
+        var simParams = BilliardsSimParams.FromConfig(_cfg);
+        if (tableView != null) tableView.Layout(simParams, felt.rect.width);
+        if (debugOverlay != null) debugOverlay.Build(simParams, felt.rect.width);
     }
 
     private void ShowUnavailable()
@@ -171,9 +213,10 @@ public class BilliardsApp : LaptopApp
     {
         var rng = RngService.Instance;
         if (rng == null) { _preset = null; return; }
-        var drawn = BilliardsPresetLibrary.Draw(rng.Random, _lastPlayedId);
+        var drawn = BilliardsPresetLibrary.Draw(rng.Random, _lastPlayedId, BilliardsDebug.PresetId);
         _preset = drawn.preset;
-        _mirror = drawn.mirror;
+        _rolledMirror = drawn.mirror;
+        _mirror = BilliardsDebug.Apply(_rolledMirror);
         _round = null;
         _state = State.Racked;
         _difficulty = BilliardsDifficulty.Medium;
@@ -185,9 +228,12 @@ public class BilliardsApp : LaptopApp
     {
         if (_preset == null) return;
         _mapper = new FeltMapper(felt.rect.width, _mirror);
-        if (aim != null) aim.Configure(_mapper, CueFeltPosition);
-
         float diameter = Mathf.Round(_cfg.billiardsBallRadius * felt.rect.width);   // 2r table units x (feltWidth / 2) per unit; whole pixels keep the sprite crisp
+        if (aim != null)
+        {
+            aim.Configure(_mapper, () => ActiveSim, diameter);
+            aim.SetAssist(_cfg.billiardsAssist[(int)_difficulty]);                  // the assist follows the difficulty of the round
+        }
         var wanted = new HashSet<string>();
         foreach (var b in _preset.balls)
         {
@@ -199,28 +245,54 @@ public class BilliardsApp : LaptopApp
             }
             view.Setup(b.id, ballSprites != null ? ballSprites.Get(b.id) : null, diameter);
         }
-        foreach (var kv in _views) if (!wanted.Contains(kv.Key) && kv.Value != null) kv.Value.SetVisible(false);
-        RefreshBalls();
+        foreach (var kv in _views) if (!wanted.Contains(kv.Key) && kv.Value != null) kv.Value.Hide();
+        _ballCentre = diameter * 0.5f;
+        RefreshBalls(false);
     }
 
     private BilliardsSim ActiveSim => _round != null ? _round.Sim : _previewSim;
 
-    private Vector2 CueFeltPosition()
-    {
-        var sim = ActiveSim;
-        return sim == null ? Vector2.zero : _mapper.TableToFelt(sim.Position(sim.IndexOf("cue")));
-    }
-
-    private void RefreshBalls()
+    /// animate: play the pot and re-spot tweens for balls whose state just changed. False when the whole table is being
+    /// (re)drawn: a new table, or coming back to a kept one.
+    private void RefreshBalls(bool animate)
     {
         var sim = ActiveSim;
         if (sim == null) return;
         for (int i = 0; i < sim.BallCount; i++)
         {
             if (!_views.TryGetValue(sim.IdOf(i), out BallView view) || view == null) continue;
-            view.SetVisible(!sim.IsPotted(i));
-            if (!sim.IsPotted(i)) view.SetPosition(_mapper.TableToFelt(sim.Position(i)));
+            bool potted = sim.IsPotted(i);
+            if (potted)
+            {
+                if (animate && _pocketed.Add(sim.IdOf(i))) OnPocket?.Invoke(sim.IdOf(i));
+                view.Sync(true, Vector2.zero, NearestPocketFelt(view.FeltPosition), animate);
+                continue;
+            }
+
+            // The sim keeps its exact position; only the DRAWN position is snapped, so balls settle onto whole art pixels
+            // instead of shimmering between them as they slow down. Corner-based so even and odd diameters both stay crisp.
+            Vector2 corner = _mapper.TableToFelt(sim.Position(i)) - Vector2.one * _ballCentre;
+            view.Sync(false, FeltMapper.Snap(corner, ballArtPixel) + Vector2.one * _ballCentre, Vector2.zero, animate);
         }
+        if (debugOverlay != null && BilliardsDebug.Overlay) debugOverlay.Refresh(sim, _mapper);
+    }
+
+    private float _ballCentre;                                   // half the drawn ball diameter
+
+    private static readonly Pocket[] AllPockets = { Pocket.TL, Pocket.TM, Pocket.TR, Pocket.BL, Pocket.BM, Pocket.BR };
+
+    /// Where a ball that just dropped rolls to: the pocket nearest to where it was last drawn.
+    private Vector2 NearestPocketFelt(Vector2 from)
+    {
+        Vector2 best = from;
+        float bestSqr = float.MaxValue;
+        foreach (var pk in AllPockets)
+        {
+            Vector2 c = _mapper.TableToFelt(BilliardsSim.PocketCentre(pk));
+            float d = (c - from).sqrMagnitude;
+            if (d < bestSqr) { bestSqr = d; best = c; }
+        }
+        return best;
     }
 
     private void ClearTable()
@@ -230,7 +302,38 @@ public class BilliardsApp : LaptopApp
         _round = null;
         _previewSim = null;
         _state = State.Racked;
-        foreach (var kv in _views) if (kv.Value != null) kv.Value.SetVisible(false);
+        foreach (var kv in _views) if (kv.Value != null) kv.Value.Hide();
+    }
+
+    // ================= test switches (cheat menu) =================
+
+    private void HandleDebugChanged()
+    {
+        ApplyOverlay();
+        if (!_available || _preset == null) return;
+        // A forced mirror takes effect on a table nobody has played yet; a round in progress keeps what it was dealt.
+        string forced = BilliardsDebug.PresetId;
+        if (_state == State.Racked && !string.IsNullOrEmpty(forced) && _preset.id != forced)
+        {
+            ClearTable();                                          // a forced table replaces an unplayed one
+            DrawTable();
+            ShowState();
+            return;
+        }
+        TableMirror wanted = BilliardsDebug.Apply(_rolledMirror);
+        if (_state == State.Racked && (wanted.flipX != _mirror.flipX || wanted.flipY != _mirror.flipY))
+        {
+            _mirror = wanted;
+            BindTable();
+            ShowState();
+        }
+    }
+
+    private void ApplyOverlay()
+    {
+        if (debugOverlay == null) return;
+        debugOverlay.SetVisible(BilliardsDebug.Overlay);
+        if (BilliardsDebug.Overlay && ActiveSim != null) debugOverlay.Refresh(ActiveSim, _mapper);
     }
 
     private void NextTable()
@@ -287,8 +390,16 @@ public class BilliardsApp : LaptopApp
 
         _charge = charge;
         _payoutOnWin = BilliardsPayout.OnWin(_bet, _difficulty, _preset, _cfg);             // from the BASE bet, not the charge
-        _round = new BilliardsRound(_preset, _mirror, _difficulty, _bet, _cfg);
-        _notice = null;
+        // Chalk Up cards: taken only now, after the bet was really paid, so a refused Play never uses one up. The payout
+        // stays the one for the difficulty's normal shots: extra shots are the card's gift, not a cheaper table.
+        int extraShots = BilliardsPendingEffects.TakeExtraShots();
+        _round = new BilliardsRound(_preset, _mirror, _difficulty, _bet, _cfg, extraShots);
+        _notice = extraShots > 0 ? $"Chalk Up: +{extraShots} extra {(extraShots == 1 ? "shot" : "shots")}" : null;
+        _noticeKind = NoticeKind.Good;
+        _noticeFresh = extraShots > 0;
+        _shotNote = null;
+        BilliardsRoundLog.Begin(_preset.id, _difficulty.ToString(), _bet, charge, _round.ShotsLeft);
+        BilliardsRoundLog.AimStarted();
         _state = State.Aiming;
         BindTable();
         ShowState();
@@ -309,8 +420,24 @@ public class BilliardsApp : LaptopApp
         if (_state != State.Aiming || _round == null || IsGameOver()) return;
         if (_round.ShotsLeft <= 0) return;
 
+        // Card effects that act on the shot itself. Cue Slip changes the power BEFORE quantizing (random draw from the
+        // run's seeded RngService), so the simulation still receives one exact, replayable input.
+        _shotNote = null;
+        float slip = BilliardsPendingEffects.TakeCueSlip();
+        if (slip > 0f)
+        {
+            var rng = RngService.Instance;
+            float factor = 1f + (rng != null ? (float)(rng.Random.NextDouble() * 2.0 - 1.0) : 0f) * slip;
+            var slipped = ShotInput.Quantized(shot.angle, shot.power * factor);
+            _shotNote = $"Cue slip! power {shot.power:0.00} became {slipped.power:0.00}";
+            shot = slipped;
+        }
+        BilliardsPendingEffects.TakeTrickShot();                                    // the preview was available for this shot: used up
+
         _headBeforeShot = _round.Referee.Head;
         _round.Fire(shot);
+        BilliardsRoundLog.ShotFired();
+        _pocketed.Clear();
         _acc = 0f;
         _state = State.Rolling;
         if (aim != null) aim.SetActive(false);
@@ -323,8 +450,12 @@ public class BilliardsApp : LaptopApp
         if (IsGameOver())                                         // freeze: no input, no money, nothing moves
         {
             if (aim != null) aim.SetActive(false);
+            BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Abandoned, 0);
             return;
         }
+        // A cost-modifier card can arrive or run out while the racked screen is open: redraw the price when it changes.
+        if (_state == State.Racked && _preset != null && !Mathf.Approximately(CostMultiplier(), _shownMultiplier)) RefreshRacked();
+
         if (_state != State.Rolling || _round == null) return;
 
         _acc += Time.deltaTime;
@@ -337,7 +468,7 @@ public class BilliardsApp : LaptopApp
             if (!_round.Sim.Step()) { settled = true; break; }
         }
         _acc = Mathf.Min(_acc, MaxStepsPerFrame * BilliardsSim.FixedDt);   // a slow frame just plays out slower on screen
-        RefreshBalls();
+        RefreshBalls(true);
         if (settled) Judge();
     }
 
@@ -346,7 +477,11 @@ public class BilliardsApp : LaptopApp
         var report = _round.Sim.Report;
         ShotResult result = _round.Resolve();
         string message = DescribeShot(result, report);
-        RefreshBalls();
+        RefreshBalls(true);                                       // the re-spots from Resolve() pop back in
+        _pendingPopped = result.popped;                           // the queue strip slides these out / shakes the re-spots
+        _pendingRespot = result.respot;
+        _noticeKind = result.foul || (result.popped.Count == 0 && result.respot.Count > 0) ? NoticeKind.Bad
+                    : result.popped.Count > 0 ? NoticeKind.Good : NoticeKind.Info;
 
         if (result.verdict == Verdict.Win)
         {
@@ -361,17 +496,31 @@ public class BilliardsApp : LaptopApp
             }
             _state = State.Won;
             if (resultLabel != null) resultLabel.text = $"TABLE CLEARED!\n+${profit} profit  (${_payoutOnWin} back)";
+            OnWin?.Invoke(profit);
+            BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Win, _payoutOnWin);
         }
         else if (result.verdict == Verdict.Fail)
         {
             _state = State.Lost;
             if (resultLabel != null) resultLabel.text = $"TABLE LOST\n{result.failReason}";
+            OnFail?.Invoke(result.failReason);
+            BilliardsRoundLog.End(BilliardsRoundLog.Outcome.Lost, 0);
         }
         else
         {
             _state = State.Aiming;
+            if (result.foul) OnFoul?.Invoke(message);
+            BilliardsRoundLog.ShotJudged();
+        }
+        if (_shotNote != null)                                    // a card changed this shot: say so, whatever happened
+        {
+            if ((_state == State.Won || _state == State.Lost) && resultLabel != null) resultLabel.text += "\n" + _shotNote;
+            message = string.IsNullOrEmpty(message) ? _shotNote : _shotNote + "  ·  " + message;
+            if (_noticeKind == NoticeKind.Info) _noticeKind = NoticeKind.Bad;
+            _shotNote = null;
         }
         _notice = message;
+        _noticeFresh = !string.IsNullOrEmpty(message);
         ShowState();
     }
 
@@ -384,9 +533,38 @@ public class BilliardsApp : LaptopApp
             if (report.firstContact == null) return "Foul: touched nothing";
             return $"Foul: hit {report.firstContact} first (needed {_headBeforeShot})";
         }
-        if (result.popped.Count > 0) return "Potted " + string.Join(", ", result.popped);
-        if (result.respot.Count > 0) return "Wrong pocket: " + string.Join(", ", result.respot) + " back on the table";
-        return "No pot";
+        string back = RespotMessage(result, report);
+        if (result.popped.Count > 0) return "Potted " + string.Join(", ", result.popped) + (back != null ? "  ·  " + back : "");
+        return back ?? "No pot";
+    }
+
+    /// Why balls are going back: the pocket was not the called one, or the ball simply was not next. Null when nothing goes back.
+    private string RespotMessage(ShotResult result, ShotReport report)
+    {
+        if (result.respot.Count == 0) return null;
+        var wrongPocket = new List<string>();
+        var outOfTurn = new List<string>();
+        foreach (string id in result.respot)
+        {
+            if (id == "cue") continue;
+            bool called = false, wrong = false;
+            if (_preset.called != null)
+                foreach (var c in _preset.called)
+                    if (c.ball == id) { called = true; break; }
+            if (called)
+                foreach (var pot in report.pots)
+                    if (pot.Item1 == id && Enum.TryParse(CalledPocketName(id), out Pocket want) && pot.Item2 != want) wrong = true;
+            (wrong ? wrongPocket : outOfTurn).Add(id);
+        }
+        if (wrongPocket.Count > 0) return $"{string.Join(", ", wrongPocket)} went in the wrong pocket, back on the table";
+        if (outOfTurn.Count > 0) return $"{string.Join(", ", outOfTurn)} went in out of turn, back on the table";
+        return null;
+    }
+
+    private string CalledPocketName(string ballId)
+    {
+        foreach (var c in _preset.called) if (c.ball == ballId) return c.pocket;
+        return null;
     }
 
     // ================= UI =================
@@ -407,20 +585,42 @@ public class BilliardsApp : LaptopApp
                 : $"{_preset.name}  ·  Par {_preset.par}";
             ShowQueue();
         }
+        if (tableView != null)                                   // ring the pocket the head ball has been called to
+            tableView.ShowCalledPocket(playing && _round != null ? HeadCalledPocket() : null);
         if (playing && _round != null)
         {
-            if (shotsLabel != null) shotsLabel.text = $"SHOTS LEFT: {_round.ShotsLeft}";
+            if (shotsLabel != null)
+            {
+                shotsLabel.text = $"SHOTS LEFT: {_round.ShotsLeft}";
+                shotsLabel.color = _round.ShotsLeft <= 1 ? badColor : _shotsBase;          // the last shot is the one to be careful with
+            }
             if (betInfoLabel != null) betInfoLabel.text = $"Bet ${_bet}  ·  win ${_payoutOnWin}";
         }
-        RefreshBalls();
+        RefreshBalls(false);
         RefreshRacked();
 
         if (statusLabel != null && _available)
         {
+            bool hasNotice = !string.IsNullOrEmpty(_notice) && _state != State.Won && _state != State.Lost;
             if (_state == State.Racked) statusLabel.text = _notice ?? "Pick a difficulty to start";
             else if (_state == State.Won || _state == State.Lost) statusLabel.text = "";
             else statusLabel.text = !string.IsNullOrEmpty(_notice) ? _notice
-                                  : _state == State.Aiming ? "Drag back from the table and release to shoot" : "";
+                                  : _state == State.Aiming ? (BilliardsPendingEffects.TrickShotPending
+                                        ? "Trick Shot ready: the faint balls show where everything ends up"
+                                        : "Drag back from the table and release to shoot") : "";
+
+            bool coloured = hasNotice || (_state == State.Racked && !string.IsNullOrEmpty(_notice));
+            statusLabel.color = !coloured ? _statusBase
+                              : _noticeKind == NoticeKind.Good ? goodColor
+                              : _noticeKind == NoticeKind.Bad ? badColor : _statusBase;
+            if (_noticeFresh && coloured)
+            {
+                var rt = statusLabel.rectTransform;
+                DOTween.Kill(rt);
+                rt.localScale = Vector3.one;
+                rt.DOPunchScale(Vector3.one * 0.12f, 0.3f, 6, 0.6f).SetId(rt);
+            }
+            _noticeFresh = false;
         }
     }
 
@@ -428,7 +628,18 @@ public class BilliardsApp : LaptopApp
     {
         if (queueView == null || _preset == null) return;
         IReadOnlyList<string> queue = _round != null ? _round.Referee.Queue : _preset.order;
-        queueView.Show(queue, CalledPocketLabel);
+        queueView.Apply(queue, CalledPocketLabel, _pendingPopped, _pendingRespot);
+        _pendingPopped = _pendingRespot = null;                   // animate once, not on every later refresh
+    }
+
+    /// The pocket the head ball is called to, as the PLAYER sees it (mirrored), or null.
+    private Pocket? HeadCalledPocket()
+    {
+        string head = _round.Referee.Head;
+        if (head == null || _preset == null || _preset.called == null) return null;
+        foreach (var c in _preset.called)
+            if (c.ball == head && Enum.TryParse(c.pocket, out Pocket pk)) return _mirror.MapPocket(pk);
+        return null;
     }
 
     /// The called pocket for a ball as the PLAYER sees it (mirrored), or null when the ball has none.
@@ -444,6 +655,7 @@ public class BilliardsApp : LaptopApp
     {
         if (_state != State.Racked || _preset == null || !_available) return;
 
+        _shownMultiplier = CostMultiplier();
         int cap = MaxAffordableBet();
         bool canPlay = cap >= _cfg.billiardsBetMin;
         _bet = Mathf.Clamp(_bet, _cfg.billiardsBetMin, Mathf.Max(_cfg.billiardsBetMin, Mathf.Min(_cfg.billiardsBetMax, cap)));

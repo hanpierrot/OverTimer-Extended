@@ -135,7 +135,19 @@ public sealed class BilliardsSim
         return walls;
     }
 
+    /// What the simulation treats as cushion, in table space: the straight segments (the felt edge, where a ball's own
+    /// edge bounces) and the jaw points at their ends. For the debug overlay only; reads nothing from a live sim.
+    public static void GetTableGeometry(BilliardsSimParams p, List<(Vector2 a, Vector2 b)> cushions, List<Vector2> jaws)
+    {
+        var walls = BuildWalls(p, out float[] jawX, out float[] jawY);
+        foreach (var w in walls)
+            cushions.Add(w.horizontal ? (new Vector2(w.lo, w.line), new Vector2(w.hi, w.line))
+                                      : (new Vector2(w.line, w.lo), new Vector2(w.line, w.hi)));
+        for (int i = 0; i < jawX.Length; i++) jaws.Add(new Vector2(jawX[i], jawY[i]));
+    }
+
     public int BallCount => _ids.Length;
+    public float BallRadius => _p.ballRadius;                  // table units
     public string IdOf(int index) => _ids[index];
     public int IndexOf(string id) => id != null && _index.TryGetValue(id, out int i) ? i : -1;
     public Vector2 Position(int index) => new Vector2(_x[index], _y[index]);   // table units
@@ -217,10 +229,34 @@ public sealed class BilliardsSim
 
                     float d = Sqrt(d2);
                     float nx = 1f, ny = 0f;
-                    if (d > 1e-6f) { nx = dx / d; ny = dy / d; }
-                    float half = (minDist - d) * 0.5f;
-                    _x[i] -= nx * half; _y[i] -= ny * half;
-                    _x[j] += nx * half; _y[j] += ny * half;
+                    float oix = _vx[i], oiy = _vy[i], ojx = _vx[j], ojy = _vy[j];
+
+                    // The balls overlap by up to a step's travel. A fast hit used to take its normal from those overlapped
+                    // centres, which skews the object ball by several degrees. Instead find the instant they touched (tau
+                    // before now: |d - rel*tau| = 2r), take the normal from there, and after the impulse let the balls
+                    // move on for tau with their new velocities. That is the exact two-ball answer, still fully deterministic.
+                    float rvx = ojx - oix, rvy = ojy - oiy;
+                    float a = rvx * rvx + rvy * rvy;
+                    float b = dx * rvx + dy * rvy;                   // negative while approaching
+                    float tau = -1f;
+                    if (a > 1e-12f && b < 0f)
+                    {
+                        float t = (b + Sqrt(b * b - a * (d2 - minDist * minDist))) / a;
+                        if (t >= 0f && t <= 2f * FixedDt) tau = t;
+                    }
+
+                    if (tau >= 0f)
+                    {
+                        nx = (dx - rvx * tau) / minDist;
+                        ny = (dy - rvy * tau) / minDist;
+                    }
+                    else
+                    {
+                        if (d > 1e-6f) { nx = dx / d; ny = dy / d; }
+                        float half = (minDist - d) * 0.5f;           // no usable touch time (resting contact, cluster): push apart
+                        _x[i] -= nx * half; _y[i] -= ny * half;
+                        _x[j] += nx * half; _y[j] += ny * half;
+                    }
 
                     float vrel = (_vx[i] - _vx[j]) * nx + (_vy[i] - _vy[j]) * ny;
                     if (vrel > 0f)                                   // approaching
@@ -228,6 +264,12 @@ public sealed class BilliardsSim
                         float jImp = (1f + _p.ballRestitution) * 0.5f * vrel;
                         _vx[i] -= jImp * nx; _vy[i] -= jImp * ny;
                         _vx[j] += jImp * nx; _vy[j] += jImp * ny;
+                    }
+
+                    if (tau >= 0f)                                   // back to the touch instant, then forward again with the new velocities
+                    {
+                        _x[i] += (_vx[i] - oix) * tau; _y[i] += (_vy[i] - oiy) * tau;
+                        _x[j] += (_vx[j] - ojx) * tau; _y[j] += (_vy[j] - ojy) * tau;
                     }
 
                     if (_report.firstContact == null)

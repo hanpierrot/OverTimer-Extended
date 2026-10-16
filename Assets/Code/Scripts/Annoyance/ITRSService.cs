@@ -41,6 +41,8 @@ public class ITRSService : MonoBehaviour
     private int earnedSinceLastBill;
     private int lastKnownMoney;
     private bool skipNextBill;
+    private readonly System.Collections.Generic.List<CardItem> skipCards = new System.Collections.Generic.List<CardItem>();
+    private CardItem[] exemptCards = System.Array.Empty<CardItem>();
 
     private void Awake()
     {
@@ -104,6 +106,8 @@ public class ITRSService : MonoBehaviour
         {
             skipNextBill = false;
             amountDue = 0;
+            exemptCards = skipCards.ToArray();                   // this bill is the exemption: resolving it ends these cards
+            skipCards.Clear();
         }
         else
         {
@@ -144,10 +148,25 @@ public class ITRSService : MonoBehaviour
         HasPendingAssessment = false;
         AnnoyanceManager.Instance?.End("itrs");
         OnAssessmentResolved?.Invoke();
+
+        var exempt = exemptCards;
+        exemptCards = System.Array.Empty<CardItem>();
+        foreach (var card in exempt) if (card != null) card.EndEffect();
     }
 
-    /// <summary>Tax Exemption buff - the next scheduled bill is skipped entirely.</summary>
-    public void SkipNextBill() => skipNextBill = true;
+    /// <summary>Tax Exemption buff - the next scheduled bill is skipped entirely. The card that queued it is ended when
+    /// that exempt bill is resolved; a card that goes away first withdraws (pawned), so the exemption goes with it.</summary>
+    public void SkipNextBill(CardItem owner = null)
+    {
+        skipNextBill = true;
+        if (owner != null && !skipCards.Contains(owner)) skipCards.Add(owner);
+    }
+
+    public void WithdrawSkipNextBill(CardItem owner)
+    {
+        if (owner == null) return;
+        if (skipCards.Remove(owner) && skipCards.Count == 0) skipNextBill = false;
+    }
 
     /// <summary>Audit debuff - a new assessment lands immediately, bypassing the schedule.</summary>
     public void ForceBillNow()

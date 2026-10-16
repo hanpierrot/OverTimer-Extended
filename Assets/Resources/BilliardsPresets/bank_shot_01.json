@@ -1,0 +1,16 @@
+{
+  "id": "bank_shot_01",
+  "name": "Off the Rail",
+  "par": 1,
+  "shots": [0, 0, 0],
+  "balls": [
+    { "id": "cue", "x": 0.6, "y": 0.85 },
+    { "id": "1", "x": 0.9, "y": 0.6 }
+  ],
+  "order": ["1"],
+  "forbidden": [],
+  "called": [],
+  "solution": [
+    { "angle": 38.8, "power": 0.75 }
+  ]
+}

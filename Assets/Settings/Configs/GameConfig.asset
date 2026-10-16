@@ -100,12 +100,15 @@ MonoBehaviour:
   billiardsAssist: 020000000100000000000000
   billiardsStrictFirstContact: 1
   billiardsFinalWrongPocketFails: 1
-  billiardsBallRadius: 0.0714
-  billiardsCornerPocketRadius: 0.15
-  billiardsSidePocketRadius: 0.12
+  billiardsBallRadius: 0.0614
+  billiardsCornerPocketRadius: 0.12
+  billiardsSidePocketRadius: 0.09
   billiardsMaxShotSpeed: 5
   billiardsRollingDecel: 1.2
   billiardsBallRestitution: 0.95
   billiardsCushionRestitution: 0.75
   billiardsStopSpeed: 0.01
   billiardsMaxShotSeconds: 20
+  hintHoldSeconds: 2.5
+  hintFadeSeconds: 0.5
+  hintRepeatCooldown: 3

@@ -1,0 +1,20 @@
+{
+  "id": "eight_trap_01",
+  "name": "Eight Ball Trap",
+  "par": 2,
+  "shots": [0, 0, 0],
+  "balls": [
+    { "id": "cue", "x": 0.25, "y": 0.45 },
+    { "id": "1", "x": 0.7, "y": 0.7 },
+    { "id": "8", "x": 0.92, "y": 0.84 }
+  ],
+  "order": ["1", "8"],
+  "forbidden": [],
+  "called": [
+    { "ball": "8", "pocket": "BR" }
+  ],
+  "solution": [
+    { "angle": 53.0, "power": 1.00 },
+    { "angle": 27.5, "power": 1.00 }
+  ]
+}
