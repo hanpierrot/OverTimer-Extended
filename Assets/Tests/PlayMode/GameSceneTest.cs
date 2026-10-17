@@ -81,4 +81,24 @@ public abstract class GameSceneTest
     {
         for (int i = 0; i < count; i++) yield return null;
     }
+
+    protected static LaptopController Laptop => TestHooks.Find<LaptopController>();
+
+    /// <summary>
+    /// Mở một ứng dụng trên Laptop qua đúng đường của game (LaptopController.RequestOpen, có thời gian chuyển ứng dụng).
+    /// Laptop mặc định bị khóa cho tới khi giải Wire Task; ca nào không kiểm thử Wire Task thì mở khóa thẳng.
+    /// </summary>
+    protected static IEnumerator OpenLaptopApp(LaptopApp app)
+    {
+        var laptop = Laptop;
+        laptop.Disabled = false;
+        laptop.gameObject.SetActive(true);
+        yield return null;
+
+        laptop.RequestOpen(app);
+        float deadline = Time.realtimeSinceStartup + 10f;
+        while (!app.gameObject.activeInHierarchy && Time.realtimeSinceStartup < deadline) yield return null;
+        NUnit.Framework.Assert.IsTrue(app.gameObject.activeInHierarchy, $"Không mở được ứng dụng {app.AppName}");
+        yield return null;   // để Start() của ứng dụng chạy
+    }
 }

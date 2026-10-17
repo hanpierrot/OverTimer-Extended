@@ -37,6 +37,46 @@ public static class TestHooks
         field.SetValue(null, value);
     }
 
+    public static object Call(object target, string method, params object[] args)
+    {
+        var info = FindMethod(target.GetType(), method);
+        Assert.IsNotNull(info, $"{target.GetType().Name} không có hàm '{method}' (mã game đã đổi?)");
+        return info.Invoke(target, args);
+    }
+
+    private static MethodInfo FindMethod(System.Type type, string name)
+    {
+        // Hàm private của lớp cha (ví dụ HoldTask) không thấy được từ lớp con, nên đi ngược lên cây kế thừa.
+        for (var t = type; t != null; t = t.BaseType)
+        {
+            var m = t.GetMethod(name, Instance | BindingFlags.DeclaredOnly);
+            if (m != null) return m;
+        }
+        return null;
+    }
+
+    public static T GetFieldInHierarchy<T>(object target, string name)
+    {
+        for (var t = target.GetType(); t != null; t = t.BaseType)
+        {
+            var f = t.GetField(name, Instance | BindingFlags.DeclaredOnly);
+            if (f != null) return (T)f.GetValue(target);
+        }
+        Assert.Fail($"{target.GetType().Name} không có field '{name}' (mã game đã đổi?)");
+        return default;
+    }
+
+    /// <summary>Tìm component trong scene, kể cả trên GameObject đang tắt (app Laptop, panel…).</summary>
+    public static T Find<T>() where T : UnityEngine.Object
+    {
+        var found = UnityEngine.Object.FindAnyObjectByType<T>(UnityEngine.FindObjectsInactive.Include);
+        Assert.IsNotNull(found, $"Không tìm thấy {typeof(T).Name} trong scene");
+        return found;
+    }
+
+    /// <summary>Bấm một nút UI private của component (gọi đúng listener mà game đã gắn).</summary>
+    public static void ClickButton(object owner, string buttonField) => GetField<Button>(owner, buttonField).onClick.Invoke();
+
     public static void SetMoney(int amount) => SetAutoProperty(MoneyService.Instance, "Current", amount);
 
     public static void SetClock(float seconds) => SetAutoProperty(ClockService.Instance, "RemainingTime", seconds);
