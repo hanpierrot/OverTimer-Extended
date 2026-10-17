@@ -168,3 +168,4 @@ MonoBehaviour:
   wobbleDuration: 0.4
   wobbleCycles: 3
   pawnValue: 20
+  pawnable: 0

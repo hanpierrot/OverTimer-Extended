@@ -34,6 +34,8 @@ public class BlackjackApp : LaptopApp
     [SerializeField] private GameObject playerWinLabel;
     [SerializeField] private GameObject dealerWinLabel;
     [SerializeField] private TMP_Text winningOutcomeLabel;
+    [Tooltip("Hot Table streak readout. Shown only while the streak is 1 or more")]
+    [SerializeField] private TMP_Text streakLabel;
 
     private GameConfig config => GameManager.Instance.GameConfig;
 
@@ -42,6 +44,39 @@ public class BlackjackApp : LaptopApp
     private float _totalSpent;
     private int _totalReceived;
     private string _payoutInfoText;
+
+    // Hot Table: wins in a row this sitting. Instance field on purpose - it dies with the app's state,
+    // never survives a scene reload, and closing the app resets it (OnAppClosed).
+    private int _streak;
+
+    /// <summary>Bonus on the next win, as a fraction (0.2 = +20%).</summary>
+    public static float StreakBonus(GameConfig cfg, int streak) =>
+        Mathf.Min(streak * cfg.blackjackStreakStep, cfg.blackjackStreakCap);
+
+    /// <summary>
+    /// Money for a resolved hand, and the streak after it. Win or natural: base x (doubled ? 2 : 1) x (1 + bonus),
+    /// then streak + 1. Push: base x (doubled ? 2 : 1), streak unchanged. Anything else: 0 and the streak resets.
+    /// Money only - the clock is never touched here.
+    /// </summary>
+    public static int SettleHand(GameConfig cfg, Outcome result, bool doubled, ref int streak)
+    {
+        int mult = doubled ? 2 : 1;
+        switch (result)
+        {
+            case Outcome.PlayerNatural:
+            case Outcome.PlayerWin:
+            case Outcome.DealerBust:
+                int baseAmount = result == Outcome.PlayerNatural ? cfg.blackjackNaturalPayout : cfg.blackjackWinPayout;
+                int payout = Mathf.RoundToInt(baseAmount * mult * (1f + StreakBonus(cfg, streak)));
+                streak++;
+                return payout;
+            case Outcome.Push:
+                return cfg.blackjackPushPayout * mult;
+            default:
+                streak = 0;
+                return 0;
+        }
+    }
 
     private float CurrentAnte
     {
@@ -172,10 +207,8 @@ public class BlackjackApp : LaptopApp
         // time on a resolved hand feels like theft.
         yield return new WaitForSeconds(config.blackjackRevealDelay);
 
-        int payout = _game.Payout(
-            config.blackjackWinPayout,
-            config.blackjackPushPayout,
-            config.blackjackNaturalPayout);
+        int payout = SettleHand(config, _game.Result, _game.DoubledDown, ref _streak);
+        RefreshStreak();
 
         if (payout > 0)
         {
@@ -211,6 +244,7 @@ public class BlackjackApp : LaptopApp
 
     public override void OnAppClosed()
     {
+        _streak = 0; // closing ends the hot streak, mid-hand forfeit included
         if (_game == null) return; // never opened, nothing to forfeit
 
         // Closing the app mid-hand FORFEITS the ante and the hand.
@@ -225,12 +259,22 @@ public class BlackjackApp : LaptopApp
             HideWinBadges();
             winningOutcomeLabel.text = _payoutInfoText;
         }
+        if (streakLabel != null) RefreshStreak();
     }
 
     // ---------- UI ----------
 
+    private void RefreshStreak()
+    {
+        if (streakLabel == null) return;
+        streakLabel.gameObject.SetActive(_streak >= 1);
+        if (_streak >= 1)
+            streakLabel.text = $"Hot Table x{_streak}  +{Mathf.RoundToInt(StreakBonus(config, _streak) * 100f)}% next win";
+    }
+
     private void Refresh()
     {
+        RefreshStreak();
         bool idle = _game.State == HandState.Idle && !_resolving;
         bool playing = _game.State == HandState.PlayerTurn && !_resolving;
 

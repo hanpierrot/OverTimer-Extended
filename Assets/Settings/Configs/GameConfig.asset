@@ -25,7 +25,7 @@ MonoBehaviour:
   tripleMatchCost: 25
   tripleMatchBaseReward: 55
   luckyNineCost: 55
-  luckyNineBaseReward: 110
+  luckyNineBaseReward: 26
   handCap: 5
   packCost: 35
   commonWeight: 60
@@ -34,9 +34,11 @@ MonoBehaviour:
   ultrRareWeight: 3
   blackjackAnte: 20
   blackjackClockMargin: 15
-  blackjackWinPayout: 40
-  blackjackPushPayout: 20
-  blackjackNaturalPayout: 50
+  blackjackWinPayout: 100
+  blackjackPushPayout: 25
+  blackjackNaturalPayout: 130
+  blackjackStreakStep: 0.1
+  blackjackStreakCap: 0.5
   blackjackRevealDelay: 0.6
   blackjackResultDelay: 1.2
   laptopSwitchTime: 1
@@ -72,18 +74,18 @@ MonoBehaviour:
   powerBankRestTime: 2
   wireTaskMoneyReward: 20
   eggTimerPawnValue: 150
-  cardBoxPawnValue: 180
+  cardBoxPawnValue: 48
   powerBankPawnValue: 45
   clickTaskPawnValue: 40
   pictureClickTaskPawnValue: 40
   wireTaskPawnValue: 15
   tripleStackPawnValue: 50
-  nineStackPawnValue: 100
+  nineStackPawnValue: 24
   junkSmallPawnValue: 5
   junkMediumPawnValue: 15
   junkLargePawnValue: 30
   unrevealedCardSellValue: 10
-  laptopPawnValue: 300
+  laptopPawnValue: 120
   billiardsBetMin: 10
   billiardsBetMax: 40
   billiardsBetStep: 5

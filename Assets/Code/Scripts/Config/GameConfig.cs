@@ -45,6 +45,10 @@ public class GameConfig : ScriptableObject
     public int blackjackWinPayout = 120;
     public int blackjackPushPayout = 60;
     public int blackjackNaturalPayout = 200;
+    [Tooltip("Hot Table: extra share of a win's payout per win in a row (money only, never clock)")]
+    public float blackjackStreakStep = 0.10f;
+    [Tooltip("Hot Table: the most the streak bonus can reach (0.5 = +50%)")]
+    public float blackjackStreakCap = 0.50f;
     public float blackjackRevealDelay = 0.6f;
     public float blackjackResultDelay = 1.2f;
     public float laptopSwitchTime = 1.0f;

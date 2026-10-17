@@ -11,8 +11,10 @@ public class ClickTask : TaskBase, IPawnable
     [SerializeField] private float wobbleDuration = 0.4f;
     [SerializeField] private int wobbleCycles = 3;
     
-    public bool CanBePawned => true;
-    
+    [Tooltip("Off for starting-kit items (the Bear): the pawn refuses them")]
+    [SerializeField] private bool pawnable = true;
+    public bool CanBePawned => pawnable;
+
     protected virtual int MinClicks => GameManager.Instance.GameConfig.clickTaskMinClicks;
     protected virtual int MaxClicks => GameManager.Instance.GameConfig.clickTaskMaxClicks;
     protected virtual float LockDuration => GameManager.Instance.GameConfig.clickTaskLockDuration;

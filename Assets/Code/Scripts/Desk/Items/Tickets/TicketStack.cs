@@ -10,17 +10,20 @@ public class TicketStack : MonoBehaviour, IPawnable
     [SerializeField] private Vector2 spawnRangeMin = new Vector2(-4f, -3f);
     [SerializeField] private Vector2 spawnRangeMax = new Vector2(4f, 3f);
 
+    private bool IsNine => ticketPool != null && ticketPool.Length > 0
+                                               && ticketPool[0].TierKind == TicketTierKind.LuckyNine;
+
     public int PawnValue
     {
         get
         {
             var config = GameManager.Instance.GameConfig;
-            bool isNine = ticketPool != null && ticketPool.Length > 0
-                                             && ticketPool[0].TierKind == TicketTierKind.LuckyNine;
-            return isNine ? config.nineStackPawnValue : config.tripleStackPawnValue;
+            return IsNine ? config.nineStackPawnValue : config.tripleStackPawnValue;
         }
     }
-    public bool CanBePawned => true;
+
+    // Triple Match is part of the starting kit: it can't be sold for cash.
+    public bool CanBePawned => IsNine;
     
     private PointerReceiver receiver;
     
