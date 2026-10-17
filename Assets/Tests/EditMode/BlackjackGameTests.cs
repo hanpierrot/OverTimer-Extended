@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Overtime.Blackjack;
-using UnityEditor;
 
 /// <summary>
 /// Mục 4.3.2 của kế hoạch kiểm thử. BlackjackGame là logic C# thuần nên chạy được ở Edit Mode.
@@ -10,16 +9,10 @@ using UnityEditor;
 /// </summary>
 public class BlackjackGameTests
 {
-    private const string GameConfigPath = "Assets/Settings/Configs/GameConfig.asset";
-
     private GameConfig _config;
 
     [OneTimeSetUp]
-    public void LoadConfig()
-    {
-        _config = AssetDatabase.LoadAssetAtPath<GameConfig>(GameConfigPath);
-        Assert.IsNotNull(_config, $"Không tìm thấy GameConfig ở {GameConfigPath}");
-    }
+    public void LoadConfig() => _config = TestAssets.LoadGameConfig();
 
     private static Card C(int rank, Suit suit = Suit.Spades) => new Card(rank, suit);
 
