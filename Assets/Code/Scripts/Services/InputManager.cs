@@ -92,7 +92,7 @@ public class InputManager : MonoBehaviour
         if (IsPointerOverUI()) return;
         
         Vector2 worldPos = GetPointerWorldPos();
-        Collider2D hit = Physics2D.OverlapPoint(worldPos, interactableLayers);
+        Collider2D hit = PickTarget(worldPos);
         if (hit == null) return;
         
         if (FocusRoot != null && !hit.transform.IsChildOf(FocusRoot)) return;
@@ -105,6 +105,27 @@ public class InputManager : MonoBehaviour
             
             currentTarget.OnPressStart(worldPos);
         }
+    }
+    
+    private Collider2D PickTarget(Vector2 worldPos)
+    {
+        CameraView view = CameraRig.Instance != null ? CameraRig.Instance.CurrentView : CameraView.Desk;
+        Collider2D best = null;
+        bool bestIsZone = true;
+
+        foreach (var c in Physics2D.OverlapPointAll(worldPos, interactableLayers))
+        {
+            if (!ViewGate.IsAllowed(c, view)) continue;
+
+            bool isZone = c.TryGetComponent(out CameraViewButton _);
+            if (best == null || (bestIsZone && !isZone))
+            {
+                best = c;
+                bestIsZone = isZone;
+            }
+        }
+
+        return best;
     }
 
     private void OnClickCanceled(InputAction.CallbackContext context)

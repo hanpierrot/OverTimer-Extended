@@ -318,10 +318,10 @@ MonoBehaviour:
 
       It spends all your money at once.'
     image: {fileID: 0}
-  - text: 'Hold the <color=#FFD166>arrow buttons</color> to look around the room.
+  - text: 'Click the <color=#FFD166>desk</color> to zoom in and work. Click the <color=#FFD166>door</color>
+      when the bell rings.
 
-      Now
-      try your luck.'
+      Now try your luck.'
     image: {fileID: 0}
 --- !u!114 &6247893699725223100
 MonoBehaviour:

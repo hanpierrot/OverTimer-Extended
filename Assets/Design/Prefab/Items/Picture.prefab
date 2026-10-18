@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4104949027403663724}
   - component: {fileID: 439550290239436310}
   - component: {fileID: 3212747497556712805}
+  - component: {fileID: 6691136558603050560}
   m_Layer: 3
   m_Name: Picture
   m_TagString: Untagged
@@ -170,3 +171,18 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3472341762601470726}
   normalSprite: {fileID: 7082200727899390915, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}
   reactSprite: {fileID: -412419664, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}
+--- !u!114 &6691136558603050560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4962157898269455889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a18e81f99360fc419bf697033f549e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ViewGate
+  allowedViews:
+  - 0
+  - 1
