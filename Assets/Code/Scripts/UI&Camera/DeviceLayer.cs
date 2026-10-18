@@ -43,7 +43,8 @@ public class DeviceLayer : MonoBehaviour
     private bool _laptopAppOpen;
 
     public Mode Current { get; private set; } = Mode.None;
-    public bool IsLaptopLocked => _laptopLockers.Count > 0;
+    /// <summary>A paused call (our holders) or a card such as Cable Eater (the static LaptopLock) keeps the Laptop from acting.</summary>
+    public bool IsLaptopLocked => _laptopLockers.Count > 0 || LaptopLock.IsLocked;
     public bool IsPhoneLockedOpen => _phoneLockers.Count > 0;
     public event Action<Mode> ModeChanged;
 
@@ -60,8 +61,15 @@ public class DeviceLayer : MonoBehaviour
         RefreshChrome();
     }
 
+    private void Start()
+    {
+        // Not Awake: LaptopLock resets its events on sceneLoaded, which runs after every Awake.
+        LaptopLock.Changed += RefreshChrome;
+    }
+
     private void OnDestroy()
     {
+        LaptopLock.Changed -= RefreshChrome;
         DOTween.Kill(this);
         if (Instance == this) Instance = null;
     }
