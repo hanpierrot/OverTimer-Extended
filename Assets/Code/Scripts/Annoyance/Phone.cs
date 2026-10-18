@@ -104,7 +104,7 @@ public class Phone : DeskObject
         IsRinging = true;
         ringElapsed = 0f;
         answeringElapsed = -1f;
-        ClockService.Instance.TickMultiplier = GameManager.Instance.GameConfig.ringEffectMultiplier;
+        ClockService.Instance.SetSpeed(this, GameManager.Instance.GameConfig.ringEffectMultiplier);
 
         if (ringingVisual) ringingVisual.SetActive(true);
         PlayRingSound();
@@ -115,7 +115,7 @@ public class Phone : DeskObject
     private void StopRing()
     {
         IsRinging = false;
-        ClockService.Instance.TickMultiplier = 1f;
+        ClockService.Instance.ClearSpeed(this);
 
         if (ringingVisual) ringingVisual.SetActive(false);
         StopRingSound();

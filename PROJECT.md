@@ -7,7 +7,7 @@
 | Snapshot | Value |
 |---|---|
 | Last verified against code | **2026-10-17**, static read of the repo (nothing run in Play mode) |
-| Branch / commit | `ari/pool-table` @ `e724c68` (fast-forward merge of `main`) |
+| Branch / commit | `ari/Phone-Revamp` from `main` @ `30d5207` (Phase 1.1 uncommitted, clock core verified in Play mode 2026-10-18) |
 | Engine | Unity **6000.3.14f1**, URP 2D, single scene |
 | Replaces | `GAME_STRUCTURE.md`, `CODE_GROUND_TRUTH.md`, `ITEMS_INVENTORY.md`, `BILLIARDS_BALANCE.md`, `BILLIARDS_DECISIONS.md` (see §21) |
 | Related plan (not built) | `PHONE_SHOP_DELIVERY_IMPLEMENTATION.md` + `PHONE_DELIVERY_DECISIONS.md` (claude.ai project "Overtimer") |
@@ -179,7 +179,7 @@ Target platform: **WebGL** (custom 1080p template). No `.asmdef` files: runtime 
 
 - Tags: none. Layers: 0 Default, 1 TransparentFX, 2 Ignore Raycast, **3 DeskObject** (pawnable mask), 4 Water, 5 UI. Sorting layers: `Default` only (order by `sortingOrder`).
 - Canvas: Screen Space Overlay, `CanvasScaler` Scale With Screen Size **960×540**, match width. Main Camera orthographic size 6.
-- Script execution order (from `.cs.meta`, per GAME_STRUCTURE 10-08): `GameManager −20 → InputManager −10 → MoneyService −5 → RngService −4 → CardCollectionManager −3 → RunStatsService −2 → others 0`. [re-verify]; the Phone plan wants `ClockService −1`.
+- Script execution order (from `.cs.meta`, per GAME_STRUCTURE 10-08): `GameManager −20 → InputManager −10 → MoneyService −5 → RngService −4 → CardCollectionManager −3 → RunStatsService −2 → others 0`. [re-verify]; `ClockService −1` via `[DefaultExecutionOrder(-1)]` on the class (Phone plan P3, owner-approved Q13).
 
 ### 5.5 Scene `SampleScene.unity`
 
@@ -233,7 +233,7 @@ All use `if (Instance != null && Instance != this) { Destroy(gameObject); return
 | Class | Owns | Key API |
 |---|---|---|
 | `GameManager` | config ref, game-over state, pause refcount, restart | `GameConfig`, `IsGameOver`, `LastEndReason`, `OnGameOver(EndReason)`, `PauseGame()/ResumeGame()` (refcounted, `timeScale`), `GameOver(reason)`, `Restart()` |
-| `ClockService` | `RemainingTime`, `TickMultiplier`, final-countdown intercept | `AddSeconds(s, reason)`, `Spend(s, reason)`, `PauseCountdown()/ResumeCountdown()` (plain bool), `ArmFinalCountdownIntercept(reset)`, `OnTimeChanged`, `OnCountdownFinished`, `OnFinalCountdownTriggered` |
+| `ClockService` | `RemainingTime`, `GameDelta`/`GameTime`, `TickMultiplier` (read-only), final-countdown intercept; owns `Clock/PauseLock` + `Clock/SpeedModifiers` | `AddSeconds(s, reason)`, `Spend(s, reason)`, `Pause(holder)/Resume(holder)`, `SetSpeed(key, m)/ClearSpeed(key)`, `PauseCountdown()/ResumeCountdown()` (legacy wrappers around one holder), `ArmFinalCountdownIntercept(reset)`, `OnTimeChanged`, `OnCountdownFinished`, `OnFinalCountdownTriggered` |
 | `MoneyService` | `Current` | `Add(int, reason)`, `TrySpend(int, reason) → bool` (never negative), `OnMoneyChanged(current, reason)`, `const StakeRefundReason = "stake refund"` |
 | `Meter` | Feed button | `SetLocked(bool)`, `IsLocked` |
 | `RngService` | one `System.Random` | `Random`; serialized `useFixedSeed`, `seed` (scene: unseeded) |
@@ -283,7 +283,7 @@ If a reason has no director, the end panel shows immediately. `GameOver` has **n
 | Mechanism | Type | Used by |
 |---|---|---|
 | `GameManager.PauseGame/ResumeGame` | refcounted, sets `Time.timeScale = 0` | `CardPanel` (open/close), `TutorialPanel`; `ResumeGame` never unfreezes after game over |
-| `ClockService.PauseCountdown/ResumeCountdown` | **plain bool, not counted** | `GameOver`, Final Countdown intro |
+| `ClockService.Pause/Resume(holder)` | **reference-counted** (`PauseLock`); `PauseCountdown/ResumeCountdown` share one legacy holder | `GameManager.GameOver` (own holder, never released), Final Countdown intro |
 
 Everything gameplay-side uses scaled time, so it freezes with `timeScale`. Cutscenes run `UnscaledGameTime`; hints and end panel use `SetUpdate(true)`.
 
@@ -345,10 +345,10 @@ No audio manager or mixer. Per-object `AudioSource`s: Phone ring loop, Pawn loop
 
 ### 9.1 ClockService
 
-- Tick: `RemainingTime -= Time.deltaTime * TickMultiplier` every frame while running; `OnTimeChanged` fires every frame.
+- Tick: `GameDelta = IsRunning ? Time.deltaTime : 0`; `RemainingTime -= GameDelta * TickMultiplier` every frame while running. Gameplay timers use `GameDelta`, not `TickMultiplier`; `OnTimeChanged` fires every frame.
 - At ≤ 0: if the Final Countdown intercept is armed, reset to its value (180 s) and raise `OnFinalCountdownTriggered`; else end the countdown (loss).
 - `AddSeconds(s, reason)` ignores `s ≤ 0` and game over; no cap. `Spend(s, reason)` clamps at 0 and **ends the run directly, bypassing the Final Countdown intercept**. The `reason` strings are **discarded** — there is no balance log yet.
-- **`TickMultiplier` is one scalar, last writer wins.** Writers: `Phone` (1.5 on ring start, 1.0 on stop) and `ClockSpeedCardSO` (its value on place, 1.0 on remove). Overlaps cancel each other (e.g. Slow Hand placed → ring → ring ends → back to 1.0 while the card still shows). Planned fix: keyed `SpeedModifiers` (Phone plan Batch 1).
+- **`TickMultiplier` is the product of keyed modifiers** (read-only, clamped 0–3). Writers: `Phone` (key = the phone, 1.5 while ringing) and `ClockSpeedCardSO` (key = the `CardItem`). Overlaps stack (Slow Hand 0.75 × ring 1.5 = 1.125). Never write it directly; use `SetSpeed/ClearSpeed`. Known gap: `Phone.OnPawned` deactivates without clearing its key (replaced in Phase 1.3).
 
 ### 9.2 Money and Meter
 
@@ -508,7 +508,7 @@ Both tiers are negative-EV gambles, as intended after the hotfix (base 110 → 2
 
 | Class | Fields (defaults) | Effect | Ends when |
 |---|---|---|---|
-| `ClockSpeedCardSO` | duration 15, tickMultiplier 0.75 | writes `TickMultiplier` | timer |
+| `ClockSpeedCardSO` | duration 15, tickMultiplier 0.75 | `SetSpeed(card, x)` / `ClearSpeed(card)` | timer |
 | `DoNotDisturbCardSO` | duration 30 | `Phone.Silence` / `Unsilence` | timer |
 | `RobocallsCardSO` | duration 30 | ring interval ×0.5 | timer |
 | `DisableAppIconCardSO` | duration 15, targetAppName | hides a laptop desktop icon (open app keeps running) | timer |
@@ -688,7 +688,6 @@ Ranked by impact. IDs: `L#` landmine pass (2026-08-31), `P#` Phone-plan problem 
 | L1 | **High** | Egg Timer +2 s/s net, untaxed, no limit — holding it alone wins in ~240 s | `crankTime 1`, `EggTimerTask` | 0.75 s cooldown in `EggTimerTask` (Batch 2) |
 | L4b | **High** | Pawning the wire puzzle sets `LaptopController.Disabled = true` forever (all apps dead) | `WireTask.OnPawned` | make it unpawnable or set `false`; plan makes it unpawnable |
 | L4a | High | Laptop pawnable ($120) with no buyback yet → unwinnable-but-running run | `DeskLaptopOpener.CanBePawned` | intended once Buyback ships (Batch 4); until then risky |
-| L5 / P1 | High | `TickMultiplier` last-write-wins (Phone vs clock cards) | `ClockService`, `Phone`, `ClockSpeedCardSO` | keyed `SpeedModifiers` (Batch 1) |
 | I8 / P5 | Med | `AnnoyanceManager` probably absent from the scene → phone/bill overlap and bills overwrite each other; Audit bypasses it anyway | `AnnoyanceManager`, `ITRSService.ForceBillNow` | verify in Editor; plan replaces with `CallScheduler` and moves the pending-bill guard into ITRS |
 | N5 | Med | Audit card: `OnRemoved` empty → after pawning, its handler ends a *different* pooled card later | `AuditCardSO` | unsubscribe in `OnRemoved` |
 | P15 | Med | `ClockService.Spend` bypasses the Final Countdown intercept | `ClockService.Spend` | route through the same check as the tick |
@@ -744,6 +743,7 @@ Ranked by impact. IDs: `L#` landmine pass (2026-08-31), `P#` Phone-plan problem 
 | GS | Card weights all 0 | weights set (3 assets verified, rest per ITEMS_INVENTORY) |
 | GS | `CostModifier` couldn't reach Blackjack/Billiards | `Target { Ticket, CardPack, Blackjack, Billiards }` |
 | P11 | Pawned objects `Destroy()`ed | every `OnPawned` deactivates |
+| L5 / P1 | `TickMultiplier` last-write-wins (Phone vs clock cards) | keyed `SpeedModifiers` in `ClockService` (`SetSpeed/ClearSpeed`); `TickMultiplier` is read-only (Phase 1.1, `ari/Phone-Revamp`; self-tests + Play check, Final Countdown intro not yet Play-tested) |
 | Hotfix | Blackjack lost money (40/20/50) | 100/25/130 + Hot Table; pawn values Laptop 120, Card Box 48, Nine stack 24; Triple stack and Bear unpawnable |
 
 ---
@@ -847,6 +847,13 @@ Condensed; newest last. Full rationale lives in the plan docs.
 | P24 | 10-17 | Guided tutorial, one panel per new mechanic | planned (reuse existing hint/tutorial code) |
 | P29 | 10-17 | Remove `AnnoyanceManager`; `CallScheduler` replaces it | planned |
 | P30 | 10-17 | Batch order 0 → 4, one branch each from `main` | final |
+| A1 | 10-18 | Phone plan Checkpoint 0 answers (Ari): Q1 remove tax Ignore; Q2 full catalog, no refresh; Q5 tutorials pause the clock; Q6 junk mail 60–120 s, none in first 60 s; Q9 Han draws art, placeholders meanwhile; Q10 Robocalls halve the call interval; Q13 `ClockService` execution order −1; Q14 Egg Timer stays pawnable ($150) until Batch 2 | decided |
+| A2 | 10-18 | **Q3:** client call pays **+$22 only**; no coupon option (no sale-tag art). Coupon code in `Checkout` stays tested but unwired, no `GrantCoupon` | decided |
+| A3 | 10-18 | **Q4:** device layout replaces "side by side": Laptop open shows the phone docked on its right; tapping the phone tweens the Laptop out to the left and leaves only the phone (home screen, like the reference UI set). Background blur stays while any device is open. A paused call therefore never shows the Laptop | decided; details at Checkpoint 1.2 |
+| A4 | 10-18 | **Q7:** unboxing = 3 box clicks with shake and broken-crate SFX (no knife drag) | decided |
+| A5 | 10-18 | **Q8:** no buyback card; task 4.2.5 dropped (no new card assets) | decided |
+| A6 | 10-18 | **Q11:** raise `CutsceneRoot`/`ClockRoot` sorting order to 2 and put `DeviceLayer` at 1 | decided; scene edit in Phase 1.2 |
+| A7 | 10-18 | **Q12:** Ari runs the WebGL build for the blur test; agents implement blur with tint fallback | decided |
 
 ---
 
@@ -919,6 +926,7 @@ Known stale spots in the plan docs (fix when the batch starts): they say `GameMa
 | Date | Change |
 |---|---|
 | 2026-10-17 | Created from a six-agent static audit of `ari/pool-table` @ `e724c68` plus all project docs. |
+| 2026-10-18 | Phone plan Phase 1.1: clock core (`PauseLock`, `SpeedModifiers`, `GameDelta`) in §6, §7, §9, §12, §15/§16; Checkpoint 0 answers A1–A7 in §18. |
 | 2026-10-17 | §5.2: noted the missing `unityyamlmerge` driver and the new agent files (`AGENTS.md`/`CLAUDE.md` rebuilt on Ari's template, `.claude/rules/` added). |
 
 ---

@@ -3,6 +3,8 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
+// -1: every timer that reads GameDelta must see this frame's value, not last frame's (plan P3).
+[DefaultExecutionOrder(-1)]
 public class ClockService : MonoBehaviour
 {
     public static ClockService Instance{get; private set;}
@@ -16,8 +18,23 @@ public class ClockService : MonoBehaviour
     [SerializeField] private string timeFormat = "mm\\:ss";
 
     public float RemainingTime { get; private set; }
-    public bool IsRunning { get; private set; }
     public bool IsGameOver { get; private set; }
+
+    private readonly PauseLock _pause = new PauseLock();
+    private readonly SpeedModifiers _speed = new SpeedModifiers();
+    private bool _started;
+    // Immutable token for the legacy PauseCountdown/ResumeCountdown pair (Final Countdown intro).
+    private static readonly object LegacyHolder = new object();
+
+    /// <summary>True while the clock ticks: started, no pause holder, not over.</summary>
+    public bool IsRunning => _started && !_pause.IsPaused && !IsGameOver;
+
+    /// <summary>Seconds of RUNNING clock this frame: Time.deltaTime while running, else 0. Not multiplied by TickMultiplier.
+    /// Every gameplay timer (rings, bills, deliveries) counts with this.</summary>
+    public float GameDelta { get; private set; }
+
+    /// <summary>Running sum of GameDelta since scene load.</summary>
+    public float GameTime { get; private set; }
 
     public float CurrentSeconds => RemainingTime;
     
@@ -25,11 +42,13 @@ public class ClockService : MonoBehaviour
     private float _finalCountdownResetSeconds;
     public event Action OnFinalCountdownTriggered;
 
-    /// <summary>
-    /// Multiplies tick speed on top of the existing mouse-speed multiplier.
-    /// Phone/cards (Slow Hand, Rush, Robocalls) write this. Nothing else should.
-    /// </summary>
-    public float TickMultiplier { get; set; } = 1f;
+    /// <summary>Read-only product of every keyed speed modifier. Write through SetSpeed/ClearSpeed.</summary>
+    public float TickMultiplier => _speed.Effective;
+
+    public void Pause(object holder) => _pause.Acquire(holder);
+    public void Resume(object holder) => _pause.Release(holder);
+    public void SetSpeed(object key, float multiplier) => _speed.Set(key, multiplier);
+    public void ClearSpeed(object key) => _speed.Remove(key);
 
     public event Action OnCountdownFinished;
     public event Action<float> OnTimeChanged;
@@ -55,28 +74,27 @@ public class ClockService : MonoBehaviour
 
     private void Update()
     {
+        GameDelta = IsRunning ? Time.deltaTime : 0f;
+        GameTime += GameDelta;
         RunTimer();
     }
 
     public void StartCountdown()
     {
         if(IsGameOver)  return;
-        IsRunning = true;
+        _started = true;
     }
-    
-    public void PauseCountdown() => IsRunning = false;
-    
-    public void ResumeCountdown()
-    { 
-        if(IsGameOver) return;
-        IsRunning = true;
-    }
-    
+
+    // Kept so the Final Countdown intro works unchanged: thin wrappers around one holder.
+    public void PauseCountdown() => Pause(LegacyHolder);
+
+    public void ResumeCountdown() => Resume(LegacyHolder);
+
     private void RunTimer()
     {
-        if (!IsRunning || IsGameOver) return;
-        
-        RemainingTime -= Time.deltaTime * TickMultiplier;
+        if (GameDelta <= 0f) return;
+
+        RemainingTime -= GameDelta * TickMultiplier;
 
         if (RemainingTime <= 0f)
         {
@@ -124,7 +142,6 @@ public class ClockService : MonoBehaviour
 
     private void EndCountdown()
     {
-        IsRunning = false;
         IsGameOver = true;
         OnCountdownFinished?.Invoke();
     }

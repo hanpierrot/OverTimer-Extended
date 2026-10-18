@@ -97,7 +97,8 @@ public class GameManager : MonoBehaviour
         IsGameOver = true;
         LastEndReason = reason;
         InputManager.Instance.IsInputEnabled = false;
-        ClockService.Instance.PauseCountdown();
+        // Own holder, never released: no later Resume() from another system can restart the clock after the end.
+        ClockService.Instance.Pause(this);
         Freeze(true);
 
         OnGameOver?.Invoke(reason);
