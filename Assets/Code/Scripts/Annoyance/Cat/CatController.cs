@@ -127,7 +127,9 @@ public class CatController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (_sm.CurrentState != CatState.Wandering) return;
-        
+
+        if (other.TryGetComponent(out CameraViewButton _)) return;
+
         if (!other.TryGetComponent(out PointerReceiver target)) return;
         if (!target.IsInteractable) return;
         
