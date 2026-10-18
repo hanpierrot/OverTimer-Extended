@@ -24,6 +24,8 @@ public static class PhoneShopSelfTests
         InboxAndBanners();
         TaxDeadlines();
         Dialogues();
+        ShopMath();
+        ShopCatalogAsset();
 
         if (_fails == 0) Debug.Log($"[PhoneShop] ALL OK ({_passes} checks)");
         else Debug.LogError($"[PhoneShop] {_fails} FAILED, {_passes} passed");
@@ -113,6 +115,126 @@ public static class PhoneShopSelfTests
         var rec = new CallRecord { name = "Client", outcome = CallEnd.Answered };
         rec.transcript.Add("Client: hi");
         Check(rec.transcript.Count == 1 && rec.result == "", "call record starts with no result");
+    }
+
+    // ---- Phase 2.1: catalog, pawn and buyback maths, checkout, ownership, icon gate, delivery, ledger, validator
+    static void ShopMath()
+    {
+        var cat = new System.Collections.Generic.List<ItemDef>
+        {
+            new ItemDef { id = "laptop", kind = ItemKind.Physical, catalogValue = 150, startsOwned = true, pawnable = true },
+            new ItemDef { id = "phone", kind = ItemKind.Physical, startsOwned = true, pawnable = false },
+            new ItemDef { id = "triple_stack", kind = ItemKind.Physical, startsOwned = true, pawnable = false },
+            new ItemDef { id = "power_bank", kind = ItemKind.Physical, price = 25, pawnable = true, sold = true },
+            new ItemDef { id = "card_box", kind = ItemKind.Physical, price = 40, pawnable = true, sold = true },
+            new ItemDef { id = "lucky_stack", kind = ItemKind.Physical, price = 30, pawnable = true, sold = true },
+            new ItemDef { id = "license_blackjack", kind = ItemKind.Digital, price = 60, sold = true },
+            new ItemDef { id = "license_billiards", kind = ItemKind.Digital, price = 60, sold = true },
+        };
+        var own = new Ownership(cat);
+        Check(own.IsOwned("laptop") && !own.CanBuy("laptop") && own.CanBuy("power_bank"), "starting kit owned; shop items buyable");
+        Check(PawnMath.PawnValue(cat[0], 0, true) == 120, "Laptop pawns for $120 (80% of $150)");
+        Check(PawnMath.PawnValue(cat[1], 0, true) == 0 && PawnMath.PawnValue(cat[2], 0, true) == 0, "Phone and Triple stack can't be pawned");
+        Check(PawnMath.PawnValue(cat[6], 60, true) == 0, "licenses can't be pawned");
+
+        // (pawn, buyback at 0 s, 30 s, 60 s, 95 s). Card Box is $40 (Ari, 2026-10-18), so its row differs from the plan's $60 row.
+        var expect = new System.Collections.Generic.Dictionary<string, (int pawn, int b0, int b30, int b60, int b90)>
+        {
+            { "laptop", (120, 165, 173, 180, 188) }, { "power_bank", (20, 28, 29, 30, 32) },
+            { "card_box", (32, 44, 46, 48, 50) }, { "lucky_stack", (24, 33, 35, 36, 38) },
+        };
+        bool tableOk = true;
+        foreach (var kv in expect)
+        {
+            ItemDef d = null; foreach (var x in cat) if (x.id == kv.Key) d = x;
+            int basis = d.startsOwned ? d.catalogValue : d.price;
+            int pv = PawnMath.PawnValue(d, d.startsOwned ? 0 : d.price, true);
+            var got = (pv, PawnMath.BuybackPrice(basis, 0), PawnMath.BuybackPrice(basis, 30), PawnMath.BuybackPrice(basis, 60), PawnMath.BuybackPrice(basis, 95));
+            if (got != kv.Value) { tableOk = false; Debug.LogError($"[PhoneShop]    {kv.Key}: got {got} want {kv.Value}"); }
+        }
+        Check(tableOk, "pawn + buyback table matches the decision log for every item");
+        Check(PawnMath.BuybackMultiplier(29.9f) == 1.10f && PawnMath.BuybackMultiplier(90f) == 1.25f && PawnMath.NextStepIn(95f) < 0, "buyback steps, capped at 90 s");
+        bool roundTripLoses = true;
+        for (int price = 1; price <= 500; price++) for (int s = 0; s <= 120; s += 15)
+            if (PawnMath.BuybackPrice(price, s) <= (int)Math.Floor(price * 0.8)) roundTripLoses = false;
+        Check(roundTripLoses, "for every price $1-$500 and every wait, buyback > pawn (no money printer)");
+
+        var sc = new ShopConfig();
+        var q = Checkout.Quote(new System.Collections.Generic.List<ItemDef> { cat[3], cat[6] }, Shipping.Standard, false, false, sc);
+        Check(q.total == 85 && q.shipping == 0 && q.etaSeconds == 20f, "Power Bank + Blackjack license, standard: $85, 20 s");
+        q = Checkout.Quote(new System.Collections.Generic.List<ItemDef> { cat[6] }, Shipping.Express, true, false, sc);
+        Check(q.total == 60 && q.shipping == 0 && q.leaveOpenFee == 0 && q.etaSeconds == 0f, "license only: no shipping or leave-open fee, instant");
+        q = Checkout.Quote(new System.Collections.Generic.List<ItemDef> { cat[3], cat[4], cat[5] }, Shipping.Express, true, false, sc);
+        Check(q.total == 95 + 8 + 3 && q.etaSeconds == 5f, "3 physical items, express + leave open: fees charged once ($106)");
+        q = Checkout.Quote(new System.Collections.Generic.List<ItemDef> { cat[3], cat[4], cat[5] }, Shipping.Standard, false, true, sc);
+        int paidSum = 0; foreach (var v in q.pricePaid.Values) paidSum += v;
+        Check(q.discount == 19 && paidSum == q.subtotal - q.discount && q.total == 76, "20% coupon: $19 off, per-item prices add up exactly ($76)");
+        Check(PawnMath.PawnValue(cat[4], q.pricePaid["card_box"], true) < PawnMath.PawnValue(cat[4], 40, true), "coupon purchase pawns at 80% of the discounted price");
+        own.MarkOrdered("power_bank", 25); Check(!own.CanBuy("power_bank"), "can't order the same item twice");
+        own.MarkDelivered("power_bank"); Check(own.MarkPawned("power_bank") == 20 && own.Of("power_bank") == Ownership.Status.Pawned && !own.CanBuy("power_bank"), "pawned item pays $20 and shows as Sold (until Batch 4)");
+        Check(own.MarkPawned("phone") == 0 && own.IsOwned("phone"), "pawning the Phone does nothing");
+        bool dup = false; try { new Ownership(new[] { cat[0], cat[0] }); } catch (ArgumentException) { dup = true; }
+        Check(dup, "a duplicate item id is rejected");
+
+        var g = new IconGate(); g.SetLicensed("Blackjack", false);
+        g.CardHide("Blackjack"); g.CardRelease("Blackjack");
+        Check(!g.IsVisible("Blackjack"), "card removal does NOT reveal an unlicensed app");
+        g.SetLicensed("Blackjack", true); Check(g.IsVisible("Blackjack"), "licence shows it");
+        g.CardHide("Mining"); g.CardHide("Mining"); g.CardRelease("Mining");
+        Check(!g.IsVisible("Mining"), "two overlapping No More Mining cards: one ending keeps it hidden");
+        g.CardRelease("Mining"); Check(g.IsVisible("Mining"), "both ended: visible");
+
+        var ds = new DeliveryScheduler(); var arrived = new System.Collections.Generic.List<Order>(); ds.Arrived += arrived.Add;
+        ds.Ship(new[] { "power_bank" }, 20f, false); ds.ShipJunk(5f);
+        for (int i = 0; i < 49; i++) ds.Tick(0.1f); Check(arrived.Count == 0, "nothing at 4.9 s");
+        ds.Tick(0.2f); Check(arrived.Count == 1 && arrived[0].junk, "junk box at 5 s");
+        for (int i = 0; i < 300; i++) ds.Tick(0f); Check(arrived.Count == 1, "paused clock: shipping doesn't advance");
+        for (int i = 0; i < 160; i++) ds.Tick(0.1f); Check(arrived.Count == 2 && arrived[1].itemIds[0] == "power_bank", "Power Bank at 20 s");
+        ds.Arrived += o => { if (!o.junk) ds.ShipJunk(1f); };
+        ds.Ship(new[] { "card_box" }, 1f, true); ds.Tick(1.1f); Check(ds.InTransit.Count == 1, "a handler can ship from inside Arrived safely");
+
+        var led = new PawnLedger(); led.Record("laptop", 150, 100f);
+        Check(led.Price("laptop", 100f) == 165 && led.Price("laptop", 131f) == 173 && led.Price("laptop", 500f) == 188, "ledger buyback uses game time since pawn");
+
+        var defs = new System.Collections.Generic.List<ItemDefCheck>
+        {
+            new ItemDefCheck { id = "a", kind = ItemKind.Physical, pawnable = true, needsBinding = true, bindingLayer = 3 },
+            new ItemDefCheck { id = "b", kind = ItemKind.Physical, needsBinding = true, bindingLayer = 3 },
+            new ItemDefCheck { id = "c", kind = ItemKind.Digital },
+        };
+        Check(ShopValidation.Check(defs, new[] { "a", "b" }).Count == 0, "validator: a clean catalog passes");
+        Check(ShopValidation.Check(defs, new[] { "a" }).Count == 1, "validator: a scene item without a binding is reported");
+        Check(ShopValidation.Check(defs, new[] { "a", "a", "b" }).Count == 1, "validator: a double binding is reported");
+        Check(ShopValidation.Check(defs, new[] { "a", "b", "zzz" }).Count == 1, "validator: an unknown id on a binding is reported");
+        defs[0].bindingLayer = 0; Check(ShopValidation.Check(defs, new[] { "a", "b" }).Count == 1, "validator: a pawnable item off layer 3 is reported");
+        defs[0].bindingLayer = 3; defs.Add(new ItemDefCheck { id = "a", kind = ItemKind.Digital });
+        Check(ShopValidation.Check(defs, new[] { "a", "b" }).Count >= 1, "validator: a duplicate id is reported");
+    }
+
+    // The real catalog asset (Assets/Settings/Configs/ItemCatalog.asset) against the table in the plan (sec. 3.6).
+    static void ShopCatalogAsset()
+    {
+        var catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<ItemCatalogSO>("Assets/Settings/Configs/ItemCatalog.asset");
+        Check(catalog != null, "ItemCatalog.asset exists");
+        if (catalog == null) return;
+        var d = catalog.BuildDefs();
+        var own = new Ownership(d);                       // throws on a duplicate id
+        string[] ids = { "laptop", "phone", "printer", "meter", "collection", "egg_timer", "bear", "picture", "triple_stack",
+                         "power_bank", "card_box", "lucky_stack", "license_blackjack", "license_billiards" };
+        bool all = true; foreach (var id in ids) if (!own.Has(id)) { all = false; Debug.LogError("[PhoneShop] catalog is missing '" + id + "'"); }
+        Check(all && d.Count == ids.Length, "catalog has exactly the 14 planned items");
+        if (!all) return;
+        Check(own.Def("power_bank").price == 25 && own.Def("card_box").price == 40 && own.Def("lucky_stack").price == 30 &&
+              own.Def("license_blackjack").price == 60 && own.Def("license_billiards").price == 60, "catalog prices: Power Bank 25, Card Box 40, Lucky Nine 30, licenses 60");
+        Check(own.Def("laptop").catalogValue == 150 && own.Def("laptop").pawnable && PawnMath.PawnValue(own.Def("laptop"), 0, true) == 120, "Laptop: value $150, pawns for $120");
+        bool startingOk = true;
+        foreach (var id in new[] { "laptop", "phone", "printer", "meter", "collection", "egg_timer", "bear", "picture", "triple_stack" }) if (!own.IsOwned(id)) startingOk = false;
+        foreach (var id in new[] { "power_bank", "card_box", "lucky_stack", "license_blackjack", "license_billiards" }) if (own.IsOwned(id) || !own.CanBuy(id)) startingOk = false;
+        Check(startingOk, "starting kit owned; Power Bank, Card Box, Lucky Nine and both licenses are for sale");
+        bool unpawnable = true;
+        foreach (var id in new[] { "phone", "printer", "meter", "collection", "egg_timer", "bear", "picture", "triple_stack", "license_blackjack", "license_billiards" }) if (own.Def(id).pawnable) unpawnable = false;
+        Check(unpawnable, "only the Laptop and the three shop items can be pawned");
+        Check(own.Def("license_blackjack").kind == ItemKind.Digital && own.Def("license_billiards").kind == ItemKind.Digital, "licenses are digital");
     }
 
     // ---- Phase 1.4: TaxDeadline

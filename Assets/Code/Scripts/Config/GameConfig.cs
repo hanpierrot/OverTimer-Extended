@@ -88,6 +88,15 @@ public class GameConfig : ScriptableObject
     [Tooltip("Blur the desk behind the Laptop/Phone. Off = plain dark tint only (WebGL read-back fallback).")]
     public bool deviceBlurEnabled = true;
 
+    [Header("Shop (Phone plan, Batch 2)")]
+    public int shopStandardFee = 0;
+    public float shopStandardSeconds = 20f;
+    public int shopExpressFee = 8;
+    public float shopExpressSeconds = 5f;
+    [Tooltip("Batch 3: \"leave it opened & ready\" fee.")]
+    public int shopLeaveOpenFee = 3;
+    [Range(0f, 1f)] public float shopCouponRate = 0.2f;
+
     [Header("Annoyance Manager (§5.7)")]
     public float annoyanceMinGap = 12f;
 
