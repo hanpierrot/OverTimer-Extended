@@ -19,7 +19,9 @@ public class WireTask : TaskBase, IPawnable
     [SerializeField] private Color[] wireColors;
     
     public int PawnValue => GameManager.Instance.GameConfig.wireTaskPawnValue;
-    public bool CanBePawned => true;
+    // Part of the wall (Ari, Phase 2.3): never pawnable. The plan's catalog table lists the wire puzzle as a starting item
+    // that can't be pawned; it has no ShopItemBinding, so this is where the rule lives.
+    public bool CanBePawned => false;
 
     private PointerReceiver _receiver;
     private bool[] _connected;

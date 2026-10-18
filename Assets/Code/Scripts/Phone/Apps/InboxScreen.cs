@@ -42,7 +42,7 @@ public class InboxScreen : MonoBehaviour
         if (phone == null) return;
 
         var all = phone.Inbox.All;
-        int sig = all.Count * 1000 + phone.Inbox.Unread * 10 + _selectedId * 100000;
+        int sig = all.Count * 1000 + phone.Inbox.Unread * 10 + _selectedId * 100000 + (ShopService.Instance != null ? ShopService.Instance.Version * 7919 : 0);
         if (sig == _signature) return;
         _signature = sig;
 
@@ -102,8 +102,14 @@ public class InboxScreen : MonoBehaviour
         bool has = !string.IsNullOrEmpty(id);
         PhoneUi.SetActive(actionButton.gameObject, has);
         if (!has) return;
-        PhoneUi.SetText(actionLabel, id.StartsWith("app:") ? "Open" : "Activate");
-        actionButton.interactable = id.StartsWith("app:");          // license activation arrives with the Shop (Batch 2)
+        if (id.StartsWith("license:"))
+        {
+            PhoneUi.SetText(actionLabel, m.actionDone ? "Activated" : "Activate");
+            actionButton.interactable = !m.actionDone;
+            return;
+        }
+        PhoneUi.SetText(actionLabel, "Open");
+        actionButton.interactable = id.StartsWith("app:");
     }
 
     private void RunAction()
@@ -114,6 +120,11 @@ public class InboxScreen : MonoBehaviour
         {
             if (m.id != _selectedId) continue;
             if (m.actionId == "app:taxes" && home != null) home.OpenApp("taxes");
+            else if (m.actionId != null && m.actionId.StartsWith("license:") && !m.actionDone && ShopService.Instance != null)
+            {
+                if (ShopService.Instance.ActivateLicense(m.actionId.Substring("license:".Length))) m.actionDone = true;
+                _signature = -1;
+            }
             return;
         }
     }

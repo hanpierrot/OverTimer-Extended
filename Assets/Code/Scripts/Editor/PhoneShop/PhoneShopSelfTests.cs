@@ -184,6 +184,19 @@ public static class PhoneShopSelfTests
         Check(!g.IsVisible("Mining"), "two overlapping No More Mining cards: one ending keeps it hidden");
         g.CardRelease("Mining"); Check(g.IsVisible("Mining"), "both ended: visible");
 
+        var gate = new IconGate(); gate.CardHide("Shop");
+        Check(!gate.IsVisible("shop") && !gate.IsVisible("SHOP"), "icon names ignore case: a card hiding \"Shop\" hides the phone's \"shop\" icon");
+        gate.CardRelease("shop"); Check(gate.IsVisible("Shop"), "...and releasing it with another case shows it again");
+
+        var cart = new ShopCart(); var own2 = new Ownership(cat);
+        Check(cart.TryAdd(cat[3], own2) && !cart.TryAdd(cat[3], own2), "cart: an item goes in once");
+        Check(!cart.TryAdd(cat[0], own2), "cart: an owned item (Laptop) can't be added");
+        cart.TryAdd(cat[6], own2); var cq = cart.Quote(Shipping.Standard, sc);
+        Check(cq.total == 85 && cart.Count == 2, "cart: Power Bank + Blackjack quote $85");
+        own2.MarkOrdered("power_bank", 25); Check(!cart.TryAdd(cat[3], own2), "cart: an item already on the way can't be added again");
+        Check(cart.Remove("power_bank") && !cart.Remove("power_bank") && cart.Count == 1, "cart: remove works once");
+        cart.Clear(); Check(cart.Count == 0 && cart.Quote(Shipping.Express, sc).total == 0, "cart: empty cart costs nothing");
+
         var ds = new DeliveryScheduler(); var arrived = new System.Collections.Generic.List<Order>(); ds.Arrived += arrived.Add;
         ds.Ship(new[] { "power_bank" }, 20f, false); ds.ShipJunk(5f);
         for (int i = 0; i < 49; i++) ds.Tick(0.1f); Check(arrived.Count == 0, "nothing at 4.9 s");

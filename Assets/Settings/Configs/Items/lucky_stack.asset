@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: lucky_stack
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: lucky_stack
-  displayName: Lucky Nine stack
+  displayName: Lucky Nine
   icon: {fileID: 0}
   description: Lucky Nine scratch tickets.
   kind: 0

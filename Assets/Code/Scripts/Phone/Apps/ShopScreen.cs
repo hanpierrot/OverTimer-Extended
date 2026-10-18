@@ -1,0 +1,237 @@
+using System.Collections.Generic;
+using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// The Shop app window, laid out like an inventory (the Backpack pieces of Premade Menus):
+///   Left   - the shop's items as rows (name, price or status on the right); click one to select it (orange row).
+///   Right  - Browse: an item card (picture box, name / price / status fields, description) with ADD / DROP and CART.
+///            Cart: a receipt on a pink pane (the items, the total), two shipping tiles (STD / EXP, the chosen one is
+///            orange), BACK and BUY. The orders on the way (with a live countdown) show on the receipt.
+/// While the cart is open a click on a row takes that item out of the cart. It only reads ShopService.
+/// </summary>
+public class ShopScreen : MonoBehaviour
+{
+    [Header("Item list")]
+    [SerializeField] private PhoneListView list;
+
+    [Header("Browse card")]
+    [SerializeField] private GameObject browseGroup;
+    [SerializeField] private Image itemPicture;
+    [SerializeField] private TMP_Text nameLabel;
+    [SerializeField] private TMP_Text priceLabel;
+    [SerializeField] private TMP_Text statusLabel;
+    [SerializeField] private TMP_Text descriptionLabel;
+    [SerializeField] private Button addButton;
+    [SerializeField] private TMP_Text addLabel;
+    [SerializeField] private Button cartButton;
+    [SerializeField] private TMP_Text cartLabel;
+
+    [Header("Cart receipt")]
+    [SerializeField] private GameObject cartGroup;
+    [SerializeField] private TMP_Text receiptLabel;
+    [SerializeField] private TMP_Text summaryLabel;
+    [SerializeField] private Button standardTile;
+    [SerializeField] private Image standardTileImage;
+    [SerializeField] private Button expressTile;
+    [SerializeField] private Image expressTileImage;
+    [SerializeField] private Sprite tileNormal;
+    [SerializeField] private Sprite tileSelected;
+    [SerializeField] private Button backButton;
+    [SerializeField] private Button buyButton;
+    [SerializeField] private TMP_Text buyLabel;
+
+    private bool _cartView;
+    private string _selectedId;
+    private int _signature = -1;
+
+    private readonly List<PhoneListRowData> _rows = new List<PhoneListRowData>();
+    private readonly List<string> _rowIds = new List<string>();
+    private readonly StringBuilder _text = new StringBuilder();
+
+    private void Awake()
+    {
+        list.Clicked += HandleRowClicked;
+        addButton.onClick.AddListener(() =>
+        {
+            var shop = ShopService.Instance;
+            if (shop == null || _selectedId == null) return;
+            if (shop.Cart.Contains(_selectedId)) shop.RemoveFromCart(_selectedId); else shop.AddToCart(_selectedId);
+        });
+        cartButton.onClick.AddListener(() => { _cartView = true; _signature = -1; });
+        backButton.onClick.AddListener(() => { _cartView = false; _signature = -1; });
+        standardTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetShipping(Shipping.Standard); });
+        expressTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetShipping(Shipping.Express); });
+        buyButton.onClick.AddListener(() =>
+        {
+            var shop = ShopService.Instance;
+            if (shop != null && shop.TryBuy()) { _cartView = false; _signature = -1; }
+        });
+    }
+
+    private void OnEnable() => _signature = -1;
+
+    private void Update()
+    {
+        var shop = ShopService.Instance;
+        if (shop == null || shop.Config == null) return;
+
+        int sig = shop.Version * 31 + (_cartView ? 1 : 0) + (_selectedId != null ? _selectedId.GetHashCode() : 0) * 7 + OrderSeconds(shop);
+        if (sig == _signature) return;
+        _signature = sig;
+
+        PhoneUi.SetActive(browseGroup, !_cartView);
+        PhoneUi.SetActive(cartGroup, _cartView);
+        if (_cartView) ShowCart(shop); else ShowBrowse(shop);
+    }
+
+    // Whole seconds left on the orders, so the countdown redraws once a second.
+    private static int OrderSeconds(ShopService shop)
+    {
+        int n = 0;
+        foreach (var o in shop.Delivery.InTransit) n += Mathf.CeilToInt(o.secondsLeft) * 13 + o.id;
+        return n;
+    }
+
+    // ---- Browse ----
+
+    private void ShowBrowse(ShopService shop)
+    {
+        _rows.Clear(); _rowIds.Clear();
+        int selectedIndex = -1;
+        foreach (var def in shop.Ownership.Defs)
+        {
+            if (!def.sold) continue;
+            if (def.id == _selectedId) selectedIndex = _rows.Count;
+            _rows.Add(new PhoneListRowData { title = def.displayName, detail = StatusOf(shop, def) });
+            _rowIds.Add(def.id);
+        }
+        list.SetRows(_rows, selectedIndex);
+
+        PhoneUi.SetText(cartLabel, shop.Cart.Count > 0 ? "CART " + shop.Cart.Count : "CART");
+
+        if (selectedIndex < 0)
+        {
+            SetPicture(null);
+            PhoneUi.SetText(nameLabel, "SHOP");
+            PhoneUi.SetText(priceLabel, "");
+            PhoneUi.SetText(statusLabel, "");
+            _text.Clear().Append("Pick an item on the left.");
+            AppendOrders(shop);
+            PhoneUi.SetText(descriptionLabel, _text.ToString());
+            PhoneUi.SetActive(addButton.gameObject, false);
+            return;
+        }
+
+        var item = shop.Ownership.Def(_selectedId);
+        var so = shop.Catalog != null ? shop.Catalog.Find(_selectedId) : null;
+        SetPicture(so != null ? so.icon : null);
+        PhoneUi.SetText(nameLabel, item.displayName);
+        PhoneUi.SetText(priceLabel, "$" + item.price);
+        PhoneUi.SetText(statusLabel, StatusText(shop, item));
+        PhoneUi.SetText(descriptionLabel, (item.kind == ItemKind.Digital ? "License. " : "") + (so != null ? so.description : ""));
+
+        bool inCart = shop.Cart.Contains(item.id);
+        PhoneUi.SetActive(addButton.gameObject, true);
+        PhoneUi.SetText(addLabel, inCart ? "DROP" : "ADD");
+        addButton.interactable = inCart || shop.Ownership.CanBuy(item.id);
+    }
+
+    private void SetPicture(Sprite sprite)
+    {
+        if (itemPicture == null) return;
+        itemPicture.sprite = sprite;
+        itemPicture.enabled = sprite != null;
+    }
+
+    // ---- Cart ----
+
+    private void ShowCart(ShopService shop)
+    {
+        _rows.Clear(); _rowIds.Clear();
+        foreach (var def in shop.Cart.Items)
+        {
+            _rows.Add(new PhoneListRowData { title = def.displayName, detail = "$" + def.price });
+            _rowIds.Add(def.id);
+        }
+        list.SetRows(_rows, -1);
+
+        var quote = shop.Quote();
+        bool any = shop.Cart.Count > 0;
+
+        _text.Clear();
+        if (!any) _text.Append("Your cart is empty.");
+        else
+        {
+            foreach (var def in shop.Cart.Items) _text.Append(def.displayName).Append("  $").Append(def.price).Append('\n');
+            if (quote.hasPhysical)
+                _text.Append(shop.Shipping == Shipping.Express ? "Express $" : "Standard $").Append(quote.shipping)
+                     .Append("  ").Append(Mathf.CeilToInt(quote.etaSeconds)).Append('s');
+        }
+        AppendOrders(shop);
+        PhoneUi.SetText(receiptLabel, _text.ToString());
+
+        bool express = shop.Shipping == Shipping.Express;
+        standardTileImage.sprite = express ? tileNormal : tileSelected;
+        expressTileImage.sprite = express ? tileSelected : tileNormal;
+        PhoneUi.SetActive(standardTile.gameObject, quote.hasPhysical);
+        PhoneUi.SetActive(expressTile.gameObject, quote.hasPhysical);
+
+        PhoneUi.SetText(summaryLabel, any ? "TOTAL\n$" + quote.total : "");
+
+        PhoneUi.SetActive(buyButton.gameObject, any);
+        PhoneUi.SetText(buyLabel, "BUY $" + quote.total);
+    }
+
+    private void AppendOrders(ShopService shop)
+    {
+        bool header = false;
+        foreach (var o in shop.Delivery.InTransit)
+        {
+            if (o.junk) continue;
+            if (!header) { _text.Append("\n\nON THE WAY"); header = true; }
+            _text.Append('\n');
+            for (int i = 0; i < o.itemIds.Count; i++)
+            {
+                if (i > 0) _text.Append(", ");
+                _text.Append(shop.Ownership.Has(o.itemIds[i]) ? shop.Ownership.Def(o.itemIds[i]).displayName : o.itemIds[i]);
+            }
+            _text.Append("  ").Append(Mathf.CeilToInt(o.secondsLeft)).Append('s');
+        }
+    }
+
+    private static string StatusOf(ShopService shop, ItemDef def)
+    {
+        if (shop.Cart.Contains(def.id)) return "IN CART";
+        switch (shop.Ownership.Of(def.id))
+        {
+            case Ownership.Status.Owned: return "OWNED";
+            case Ownership.Status.Ordered: return "ON WAY";
+            case Ownership.Status.Pawned: return "SOLD";
+            default: return "$" + def.price;
+        }
+    }
+
+    private static string StatusText(ShopService shop, ItemDef def)
+    {
+        if (shop.Cart.Contains(def.id)) return "In cart";
+        switch (shop.Ownership.Of(def.id))
+        {
+            case Ownership.Status.Owned: return "Owned";
+            case Ownership.Status.Ordered: return def.kind == ItemKind.Digital ? "Activate it" : "On the way";
+            case Ownership.Status.Pawned: return "Sold";
+            default: return "For sale";
+        }
+    }
+
+    private void HandleRowClicked(int index)
+    {
+        var shop = ShopService.Instance;
+        if (shop == null || index < 0 || index >= _rowIds.Count) return;
+        if (_cartView) shop.RemoveFromCart(_rowIds[index]);
+        else _selectedId = _rowIds[index];
+        _signature = -1;
+    }
+}

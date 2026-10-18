@@ -155,8 +155,9 @@ public sealed class Ownership
 
 public sealed class IconGate
 {
-    readonly Dictionary<string, HideReason> _reasons = new Dictionary<string, HideReason>();
-    readonly Dictionary<string, int> _cardHolds = new Dictionary<string, int>();   // two "No More Mining" cards can overlap
+    // App names are compared ignoring case: the "Close The Shop" card says "Shop", the phone's icon id is "shop".
+    readonly Dictionary<string, HideReason> _reasons = new Dictionary<string, HideReason>(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string, int> _cardHolds = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);   // two "No More Mining" cards can overlap
     public event Action<string, bool> VisibilityChanged;
 
     public bool IsVisible(string app) => !_reasons.TryGetValue(app, out var r) || r == HideReason.None;

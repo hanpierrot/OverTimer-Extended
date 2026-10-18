@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: license_blackjack
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: license_blackjack
-  displayName: Blackjack license
+  displayName: Blackjack
   icon: {fileID: 0}
   description: Unlocks Blackjack on the Laptop.
   kind: 1

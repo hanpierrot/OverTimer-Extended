@@ -8,7 +8,7 @@ using UnityEngine.UI;
 ///   Booting  - black screen with a progress bar
 ///   On       - home screen with the app icons; the app window opens to the right of the phone
 /// The window shows only in the DeviceLayer's Phone view. Apps: "call" (CallScreen), "inbox" (InboxScreen),
-/// "taxes" (TaxesScreen). An incoming or active call always takes the window.
+/// "taxes" (TaxesScreen), "shop" (ShopScreen). An incoming or active call always takes the window.
 /// </summary>
 public class PhoneHome : MonoBehaviour
 {
@@ -24,6 +24,7 @@ public class PhoneHome : MonoBehaviour
     [SerializeField] private GameObject callWindow;
     [SerializeField] private GameObject inboxWindow;
     [SerializeField] private GameObject taxesWindow;
+    [SerializeField] private GameObject shopWindow;
 
     private string _app = "call";
 
@@ -54,9 +55,11 @@ public class PhoneHome : MonoBehaviour
         if (powerButton != null) powerButton.interactable = !power.IsForcedOff;
 
         var itrs = ITRSService.Instance;
+        var gate = ShopService.Instance != null ? ShopService.Instance.IconGate : null;
         foreach (var icon in icons)
         {
             if (icon == null) continue;
+            if (gate != null) PhoneUi.SetActive(icon.gameObject, gate.IsVisible(icon.AppId));   // "Close The Shop" hides the Shop icon
             if (icon.AppId == "inbox") icon.SetBadge(phone.Inbox.Unread);
             else if (icon.AppId == "taxes") icon.SetBadge(itrs != null && itrs.HasPendingAssessment ? 1 : 0);
         }
@@ -65,9 +68,11 @@ public class PhoneHome : MonoBehaviour
         bool phoneView = DeviceLayer.Instance != null && DeviceLayer.Instance.Current == DeviceLayer.Mode.Phone;
         bool show = phoneView && power.IsUsable;
         string app = (phone.IsRinging || phone.ActiveCall != null) ? "call" : _app;
+        if (gate != null && !gate.IsVisible(app)) app = "call";           // the open app's icon just got hidden
         PhoneUi.SetActive(callWindow, show && app == "call");
         PhoneUi.SetActive(inboxWindow, show && app == "inbox");
         PhoneUi.SetActive(taxesWindow, show && app == "taxes");
+        PhoneUi.SetActive(shopWindow, show && app == "shop");
     }
 
     public void OpenApp(string id)
@@ -75,6 +80,8 @@ public class PhoneHome : MonoBehaviour
         var phone = PhoneController.Instance;
         // Mid-call the Call window stays up; the other apps wait until it ends.
         if (phone != null && (phone.IsRinging || phone.ActiveCall != null)) return;
+        var gate = ShopService.Instance != null ? ShopService.Instance.IconGate : null;
+        if (gate != null && !gate.IsVisible(id)) return;
         _app = id;
     }
 }

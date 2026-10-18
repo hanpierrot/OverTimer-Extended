@@ -103,6 +103,8 @@ public class GameConfig : ScriptableObject
     [Header("Egg Timer (§5.8)")]
     public float crankTime = 2f;
     public float timePayout = 3f;
+    [Tooltip("Game seconds after each completed crank during which the Egg Timer ignores presses (plan P18).")]
+    public float eggTimerCooldown = 0.75f;
     
     [Header("Cat")]
     public float catSitDurationMin = 3f;

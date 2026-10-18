@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: license_billiards
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: license_billiards
-  displayName: Billiards license
+  displayName: Billiards
   icon: {fileID: 0}
   description: Unlocks Billiards on the Laptop.
   kind: 1
