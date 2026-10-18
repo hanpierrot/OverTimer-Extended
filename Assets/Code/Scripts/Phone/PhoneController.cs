@@ -31,24 +31,48 @@ public class PhoneController : DeskObject
     public CallInfo ActiveCall { get; private set; }
     public bool IsRinging => Calls != null && Calls.Current == CallScheduler.State.Ringing;
     public CallInfo RingingCall => IsRinging ? Calls.Call : null;
-    /// <summary>Telemarketer: seconds of pitch left (game time). 0 = the player may hang up.</summary>
-    public float PitchLeft { get; private set; }
-    /// <summary>Client: real seconds left to take the job before the caller hangs up.</summary>
-    public float ClientLeft { get; private set; }
-    public bool ClientAccepted { get; private set; }
-    /// <summary>ITRS: the payment plan was taken on this call (the call ends a moment later).</summary>
-    public bool PaymentPlanTaken { get; private set; }
-    public float ItrsExtension => GameManager.Instance.GameConfig.itrsCallExtension;
-    public int ClientMoney => GameManager.Instance.GameConfig.clientGigMoney;
-    /// <summary>Newest first, e.g. "Missed: Unknown". Shown by the Call app.</summary>
-    public IReadOnlyList<string> CallLog => _callLog;
+    /// <summary>Which line of the caller's script is on screen (null when no call is active).</summary>
+    public CallDialogue Dialogue { get; private set; }
+    /// <summary>What the caller is saying right now.</summary>
+    public string CallerLine { get; private set; } = "";
+    /// <summary>The player's button label for this line ("Got you.", "Hang up."...).</summary>
+    public string ReplyLabel { get; private set; } = "";
+    /// <summary>False while the telemarketer is still pitching: the reply button is greyed out (no countdown is shown).</summary>
+    public bool ReplyEnabled => ActiveCall != null && Dialogue != null && !_goodbye && !(ActiveCall.truth == CallTruth.Telemarketer && Dialogue.Index == 0 && _pitchLeft > 0f);
+
+    [Header("Callers")]
+    [Tooltip("Caller names, pictures and conversations. Assets/Settings/Configs/CallerProfiles.asset")]
+    [SerializeField] private CallerProfileCatalog catalog;
+    private CallerProfileCatalog _fallbackCatalog;
+    public CallerProfileCatalog Catalog
+    {
+        get
+        {
+            if (catalog != null) return catalog;
+            if (_fallbackCatalog == null)
+            {
+                Debug.LogWarning("[Phone] No CallerProfileCatalog assigned: using the built-in default callers and lines.");
+                _fallbackCatalog = ScriptableObject.CreateInstance<CallerProfileCatalog>();
+            }
+            return _fallbackCatalog;
+        }
+    }
+    /// <summary>Newest first. Shown by the Call app's history list.</summary>
+    public IReadOnlyList<CallRecord> CallHistory => _history;
     /// <summary>Bumped on every state change so views can refresh only when needed.</summary>
     public int Version { get; private set; }
 
-    private readonly List<string> _callLog = new List<string>();
+    private const int HistoryMax = 30;
+    private readonly List<CallRecord> _history = new List<CallRecord>();
+    private CallRecord _record;      // the record of the call in progress
+    private int _nextRecordId = 1;
+    private bool _goodbye;           // a client who never answered says their goodbye line, then the call ends
+    private float _goodbyeLeft;      // REAL time
     private readonly HashSet<object> _robocalls = new HashSet<object>();
-    private const float ClientThanksSeconds = 1.2f;
-    private float _planThanksLeft;
+    private IReadOnlyList<CallerProfileCatalog.Line> _script;
+    private float _pitchLeft;        // telemarketer, game time: the reply button stays grey until the pitch is over
+    private float _firstLineLeft;    // client, REAL time: if the player never answers the first line the caller hangs up
+    private float _hangUpLeft;       // last line, REAL time: a stalling player is hung up on
     private bool _ready;
     private bool _shaking;
     private Quaternion _baseRotation;
@@ -125,44 +149,118 @@ public class PhoneController : DeskObject
 
     private void TickActiveCall(float gameDelta)
     {
-        if (ActiveCall == null) return;
+        if (ActiveCall == null || Dialogue == null) return;
 
-        if (ActiveCall.truth == CallTruth.Telemarketer)
+        // None of these timers is shown to the player.
+        if (_goodbye)
         {
-            if (PitchLeft > 0f) { PitchLeft = Mathf.Max(0f, PitchLeft - gameDelta); Version++; }
+            _goodbyeLeft -= Time.unscaledDeltaTime;
+            if (_goodbyeLeft <= 0f) FinishCall();
         }
-        else if (ActiveCall.truth == CallTruth.Client)
+        else if (Dialogue.IsFinal)
         {
-            // Real time: the clock is paused during this call.
-            ClientLeft -= Time.unscaledDeltaTime;
-            Version++;
-            if (ClientLeft <= 0f) FinishCall();          // took the job (thanks beat over) or the caller hung up
+            _hangUpLeft -= Time.unscaledDeltaTime;          // real time: the clock may be paused
+            if (_hangUpLeft <= 0f) FinishCall();
         }
-        else if (PaymentPlanTaken)
+        else if (ActiveCall.truth == CallTruth.Telemarketer)
         {
-            _planThanksLeft -= Time.unscaledDeltaTime;   // real time: the clock is paused during an ITRS call
-            if (_planThanksLeft <= 0f) FinishCall();
+            if (_pitchLeft > 0f) _pitchLeft = Mathf.Max(0f, _pitchLeft - gameDelta);
+        }
+        else if (ActiveCall.truth == CallTruth.Client && Dialogue.Index == 0)
+        {
+            _firstLineLeft -= Time.unscaledDeltaTime;
+            if (_firstLineLeft <= 0f) BeginGoodbye();
         }
     }
 
-    /// <summary>ITRS call: take the payment plan, +itrsCallExtension seconds to pay the open bill. Once per call.</summary>
-    public void AcceptPaymentPlan()
+    /// <summary>The player never answered the client: they say "Hello? Are you there?" and hang up. No money.</summary>
+    private void BeginGoodbye()
     {
-        if (ActiveCall == null || ActiveCall.truth != CallTruth.ITRS || PaymentPlanTaken) return;
-        var itrs = ITRSService.Instance;
-        if (itrs == null || !itrs.HasPendingAssessment) return;
-
-        itrs.ExtendCurrentBill(ItrsExtension);
-        PaymentPlanTaken = true;
-        _planThanksLeft = ClientThanksSeconds;
-        Log($"Payment plan: +{ItrsExtension:0}s");
+        _goodbye = true;
+        _goodbyeLeft = GameManager.Instance.GameConfig.callGoodbyeSeconds;
+        CallerLine = Catalog.NoReplyLine;
+        ReplyLabel = "";
+        if (_record != null)
+        {
+            _record.transcript.Add($"{_record.name}: {CallerLine}");
+            _record.result = "Hung up, no reply";
+        }
         Version++;
+    }
+
+    /// <summary>The player's button on the current line: it moves the conversation on, and on the last line it hangs up.</summary>
+    public void Reply()
+    {
+        if (ActiveCall == null || Dialogue == null || _goodbye) return;
+        if (_record != null) _record.transcript.Add($"You: {ReplyLabel}");
+        if (Dialogue.IsFinal) { FinishCall(); return; }
+        if (!ReplyEnabled) return;
+
+        Dialogue.Advance();
+        ShowLine();
+    }
+
+    private void ShowLine()
+    {
+        var line = _script[Dialogue.Index];
+        CallerLine = line.callerLine;
+        ReplyLabel = line.replyLabel;
+        if (Dialogue.IsFinal) Payoff();                      // may swap CallerLine (ITRS with nothing to extend)
+        if (_record != null) _record.transcript.Add($"{_record.name}: {CallerLine}");
+        Version++;
+    }
+
+    private string NameFor(CallerKind kind, int seed)
+    {
+        var p = Catalog.Pick(kind, seed);
+        if (p != null && !string.IsNullOrEmpty(p.displayName)) return p.displayName;
+        return kind == CallerKind.Unknown ? "Unknown number" : kind.ToString();
+    }
+
+    /// <summary>The caller's name for a call kind and picture seed (ringing screen, live call and history all agree).</summary>
+    public string CallerName(CallerKind kind, int seed) => NameFor(kind, seed);
+
+    private void AddRecord(CallRecord r)
+    {
+        r.id = _nextRecordId++;
+        _history.Insert(0, r);
+        if (_history.Count > HistoryMax) _history.RemoveAt(_history.Count - 1);
+    }
+
+    /// <summary>The last line is where the call pays off: the client pays, ITRS gives more time.</summary>
+    private void Payoff()
+    {
+        var config = GameManager.Instance.GameConfig;
+        _hangUpLeft = config.callHangUpDelay;
+
+        if (ActiveCall.truth == CallTruth.Client)
+        {
+            MoneyService.Instance.Add(config.clientGigMoney, "client");
+            if (_record != null) _record.result = $"+${config.clientGigMoney}";
+        }
+        else if (ActiveCall.truth == CallTruth.ITRS)
+        {
+            var itrs = ITRSService.Instance;
+            if (itrs != null && itrs.HasPendingAssessment)
+            {
+                itrs.ExtendCurrentBill(config.itrsCallExtension);
+                if (_record != null) _record.result = $"+{config.itrsCallExtension:0}s to pay";
+            }
+            else
+            {
+                // Already paid: the time carries over to the NEXT bill's deadline.
+                if (itrs != null) itrs.GrantNextBillTime(config.itrsCallExtension);
+                CallerLine = Catalog.ItrsNoBillLine;
+                if (_record != null) _record.result = $"+{config.itrsCallExtension:0}s on next bill";
+            }
+        }
     }
 
     // ---- Calls ----
 
     private void HandleRingStarted(CallInfo call)
     {
+        call.profileSeed = RngService.Instance.Random.Next(0, 1 << 20);   // which name/picture the caller shows
         ClockService.Instance.SetSpeed(this, Config.ringClockMultiplier);
         if (ringingVisual != null) ringingVisual.SetActive(true);
         PlayRingSound();
@@ -180,7 +278,7 @@ public class PhoneController : DeskObject
         else
         {
             string what = how == CallEnd.Declined ? "Declined" : "Missed";
-            Log($"{what}: {call.shownAs}");
+            AddRecord(new CallRecord { name = NameFor(call.shownAs, call.profileSeed), outcome = how });
             Inbox.Add(MessageKind.MissedCall, $"{what} call", call.shownAs.ToString());
         }
         Version++;
@@ -189,10 +287,14 @@ public class PhoneController : DeskObject
     private void BeginCall(CallInfo call)
     {
         ActiveCall = call;
-        PitchLeft = call.truth == CallTruth.Telemarketer ? Config.telemarketerPitch : 0f;
-        ClientLeft = call.truth == CallTruth.Client ? Config.beneficialCallTimeout : 0f;
-        ClientAccepted = false;
-        PaymentPlanTaken = false;
+        _script = Catalog.Script(call.truth);
+        Dialogue = new CallDialogue(_script.Count);
+        _pitchLeft = call.truth == CallTruth.Telemarketer ? Config.telemarketerPitch : 0f;
+        _firstLineLeft = call.truth == CallTruth.Client ? Config.beneficialCallTimeout : 0f;
+        _goodbye = false;
+        var kind = call.truth == CallTruth.Client ? CallerKind.Client : call.truth == CallTruth.ITRS ? CallerKind.ITRS : CallerKind.Telemarketer;
+        _record = new CallRecord { name = NameFor(kind, call.profileSeed), outcome = CallEnd.Answered };
+        AddRecord(_record);
 
         if (call.PausesClock)
         {
@@ -203,7 +305,7 @@ public class PhoneController : DeskObject
                 DeviceLayer.Instance.LockPhoneOpen(this);   // can't walk away from a paused call
             }
         }
-        Log($"Answered: {call.shownAs}");
+        ShowLine();                                  // the caller's first line (a one-line script pays off right away)
     }
 
     private void HandleCallFinished(CallInfo call)
@@ -215,6 +317,12 @@ public class PhoneController : DeskObject
             DeviceLayer.Instance.UnlockPhoneOpen(this);
         }
         ActiveCall = null;
+        Dialogue = null;
+        _script = null;
+        _record = null;
+        _goodbye = false;
+        CallerLine = "";
+        ReplyLabel = "";
         Version++;
     }
 
@@ -229,24 +337,6 @@ public class PhoneController : DeskObject
     public void Decline()
     {
         if (_ready) Calls.Decline();
-    }
-
-    /// <summary>Hang up the active call (telemarketer after the pitch, ITRS any time).</summary>
-    public void HangUp()
-    {
-        if (ActiveCall == null) return;
-        if (ActiveCall.truth == CallTruth.Telemarketer && PitchLeft > 0f) return;
-        FinishCall();
-    }
-
-    /// <summary>Client call: take the +$ job. The call ends a moment later so the screen can say thanks.</summary>
-    public void AcceptClientJob()
-    {
-        if (ActiveCall == null || ActiveCall.truth != CallTruth.Client || ClientAccepted || ClientLeft <= 0f) return;
-        ClientAccepted = true;
-        MoneyService.Instance.Add(ClientMoney, "client");
-        ClientLeft = ClientThanksSeconds;
-        Version++;
     }
 
     private void FinishCall()
@@ -323,12 +413,6 @@ public class PhoneController : DeskObject
     private void StopRingSound()
     {
         if (audioSource != null) audioSource.Stop();
-    }
-
-    private void Log(string line)
-    {
-        _callLog.Insert(0, line);
-        if (_callLog.Count > 20) _callLog.RemoveAt(_callLog.Count - 1);
     }
 
     /// <summary>Game over: end any ring or call and let go of every pause, speed key and lock.</summary>

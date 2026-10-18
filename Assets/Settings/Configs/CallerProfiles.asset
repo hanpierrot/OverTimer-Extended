@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c28edaffe9901b64aad4f132f876fac7, type: 3}
+  m_Name: CallerProfiles
+  m_EditorClassIdentifier: Assembly-CSharp::CallerProfileCatalog
+  unknown:
+  - displayName: Unknown Number
+    portrait: {fileID: 6380991674727031096, guid: e0dbfaeae8e7fc1429208af0c9b1779a, type: 3}
+  telemarketers:
+  - displayName: Telemarketer
+    portrait: {fileID: 5115304881260417634, guid: 99bebc699abfd544199354a50b8d7941, type: 3}
+  clients:
+  - displayName: Client
+    portrait: {fileID: 3961218125512176384, guid: ce8b01b45ad4a8e4ca4eb5b27c0326d4, type: 3}
+  itrs:
+  - displayName: ITRS Agent
+    portrait: {fileID: 489376051326552219, guid: 452a6912e1612f64e8884a249113f00e, type: 3}
+  telemarketerScript:
+  - callerLine: Hello there! Do you have a minute to talk about your car's extended
+      warranty?
+    replyLabel: Uh-huh.
+  - callerLine: Wonderful! It will only take a moment of your time...
+    replyLabel: Hang up.
+  clientScript:
+  - callerLine: I am interested in buying one of your products, will you sign me
+      up for it?
+    replyLabel: Got you.
+  - callerLine: Awesome, thank you!
+    replyLabel: Hang up.
+  itrsScript:
+  - callerLine: This is the Internal Time Revenue Service. We are calling about your
+      account.
+    replyLabel: Go on.
+  - callerLine: Fine, we will give you a little more time to pay. Do not make us
+      call again.
+    replyLabel: Hang up.
+  itrsNoBillLine: It looks like you already paid. Fine, we will give your next bill
+    a little more time. Goodbye.
+  noReplyLine: Hello? Are you there?

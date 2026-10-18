@@ -48,6 +48,7 @@ public class ITRSService : MonoBehaviour
     private int earnedSinceLastBill;
     private int lastKnownMoney;
     private bool skipNextBill;
+    private float nextBillBonus;      // an ITRS call that found the bill already paid: extra seconds added to the gap before the NEXT bill
     private readonly System.Collections.Generic.List<CardItem> skipCards = new System.Collections.Generic.List<CardItem>();
     private CardItem[] exemptCards = System.Array.Empty<CardItem>();
 
@@ -87,7 +88,7 @@ public class ITRSService : MonoBehaviour
         if (HasPendingAssessment) return;                        // P6: never issue over an unpaid bill
 
         timer += gameDelta;
-        if (timer >= GameManager.Instance.GameConfig.billInterval)
+        if (timer >= GameManager.Instance.GameConfig.billInterval + nextBillBonus)
         {
             timer = 0f;
             IssueAssessment();
@@ -115,6 +116,7 @@ public class ITRSService : MonoBehaviour
 
         CurrentAssessment = new Assessment(earned, config.billRate, config.billMinimum, amountDue, config.shortfallPenalty);
         HasPendingAssessment = true;
+        nextBillBonus = 0f;                                      // the ITRS call's extra gap has been spent
         _deadline = new TaxDeadline(amountDue, config.taxPayWindow);
         _deadline.Resolved += HandleDeadlineResolved;
 
@@ -167,6 +169,10 @@ public class ITRSService : MonoBehaviour
         _deadline.Extend(seconds);
         AssessmentChanged?.Invoke();
     }
+
+    /// <summary>ITRS call when no bill is open: the extra time lengthens the gap before the next bill (billInterval + this). The 30 s pay window is unchanged.</summary>
+    public void GrantNextBillTime(float seconds) => nextBillBonus += seconds;
+    public float NextBillBonus => nextBillBonus;
 
     /// <summary>Tax Exemption buff - the next scheduled bill is skipped entirely. The card that queued it is ended when
     /// that exempt bill is resolved; a card that goes away first withdraws (pawned), so the exemption goes with it.</summary>

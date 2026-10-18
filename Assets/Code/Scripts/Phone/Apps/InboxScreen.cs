@@ -1,37 +1,36 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// The Inbox app window: newest message first, tap one to read it (that marks it read). Messages with an actionId get a
-/// button: "app:taxes" opens the Taxes app; "license:..." (Batch 2) is shown but does nothing yet. Shows the newest few
-/// rows (no scrolling yet).
+/// The Inbox app window: a scrolling list of messages (newest first, an icon and an unread dot per row) with the opened
+/// message on the right. Clicking a row highlights it, marks it read and shows it. Messages with an actionId get a
+/// button: "app:taxes" opens the Taxes app; "license:..." (Batch 2) is shown but does nothing yet.
 /// </summary>
 public class InboxScreen : MonoBehaviour
 {
     [Header("List")]
-    [SerializeField] private Button[] rowButtons;
-    [SerializeField] private TMP_Text[] rowLabels;
-    [SerializeField] private GameObject[] unreadDots;
+    [SerializeField] private PhoneListView list;
+    [SerializeField] private Sprite mailIcon;
+    [Tooltip("Used for tax bills and missed calls.")]
+    [SerializeField] private Sprite alertIcon;
 
     [Header("Reading pane")]
-    [SerializeField] private TMP_Text readTitle;
+    [SerializeField] private TMP_Text fromLabel;
     [SerializeField] private TMP_Text readBody;
     [SerializeField] private Button actionButton;
     [SerializeField] private TMP_Text actionLabel;
 
     [SerializeField] private PhoneHome home;
 
-    private InboxMessage _selected;
+    private readonly List<PhoneListRowData> _rows = new List<PhoneListRowData>();
+    private int _selectedId = -1;       // message id (indices shift when a new message lands)
     private int _signature = -1;
 
     private void Awake()
     {
-        for (int i = 0; i < rowButtons.Length; i++)
-        {
-            int index = i;
-            rowButtons[i].onClick.AddListener(() => Select(index));
-        }
+        list.Clicked += Select;
         actionButton.onClick.AddListener(RunAction);
     }
 
@@ -43,30 +42,47 @@ public class InboxScreen : MonoBehaviour
         if (phone == null) return;
 
         var all = phone.Inbox.All;
-        int sig = all.Count * 1000 + phone.Inbox.Unread * 10 + (_selected != null ? _selected.id * 100000 : 0);
+        int sig = all.Count * 1000 + phone.Inbox.Unread * 10 + _selectedId * 100000;
         if (sig == _signature) return;
         _signature = sig;
 
-        for (int i = 0; i < rowButtons.Length; i++)
+        _rows.Clear();
+        int selectedIndex = -1;
+        for (int i = 0; i < all.Count; i++)
         {
-            bool has = i < all.Count;
-            PhoneUi.SetActive(rowButtons[i].gameObject, has);
-            if (!has) continue;
-            PhoneUi.SetText(rowLabels[i], all[i].title);
-            PhoneUi.SetActive(unreadDots[i], !all[i].read);
+            var m = all[i];
+            if (m.id == _selectedId) selectedIndex = i;
+            bool alert = m.kind == MessageKind.Tax || m.kind == MessageKind.MissedCall;
+            _rows.Add(new PhoneListRowData { title = m.title, icon = alert ? alertIcon : mailIcon, unread = !m.read });
         }
+        list.SetRows(_rows, selectedIndex);
 
-        if (_selected == null)
+        if (selectedIndex < 0)
         {
-            PhoneUi.SetText(readTitle, all.Count == 0 ? "No messages." : "Pick a message.");
-            PhoneUi.SetText(readBody, "");
+            PhoneUi.SetText(fromLabel, "");
+            PhoneUi.SetText(readBody, all.Count == 0 ? "No messages." : "Pick a message.");
             PhoneUi.SetActive(actionButton.gameObject, false);
         }
         else
         {
-            PhoneUi.SetText(readTitle, _selected.title);
-            PhoneUi.SetText(readBody, _selected.body);
-            ShowAction();
+            var m = all[selectedIndex];
+            PhoneUi.SetText(fromLabel, Sender(m.kind));
+            PhoneUi.SetText(readBody, m.title + "\n\n" + m.body);
+            ShowAction(m);
+        }
+    }
+
+    private static string Sender(MessageKind kind)
+    {
+        switch (kind)
+        {
+            case MessageKind.Tax: return "ITRS";
+            case MessageKind.MissedCall: return "PHONE";
+            case MessageKind.License:
+            case MessageKind.Sale: return "SHOP";
+            case MessageKind.Delivery: return "COURIER";
+            case MessageKind.Junk: return "???";
+            default: return "SYSTEM";
         }
     }
 
@@ -74,14 +90,15 @@ public class InboxScreen : MonoBehaviour
     {
         var phone = PhoneController.Instance;
         if (phone == null || index >= phone.Inbox.All.Count) return;
-        _selected = phone.Inbox.All[index];
-        phone.Inbox.MarkRead(_selected);
+        var m = phone.Inbox.All[index];
+        _selectedId = m.id;
+        phone.Inbox.MarkRead(m);
         _signature = -1;
     }
 
-    private void ShowAction()
+    private void ShowAction(InboxMessage m)
     {
-        string id = _selected.actionId;
+        string id = m.actionId;
         bool has = !string.IsNullOrEmpty(id);
         PhoneUi.SetActive(actionButton.gameObject, has);
         if (!has) return;
@@ -91,7 +108,13 @@ public class InboxScreen : MonoBehaviour
 
     private void RunAction()
     {
-        if (_selected == null || string.IsNullOrEmpty(_selected.actionId)) return;
-        if (_selected.actionId == "app:taxes" && home != null) home.OpenApp("taxes");
+        var phone = PhoneController.Instance;
+        if (phone == null) return;
+        foreach (var m in phone.Inbox.All)
+        {
+            if (m.id != _selectedId) continue;
+            if (m.actionId == "app:taxes" && home != null) home.OpenApp("taxes");
+            return;
+        }
     }
 }

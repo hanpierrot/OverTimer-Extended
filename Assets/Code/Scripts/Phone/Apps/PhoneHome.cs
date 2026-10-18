@@ -20,12 +20,10 @@ public class PhoneHome : MonoBehaviour
     [SerializeField] private Button powerButton;
     [SerializeField] private PhoneIconView[] icons;
 
-    [Header("Window")]
-    [SerializeField] private GameObject windowRoot;
-    [SerializeField] private TMP_Text windowTitle;
-    [SerializeField] private GameObject callScreenRoot;
-    [SerializeField] private GameObject inboxScreenRoot;
-    [SerializeField] private GameObject taxesScreenRoot;
+    [Header("App windows (one frame per app; only one shows at a time)")]
+    [SerializeField] private GameObject callWindow;
+    [SerializeField] private GameObject inboxWindow;
+    [SerializeField] private GameObject taxesWindow;
 
     private string _app = "call";
 
@@ -66,10 +64,10 @@ public class PhoneHome : MonoBehaviour
         // The window shows in the phone-only view while the phone is on. An incoming call always takes the window.
         bool phoneView = DeviceLayer.Instance != null && DeviceLayer.Instance.Current == DeviceLayer.Mode.Phone;
         bool show = phoneView && power.IsUsable;
-        PhoneUi.SetActive(windowRoot, show);
-        if (!show) return;
-
-        ShowApp((phone.IsRinging || phone.ActiveCall != null) ? "call" : _app);
+        string app = (phone.IsRinging || phone.ActiveCall != null) ? "call" : _app;
+        PhoneUi.SetActive(callWindow, show && app == "call");
+        PhoneUi.SetActive(inboxWindow, show && app == "inbox");
+        PhoneUi.SetActive(taxesWindow, show && app == "taxes");
     }
 
     public void OpenApp(string id)
@@ -78,13 +76,5 @@ public class PhoneHome : MonoBehaviour
         // Mid-call the Call window stays up; the other apps wait until it ends.
         if (phone != null && (phone.IsRinging || phone.ActiveCall != null)) return;
         _app = id;
-    }
-
-    private void ShowApp(string app)
-    {
-        PhoneUi.SetActive(callScreenRoot, app == "call");
-        PhoneUi.SetActive(inboxScreenRoot, app == "inbox");
-        PhoneUi.SetActive(taxesScreenRoot, app == "taxes");
-        PhoneUi.SetText(windowTitle, app == "inbox" ? "INBOX" : app == "taxes" ? "TAXES" : "CALL");
     }
 }

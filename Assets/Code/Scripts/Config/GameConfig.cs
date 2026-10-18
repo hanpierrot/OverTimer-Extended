@@ -68,9 +68,9 @@ public class GameConfig : ScriptableObject
     public float answerTime = 1.5f;
     public float maxRingDuration = 10f;
     [Header("Phone - calls (Phone plan)")]
-    public int callWeightTelemarketer = 40;
+    public int callWeightTelemarketer = 25;
     public int callWeightClient = 25;
-    public int callWeightUnknown = 25;
+    public int callWeightUnknown = 40;
     public int callWeightITRS = 10;
     [Range(0f, 1f)] public float unknownSpamChance = 0.6f;
     [Tooltip("Seconds of pitch (clock running) before a telemarketer can be hung up on.")]
@@ -78,6 +78,10 @@ public class GameConfig : ScriptableObject
     [Tooltip("REAL seconds to choose on a client call (the clock is paused) before the caller hangs up.")]
     public float beneficialCallTimeout = 8f;
     public int clientGigMoney = 22;
+    [Tooltip("REAL seconds on a call's last line before the caller hangs up for a stalling player (not shown on screen).")]
+    public float callHangUpDelay = 5f;
+    [Tooltip("REAL seconds the caller's goodbye line stays up (a client who never answered) before the call ends.")]
+    public float callGoodbyeSeconds = 2f;
     public float itrsCallExtension = 15f;
     public float phoneBootSeconds = 5f;
     public float bannerLifetime = 4f;

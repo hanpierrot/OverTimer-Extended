@@ -23,6 +23,7 @@ public static class PhoneShopSelfTests
         CallsAndPower();
         InboxAndBanners();
         TaxDeadlines();
+        Dialogues();
 
         if (_fails == 0) Debug.Log($"[PhoneShop] ALL OK ({_passes} checks)");
         else Debug.LogError($"[PhoneShop] {_fails} FAILED, {_passes} passed");
@@ -41,8 +42,8 @@ public static class PhoneShopSelfTests
             truth.TryGetValue(c.truth, out int t); truth[c.truth] = t + 1;
         }
         double sp = truth[CallTruth.Telemarketer] / (double)N;
-        Check(Math.Abs(shown[CallerKind.Telemarketer] / (double)N - 0.40) < 0.01 && Math.Abs(shown[CallerKind.Unknown] / (double)N - 0.25) < 0.01, "caller ID weights 40/25/25/10");
-        Check(Math.Abs(sp - 0.55) < 0.01, $"real telemarketer share ~55% (got {sp:P1})");
+        Check(Math.Abs(shown[CallerKind.Telemarketer] / (double)N - 0.25) < 0.01 && Math.Abs(shown[CallerKind.Unknown] / (double)N - 0.40) < 0.01, "caller ID weights 25/25/40/10 (Unknown is the most common)");
+        Check(Math.Abs(sp - 0.49) < 0.01, $"real telemarketer share ~49% (got {sp:P1})");
         rng = new Random(2); bool anyItrs = false;
         for (int i = 0; i < 50000; i++) if (CallerRoller.Roll(rng, cfg, false).truth == CallTruth.ITRS) anyItrs = true;
         Check(!anyItrs, "no ITRS calls while no bill is pending");
@@ -86,6 +87,32 @@ public static class PhoneShopSelfTests
         Check(pw.Current == PhonePower.State.Off && !pw.Press(), "Cable Eater forces off; the button is dead");
         pw.ReleaseForceOff(eater); Check(pw.Current == PhonePower.State.Off && pw.Press() && pw.Current == PhonePower.State.Booting, "after release the player must boot it (stays off)");
         pw.ForceOff(eater); Check(pw.Current == PhonePower.State.Off, "forced off mid-boot cancels the boot");
+    }
+
+    // ---- Call dialogue (client/ITRS/telemarketer scripts)
+    static void Dialogues()
+    {
+        var d = new CallDialogue(2);
+        Check(d.Index == 0 && !d.IsFinal, "a 2-line call starts on line 0, not final");
+        Check(d.Advance() && d.IsFinal && d.Index == 1, "reply moves to the last line");
+        Check(!d.Advance() && d.Index == 1, "the last line can't be advanced past");
+        var one = new CallDialogue(1); Check(one.IsFinal, "a 1-line script is final at once");
+        Check(new CallDialogue(0).IsFinal, "an empty script is treated as one final line");
+
+        var cat = ScriptableObject.CreateInstance<CallerProfileCatalog>();
+        foreach (CallTruth t in new[] { CallTruth.Telemarketer, CallTruth.Client, CallTruth.ITRS })
+        {
+            var s = cat.Script(t);
+            Check(s.Count >= 2 && s[s.Count - 1].replyLabel == "Hang up.", t + " default script ends with a \"Hang up.\" line");
+        }
+        Check(cat.Script(CallTruth.Client)[0].replyLabel == "Got you.", "client's first reply is \"Got you.\"");
+        Check(cat.Pick(CallerKind.Client, -5) != null && cat.Pick(CallerKind.Unknown, 123456789) != null, "profile pick works for any seed");
+        Check(!string.IsNullOrEmpty(cat.NoReplyLine) && cat.NoReplyLine.Contains("Are you there"), "client no-reply goodbye line exists");
+        UnityEngine.Object.DestroyImmediate(cat);
+
+        var rec = new CallRecord { name = "Client", outcome = CallEnd.Answered };
+        rec.transcript.Add("Client: hi");
+        Check(rec.transcript.Count == 1 && rec.result == "", "call record starts with no result");
     }
 
     // ---- Phase 1.4: TaxDeadline

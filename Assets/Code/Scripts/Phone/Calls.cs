@@ -8,7 +8,29 @@ public sealed class CallInfo
 {
     public CallerKind shownAs;   // what caller ID shows while ringing
     public CallTruth  truth;     // decided at ring time, revealed on answer
+    public int        profileSeed; // random number picking the caller's name/picture (set by PhoneController at ring time)
     public bool PausesClock => truth != CallTruth.Telemarketer;
+}
+
+/// One entry of the Call app's history: who, how it ended, what was said. Newest first in PhoneController.CallHistory.
+public sealed class CallRecord
+{
+    public int id;
+    public string name;          // the caller's name as shown (profile name)
+    public CallEnd outcome;
+    public string result = "";   // e.g. "+$22"; empty when nothing happened
+    public readonly System.Collections.Generic.List<string> transcript = new System.Collections.Generic.List<string>();
+}
+
+/// Which line of a call's conversation is on screen. The last line is the payoff (reward, then hang up).
+public sealed class CallDialogue
+{
+    readonly int _count;
+    public int Index { get; private set; }
+    public CallDialogue(int lineCount) { _count = Math.Max(1, lineCount); }
+    public bool IsFinal => Index >= _count - 1;
+    /// Moves to the next line; false (and no change) when already on the last one.
+    public bool Advance() { if (IsFinal) return false; Index++; return true; }
 }
 
 /// Weighted caller pick. All randomness comes from the passed System.Random (RngService).
@@ -40,7 +62,7 @@ public static class CallerRoller
 /// without a ScriptableObject; build it from GameConfig once per scene.
 public sealed class PhoneConfig
 {
-    public int   weightTelemarketer = 40, weightClient = 25, weightUnknown = 25, weightITRS = 10;
+    public int   weightTelemarketer = 25, weightClient = 25, weightUnknown = 40, weightITRS = 10;
     public float unknownSpamChance  = 0.6f;
     public float ringIntervalMin = 30f, ringIntervalMax = 60f;   // existing GameConfig fields
     public float maxRingDuration = 10f;                          // existing

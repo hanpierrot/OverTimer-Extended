@@ -3,21 +3,37 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// The Call app window: the incoming-call screen (Answer / Decline), the three call screens by what the call really
-/// is (telemarketer pitch, client job, ITRS) and, when idle, the recent-call log. It only reads PhoneController; every
-/// button calls straight back into it.
+/// The Call app window. While ringing it shows only who is calling (caller ID) and ACCEPT / DECLINE: no details, no
+/// timers. After ACCEPT the caller speaks (CallerLine) and the main button becomes the player's reply for that line
+/// ("Got you.", then "Hang up." on the last line); DECLINE stays greyed out for the whole call. When the call is over the
+/// window shows the call history (CallHistoryView). It only reads PhoneController; every button calls straight back into it.
+/// Layout: the headline on top; a body column (caller picture in a circle, who is calling, what they say); the buttons in
+/// a row at the bottom. Names, pictures and lines come from the CallerProfileCatalog on PhoneController.
 /// </summary>
 public class CallScreen : MonoBehaviour
 {
+    [Header("Text")]
     [SerializeField] private TMP_Text headline;
-    [SerializeField] private TMP_Text body;
-    [SerializeField] private TMP_Text timer;
+    [SerializeField] private TMP_Text callerLabel;
+    [SerializeField] private TMP_Text detail;
+
+    [Header("Caller picture (a circle with the picture nested inside)")]
+    [SerializeField] private GameObject profileRoot;
+    [SerializeField] private Image portrait;
+
+    [Header("Live call vs. history")]
+    [Tooltip("Everything shown while a call rings or is active (headline, body, buttons). Hidden when there is no call.")]
+    [SerializeField] private GameObject[] liveParts;
+    [Tooltip("The history list + transcript, shown when there is no call.")]
+    [SerializeField] private GameObject historyRoot;
+
+    [Header("Buttons")]
     [SerializeField] private Button primaryButton;
     [SerializeField] private TMP_Text primaryLabel;
     [SerializeField] private Button secondaryButton;
     [SerializeField] private TMP_Text secondaryLabel;
 
-    private enum Action { None, Answer, Decline, HangUp, TakeJob, PaymentPlan }
+    private enum Action { None, Answer, Decline, Reply }
     private Action _primary, _secondary;
 
     private void Awake()
@@ -33,70 +49,44 @@ public class CallScreen : MonoBehaviour
 
         if (phone.IsRinging) ShowRinging(phone);
         else if (phone.ActiveCall != null) ShowCall(phone);
-        else ShowIdle(phone);
+        else ShowIdle();
     }
 
     private void ShowRinging(PhoneController phone)
     {
         var call = phone.RingingCall;
-        Set("INCOMING CALL", call.shownAs == CallerKind.Unknown ? "Unknown number" : call.shownAs.ToString(), "",
-            Action.Answer, "Answer", true, Action.Decline, "Decline", true);
+        Set(phone, "INCOMING CALL", call.shownAs, call.profileSeed, "",
+            Action.Answer, "ACCEPT", true, Action.Decline, "DECLINE", true);
     }
 
     private void ShowCall(PhoneController phone)
     {
         var call = phone.ActiveCall;
-        switch (call.truth)
-        {
-            case CallTruth.Telemarketer:
-                bool listening = phone.PitchLeft > 0f;
-                Set("TELEMARKETER", "\"Have you got a minute to talk about your car's extended warranty?\"",
-                    listening ? $"Listening... {Mathf.CeilToInt(phone.PitchLeft)}s" : "",
-                    Action.HangUp, "Hang up", !listening, Action.None, "", false);
-                break;
-
-            case CallTruth.Client:
-                if (phone.ClientAccepted)
-                    Set("CLIENT", $"Thanks! +${phone.ClientMoney}", "", Action.None, "", false, Action.None, "", false);
-                else
-                    Set("CLIENT", $"A client needs a quick job done.\n+${phone.ClientMoney} now.", $"{Mathf.CeilToInt(Mathf.Max(0f, phone.ClientLeft))}s",
-                        Action.TakeJob, $"Take the job (+${phone.ClientMoney})", true, Action.HangUp, "No thanks", true);
-                break;
-
-            default:   // ITRS
-                var itrs = ITRSService.Instance;
-                bool bill = itrs != null && itrs.HasPendingAssessment;
-                if (phone.PaymentPlanTaken)
-                    Set("ITRS", $"Payment plan agreed.\n+{phone.ItrsExtension:0} seconds to pay your ${itrs.CurrentAmountDue} bill.", "",
-                        Action.None, "", false, Action.None, "", false);
-                else if (bill)
-                    Set("ITRS", $"Your bill of ${itrs.CurrentAmountDue} is due in {Mathf.CeilToInt(itrs.SecondsLeft)}s.", "",
-                        Action.PaymentPlan, $"Payment plan (+{phone.ItrsExtension:0}s)", true, Action.HangUp, "Hang up", true);
-                else
-                    Set("ITRS", "Your bill is being processed.", "", Action.HangUp, "Hang up", true, Action.None, "", false);
-                break;
-        }
+        var kind = call.truth == CallTruth.Client ? CallerKind.Client : call.truth == CallTruth.ITRS ? CallerKind.ITRS : CallerKind.Telemarketer;
+        // DECLINE is still there, greyed out for the whole call.
+        Set(phone, "ON THE LINE", kind, call.profileSeed, phone.CallerLine,
+            Action.Reply, phone.ReplyLabel, phone.ReplyEnabled, Action.Decline, "DECLINE", false);
     }
 
-    private void ShowIdle(PhoneController phone)
+    private void ShowIdle()
     {
-        var log = phone.CallLog;
-        string text = "No calls yet.";
-        if (log.Count > 0)
-        {
-            int n = Mathf.Min(6, log.Count);
-            var lines = new string[n];
-            for (int i = 0; i < n; i++) lines[i] = log[i];
-            text = string.Join("\n", lines);
-        }
-        Set("RECENT CALLS", text, "", Action.None, "", false, Action.None, "", false);
+        // No call: the live view hides and the history (list + transcript) takes its place.
+        SetLive(false);
     }
 
-    private void Set(string head, string text, string time, Action a1, string l1, bool on1, Action a2, string l2, bool on2)
+    private void SetLive(bool on)
     {
+        foreach (var part in liveParts) PhoneUi.SetActive(part, on);
+        PhoneUi.SetActive(historyRoot, !on);
+    }
+
+    private void Set(PhoneController phone, string head, CallerKind face, int seed, string text,
+                     Action a1, string l1, bool on1, Action a2, string l2, bool on2)
+    {
+        SetLive(true);
         PhoneUi.SetText(headline, head);
-        PhoneUi.SetText(body, text);
-        PhoneUi.SetText(timer, time);
+        ShowCaller(phone, face, seed);
+        PhoneUi.SetText(detail, text);
         _primary = a1; _secondary = a2;
         PhoneUi.SetActive(primaryButton.gameObject, a1 != Action.None);
         PhoneUi.SetActive(secondaryButton.gameObject, a2 != Action.None);
@@ -104,6 +94,18 @@ public class CallScreen : MonoBehaviour
         PhoneUi.SetText(secondaryLabel, l2);
         primaryButton.interactable = on1;
         secondaryButton.interactable = on2;
+    }
+
+    private void ShowCaller(PhoneController phone, CallerKind face, int seed)
+    {
+        var profile = phone.Catalog.Pick(face, seed);
+        PhoneUi.SetText(callerLabel, phone.CallerName(face, seed));
+        if (portrait != null)
+        {
+            var sprite = profile != null ? profile.portrait : null;
+            if (portrait.sprite != sprite) portrait.sprite = sprite;
+            portrait.enabled = sprite != null;               // no picture yet: the blank circle shows
+        }
     }
 
     private static void Run(Action action)
@@ -114,9 +116,7 @@ public class CallScreen : MonoBehaviour
         {
             case Action.Answer: phone.Answer(); break;
             case Action.Decline: phone.Decline(); break;
-            case Action.HangUp: phone.HangUp(); break;
-            case Action.TakeJob: phone.AcceptClientJob(); break;
-            case Action.PaymentPlan: phone.AcceptPaymentPlan(); break;
+            case Action.Reply: phone.Reply(); break;
         }
     }
 }
