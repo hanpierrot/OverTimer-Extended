@@ -17,7 +17,7 @@ MonoBehaviour:
   description: One and a half times the cost of any Billiards turn in 20s.
   rarity: 0
   weight: 12
-  pawnValue: 0
+  pawnValue: 6
   hideUntilCollected: 0
   collectionRegisterAs: {fileID: 0}
   _isDebuff: 1
