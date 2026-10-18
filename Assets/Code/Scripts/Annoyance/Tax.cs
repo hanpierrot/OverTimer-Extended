@@ -3,11 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Controller for the Tax panel (Assets/Prefab/Panels/Tax.prefab) - the fake IRS
-/// notice DESIGN.md's Mail Tray shows when a bill is due (DESIGN.md §5.6). TaxNotice
-/// calls Show() directly once the player clicks the desk object (this panel starts
-/// inactive in the scene, so an event it subscribes to in OnEnable would miss the
-/// first notice - see TaxNotice). Pay/Ignore call straight back into ITRSService.
+/// The paper copy of the current ITRS bill (Assets/Prefab/Panels/Tax.prefab), opened from the desk notice (TaxNotice).
+/// It is the SAME bill the Taxes phone app shows: paying here or there resolves both. Close only closes - there is no
+/// Ignore (Q1): leaving the bill unpaid costs the shortfall penalty when the 30 s window runs out.
+/// The panel starts inactive, so it never subscribes to events; it just reads ITRSService each frame while open.
 /// </summary>
 public class Tax : MonoBehaviour
 {
@@ -20,48 +19,43 @@ public class Tax : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Button payButton;
     [SerializeField] private TextMeshProUGUI payButtonLabel;
-    [SerializeField] private Button ignoreButton;
     [SerializeField] private Button closeButton;
-
-    private ITRSService.Assessment current;
 
     private void Awake()
     {
         payButton.onClick.AddListener(HandlePay);
-        ignoreButton.onClick.AddListener(HandleIgnore);
-        closeButton.onClick.AddListener(HandleClose);
+        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
     }
 
-    public void Show(ITRSService.Assessment assessment)
+    public void Show()
     {
-        current = assessment;
-
-        earnedValueText.text = $"${assessment.earnedSinceNotice}";
-        rateValueText.text = $"{Mathf.RoundToInt(assessment.rate * 100f)}%";
-        minimumValueText.text = $"${assessment.minimum}";
-        amountDueText.text = $"${assessment.amountDue}";
-        payButtonLabel.text = $"PAY ${assessment.amountDue}";
-
         gameObject.SetActive(true);
+        Refresh();
     }
 
-    private void Update()
+    private void Update() => Refresh();
+
+    private void Refresh()
     {
-        payButton.interactable = MoneyService.Instance.Current >= current.amountDue;
+        var itrs = ITRSService.Instance;
+        if (itrs == null || !itrs.HasPendingAssessment)
+        {
+            gameObject.SetActive(false);                 // the bill was paid in the app (or penalised): the paper copy goes away
+            return;
+        }
+
+        var a = itrs.CurrentAssessment;
+        int due = itrs.CurrentAmountDue;
+        PhoneUi.SetText(earnedValueText, $"${a.earnedSinceNotice}");
+        PhoneUi.SetText(rateValueText, $"{Mathf.RoundToInt(a.rate * 100f)}%");
+        PhoneUi.SetText(minimumValueText, $"${a.minimum}");
+        PhoneUi.SetText(amountDueText, $"${due}");
+        PhoneUi.SetText(payButtonLabel, $"PAY ${due}");
+        payButton.interactable = MoneyService.Instance.Current >= due;
     }
 
     private void HandlePay()
     {
         if (ITRSService.Instance.Pay()) gameObject.SetActive(false);
     }
-
-    private void HandleIgnore()
-    {
-        ITRSService.Instance.Ignore();
-        gameObject.SetActive(false);
-    }
-
-    // Closing without deciding must still resolve the bill - otherwise HasPendingAssessment
-    // stays true forever and AnnoyanceManager stays busy, blocking every later annoyance.
-    private void HandleClose() => HandleIgnore();
 }

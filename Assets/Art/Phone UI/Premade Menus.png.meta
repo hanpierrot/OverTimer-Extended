@@ -1,0 +1,3811 @@
+fileFormatVersion: 2
+guid: 33af2dfedd6613f4e9af4fb259752b9a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2344441523484314674
+    second: Premade Menus_0
+  - first:
+      213: 5765745806987443548
+    second: Premade Menus_1
+  - first:
+      213: -9030514154079491236
+    second: Premade Menus_2
+  - first:
+      213: -417249955215120449
+    second: Premade Menus_3
+  - first:
+      213: 7204070891448436753
+    second: Premade Menus_4
+  - first:
+      213: -1061687649680057437
+    second: Premade Menus_5
+  - first:
+      213: -5797618748441517247
+    second: Premade Menus_6
+  - first:
+      213: -2210943011483115604
+    second: Premade Menus_7
+  - first:
+      213: -3336357627867420068
+    second: Premade Menus_8
+  - first:
+      213: -1353994916403770416
+    second: Premade Menus_9
+  - first:
+      213: 8359093659931578087
+    second: Premade Menus_10
+  - first:
+      213: -6994772930347586005
+    second: Premade Menus_11
+  - first:
+      213: -940568649908320066
+    second: Premade Menus_12
+  - first:
+      213: 3746151929619990050
+    second: Premade Menus_13
+  - first:
+      213: 7645965004996304041
+    second: Premade Menus_14
+  - first:
+      213: -5749081500915635222
+    second: Premade Menus_15
+  - first:
+      213: -1720263503533023109
+    second: Premade Menus_16
+  - first:
+      213: 9046930370197605918
+    second: Premade Menus_17
+  - first:
+      213: 8920408377220701664
+    second: Premade Menus_18
+  - first:
+      213: -2242583500842788525
+    second: Premade Menus_19
+  - first:
+      213: 752452770592251012
+    second: Premade Menus_20
+  - first:
+      213: -8892008983939377251
+    second: Premade Menus_21
+  - first:
+      213: 6102262793707134342
+    second: Premade Menus_22
+  - first:
+      213: -7211127798751533481
+    second: Premade Menus_23
+  - first:
+      213: -4801841959664527010
+    second: Premade Menus_24
+  - first:
+      213: -7590011409369115706
+    second: Premade Menus_25
+  - first:
+      213: 3416007146719606670
+    second: Premade Menus_26
+  - first:
+      213: -8264320830723789591
+    second: Premade Menus_27
+  - first:
+      213: -3165072022826666956
+    second: Premade Menus_28
+  - first:
+      213: 7435135690511168647
+    second: Premade Menus_29
+  - first:
+      213: -6835179900724107072
+    second: Premade Menus_30
+  - first:
+      213: 5787015524496359396
+    second: Premade Menus_31
+  - first:
+      213: 2161370158167668091
+    second: Premade Menus_32
+  - first:
+      213: 4595536661444463785
+    second: Premade Menus_33
+  - first:
+      213: 7599384065251265364
+    second: Premade Menus_34
+  - first:
+      213: 7361771713750984069
+    second: Premade Menus_35
+  - first:
+      213: -1671497581460368749
+    second: Premade Menus_36
+  - first:
+      213: -5317437923993901806
+    second: Premade Menus_37
+  - first:
+      213: 7122882138872022784
+    second: Premade Menus_38
+  - first:
+      213: 5867731835387421293
+    second: Premade Menus_39
+  - first:
+      213: -1816654363926071384
+    second: Premade Menus_40
+  - first:
+      213: -3893178263353039575
+    second: Premade Menus_41
+  - first:
+      213: -5636442256221320658
+    second: Premade Menus_42
+  - first:
+      213: 6433882412192442723
+    second: Premade Menus_43
+  - first:
+      213: 4381301884031754832
+    second: Premade Menus_44
+  - first:
+      213: 2673088413890205905
+    second: Premade Menus_45
+  - first:
+      213: 3240440114758473624
+    second: Premade Menus_46
+  - first:
+      213: 1698010314927966052
+    second: Premade Menus_47
+  - first:
+      213: -1476485376144916844
+    second: Premade Menus_48
+  - first:
+      213: -2834756332985066421
+    second: Premade Menus_49
+  - first:
+      213: -8269802075627297094
+    second: Premade Menus_50
+  - first:
+      213: 3013856707575282839
+    second: Premade Menus_51
+  - first:
+      213: -4727349997706556269
+    second: Premade Menus_52
+  - first:
+      213: 8613311094186667771
+    second: Premade Menus_53
+  - first:
+      213: 8234411010703278705
+    second: Premade Menus_54
+  - first:
+      213: 5870291528260864741
+    second: Premade Menus_55
+  - first:
+      213: -6392846534793814155
+    second: Premade Menus_56
+  - first:
+      213: 5256718820312011733
+    second: Premade Menus_57
+  - first:
+      213: 8715954645629364561
+    second: Premade Menus_58
+  - first:
+      213: 2198987270247668755
+    second: Premade Menus_59
+  - first:
+      213: 5759522717250054474
+    second: Premade Menus_60
+  - first:
+      213: 571858591474123434
+    second: Premade Menus_61
+  - first:
+      213: 6955213500993991209
+    second: Premade Menus_62
+  - first:
+      213: -7628637891586880033
+    second: Premade Menus_63
+  - first:
+      213: 7634204842245384042
+    second: Premade Menus_64
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Premade Menus_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec3ba041bded67fd0800000000000000
+      internalID: -2344441523484314674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_1
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 752
+        width: 24
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5d3fa2634b040050800000000000000
+      internalID: 5765745806987443548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_2
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 640
+        width: 91
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5b64faf83b2da280800000000000000
+      internalID: -9030514154079491236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_3
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 720
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb7eadc5061a53af0800000000000000
+      internalID: -417249955215120449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_4
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 752
+        width: 38
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11804859e400af360800000000000000
+      internalID: 7204070891448436753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_5
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 752
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ab966a25b02441f0800000000000000
+      internalID: -1061687649680057437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_6
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 752
+        width: 3
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 143aff32778ba8fa0800000000000000
+      internalID: -5797618748441517247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_7
+      rect:
+        serializedVersion: 2
+        x: 688
+        y: 656
+        width: 109
+        height: 101
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caf9aed8b072151e0800000000000000
+      internalID: -2210943011483115604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_8
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 656
+        width: 109
+        height: 101
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5a2c4b0a60e2b1d0800000000000000
+      internalID: -3336357627867420068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_9
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 736
+        width: 91
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0db811c1cc4a53de0800000000000000
+      internalID: -1353994916403770416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_10
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 736
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ee01743567710470800000000000000
+      internalID: 8359093659931578087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_11
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 704
+        width: 61
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2e2d1a64139dee90800000000000000
+      internalID: -6994772930347586005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_12
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 720
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb88857dbcd62f2f0800000000000000
+      internalID: -940568649908320066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_13
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 720
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 226c4aff4510df330800000000000000
+      internalID: 3746151929619990050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_14
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 720
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ac5fd779aceb1a60800000000000000
+      internalID: 7645965004996304041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_15
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 720
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeb6729b5d82730b0800000000000000
+      internalID: -5749081500915635222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_16
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 704
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7068d735756028e0800000000000000
+      internalID: -1720263503533023109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_17
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 688
+        width: 61
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1e425f2d372d8d70800000000000000
+      internalID: 9046930370197605918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_18
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 688
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ed98af1828abcb70800000000000000
+      internalID: 8920408377220701664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_19
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 672
+        width: 61
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3591d1d003eb0e0e0800000000000000
+      internalID: -2242583500842788525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_20
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 672
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48cd865eecf317a00800000000000000
+      internalID: 752452770592251012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_21
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 656
+        width: 64
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9716b4e0fc399480800000000000000
+      internalID: -8892008983939377251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_22
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 656
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68d1ff00ea79fa450800000000000000
+      internalID: 6102262793707134342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_23
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 640
+        width: 64
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7566875297deceb90800000000000000
+      internalID: -7211127798751533481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_24
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 512
+        width: 141
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5951aecd2e6c5db0800000000000000
+      internalID: -4801841959664527010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_25
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 624
+        width: 23
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c3546736dcdaa690800000000000000
+      internalID: -7590011409369115706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_26
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 624
+        width: 62
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e87fa62b668186f20800000000000000
+      internalID: 3416007146719606670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_27
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 624
+        width: 38
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ece8de9dfb3f4d80800000000000000
+      internalID: -8264320830723789591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_28
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 512
+        width: 141
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 434b3e6b3c76314d0800000000000000
+      internalID: -3165072022826666956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_29
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 512
+        width: 59
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7843fb97488ee2760800000000000000
+      internalID: 7435135690511168647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_30
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 512
+        width: 59
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c8237938109421a0800000000000000
+      internalID: -6835179900724107072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_31
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 608
+        width: 31
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4efb64765fb9f4050800000000000000
+      internalID: 5787015524496359396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_32
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 592
+        width: 57
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b75b6b915babefd10800000000000000
+      internalID: 2161370158167668091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_33
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 576
+        width: 57
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ac8ea1de30a6cf30800000000000000
+      internalID: 4595536661444463785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_34
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 560
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45bc0194b8f667960800000000000000
+      internalID: 7599384065251265364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_35
+      rect:
+        serializedVersion: 2
+        x: 928
+        y: 560
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58565ab8e544a2660800000000000000
+      internalID: 7361771713750984069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_36
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 560
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 392512e3ec5adc8e0800000000000000
+      internalID: -1671497581460368749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_37
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 560
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2152721916aa436b0800000000000000
+      internalID: -5317437923993901806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_38
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 544
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0070170119f89d260800000000000000
+      internalID: 7122882138872022784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_39
+      rect:
+        serializedVersion: 2
+        x: 928
+        y: 544
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d62a485040f5e6150800000000000000
+      internalID: 5867731835387421293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_40
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 544
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a7f5862b72f9c6e0800000000000000
+      internalID: -1816654363926071384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_41
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 544
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 925e1951ff6a8f9c0800000000000000
+      internalID: -3893178263353039575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_42
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 528
+        width: 31
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2a4de091a557c1b0800000000000000
+      internalID: -5636442256221320658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_43
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 528
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3692d5937fdb94950800000000000000
+      internalID: 6433882412192442723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_44
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 528
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0526673b9d28dcc30800000000000000
+      internalID: 4381301884031754832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_45
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 383
+        width: 7
+        height: 112
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d85323ffb7b81520800000000000000
+      internalID: 2673088413890205905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_46
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 384
+        width: 102
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 897da14ad1b58fc20800000000000000
+      internalID: 3240440114758473624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_47
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 384
+        width: 102
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4670b3e826b809710800000000000000
+      internalID: 1698010314927966052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_48
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 464
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49eb2d68f58728be0800000000000000
+      internalID: -1476485376144916844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_49
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 464
+        width: 62
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4cd2a3622ce8a8d0800000000000000
+      internalID: -2834756332985066421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_50
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 400
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab66277d3d2cb3d80800000000000000
+      internalID: -8269802075627297094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_51
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 384
+        width: 92
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79cf3fa15be53d920800000000000000
+      internalID: 3013856707575282839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_52
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 256
+        width: 5
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39cc1c14934156eb0800000000000000
+      internalID: -4727349997706556269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_53
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 256
+        width: 102
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfe6dec0ec0a88770800000000000000
+      internalID: 8613311094186667771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_54
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 256
+        width: 102
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 172c88bbf21864270800000000000000
+      internalID: 8234411010703278705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_55
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 368
+        width: 76
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ea49f5fa07777150800000000000000
+      internalID: 5870291528260864741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_56
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 256
+        width: 98
+        height: 97
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57f170682fb0847a0800000000000000
+      internalID: -6392846534793814155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_57
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 240
+        width: 30
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d3dec07aed93f840800000000000000
+      internalID: 5256718820312011733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_58
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 128
+        width: 5
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1596723329a45f870800000000000000
+      internalID: 8715954645629364561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_59
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 128
+        width: 91
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31cd7b4854f548e10800000000000000
+      internalID: 2198987270247668755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_60
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 128
+        width: 91
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a496b75656fedef40800000000000000
+      internalID: 5759522717250054474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_61
+      rect:
+        serializedVersion: 2
+        x: 752
+        y: 128
+        width: 102
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa2029eeb56afe700800000000000000
+      internalID: 571858591474123434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_62
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 59
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9227fbf24d1e58060800000000000000
+      internalID: 6955213500993991209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_63
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 0
+        width: 59
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdd01ef7142a12690800000000000000
+      internalID: -7628637891586880033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_64
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 141
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a676a943bd422f960800000000000000
+      internalID: 7634204842245384042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_65
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e228c0438221ed0488b147fedf130c17
+      internalID: 296046571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_66
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e67cf8f236f69d4cb3b69c3dce976c1
+      internalID: -1027204269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_67
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd5d5371775721f40a0635062dd3d8ad
+      internalID: 1544944908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_68
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b574f861c3455bf4fb623ab31c6d59e8
+      internalID: 1063551577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_69
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 672ed49a48d9cc64db34c84dd18e9fe1
+      internalID: 1185756894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_70
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f41e5b95b7b3a5748a52105958cbb9a9
+      internalID: -138116107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_71
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 640
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd1d01a00dafc764ba91b44e16dea497
+      internalID: -2118765975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_72
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 512
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee41f064c76236540bc12c538149cb96
+      internalID: 1357575346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_73
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 384
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9de674b47bfed64286e67137222d8b5
+      internalID: -1657971704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_74
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 256
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf8645db476544349b9b0f7ca1d88c4c
+      internalID: -1384164764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_75
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 128
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22fb9daae9ffa724d801ea7fe91c997d
+      internalID: 1505377435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_76
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 0
+        width: 224
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adda4947083d28045b7a470ea11cffbf
+      internalID: -1396579383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_77
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 80
+        width: 57
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd9ff730dc5d6514e9eb2731985be8f5
+      internalID: 1920047537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_78
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 96
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfd2a4f77c6db1f4e95e9ed3188ea461
+      internalID: 1802936156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_79
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 96
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25f00c7c219a2674cafd2a49b00f93c5
+      internalID: 484013551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_80
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 96
+        width: 31
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5ed6a9c88b7c8b478eef70184cf384e
+      internalID: 294242554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_81
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 112
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fbaa790174e6a4468adf5dc93addabc
+      internalID: -1506606958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_82
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 112
+        width: 18
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9856e0915224b147a5edd79bbb59de8
+      internalID: 1106740027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_83
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 112
+        width: 41
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb2df5ff0a379b74188e717b44791027
+      internalID: -1222596515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_84
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 640
+        width: 64
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e6d2673893459941b3a36dc7f875ad5
+      internalID: 915203170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_85
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 640
+        width: 64
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99c4a9bde45bfaa4b8e23d65a544d227
+      internalID: -1466538002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_86
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 720
+        width: 2
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46b7980ec730bb449a58a785b503381a
+      internalID: -1660841034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_87
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 720
+        width: 2
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7836b045d9a26448ac5ebeb978be712
+      internalID: 1303981789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_88
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 720
+        width: 2
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6f38e0bfe736cf4ebd3a25b126a946b
+      internalID: 1645077851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_89
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 752
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1100a42aa7b1de47acc44122c66df6a
+      internalID: 1096854546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_90
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 736
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd3a67bc338d463428d1b524e782ff89
+      internalID: 1611623843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_91
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 720
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 721606c24cec9cb4ba255306ed38eff3
+      internalID: 138406758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_92
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 704
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 613ad51d533658d44b619b95568f18b4
+      internalID: -638342214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_93
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 688
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d0540f92c268e9478578b39c00475f4
+      internalID: -1146249659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_94
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 672
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7465a9c15020874ca1a07a92070e2db
+      internalID: -1182419911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_95
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 656
+        width: 5
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91370322afbdbe547969e6356d3972ab
+      internalID: 1151708930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_96
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 624
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a84b388618f55943a92c0486fd74052
+      internalID: 1238948623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_97
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 608
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5fae9f76beebfcd4398809a0d51d3f86
+      internalID: 330430224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_99
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 592
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23f7d9ce14b413941adc32a2e597cc4d
+      internalID: 1090987976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_98
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 576
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 979ebab11405cec4da5d1e071179f5cc
+      internalID: 856140660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_100
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 560
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da4b6a567cb39d740a45aa8167e66d95
+      internalID: -1438026264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_101
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 544
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64cebc3657513c94e8204e70e84c0c3a
+      internalID: -1523025165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_102
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 528
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e273cb77e6a5cdc4b987c5e500ce97f1
+      internalID: 544823783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_103
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 512
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8fea10f86c751b0419f4d1b819585ded
+      internalID: -1417042310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_104
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 512
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d885ba93b007c143ba246e5a023e51f
+      internalID: 1734833989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_105
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 528
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b22fe147f64cbd74289acd3eafde251c
+      internalID: 1996919712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_106
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 544
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3bdd113203658f946a618e54e7ec2ee5
+      internalID: 1279885895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_107
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 560
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 809011c5090185c4c936152f89fb8a78
+      internalID: -435874900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_108
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 576
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecec535f0fcad7a4882796b105baacb2
+      internalID: 1808642526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_109
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 592
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a60204b1b0ce412448bca2b841cb7b81
+      internalID: 882235017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_110
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 608
+        width: 4
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d37a84ba4c55414baf215a31806713f
+      internalID: -1249277340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_111
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 608
+        width: 3
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9611894e8e836934f893ac1d0682d19b
+      internalID: 759089790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_112
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 512
+        width: 5
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71abfe3e051ad4542a06c41255179ecd
+      internalID: -628139732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_114
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 464
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6082ba246501dbf47a83c077248edc4e
+      internalID: 226627793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_115
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 480
+        width: 3
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c23a54b734983d43873a63680ce6d17
+      internalID: 1508526847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_116
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 480
+        width: 70
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d16ee0d067cce1449e3ef85dcbf87cb
+      internalID: -1161379087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_117
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 464
+        width: 70
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02a78f7076fae4c40b407b59c94bf5d0
+      internalID: -1387564493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_118
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 448
+        width: 91
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70343bd7d3d5c444c973e97902e8071e
+      internalID: -1837402454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_119
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 432
+        width: 91
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f9cf67c3e7c4294680043372741463a
+      internalID: 30449970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_120
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 400
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20b7434fd33dfaa4ea0de3cadea8564d
+      internalID: -1938885188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_121
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 400
+        width: 28
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 969f7c0d141614f47b620c866b82d71c
+      internalID: -432609119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_122
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 368
+        width: 21
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46ad393ca203b3a4ba835d942770358a
+      internalID: 1224130779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_123
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 368
+        width: 3
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2d524334125dcf4a95009690af2f223
+      internalID: 753031293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_124
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 368
+        width: 25
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fc470263f7d0104497269c4072d4f0c
+      internalID: 279495660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_125
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 368
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 599971a373b2b714ba320982e86a1e84
+      internalID: -989556849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_126
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 352
+        width: 91
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d8bd60c177eab748a786e86597c6f0c
+      internalID: 147094269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_127
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 336
+        width: 91
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d415aaed026bb442aacf6ce1e5574b2
+      internalID: 1640120407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_128
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 240
+        width: 42
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fe9ebf6e52affb458649f5590d0056b
+      internalID: 363776763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_129
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 240
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 183ee64bfa4f8e5429f69ec8a850a98a
+      internalID: 900370434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_130
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 224
+        width: 61
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60772bf86e2f5074db043a831baf5aaa
+      internalID: -1403787648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_131
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 208
+        width: 61
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f891d2c81c9ae742b0d403a5bc40418
+      internalID: -1238788152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_132
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 192
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2eb226ea8e39fc429ecd530c7247fed
+      internalID: -1165966630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_133
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 192
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84a06de10e159344ba26ef5bcc0d4a63
+      internalID: 1013800299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_134
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 192
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c28f13a8c719cdd439f3c7f0bc3b2ce8
+      internalID: -433017348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_135
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 192
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e0696bd464163741b930b73fc5401a9
+      internalID: -101771973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_136
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 176
+        width: 89
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 93b24a2ee5ef25a43900adaab3d2bba0
+      internalID: -151535417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_137
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 144
+        width: 5
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f71715770f51bb044aab271c744645c6
+      internalID: -1495045408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_138
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 144
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3aaec8b022b820440b90b38d94fd09af
+      internalID: 1898489492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_139
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 144
+        width: 5
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 253a50eb296f9c7429fc77fd5b77cab4
+      internalID: -1027840777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_140
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 144
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54582a0d337513443993d0a86762216e
+      internalID: -1874726477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_141
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 160
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 889a4e864ca50c947adb248eaf230d55
+      internalID: 1771922085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_142
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 160
+        width: 5
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f7bdb299edccf5429e666dbd99c7ef5
+      internalID: 780525282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_143
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 160
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75decd37354d6864db5d28a8b2c22c96
+      internalID: 1270486026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_144
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 160
+        width: 5
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d59cf9c1c349f54aaf0302a4ef67c5e
+      internalID: 2088369058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_145
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 160
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b088e534c9c2fb4d939cc14b1b0e134
+      internalID: -1876714749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_113
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 496
+        width: 47
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1516f372653565e4a9918644dfcccec2
+      internalID: 633609516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_146
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 496
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24fc276fb585f2a4f98dc427eedbc650
+      internalID: -1113672700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_147
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 752
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8472bceb3c5b384083b5af33c615c12
+      internalID: 205782423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_148
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 752
+        width: 57
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b2ebe9e48a2ed94781eee3dbfeb6831
+      internalID: -175880182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_149
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 720
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2dd0c3b2c208ac148bac40395bab41c0
+      internalID: 1858675531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Premade Menus_150
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 720
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fbc7fdd4d3a688f4d825e4a56bc08324
+      internalID: 12852425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: e01457deacbab804dabd062a7ecc723e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Premade Menus_0: -2344441523484314674
+      Premade Menus_1: 5765745806987443548
+      Premade Menus_10: 8359093659931578087
+      Premade Menus_100: -1438026264
+      Premade Menus_101: -1523025165
+      Premade Menus_102: 544823783
+      Premade Menus_103: -1417042310
+      Premade Menus_104: 1734833989
+      Premade Menus_105: 1996919712
+      Premade Menus_106: 1279885895
+      Premade Menus_107: -435874900
+      Premade Menus_108: 1808642526
+      Premade Menus_109: 882235017
+      Premade Menus_11: -6994772930347586005
+      Premade Menus_110: -1249277340
+      Premade Menus_111: 759089790
+      Premade Menus_112: -628139732
+      Premade Menus_113: 633609516
+      Premade Menus_114: 226627793
+      Premade Menus_115: 1508526847
+      Premade Menus_116: -1161379087
+      Premade Menus_117: -1387564493
+      Premade Menus_118: -1837402454
+      Premade Menus_119: 30449970
+      Premade Menus_12: -940568649908320066
+      Premade Menus_120: -1938885188
+      Premade Menus_121: -432609119
+      Premade Menus_122: 1224130779
+      Premade Menus_123: 753031293
+      Premade Menus_124: 279495660
+      Premade Menus_125: -989556849
+      Premade Menus_126: 147094269
+      Premade Menus_127: 1640120407
+      Premade Menus_128: 363776763
+      Premade Menus_129: 900370434
+      Premade Menus_13: 3746151929619990050
+      Premade Menus_130: -1403787648
+      Premade Menus_131: -1238788152
+      Premade Menus_132: -1165966630
+      Premade Menus_133: 1013800299
+      Premade Menus_134: -433017348
+      Premade Menus_135: -101771973
+      Premade Menus_136: -151535417
+      Premade Menus_137: -1495045408
+      Premade Menus_138: 1898489492
+      Premade Menus_139: -1027840777
+      Premade Menus_14: 7645965004996304041
+      Premade Menus_140: -1874726477
+      Premade Menus_141: 1771922085
+      Premade Menus_142: 780525282
+      Premade Menus_143: 1270486026
+      Premade Menus_144: 2088369058
+      Premade Menus_145: -1876714749
+      Premade Menus_146: -1113672700
+      Premade Menus_147: 205782423
+      Premade Menus_148: -175880182
+      Premade Menus_149: 1858675531
+      Premade Menus_15: -5749081500915635222
+      Premade Menus_150: 12852425
+      Premade Menus_16: -1720263503533023109
+      Premade Menus_17: 9046930370197605918
+      Premade Menus_18: 8920408377220701664
+      Premade Menus_19: -2242583500842788525
+      Premade Menus_2: -9030514154079491236
+      Premade Menus_20: 752452770592251012
+      Premade Menus_21: -8892008983939377251
+      Premade Menus_22: 6102262793707134342
+      Premade Menus_23: -7211127798751533481
+      Premade Menus_24: -4801841959664527010
+      Premade Menus_25: -7590011409369115706
+      Premade Menus_26: 3416007146719606670
+      Premade Menus_27: -8264320830723789591
+      Premade Menus_28: -3165072022826666956
+      Premade Menus_29: 7435135690511168647
+      Premade Menus_3: -417249955215120449
+      Premade Menus_30: -6835179900724107072
+      Premade Menus_31: 5787015524496359396
+      Premade Menus_32: 2161370158167668091
+      Premade Menus_33: 4595536661444463785
+      Premade Menus_34: 7599384065251265364
+      Premade Menus_35: 7361771713750984069
+      Premade Menus_36: -1671497581460368749
+      Premade Menus_37: -5317437923993901806
+      Premade Menus_38: 7122882138872022784
+      Premade Menus_39: 5867731835387421293
+      Premade Menus_4: 7204070891448436753
+      Premade Menus_40: -1816654363926071384
+      Premade Menus_41: -3893178263353039575
+      Premade Menus_42: -5636442256221320658
+      Premade Menus_43: 6433882412192442723
+      Premade Menus_44: 4381301884031754832
+      Premade Menus_45: 2673088413890205905
+      Premade Menus_46: 3240440114758473624
+      Premade Menus_47: 1698010314927966052
+      Premade Menus_48: -1476485376144916844
+      Premade Menus_49: -2834756332985066421
+      Premade Menus_5: -1061687649680057437
+      Premade Menus_50: -8269802075627297094
+      Premade Menus_51: 3013856707575282839
+      Premade Menus_52: -4727349997706556269
+      Premade Menus_53: 8613311094186667771
+      Premade Menus_54: 8234411010703278705
+      Premade Menus_55: 5870291528260864741
+      Premade Menus_56: -6392846534793814155
+      Premade Menus_57: 5256718820312011733
+      Premade Menus_58: 8715954645629364561
+      Premade Menus_59: 2198987270247668755
+      Premade Menus_6: -5797618748441517247
+      Premade Menus_60: 5759522717250054474
+      Premade Menus_61: 571858591474123434
+      Premade Menus_62: 6955213500993991209
+      Premade Menus_63: -7628637891586880033
+      Premade Menus_64: 7634204842245384042
+      Premade Menus_65: 296046571
+      Premade Menus_66: -1027204269
+      Premade Menus_67: 1544944908
+      Premade Menus_68: 1063551577
+      Premade Menus_69: 1185756894
+      Premade Menus_7: -2210943011483115604
+      Premade Menus_70: -138116107
+      Premade Menus_71: -2118765975
+      Premade Menus_72: 1357575346
+      Premade Menus_73: -1657971704
+      Premade Menus_74: -1384164764
+      Premade Menus_75: 1505377435
+      Premade Menus_76: -1396579383
+      Premade Menus_77: 1920047537
+      Premade Menus_78: 1802936156
+      Premade Menus_79: 484013551
+      Premade Menus_8: -3336357627867420068
+      Premade Menus_80: 294242554
+      Premade Menus_81: -1506606958
+      Premade Menus_82: 1106740027
+      Premade Menus_83: -1222596515
+      Premade Menus_84: 915203170
+      Premade Menus_85: -1466538002
+      Premade Menus_86: -1660841034
+      Premade Menus_87: 1303981789
+      Premade Menus_88: 1645077851
+      Premade Menus_89: 1096854546
+      Premade Menus_9: -1353994916403770416
+      Premade Menus_90: 1611623843
+      Premade Menus_91: 138406758
+      Premade Menus_92: -638342214
+      Premade Menus_93: -1146249659
+      Premade Menus_94: -1182419911
+      Premade Menus_95: 1151708930
+      Premade Menus_96: 1238948623
+      Premade Menus_97: 330430224
+      Premade Menus_98: 856140660
+      Premade Menus_99: 1090987976
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

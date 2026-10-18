@@ -1,0 +1,3627 @@
+fileFormatVersion: 2
+guid: f82d800e2375b604bad721d23b6e4109
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2274044432885689434
+    second: DIY_16x16_0
+  - first:
+      213: -355683430971269205
+    second: DIY_16x16_1
+  - first:
+      213: 7058628588996324540
+    second: DIY_16x16_2
+  - first:
+      213: 7746196035614807971
+    second: DIY_16x16_3
+  - first:
+      213: 8392823978813033106
+    second: DIY_16x16_4
+  - first:
+      213: 2456543043568628874
+    second: DIY_16x16_5
+  - first:
+      213: 8718026041004386439
+    second: DIY_16x16_6
+  - first:
+      213: -2086112978373853389
+    second: DIY_16x16_7
+  - first:
+      213: -7062403012512436435
+    second: DIY_16x16_8
+  - first:
+      213: -7963266473503469540
+    second: DIY_16x16_9
+  - first:
+      213: -3379507179155849540
+    second: DIY_16x16_10
+  - first:
+      213: 3320696312470051312
+    second: DIY_16x16_11
+  - first:
+      213: 2560707704677904167
+    second: DIY_16x16_12
+  - first:
+      213: 3653010936564762841
+    second: DIY_16x16_13
+  - first:
+      213: 6507173685154175499
+    second: DIY_16x16_14
+  - first:
+      213: 5858523441950468034
+    second: DIY_16x16_15
+  - first:
+      213: -407843861563817525
+    second: DIY_16x16_16
+  - first:
+      213: 2200514358612884641
+    second: DIY_16x16_17
+  - first:
+      213: 5709832991202187720
+    second: DIY_16x16_18
+  - first:
+      213: -9149388467253931749
+    second: DIY_16x16_19
+  - first:
+      213: 3507510849811622995
+    second: DIY_16x16_20
+  - first:
+      213: -5617626487821909674
+    second: DIY_16x16_21
+  - first:
+      213: -1678322752130483555
+    second: DIY_16x16_22
+  - first:
+      213: 7474019966502124765
+    second: DIY_16x16_23
+  - first:
+      213: 8222627948658024995
+    second: DIY_16x16_24
+  - first:
+      213: -1306489479333766429
+    second: DIY_16x16_25
+  - first:
+      213: -7611012009690735433
+    second: DIY_16x16_26
+  - first:
+      213: 8026640747118723025
+    second: DIY_16x16_27
+  - first:
+      213: -7190710700305803993
+    second: DIY_16x16_28
+  - first:
+      213: -1638308994277532542
+    second: DIY_16x16_29
+  - first:
+      213: -1170754500961456394
+    second: DIY_16x16_30
+  - first:
+      213: 1669213979747202775
+    second: DIY_16x16_31
+  - first:
+      213: 2926815359087506539
+    second: DIY_16x16_32
+  - first:
+      213: 5642972108792072126
+    second: DIY_16x16_33
+  - first:
+      213: 7885000673260068716
+    second: DIY_16x16_34
+  - first:
+      213: -7547976543055420276
+    second: DIY_16x16_35
+  - first:
+      213: -8965614329766575069
+    second: DIY_16x16_36
+  - first:
+      213: -8004474529372588785
+    second: DIY_16x16_37
+  - first:
+      213: -9153665487048689333
+    second: DIY_16x16_38
+  - first:
+      213: 610533235765924753
+    second: DIY_16x16_39
+  - first:
+      213: 3514611613751992158
+    second: DIY_16x16_40
+  - first:
+      213: 3635447640132425533
+    second: DIY_16x16_41
+  - first:
+      213: 1899620183496878225
+    second: DIY_16x16_42
+  - first:
+      213: -3639457803723584936
+    second: DIY_16x16_43
+  - first:
+      213: 852640549131584408
+    second: DIY_16x16_44
+  - first:
+      213: 5087915324488183310
+    second: DIY_16x16_45
+  - first:
+      213: 1010730404828901822
+    second: DIY_16x16_46
+  - first:
+      213: -8556245818517466978
+    second: DIY_16x16_47
+  - first:
+      213: 6580610811405779362
+    second: DIY_16x16_48
+  - first:
+      213: 1778885401581489375
+    second: DIY_16x16_49
+  - first:
+      213: -7180793408458078541
+    second: DIY_16x16_50
+  - first:
+      213: 3087553056251032462
+    second: DIY_16x16_51
+  - first:
+      213: -3391918599614249701
+    second: DIY_16x16_52
+  - first:
+      213: 7530266109547768503
+    second: DIY_16x16_53
+  - first:
+      213: 2586919729403437716
+    second: DIY_16x16_54
+  - first:
+      213: -2743427690182381447
+    second: DIY_16x16_55
+  - first:
+      213: 4334842054102480899
+    second: DIY_16x16_56
+  - first:
+      213: -4015515662455455350
+    second: DIY_16x16_57
+  - first:
+      213: 5446344030791627190
+    second: DIY_16x16_58
+  - first:
+      213: -5581858137656744053
+    second: DIY_16x16_59
+  - first:
+      213: 8340691374178014737
+    second: DIY_16x16_60
+  - first:
+      213: 1870157215096586918
+    second: DIY_16x16_61
+  - first:
+      213: -610063335642401632
+    second: DIY_16x16_62
+  - first:
+      213: 7660356112941555797
+    second: DIY_16x16_63
+  - first:
+      213: 5967210123321065863
+    second: DIY_16x16_64
+  - first:
+      213: -7784098873510827684
+    second: DIY_16x16_65
+  - first:
+      213: 8042255008269026169
+    second: DIY_16x16_66
+  - first:
+      213: 1037526067888936173
+    second: DIY_16x16_67
+  - first:
+      213: 1545623086559529791
+    second: DIY_16x16_68
+  - first:
+      213: 3634516804133126024
+    second: DIY_16x16_69
+  - first:
+      213: -1153759289176831891
+    second: DIY_16x16_70
+  - first:
+      213: 5038068574902458362
+    second: DIY_16x16_71
+  - first:
+      213: -825014824084692569
+    second: DIY_16x16_72
+  - first:
+      213: 1166306865496245721
+    second: DIY_16x16_73
+  - first:
+      213: 8856193800050957948
+    second: DIY_16x16_74
+  - first:
+      213: -6255125639905832623
+    second: DIY_16x16_75
+  - first:
+      213: 8922086194958759398
+    second: DIY_16x16_76
+  - first:
+      213: 6354322288982418666
+    second: DIY_16x16_77
+  - first:
+      213: -7584772968752841099
+    second: DIY_16x16_78
+  - first:
+      213: -2973399975344513569
+    second: DIY_16x16_79
+  - first:
+      213: 5996955434332458557
+    second: DIY_16x16_80
+  - first:
+      213: 7687775172195261442
+    second: DIY_16x16_81
+  - first:
+      213: 6128330464947247209
+    second: DIY_16x16_82
+  - first:
+      213: -5406976784010468998
+    second: DIY_16x16_83
+  - first:
+      213: -4730088433657262424
+    second: DIY_16x16_84
+  - first:
+      213: 1779226175855308251
+    second: DIY_16x16_85
+  - first:
+      213: -4727379243854505503
+    second: DIY_16x16_86
+  - first:
+      213: 963266986328700845
+    second: DIY_16x16_87
+  - first:
+      213: 5459533885578829664
+    second: DIY_16x16_88
+  - first:
+      213: 1133797749633586967
+    second: DIY_16x16_89
+  - first:
+      213: -7159267652115415831
+    second: DIY_16x16_90
+  - first:
+      213: 4280723804399007920
+    second: DIY_16x16_91
+  - first:
+      213: 3145480143723234345
+    second: DIY_16x16_92
+  - first:
+      213: -969007171568094995
+    second: DIY_16x16_93
+  - first:
+      213: -8797592116721374803
+    second: DIY_16x16_94
+  - first:
+      213: 6425703291438521849
+    second: DIY_16x16_95
+  - first:
+      213: 7169185947641240583
+    second: DIY_16x16_96
+  - first:
+      213: 6203142537090398299
+    second: DIY_16x16_97
+  - first:
+      213: -1203785367732657277
+    second: DIY_16x16_98
+  - first:
+      213: 4854631848449161864
+    second: DIY_16x16_99
+  - first:
+      213: -6020958876723066458
+    second: DIY_16x16_100
+  - first:
+      213: -6930354494023307297
+    second: DIY_16x16_101
+  - first:
+      213: -1081041215205612707
+    second: DIY_16x16_102
+  - first:
+      213: -370532554948765232
+    second: DIY_16x16_103
+  - first:
+      213: 8384072249806056704
+    second: DIY_16x16_104
+  - first:
+      213: -2701733614355198885
+    second: DIY_16x16_105
+  - first:
+      213: -122407475783460884
+    second: DIY_16x16_106
+  - first:
+      213: -200351493276048135
+    second: DIY_16x16_107
+  - first:
+      213: 6720398668897333620
+    second: DIY_16x16_108
+  - first:
+      213: 2396345359660898334
+    second: DIY_16x16_109
+  - first:
+      213: 7067243314685829979
+    second: DIY_16x16_110
+  - first:
+      213: 5628013022731916916
+    second: DIY_16x16_111
+  - first:
+      213: -2374821480553655903
+    second: DIY_16x16_112
+  - first:
+      213: -2369462013876476813
+    second: DIY_16x16_113
+  - first:
+      213: -1926511193174792533
+    second: DIY_16x16_114
+  - first:
+      213: -1005527551630368344
+    second: DIY_16x16_115
+  - first:
+      213: -8761217523353352690
+    second: DIY_16x16_116
+  - first:
+      213: 3032397300571128344
+    second: DIY_16x16_117
+  - first:
+      213: -1117494769302750066
+    second: DIY_16x16_118
+  - first:
+      213: 3680210256833958747
+    second: DIY_16x16_119
+  - first:
+      213: -5652613225397662727
+    second: DIY_16x16_120
+  - first:
+      213: -6538663033547131489
+    second: DIY_16x16_121
+  - first:
+      213: 3591430788421578541
+    second: DIY_16x16_122
+  - first:
+      213: -6053424966882405980
+    second: DIY_16x16_123
+  - first:
+      213: 2328940412237514284
+    second: DIY_16x16_124
+  - first:
+      213: 6917380537609014484
+    second: DIY_16x16_125
+  - first:
+      213: -6664109499392959646
+    second: DIY_16x16_126
+  - first:
+      213: -943489044127912313
+    second: DIY_16x16_127
+  - first:
+      213: -1822118828393582864
+    second: DIY_16x16_128
+  - first:
+      213: -6852920968096749676
+    second: DIY_16x16_129
+  - first:
+      213: -7064828640484083825
+    second: DIY_16x16_130
+  - first:
+      213: -2137755365290872867
+    second: DIY_16x16_131
+  - first:
+      213: 7411551548024214263
+    second: DIY_16x16_132
+  - first:
+      213: 7468401744766107620
+    second: DIY_16x16_133
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: DIY_16x16_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 648
+        height: 288
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5c2b910d570f8f10800000000000000
+      internalID: 2274044432885689434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_1
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 95
+        width: 55
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baf1774ddcb501bf0800000000000000
+      internalID: -355683430971269205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_2
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 95
+        width: 57
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbcea80bd4945f160800000000000000
+      internalID: 7058628588996324540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_3
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 95
+        width: 55
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a71c57d044008b60800000000000000
+      internalID: 7746196035614807971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_4
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 255
+        width: 61
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29a088f01fc497470800000000000000
+      internalID: 8392823978813033106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_5
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 271
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a847d5ff1e4671220800000000000000
+      internalID: 2456543043568628874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_6
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 271
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 788eba48e76acf870800000000000000
+      internalID: 8718026041004386439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_7
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 271
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33fb1b28c43ac03e0800000000000000
+      internalID: -2086112978373853389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_8
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 271
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2f2c8ad0ed4dfd90800000000000000
+      internalID: -7062403012512436435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_9
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 271
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c105c03655bcc7190800000000000000
+      internalID: -7963266473503469540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_10
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 271
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbe788e30249911d0800000000000000
+      internalID: -3379507179155849540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_11
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 271
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f91abfc3bb751e20800000000000000
+      internalID: 3320696312470051312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_12
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 271
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72faee61716798320800000000000000
+      internalID: 2560707704677904167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_13
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 255
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d84f82a71a12b230800000000000000
+      internalID: 3653010936564762841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_14
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 255
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0a526b7dff1e4a50800000000000000
+      internalID: 6507173685154175499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_15
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 255
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c7a1c9d708ad4150800000000000000
+      internalID: 5858523441950468034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_16
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 255
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc14aa33b2c075af0800000000000000
+      internalID: -407843861563817525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_17
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 255
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ac744c762cc98e10800000000000000
+      internalID: 2200514358612884641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_18
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 255
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c9996f7ad66d3f40800000000000000
+      internalID: 5709832991202187720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_19
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 255
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1116412aa7d60180800000000000000
+      internalID: -9149388467253931749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_20
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 239
+        width: 61
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35ca9d8c88e2da030800000000000000
+      internalID: 3507510849811622995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_21
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 239
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 651cc88097e2a02b0800000000000000
+      internalID: -5617626487821909674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_22
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 239
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9a7ecc595665b8e0800000000000000
+      internalID: -1678322752130483555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_23
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 239
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddc398b7f8d09b760800000000000000
+      internalID: 7474019966502124765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_24
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 239
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 322e5ffcd84ac1270800000000000000
+      internalID: 8222627948658024995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_25
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 239
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ea96899dba6edde0800000000000000
+      internalID: -1306489479333766429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_26
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 239
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bcd62de6e0406690800000000000000
+      internalID: -7611012009690735433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_27
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 239
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dfffa78b3b546f60800000000000000
+      internalID: 8026640747118723025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_28
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 207
+        width: 61
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7251ca157b6753c90800000000000000
+      internalID: -7190710700305803993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_29
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 223
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28c92cb56ae8349e0800000000000000
+      internalID: -1638308994277532542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_30
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 223
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fea00bfbf4a0cfe0800000000000000
+      internalID: -1170754500961456394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_31
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 223
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d6b2fc454d3a2710800000000000000
+      internalID: 1669213979747202775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_32
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 223
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b647199ef032e9820800000000000000
+      internalID: 2926815359087506539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_33
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 223
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb70df53c3ddf4e40800000000000000
+      internalID: 5642972108792072126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_34
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 223
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6fd167f5562d6d60800000000000000
+      internalID: 7885000673260068716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_35
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 223
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8463323353304790800000000000000
+      internalID: -7547976543055420276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_36
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 223
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3248c19d44db39380800000000000000
+      internalID: -8965614329766575069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_37
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 207
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f05b51733d46ae090800000000000000
+      internalID: -8004474529372588785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_38
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 207
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b49b5bbdcb5a7f080800000000000000
+      internalID: -9153665487048689333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_39
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 207
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 193d5614ebc097800800000000000000
+      internalID: 610533235765924753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_40
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 207
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5f562934a866c030800000000000000
+      internalID: 3514611613751992158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_41
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 207
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3710a50e54b37230800000000000000
+      internalID: 3635447640132425533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_42
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 207
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1986e750e7ecc5a10800000000000000
+      internalID: 1899620183496878225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_43
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 207
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85a4802096c0e7dc0800000000000000
+      internalID: -3639457803723584936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_44
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 191
+        width: 63
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 893051cdf0035db00800000000000000
+      internalID: 852640549131584408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_45
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 191
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0e626bd708eb9640800000000000000
+      internalID: 5087915324488183310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_46
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 191
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb17387b2f5d60e00800000000000000
+      internalID: 1010730404828901822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_47
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 191
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e905850d2cb124980800000000000000
+      internalID: -8556245818517466978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_48
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 191
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a1cfeadaa6035b50800000000000000
+      internalID: 6580610811405779362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_49
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 191
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdc846909dedfa810800000000000000
+      internalID: 1778885401581489375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_50
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 191
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b6c363c072b85c90800000000000000
+      internalID: -7180793408458078541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_51
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 191
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e83b307652139da20800000000000000
+      internalID: 3087553056251032462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_52
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 159
+        width: 63
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b15c3fa310c7de0d0800000000000000
+      internalID: -3391918599614249701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_53
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 175
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bae1cb2121e08860800000000000000
+      internalID: 7530266109547768503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_54
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 175
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 492aa8da9c596e320800000000000000
+      internalID: 2586919729403437716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_55
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 175
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97075b31d036de9d0800000000000000
+      internalID: -2743427690182381447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_56
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 175
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 308f33891e3782c30800000000000000
+      internalID: 4334842054102480899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_57
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 175
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a814355b7c50648c0800000000000000
+      internalID: -4015515662455455350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_58
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 175
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b177ef3a0d459b40800000000000000
+      internalID: 5446344030791627190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_59
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 175
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b87a85609914982b0800000000000000
+      internalID: -5581858137656744053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_60
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 175
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1169b0b2d9610c370800000000000000
+      internalID: 8340691374178014737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_61
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 159
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a247ff141224f910800000000000000
+      internalID: 1870157215096586918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_62
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 159
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a47b84e0ae9887f0800000000000000
+      internalID: -610063335642401632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_63
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 159
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 550afd46c4d0f4a60800000000000000
+      internalID: 7660356112941555797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_64
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 159
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 781caa4ddf9cfc250800000000000000
+      internalID: 5967210123321065863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_65
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 159
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c596ed3015359f390800000000000000
+      internalID: -7784098873510827684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_66
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 159
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9734bf00254db9f60800000000000000
+      internalID: 8042255008269026169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_67
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 159
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de45ab13678066e00800000000000000
+      internalID: 1037526067888936173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_68
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 143
+        width: 61
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3b06071208237510800000000000000
+      internalID: 1545623086559529791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_69
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 143
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88ffa80e6c5607230800000000000000
+      internalID: 3634516804133126024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_70
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 143
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d68ce441a060dffe0800000000000000
+      internalID: -1153759289176831891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_71
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 143
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af79e111da0dae540800000000000000
+      internalID: 5038068574902458362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_72
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 143
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a1200c7365fc84f0800000000000000
+      internalID: -825014824084692569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_73
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 143
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d5c0013aed8f2010800000000000000
+      internalID: 1166306865496245721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_74
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 143
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7edd0ac65587ea70800000000000000
+      internalID: 8856193800050957948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_75
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 143
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15199ff1f545139a0800000000000000
+      internalID: -6255125639905832623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_76
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 111
+        width: 61
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e5fee18f1e91db70800000000000000
+      internalID: 8922086194958759398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_77
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 127
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae4e42784761f2850800000000000000
+      internalID: 6354322288982418666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_78
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 127
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57e7087bb297db690800000000000000
+      internalID: -7584772968752841099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_79
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 127
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdd5f66e97c5cb6d0800000000000000
+      internalID: -2973399975344513569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_80
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 127
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3e0c3db137793350800000000000000
+      internalID: 5996955434332458557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_81
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 127
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20c14cb99c670ba60800000000000000
+      internalID: 7687775172195261442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_82
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 127
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 968926da6143c0550800000000000000
+      internalID: 6128330464947247209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_83
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 127
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a71a548234f86f4b0800000000000000
+      internalID: -5406976784010468998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_84
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 127
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aecca371a95b5eb0800000000000000
+      internalID: -4730088433657262424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_85
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 111
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bddaeeab7c411b810800000000000000
+      internalID: 1779226175855308251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_86
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 111
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e95f7bdf99f46eb0800000000000000
+      internalID: -4727379243854505503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_87
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 111
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da7bbff68363e5d00800000000000000
+      internalID: 963266986328700845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_88
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 111
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06f5221a42924cb40800000000000000
+      internalID: 5459533885578829664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_89
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 111
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7171c02db0f0cbf00800000000000000
+      internalID: 1133797749633586967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_90
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 111
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ec37b7700c25ac90800000000000000
+      internalID: -7159267652115415831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_91
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 111
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b8f2ceae9f286b30800000000000000
+      internalID: 4280723804399007920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_92
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 95
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9240ba6768df6ab20800000000000000
+      internalID: 3145480143723234345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_93
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 95
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de0b0e98c156d82f0800000000000000
+      internalID: -969007171568094995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_94
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 95
+        width: 63
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da9ab0cd49ca8e580800000000000000
+      internalID: -8797592116721374803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_95
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 95
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fd5046491fac2950800000000000000
+      internalID: 6425703291438521849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_96
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 95
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70cd0e9a2a01e7360800000000000000
+      internalID: 7169185947641240583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_97
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 95
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b587366954df51650800000000000000
+      internalID: 6203142537090398299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_98
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 95
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3836b72069b4b4fe0800000000000000
+      internalID: -1203785367732657277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_99
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 95
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88a3c1af1fd1f5340800000000000000
+      internalID: 4854631848449161864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_100
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 95
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a9cfa15dc1417ca0800000000000000
+      internalID: -6020958876723066458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_101
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 95
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdf65386e4f62df90800000000000000
+      internalID: -6930354494023307297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_102
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 79
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d53ec1c0ebe5ff0f0800000000000000
+      internalID: -1081041215205612707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_103
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 79
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d99f8cba9a9bdaf0800000000000000
+      internalID: -370532554948765232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_104
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 79
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00d66ec5a453a5470800000000000000
+      internalID: 8384072249806056704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_105
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 79
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5c40a69793818ad0800000000000000
+      internalID: -2701733614355198885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_106
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 79
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce71310ac0f1d4ef0800000000000000
+      internalID: -122407475783460884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_107
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 79
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f4ef0dd065383df0800000000000000
+      internalID: -200351493276048135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_108
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 79
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47132a0bbf6a34d50800000000000000
+      internalID: 6720398668897333620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_109
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 79
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e185eb18867814120800000000000000
+      internalID: 2396345359660898334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_110
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 63
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b536a11d954e31260800000000000000
+      internalID: 7067243314685829979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_111
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 63
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47655339608ba1e40800000000000000
+      internalID: 5628013022731916916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_112
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 63
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a1d1ae1270fa0fd0800000000000000
+      internalID: -2374821480553655903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_113
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 63
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3746c123adafd1fd0800000000000000
+      internalID: -2369462013876476813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_114
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 63
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba6a003e648a345e0800000000000000
+      internalID: -1926511193174792533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_115
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 63
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a12431f406ab02f0800000000000000
+      internalID: -1005527551630368344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_116
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 63
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e068898d417e96680800000000000000
+      internalID: -8761217523353352690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_117
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 63
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 812456e474d351a20800000000000000
+      internalID: 3032397300571128344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_118
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 47
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8c3a559d6cdd70f0800000000000000
+      internalID: -1117494769302750066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_119
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 47
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b535651eabbb21330800000000000000
+      internalID: 3680210256833958747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_120
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 47
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fb4f776832ed81b0800000000000000
+      internalID: -5652613225397662727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_121
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 47
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f95f1734d900245a0800000000000000
+      internalID: -6538663033547131489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_122
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 47
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2fe44b164357d130800000000000000
+      internalID: 3591430788421578541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_123
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 47
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a15e76a01aedfba0800000000000000
+      internalID: -6053424966882405980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_124
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 47
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c26087637fe025020800000000000000
+      internalID: 2328940412237514284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_125
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 47
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dcc268f2f87fff50800000000000000
+      internalID: 6917380537609014484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_126
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 31
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26b5060e7b35483a0800000000000000
+      internalID: -6664109499392959646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_127
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 31
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78e684396bd08e2f0800000000000000
+      internalID: -943489044127912313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_128
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 31
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0feac0f549886b6e0800000000000000
+      internalID: -1822118828393582864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_129
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 31
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49764c610b885e0a0800000000000000
+      internalID: -6852920968096749676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_130
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 31
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f87b0f458cfa4fd90800000000000000
+      internalID: -7064828640484083825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_131
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 31
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddfe62352da2552e0800000000000000
+      internalID: -2137755365290872867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_132
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 31
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f2da766dde1bd660800000000000000
+      internalID: 7411551548024214263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DIY_16x16_133
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 31
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4eff0bc41d715a760800000000000000
+      internalID: 7468401744766107620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      DIY_16x16_0: 2274044432885689434
+      DIY_16x16_1: -355683430971269205
+      DIY_16x16_10: -3379507179155849540
+      DIY_16x16_100: -6020958876723066458
+      DIY_16x16_101: -6930354494023307297
+      DIY_16x16_102: -1081041215205612707
+      DIY_16x16_103: -370532554948765232
+      DIY_16x16_104: 8384072249806056704
+      DIY_16x16_105: -2701733614355198885
+      DIY_16x16_106: -122407475783460884
+      DIY_16x16_107: -200351493276048135
+      DIY_16x16_108: 6720398668897333620
+      DIY_16x16_109: 2396345359660898334
+      DIY_16x16_11: 3320696312470051312
+      DIY_16x16_110: 7067243314685829979
+      DIY_16x16_111: 5628013022731916916
+      DIY_16x16_112: -2374821480553655903
+      DIY_16x16_113: -2369462013876476813
+      DIY_16x16_114: -1926511193174792533
+      DIY_16x16_115: -1005527551630368344
+      DIY_16x16_116: -8761217523353352690
+      DIY_16x16_117: 3032397300571128344
+      DIY_16x16_118: -1117494769302750066
+      DIY_16x16_119: 3680210256833958747
+      DIY_16x16_12: 2560707704677904167
+      DIY_16x16_120: -5652613225397662727
+      DIY_16x16_121: -6538663033547131489
+      DIY_16x16_122: 3591430788421578541
+      DIY_16x16_123: -6053424966882405980
+      DIY_16x16_124: 2328940412237514284
+      DIY_16x16_125: 6917380537609014484
+      DIY_16x16_126: -6664109499392959646
+      DIY_16x16_127: -943489044127912313
+      DIY_16x16_128: -1822118828393582864
+      DIY_16x16_129: -6852920968096749676
+      DIY_16x16_13: 3653010936564762841
+      DIY_16x16_130: -7064828640484083825
+      DIY_16x16_131: -2137755365290872867
+      DIY_16x16_132: 7411551548024214263
+      DIY_16x16_133: 7468401744766107620
+      DIY_16x16_14: 6507173685154175499
+      DIY_16x16_15: 5858523441950468034
+      DIY_16x16_16: -407843861563817525
+      DIY_16x16_17: 2200514358612884641
+      DIY_16x16_18: 5709832991202187720
+      DIY_16x16_19: -9149388467253931749
+      DIY_16x16_2: 7058628588996324540
+      DIY_16x16_20: 3507510849811622995
+      DIY_16x16_21: -5617626487821909674
+      DIY_16x16_22: -1678322752130483555
+      DIY_16x16_23: 7474019966502124765
+      DIY_16x16_24: 8222627948658024995
+      DIY_16x16_25: -1306489479333766429
+      DIY_16x16_26: -7611012009690735433
+      DIY_16x16_27: 8026640747118723025
+      DIY_16x16_28: -7190710700305803993
+      DIY_16x16_29: -1638308994277532542
+      DIY_16x16_3: 7746196035614807971
+      DIY_16x16_30: -1170754500961456394
+      DIY_16x16_31: 1669213979747202775
+      DIY_16x16_32: 2926815359087506539
+      DIY_16x16_33: 5642972108792072126
+      DIY_16x16_34: 7885000673260068716
+      DIY_16x16_35: -7547976543055420276
+      DIY_16x16_36: -8965614329766575069
+      DIY_16x16_37: -8004474529372588785
+      DIY_16x16_38: -9153665487048689333
+      DIY_16x16_39: 610533235765924753
+      DIY_16x16_4: 8392823978813033106
+      DIY_16x16_40: 3514611613751992158
+      DIY_16x16_41: 3635447640132425533
+      DIY_16x16_42: 1899620183496878225
+      DIY_16x16_43: -3639457803723584936
+      DIY_16x16_44: 852640549131584408
+      DIY_16x16_45: 5087915324488183310
+      DIY_16x16_46: 1010730404828901822
+      DIY_16x16_47: -8556245818517466978
+      DIY_16x16_48: 6580610811405779362
+      DIY_16x16_49: 1778885401581489375
+      DIY_16x16_5: 2456543043568628874
+      DIY_16x16_50: -7180793408458078541
+      DIY_16x16_51: 3087553056251032462
+      DIY_16x16_52: -3391918599614249701
+      DIY_16x16_53: 7530266109547768503
+      DIY_16x16_54: 2586919729403437716
+      DIY_16x16_55: -2743427690182381447
+      DIY_16x16_56: 4334842054102480899
+      DIY_16x16_57: -4015515662455455350
+      DIY_16x16_58: 5446344030791627190
+      DIY_16x16_59: -5581858137656744053
+      DIY_16x16_6: 8718026041004386439
+      DIY_16x16_60: 8340691374178014737
+      DIY_16x16_61: 1870157215096586918
+      DIY_16x16_62: -610063335642401632
+      DIY_16x16_63: 7660356112941555797
+      DIY_16x16_64: 5967210123321065863
+      DIY_16x16_65: -7784098873510827684
+      DIY_16x16_66: 8042255008269026169
+      DIY_16x16_67: 1037526067888936173
+      DIY_16x16_68: 1545623086559529791
+      DIY_16x16_69: 3634516804133126024
+      DIY_16x16_7: -2086112978373853389
+      DIY_16x16_70: -1153759289176831891
+      DIY_16x16_71: 5038068574902458362
+      DIY_16x16_72: -825014824084692569
+      DIY_16x16_73: 1166306865496245721
+      DIY_16x16_74: 8856193800050957948
+      DIY_16x16_75: -6255125639905832623
+      DIY_16x16_76: 8922086194958759398
+      DIY_16x16_77: 6354322288982418666
+      DIY_16x16_78: -7584772968752841099
+      DIY_16x16_79: -2973399975344513569
+      DIY_16x16_8: -7062403012512436435
+      DIY_16x16_80: 5996955434332458557
+      DIY_16x16_81: 7687775172195261442
+      DIY_16x16_82: 6128330464947247209
+      DIY_16x16_83: -5406976784010468998
+      DIY_16x16_84: -4730088433657262424
+      DIY_16x16_85: 1779226175855308251
+      DIY_16x16_86: -4727379243854505503
+      DIY_16x16_87: 963266986328700845
+      DIY_16x16_88: 5459533885578829664
+      DIY_16x16_89: 1133797749633586967
+      DIY_16x16_9: -7963266473503469540
+      DIY_16x16_90: -7159267652115415831
+      DIY_16x16_91: 4280723804399007920
+      DIY_16x16_92: 3145480143723234345
+      DIY_16x16_93: -969007171568094995
+      DIY_16x16_94: -8797592116721374803
+      DIY_16x16_95: 6425703291438521849
+      DIY_16x16_96: 7169185947641240583
+      DIY_16x16_97: 6203142537090398299
+      DIY_16x16_98: -1203785367732657277
+      DIY_16x16_99: 4854631848449161864
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

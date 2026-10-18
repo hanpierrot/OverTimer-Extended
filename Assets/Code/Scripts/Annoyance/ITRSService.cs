@@ -2,16 +2,16 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// Internal Time Revenue Service (DESIGN.md §5.6). Assesses a cut of money earned
-/// since the last bill on a fixed real-time interval, then holds - it does not
-/// auto-resolve. The player must Pay() or Ignore() (via the Tax panel) before another
-/// annoyance can fire; Ignore converts the full amount due into a clock penalty.
+/// Internal Time Revenue Service (DESIGN.md §5.6). Assesses a cut of money earned since the last bill every
+/// billInterval seconds of running clock, but never while a bill is still unpaid (P6). Each bill carries a TaxDeadline:
+/// taxPayWindow seconds of running clock to pay it, in the Taxes app or on the desk paper copy (paying either resolves
+/// both). Unpaid at 0, it costs amount x shortfallPenalty seconds of clock, once. There is no Ignore button (Q1).
 /// </summary>
 public class ITRSService : MonoBehaviour
 {
     public static ITRSService Instance { get; private set; }
 
-    /// <summary>A bill awaiting the player's Pay/Ignore decision - Taxes/Tax panel UI hooks here.</summary>
+    /// <summary>A bill awaiting the player - the Taxes app and the desk Tax panel hook here.</summary>
     public readonly struct Assessment
     {
         public readonly int earnedSinceNotice;
@@ -33,11 +33,18 @@ public class ITRSService : MonoBehaviour
     /// <summary>Fired when a new bill needs the player's attention.</summary>
     public event Action<Assessment> OnAssessmentIssued;
     public event Action OnAssessmentResolved;
+    /// <summary>Fired when the open bill's amount or time changes (Audit doubling it, a payment plan).</summary>
+    public event Action AssessmentChanged;
 
     public bool HasPendingAssessment { get; private set; }
     public Assessment CurrentAssessment { get; private set; }
+    /// <summary>The amount to pay right now (an Audit card can double it after issue).</summary>
+    public int CurrentAmountDue => _deadline != null ? _deadline.Amount : 0;
+    /// <summary>Running-clock seconds left to pay the open bill.</summary>
+    public float SecondsLeft => _deadline != null ? _deadline.SecondsLeft : 0f;
 
     private float timer;
+    private TaxDeadline _deadline;
     private int earnedSinceLastBill;
     private int lastKnownMoney;
     private bool skipNextBill;
@@ -73,31 +80,23 @@ public class ITRSService : MonoBehaviour
 
     private void Update()
     {
-        if (!ClockService.Instance.IsRunning || ClockService.Instance.IsGameOver) return;
+        float gameDelta = ClockService.Instance.GameDelta;     // 0 while the clock is paused (a call) or the game is over
+        if (gameDelta <= 0f) return;
 
-        timer += Time.deltaTime;
+        if (_deadline != null) _deadline.Tick(gameDelta);       // may resolve the bill (penalty)
+        if (HasPendingAssessment) return;                        // P6: never issue over an unpaid bill
+
+        timer += gameDelta;
         if (timer >= GameManager.Instance.GameConfig.billInterval)
         {
             timer = 0f;
-            TryIssueAssessment();
+            IssueAssessment();
         }
-    }
-
-    private void TryIssueAssessment()
-    {
-        // Also covers "a notice is already pending" - AnnoyanceManager stays busy
-        // until Pay/Ignore resolves it, so this naturally retries instead of piling up.
-        if (AnnoyanceManager.Instance != null && !AnnoyanceManager.Instance.TryBegin("itrs"))
-        {
-            timer = GameManager.Instance.GameConfig.billInterval - 1f; // retry in ~1s rather than dropping the bill
-            return;
-        }
-
-        IssueAssessment();
     }
 
     private void IssueAssessment()
     {
+        var config = GameManager.Instance.GameConfig;
         int earned = earnedSinceLastBill;
         earnedSinceLastBill = 0;
 
@@ -111,47 +110,62 @@ public class ITRSService : MonoBehaviour
         }
         else
         {
-            amountDue = Mathf.Max(GameManager.Instance.GameConfig.billMinimum, Mathf.RoundToInt(earned * GameManager.Instance.GameConfig.billRate));
+            amountDue = Mathf.Max(config.billMinimum, Mathf.RoundToInt(earned * config.billRate));
         }
 
-        CurrentAssessment = new Assessment(earned, GameManager.Instance.GameConfig.billRate, GameManager.Instance.GameConfig.billMinimum, amountDue, GameManager.Instance.GameConfig.shortfallPenalty);
+        CurrentAssessment = new Assessment(earned, config.billRate, config.billMinimum, amountDue, config.shortfallPenalty);
         HasPendingAssessment = true;
+        _deadline = new TaxDeadline(amountDue, config.taxPayWindow);
+        _deadline.Resolved += HandleDeadlineResolved;
+
+        var phone = PhoneController.Instance;
+        if (phone != null)
+            phone.Inbox.Add(MessageKind.Tax, $"Tax bill ${amountDue}", $"Pay within {config.taxPayWindow:0} seconds.", "app:taxes");
 
         OnAssessmentIssued?.Invoke(CurrentAssessment);
     }
 
-    /// <summary>Pay button - fails (no-op) if the player can't afford it.</summary>
+    /// <summary>Pay button (Taxes app or desk notice) - fails (no-op) if the player can't afford it.</summary>
     public bool Pay()
     {
-        if (!HasPendingAssessment) return false;
-        if (CurrentAssessment.amountDue > 0 && !MoneyService.Instance.TrySpend(CurrentAssessment.amountDue, "ITRS bill"))
+        if (!HasPendingAssessment || _deadline == null) return false;
+        int amount = _deadline.Amount;
+        if (amount > 0 && !MoneyService.Instance.TrySpend(amount, "ITRS bill"))
         {
-            HintService.Instance?.Show(HintId.TaxCannotAfford);
+            if (HintService.Instance != null) HintService.Instance.Show(HintId.TaxCannotAfford);
             return false;
         }
 
-        Resolve();
+        _deadline.MarkPaid();                                    // -> HandleDeadlineResolved
         return true;
     }
 
-    /// <summary>Ignore button - the full amount due converts straight into a clock penalty.</summary>
-    public void Ignore()
+    /// <summary>Unpaid at 0 s: the full amount converts into a clock penalty, once.</summary>
+    private void HandleDeadlineResolved(TaxDeadline deadline)
     {
-        if (!HasPendingAssessment) return;
+        if (deadline.State == TaxDeadline.Outcome.Penalized && deadline.Amount > 0)
+            ClockService.Instance.Spend(deadline.Amount * CurrentAssessment.penaltyPerDollar, "ITRS shortfall");
 
-        ClockService.Instance.Spend(CurrentAssessment.amountDue * CurrentAssessment.penaltyPerDollar, "ITRS shortfall");
+        _deadline = null;
         Resolve();
     }
 
     private void Resolve()
     {
         HasPendingAssessment = false;
-        AnnoyanceManager.Instance?.End("itrs");
         OnAssessmentResolved?.Invoke();
 
         var exempt = exemptCards;
         exemptCards = System.Array.Empty<CardItem>();
         foreach (var card in exempt) if (card != null) card.EndEffect();
+    }
+
+    /// <summary>ITRS "payment plan" call: more time to pay the open bill.</summary>
+    public void ExtendCurrentBill(float seconds)
+    {
+        if (_deadline == null) return;
+        _deadline.Extend(seconds);
+        AssessmentChanged?.Invoke();
     }
 
     /// <summary>Tax Exemption buff - the next scheduled bill is skipped entirely. The card that queued it is ended when
@@ -178,11 +192,11 @@ public class ITRSService : MonoBehaviour
 
     public void DoubleCurrentBill()
     {
-        if (!HasPendingAssessment) return;
+        if (!HasPendingAssessment || _deadline == null) return;
 
+        _deadline.Double();
         var a = CurrentAssessment;
-        CurrentAssessment = new Assessment(a.earnedSinceNotice, a.rate, a.minimum, a.amountDue * 2, a.penaltyPerDollar);
-
-        OnAssessmentIssued?.Invoke(CurrentAssessment);
+        CurrentAssessment = new Assessment(a.earnedSinceNotice, a.rate, a.minimum, _deadline.Amount, a.penaltyPerDollar);
+        AssessmentChanged?.Invoke();                             // open panels refresh (fixes the stale Audit amount)
     }
 }

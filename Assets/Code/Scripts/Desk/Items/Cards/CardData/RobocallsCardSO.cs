@@ -7,12 +7,12 @@ public class RobocallsCardSO : EffectCardSO
 
     public override void OnPlaced(CardItem card)
     {
-        if (Phone.Instance != null) Phone.Instance.StartRobocalls(duration);
+        if (PhoneController.Instance != null) PhoneController.Instance.AddRobocalls(card);
         card.ScheduleAutoRemove(duration);
     }
 
     public override void OnRemoved(CardItem card)
     {
-        if (Phone.Instance != null) Phone.Instance.StopRobocalls();
+        if (PhoneController.Instance != null) PhoneController.Instance.RemoveRobocalls(card);
     }
 }

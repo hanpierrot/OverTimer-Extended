@@ -34,7 +34,7 @@ public class PickaxeView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private RectTransform _rect;
     private RectTransform _parentRect;
-    private Vector3 _homePosition;
+    private Vector3 _homeLocalPosition;   // local, not world: the Laptop window slides (DeviceLayer), so a cached world position goes stale
     private Camera _eventCamera;
     private bool _held;
     private bool _wasOverlapping;
@@ -46,7 +46,7 @@ public class PickaxeView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         _rect = (RectTransform)transform;
         _parentRect = (RectTransform)_rect.parent;
-        _homePosition = _rect.position;
+        _homeLocalPosition = _rect.localPosition;
 
         if (oreTarget == null)
             Debug.LogWarning($"{nameof(PickaxeView)} on {name} has no Ore Target assigned - every swing will miss.", this);
@@ -84,13 +84,14 @@ public class PickaxeView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             TryHit(); // released mid-block - forced detach, still counts
 
         _wasOverlapping = false;
-        _rect.position = _homePosition;
+        _rect.localPosition = _homeLocalPosition;
     }
 
     // Caps swing rate so jittering the pickaxe right at the block's edge
     // can't fire hits faster than an actual swing would allow.
     private void TryHit()
     {
+        if (LaptopController.IsLocked) return;
         if (Time.time - _lastHitTime < hitCooldown) return;
         _lastHitTime = Time.time;
         Hit?.Invoke();

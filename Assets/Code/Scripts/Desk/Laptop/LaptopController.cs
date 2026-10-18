@@ -23,6 +23,14 @@ public class LaptopController : MonoBehaviour
     // NOT use this - see BLACKJACK.md §2.1 (Dead Battery split into two apps).
     public bool Disabled { get; set; }
 
+    /// <summary>True while a paused call holds the Laptop (DeviceLayer.LockLaptop). Apps stop acting: no Mining hits, no rolling Billiards shot.</summary>
+    public static bool IsLocked => DeviceLayer.Instance != null && DeviceLayer.Instance.IsLaptopLocked;
+
+    private void OnEnable()
+    {
+        if (DeviceLayer.Instance != null) DeviceLayer.Instance.NotifyLaptopOpened();
+    }
+
     private void Start()
     {
         // Apps are siblings under the same Canvas, not children of this
@@ -58,6 +66,7 @@ public class LaptopController : MonoBehaviour
         _current.OnAppClosed();
         _current.gameObject.SetActive(false);
         _current = null;
+        PublishAppState(false);
     }
 
     /// <summary>
@@ -88,10 +97,12 @@ public class LaptopController : MonoBehaviour
         _switching = false;
         _current = null;
         if (switchingOverlay != null) switchingOverlay.SetActive(false);
+        PublishAppState(false);
     }
 
     private void OnDisable()
     {
+        if (DeviceLayer.Instance != null) DeviceLayer.Instance.NotifyLaptopClosed();
         if (_switching) CancelSwitch();
     }
 
@@ -122,7 +133,14 @@ public class LaptopController : MonoBehaviour
     private void OpenImmediate(LaptopApp app)
     {
         _current = app;
+        PublishAppState(true);                // the window slides to the centre and the docked phone hides
         app.gameObject.SetActive(true);
         app.OnAppOpened();
+    }
+
+    /// <summary>Tells the DeviceLayer whether an app window is up (it centres the window and hides the docked Phone).</summary>
+    private void PublishAppState(bool open)
+    {
+        if (DeviceLayer.Instance != null) DeviceLayer.Instance.NotifyLaptopAppOpen(open);
     }
 }

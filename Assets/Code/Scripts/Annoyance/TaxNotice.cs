@@ -1,12 +1,10 @@
 using UnityEngine;
 
 /// <summary>
-/// The "Taxes" desk object - the Mail Tray of DESIGN.md §4/§5.6. Purely a notification
-/// layer: when ITRSService issues an assessment it does NOT auto-resolve (see
-/// ITRSService.Pay/Ignore) - it waits for the player to click this object. Until then,
-/// this nags with a repeating sound. On click it hands the assessment straight to the
-/// Tax panel via a direct call (not an event) - the panel starts inactive in the scene,
-/// so it can't reliably subscribe to an event before the first notice fires.
+/// The "Taxes" desk object - the paper copy of the current ITRS bill (the other copy is the Taxes phone app).
+/// It appears when a bill is issued and nags until the player first opens it, then stays on the desk until the bill is
+/// resolved (paid in the app or here, or penalised), when it hides itself. Clicking opens the Tax panel via a direct call
+/// (the panel starts inactive, so it can't subscribe to events itself). Phase 3.2 moves this copy to the mailbox.
 /// </summary>
 [RequireComponent(typeof(PointerReceiver))]
 [RequireComponent(typeof(Collider2D))]
@@ -21,7 +19,7 @@ public class TaxNotice : DeskObject
     public bool HasPendingBill { get; private set; }
 
     private float nagTimer;
-    private ITRSService.Assessment pendingAssessment;
+    private bool _opened;
 
     private void Start()
     {
@@ -29,26 +27,35 @@ public class TaxNotice : DeskObject
         // so ITRSService.Instance can still be null there. Start() only runs after
         // every object's Awake has completed, so the singleton is always ready here.
         ITRSService.Instance.OnAssessmentIssued += HandleAssessmentIssued;
+        ITRSService.Instance.OnAssessmentResolved += HandleAssessmentResolved;
     }
 
     private void OnDestroy()
     {
-        if (ITRSService.Instance != null) ITRSService.Instance.OnAssessmentIssued -= HandleAssessmentIssued;
+        if (ITRSService.Instance == null) return;
+        ITRSService.Instance.OnAssessmentIssued -= HandleAssessmentIssued;
+        ITRSService.Instance.OnAssessmentResolved -= HandleAssessmentResolved;
     }
 
     private void HandleAssessmentIssued(ITRSService.Assessment assessment)
     {
-        pendingAssessment = assessment;
         HasPendingBill = true;
+        _opened = false;
         nagTimer = 0f;
         if (noticeVisual) noticeVisual.SetActive(true);
         PlayNastySound();
-        HintService.Instance?.ShowOnce(HintId.MailTrayFirstBill);
+        if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.MailTrayFirstBill);
+    }
+
+    private void HandleAssessmentResolved()
+    {
+        HasPendingBill = false;
+        if (noticeVisual) noticeVisual.SetActive(false);   // recalled: the other copy settled it
     }
 
     private void Update()
     {
-        if (!HasPendingBill) return;
+        if (!HasPendingBill || _opened) return;
 
         nagTimer -= Time.deltaTime;
         if (nagTimer <= 0f)
@@ -68,10 +75,9 @@ public class TaxNotice : DeskObject
     {
         if (!HasPendingBill) return;
 
-        HasPendingBill = false;
-        if (noticeVisual) noticeVisual.SetActive(false);
-        if (taxPanel != null) taxPanel.Show(pendingAssessment);
+        _opened = true;
+        if (taxPanel != null) taxPanel.Show();
     }
-    
+
     public void OnPawned() => gameObject.SetActive(false);
 }

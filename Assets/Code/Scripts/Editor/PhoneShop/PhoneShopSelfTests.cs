@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using Random = System.Random;   // the pure classes take a System.Random (RngService); never UnityEngine.Random
 
 /// Headless checks for the Phone/Shop plan's pure classes (PHONE_SHOP_DELIVERY_IMPLEMENTATION Appendix B).
 /// Grows with each phase: add checks, never delete one.
@@ -19,9 +20,97 @@ public static class PhoneShopSelfTests
         _fails = 0; _passes = 0;
 
         ClockCore();
+        CallsAndPower();
+        InboxAndBanners();
+        TaxDeadlines();
 
         if (_fails == 0) Debug.Log($"[PhoneShop] ALL OK ({_passes} checks)");
         else Debug.LogError($"[PhoneShop] {_fails} FAILED, {_passes} passed");
+    }
+
+    // ---- Phase 1.3: CallerRoller, CallScheduler, PhonePower
+    static void CallsAndPower()
+    {
+        var cfg = new PhoneConfig(); var rng = new Random(1); int N = 200000;
+        var shown = new System.Collections.Generic.Dictionary<CallerKind, int>();
+        var truth = new System.Collections.Generic.Dictionary<CallTruth, int>();
+        for (int i = 0; i < N; i++)
+        {
+            var c = CallerRoller.Roll(rng, cfg, true);
+            shown.TryGetValue(c.shownAs, out int s); shown[c.shownAs] = s + 1;
+            truth.TryGetValue(c.truth, out int t); truth[c.truth] = t + 1;
+        }
+        double sp = truth[CallTruth.Telemarketer] / (double)N;
+        Check(Math.Abs(shown[CallerKind.Telemarketer] / (double)N - 0.40) < 0.01 && Math.Abs(shown[CallerKind.Unknown] / (double)N - 0.25) < 0.01, "caller ID weights 40/25/25/10");
+        Check(Math.Abs(sp - 0.55) < 0.01, $"real telemarketer share ~55% (got {sp:P1})");
+        rng = new Random(2); bool anyItrs = false;
+        for (int i = 0; i < 50000; i++) if (CallerRoller.Roll(rng, cfg, false).truth == CallTruth.ITRS) anyItrs = true;
+        Check(!anyItrs, "no ITRS calls while no bill is pending");
+        var unk = new CallInfo { shownAs = CallerKind.Unknown, truth = CallTruth.Client };
+        Check(unk.PausesClock && !new CallInfo { truth = CallTruth.Telemarketer }.PausesClock, "client/ITRS pause the clock, telemarketer doesn't");
+
+        var cs = new CallScheduler(cfg, new Random(3)); var log = new System.Collections.Generic.List<string>();
+        cs.RingStarted += c => log.Add("ring"); cs.RingStopped += (c, e) => log.Add(e.ToString()); cs.CallFinished += c => log.Add("done");
+        float first = 0; while (cs.Current != CallScheduler.State.Ringing && first < 100) { cs.Tick(0.1f); first += 0.1f; }
+        Check(log.Count == 1 && log[0] == "ring" && first >= 29.9f && first <= 60.2f, $"first ring within 30-60 s (at {first:F1} s)");
+        for (int i = 0; i < 200; i++) cs.Tick(0f);
+        Check(cs.Current == CallScheduler.State.Ringing, "paused clock (gameDelta 0) freezes the ring timer");
+        Check(cs.Answer() && cs.Current == CallScheduler.State.InCall, "answer -> in call");
+        for (int i = 0; i < 1000; i++) cs.Tick(0.1f);
+        Check(cs.Current == CallScheduler.State.InCall, "no second call while one is active (100 s later)");
+        cs.EndCall(); float tt = 0; while (cs.Current != CallScheduler.State.Ringing) { cs.Tick(0.1f); tt += 0.1f; if (tt > 200) break; }
+        Check(tt >= 12f + 30f - 0.11f && tt <= 12f + 60f + 0.11f, $"next ring = 12 s gap + 30-60 s interval (got {tt:F1} s)");
+        for (int i = 0; i < 101; i++) cs.Tick(0.1f);
+        Check(log[log.Count - 1] == "Missed", "unanswered ring times out after 10 s -> Missed");
+        var off = new CallScheduler(cfg, new Random(4)); bool on = false; off.CanRing = () => on; int missed = 0, rang = 0;
+        off.RingStopped += (c, e) => { if (e == CallEnd.Missed) missed++; }; off.RingStarted += c => rang++;
+        for (int i = 0; i < 1300; i++) off.Tick(0.1f);
+        Check(rang == 0 && missed >= 2, $"phone off: calls are logged as missed, none ring ({missed} missed)");
+        on = true; off.Tick(0.1f); Check(off.Current != CallScheduler.State.Ringing, "booting the phone does NOT release a backlog of calls");
+
+        var fast = new CallScheduler(cfg, new Random(5));
+        while (fast.Current != CallScheduler.State.Ringing) fast.Tick(0.1f);
+        fast.Answer(); fast.EndCall(); fast.IntervalScale = 0.5f; float ft = 0;      // the scale applies to intervals scheduled from now on
+        while (fast.Current != CallScheduler.State.Ringing && ft < 200) { fast.Tick(0.1f); ft += 0.1f; }
+        Check(ft <= 12f + 30f + 0.2f, $"Robocalls (IntervalScale 0.5): next ring within 12 s gap + 30 s (at {ft:F1} s)");
+        var abort = new CallScheduler(cfg, new Random(6)); int stops = 0; abort.RingStopped += (c, e) => stops++;
+        while (abort.Current != CallScheduler.State.Ringing) abort.Tick(0.1f);
+        abort.Abort(); Check(abort.Current == CallScheduler.State.Gap && stops == 1, "Abort() while ringing ends the ring as missed and enters the gap");
+
+        var pw = new PhonePower(5f);
+        pw.Press(); Check(pw.Current == PhonePower.State.Off, "press: on -> off");
+        pw.Press(); Check(pw.Current == PhonePower.State.Booting, "press: off -> booting");
+        for (int i = 0; i < 49; i++) pw.Tick(0.1f); Check(pw.Current == PhonePower.State.Booting, "still booting at 4.9 s");
+        pw.Tick(0.2f); Check(pw.IsUsable, "on after 5 s");
+        object eater = "cableEater"; pw.ForceOff(eater);
+        Check(pw.Current == PhonePower.State.Off && !pw.Press(), "Cable Eater forces off; the button is dead");
+        pw.ReleaseForceOff(eater); Check(pw.Current == PhonePower.State.Off && pw.Press() && pw.Current == PhonePower.State.Booting, "after release the player must boot it (stays off)");
+        pw.ForceOff(eater); Check(pw.Current == PhonePower.State.Off, "forced off mid-boot cancels the boot");
+    }
+
+    // ---- Phase 1.4: TaxDeadline
+    static void TaxDeadlines()
+    {
+        var td = new TaxDeadline(40, 30f); int res = 0; td.Resolved += _ => res++;
+        for (int i = 0; i < 299; i++) td.Tick(0.1f); Check(td.State == TaxDeadline.Outcome.Pending, "pending at 29.9 s");
+        for (int i = 0; i < 100; i++) td.Tick(0f); Check(td.State == TaxDeadline.Outcome.Pending, "paused clock doesn't run the window out");
+        td.Tick(0.2f); Check(td.State == TaxDeadline.Outcome.Penalized && res == 1, "unpaid at 30 s -> penalized once");
+        td.MarkPaid(); td.Tick(5f); Check(res == 1 && td.State == TaxDeadline.Outcome.Penalized, "no second resolution");
+        var td2 = new TaxDeadline(40, 30f); td2.Extend(15f); for (int i = 0; i < 400; i++) td2.Tick(0.1f);
+        Check(td2.State == TaxDeadline.Outcome.Pending, "ITRS payment plan +15 s");
+        td2.Double(); td2.MarkPaid(); Check(td2.Amount == 80 && td2.State == TaxDeadline.Outcome.Paid, "Audit doubles, then paid");
+        var td3 = new TaxDeadline(40, 30f); td3.MarkPaid(); td3.Tick(100f); Check(td3.State == TaxDeadline.Outcome.Paid, "a paid bill never penalises later");
+    }
+
+    // ---- Phase 1.3: Inbox, BannerQueue
+    static void InboxAndBanners()
+    {
+        var ib = new Inbox(); var bq = new BannerQueue(4f); ib.Added += bq.Push;
+        for (int i = 0; i < 5; i++) ib.Add(MessageKind.System, "m" + i, "");
+        Check(bq.Visible.Count == 3 && bq.Waiting == 2 && ib.Unread == 5, "5 at once: 3 banners, 2 waiting, all 5 in the Inbox");
+        bq.Tick(4.1f); Check(bq.Visible.Count == 2 && bq.Waiting == 0, "after 4 s the waiting two show");
+        bq.Tick(4.1f); Check(bq.Visible.Count == 0, "all banners gone; Inbox still has 5");
+        Check(ib.All[0].title == "m4", "Inbox is newest first");
     }
 
     // ---- Phase 1.1: PauseLock, SpeedModifiers

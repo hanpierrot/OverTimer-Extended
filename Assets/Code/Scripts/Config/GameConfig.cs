@@ -58,6 +58,8 @@ public class GameConfig : ScriptableObject
     [Range(0f, 1f)] public float billRate = 0.20f;
     public int billMinimum = 20;
     public float shortfallPenalty = 2f;
+    [Tooltip("Seconds of RUNNING clock to pay a bill before the shortfall penalty (Taxes app or desk paper copy).")]
+    public float taxPayWindow = 30f;
 
     [Header("Phone (§5.7)")]
     public float ringIntervalMin = 30f;
@@ -65,6 +67,22 @@ public class GameConfig : ScriptableObject
     public float ringEffectMultiplier = 1.5f;
     public float answerTime = 1.5f;
     public float maxRingDuration = 10f;
+    [Header("Phone - calls (Phone plan)")]
+    public int callWeightTelemarketer = 40;
+    public int callWeightClient = 25;
+    public int callWeightUnknown = 25;
+    public int callWeightITRS = 10;
+    [Range(0f, 1f)] public float unknownSpamChance = 0.6f;
+    [Tooltip("Seconds of pitch (clock running) before a telemarketer can be hung up on.")]
+    public float telemarketerPitch = 4f;
+    [Tooltip("REAL seconds to choose on a client call (the clock is paused) before the caller hangs up.")]
+    public float beneficialCallTimeout = 8f;
+    public int clientGigMoney = 22;
+    public float itrsCallExtension = 15f;
+    public float phoneBootSeconds = 5f;
+    public float bannerLifetime = 4f;
+    [Tooltip("Blur the desk behind the Laptop/Phone. Off = plain dark tint only (WebGL read-back fallback).")]
+    public bool deviceBlurEnabled = true;
 
     [Header("Annoyance Manager (§5.7)")]
     public float annoyanceMinGap = 12f;

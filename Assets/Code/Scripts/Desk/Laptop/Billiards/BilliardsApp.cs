@@ -457,6 +457,7 @@ public class BilliardsApp : LaptopApp
         if (_state == State.Racked && _preset != null && !Mathf.Approximately(CostMultiplier(), _shownMultiplier)) RefreshRacked();
 
         if (_state != State.Rolling || _round == null) return;
+        if (LaptopController.IsLocked) return;                    // a paused call holds the Laptop: the shot freezes mid-roll
 
         _acc += Time.deltaTime;
         int steps = 0;
