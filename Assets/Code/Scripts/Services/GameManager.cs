@@ -16,9 +16,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text endGameText;
     [SerializeField] private float endPanelDelay = 1f;
     [SerializeField] private float endPanelFadeDuration = 0.6f;
-    
-    [Header("Camera")]
-    [SerializeField] private CameraVerticalScroller cameraScroller;
 
     public GameConfig GameConfig => config;
     public bool IsGameOver { get; private set; }
@@ -54,7 +51,6 @@ public class GameManager : MonoBehaviour
         if (IsGameOver) return;
 
         if (InputManager.Instance != null) InputManager.Instance.IsInputEnabled = !blocked;
-        if (cameraScroller != null) cameraScroller.SetButtonsEnabled(!blocked);
     }
 
     public void PauseGame()

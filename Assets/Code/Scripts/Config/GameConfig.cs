@@ -171,6 +171,12 @@ public class GameConfig : ScriptableObject
     public float hintHoldSeconds = 2.5f;
     public float hintFadeSeconds = 0.5f;
     public float hintRepeatCooldown = 3f;
+    
+    [Header("Camera (§4.1)")]
+    public float roomCameraSize = 14f;
+    public float deskCameraSize = 6f;
+    public float doorCameraSize = 7f;
+    public float cameraFocusSeconds = 0.5f;
 
     [Header("Run Rating")]
     public float ratingOutcomeWeight = 0.5f;
