@@ -44,12 +44,12 @@ These are the load-bearing rules. Breaking any one of them breaks the game.
 | I6 | Exchange rate is **$1 = 1 second** (`exchangeRate`) | Every number in this doc assumes it |
 | I7 | Debuffs **close a door**, never drain the clock directly. Every debuff ends by time or can be escaped by Pawning the card (the one exception is a triggered Final Countdown, §5.14) | Player must be able to route around punishment |
 | I8 | **Only calls interrupt, one at a time**, with at least 12 s between calls (§5.9). Bills, mail and the doorbell are non-blocking notifications. The Cat is exempt | Overlapping nags read as bugs, not pressure |
-| I9 | No physics simulation of the world and no character. The camera scrolls **vertically only** inside fixed bounds (`CameraVerticalScroller`, two hold-buttons); no drag-pan, no zoom, no rotation. `Physics2D` is used only for hit-testing and trigger overlaps (clicking, Pawn, Cat). Billiards runs its own deterministic vector-math simulation inside its app (§5.6) | Scope |
+| I9 | No physics simulation of the world and no character. The camera moves only between **fixed viewpoints** (Room, Desk, Door; §4.1) by click-driven transitions; no scrolling, no drag-pan, no free zoom, no rotation. `Physics2D` is used only for hit-testing and trigger overlaps (clicking, Pawn, Cat). Billiards runs its own deterministic vector-math simulation inside its app (§5.6) | Scope |
 | I10 | All tuning values live in data assets, never in script logic | The last hours of a project are for tuning, not refactoring |
 
 > **I1 detail — alternate endings.** The Clock stays the default route. Two kinds of alternate ending exist. Three **cards** end the run deterministically from placement state: **Set completion** (win), **Final Countdown** (win or loss), **Creepy Jester** (loss). Three **mechanics** end it from play: a **Lucky Nine** ticket of nine identical symbols, a **Mining** streak or cave-in, and a **Blackjack** seven-card hand or ruin streak. None of them converts money to time (I3) or grants clock time (I4). Each alternate ending is meant to occur in roughly 1–3% of runs, and every loss has a warning and a way out. Full spec: §5.14.
 
-> **I9 detail — the Room.** The play space is a scrollable **room**: the desk is the main frame and further objects sit above/below it, reached by holding the scroll buttons. It is one scene with no loading. Anything that assumes a single unmoving frame (visibility checks, fixed layouts) must account for the scroll range.
+> **I9 detail — the Room.** The play space is a **room** containing the desk and a door. It is one scene with no loading. The camera starts with the whole room in view and zooms to the desk or the door on a click (§4.1). Camera moves never pause the Clock (I5). Anything that assumes a single unmoving frame (visibility checks, fixed layouts) must account for the three viewpoints.
 
 ---
 
@@ -86,7 +86,7 @@ These are the load-bearing rules. Breaking any one of them breaks the game.
 
 ## 4. Desk objects
 
-The play space is the scrollable room (I9). Everything is a clickable hotspot on one scene.
+The play space is the room (I9, §4.1). Everything is a clickable hotspot on one scene.
 
 | Object | Role |
 |---|---|
@@ -98,7 +98,7 @@ The play space is the scrollable room (I9). Everything is a clickable hotspot on
 | **Card Collection** | Book showing every card type collected, across runs (§5.4) |
 | **Phone** | Smartphone: calls, Shop, Inbox, Taxes (§5.7–§5.9) |
 | **Mail Tray ("Taxes")** | Paper copy of ITRS tax bills (§5.8) |
-| **Door and Mailbox** | Parcels, tax letters and junk mail arrive here (§5.7) |
+| **Door** | Parcels, tax letters and junk mail arrive here (§5.7) |
 | **Egg Timer** | Direct clock source (§5.10) |
 | **Printer (Pawn)** | Sell your own objects; Buyback through the Phone (§5.11) |
 | **Cat** | Roaming chaos (§5.12) |
@@ -106,6 +106,21 @@ The play space is the scrollable room (I9). Everything is a clickable hotspot on
 | **Junk items** | Cheap things to Pawn (§5.11) |
 
 The starting kit (§5.7) is part of the room from the start of every run. Every other object above is bought in the Shop (§5.7, §5.16).
+
+### 4.1 Camera and viewpoints
+
+The camera has three fixed viewpoints:
+
+| View | Camera | Reached by |
+|---|---|---|
+| **Room** | Orthographic size `roomCameraSize` = **14**, framing the whole room. The run starts here | Back click from the Desk or Door view |
+| **Desk** | Orthographic size `deskCameraSize` = **6**, focused on the desk | Click the desk in the Room view |
+| **Door** | Orthographic size `doorCameraSize` = **7**, focused on the door | Click the door in the Room view |
+
+- Moves between views are short tweens (`cameraFocusSeconds`). The Clock keeps running during them (I5), and desk input is blocked until the move ends.
+- There are no scroll buttons. A view always returns to the Room view first: the delivery flow is Room → Door (receive the parcel) → Room → Desk.
+- **In the Room view only the desk, the door, the Picture and the Egg Timer respond to clicks.** Every other object needs the Desk view.
+- **Back:** click the area outside the desk on its left side. There is no on-screen Back control.
 
 ---
 
@@ -225,7 +240,7 @@ reward = baseReward × (maxMatchCount − 1) × symbol.payoutMultiplier
 | Ticket Hunter | `InsiderTipCardSO` | C · 10 · $4 | One window of the next ticket pre-revealed |
 | Snail Speed | `ClockSpeedCardSO` | C · 11 · $2 | Tick ×0.75 for 15 s |
 | Time Scarab | `ClockSpeedCardSO` | SR · 18 · $14 | Tick ×0 (clock frozen) for 20 s |
-| Cable Eater | `CableEaterCardSO` | SR · 20 · $6 · debuff | Phone and Laptop both turned off for 30 s (calls stop; the Laptop and its apps are locked) |
+| Cable Eater | `CableEaterCardSo` | SR · 20 · $10 · debuff | Phone and Laptop both turned off for 20 s (calls stop; the Laptop is locked through `LaptopLock`) |
 | Tax Increase | `AuditCardSO` | SR · 10 · $28 · debuff | A bill lands immediately; if one is pending its amount doubles |
 | Butter Finger | `ButterfingersCardSO` | C · 7 · $4 · debuff | Next vein pays $0 |
 | Spam Robocall | `RobocallsCardSO` | R · 10 · $6 · debuff | Phone rings 2× as often for 30 s |
@@ -423,7 +438,7 @@ Validation: shots granted never increase with difficulty; Hard grants at least `
 `OnRemoved` clears a pending effect that has not been used, so Pawning an unplayed card is a real escape (I7) and cannot keep the effect.
 
 **UI and art.**
-- **Window:** 668 × 474 canvas units on the laptop screen, cleared of the clock/money HUD (top left) and the camera buttons (right edge). The title bar holds the table name and difficulty on the left and the ball queue on the right.
+- **Window:** 668 × 474 canvas units on the laptop screen, cleared of the clock/money HUD (top left). The title bar holds the table name and difficulty on the left and the ball queue on the right.
 - **Table:** the felt is **588 × 294 canvas units**, exactly 2:1, anchored and pivoted bottom-left, inside a nested Canvas (with its own `GraphicRaycaster`) so rolling balls never rebuild the main Canvas. Wooden rails (21 units) surround it, with a cushion shadow inside each edge; the six pocket holes are drawn from the same capture radii the simulation uses, so the visible hole and the capture area agree to the nearest art pixel. Table art is 3 canvas units per art pixel; balls are drawn 36 px wide from 42 px sprites. If the table art is redrawn, the felt rectangle and the capture radii stay fixed.
 - **Balls:** one image per ball, no raycast, drawn at the simulation position through `FeltMapper`, snapped to the art pixel for drawing only. Ball size is `round(billiardsBallRadius × feltWidth)`. Potting is a visual-only 0.15 s tween into the pocket centre while scaling to 0; a re-spot punch-scales the ball back.
 - **Ball queue** (`BallQueueView`): a strip of ball icons from the referee's queue. The head ball is enlarged with a pulsing halo, the final ball has a distinct frame, a ball with a called pocket shows a badge with the **mirrored** pocket label, and the head ball's called pocket gets a ring on the table. A popped icon slides out and fades (0.25 s) while the rest slide left; a re-spotted ball shakes its icon.
@@ -457,7 +472,7 @@ Blackjack and Billiards cannot be opened until their license is activated.
 | Express | `shopExpressCost` $8 | `shopExpressSeconds` 5 s |
 | Leave it opened & ready | `shopReadyCost` +$3 | skips the unboxing |
 
-A parcel is announced by a doorbell. The **door** sits beside the desk and the **mailbox** higher up the room (reached by scrolling the camera). The player unboxes the parcel, and the item appears in its place on the desk. The mailbox also receives paper tax bills (§5.8) and junk mail.
+A parcel is announced by a doorbell. The **door** is part of the room. When the doorbell rings, the player clicks the door to focus the camera on it (Door view, §4.1), receives and unboxes the parcel, goes back to the Room view, and clicks the desk to return to the Desk view; the item appears in its place on the desk. An unboxed parcel leaves an **empty cardboard box**, which is a Junk item (a `JunkItem` component, pawnable like any other, small tier by default): the player can drag it onto the Printer to Pawn it for a little money. A parcel shipped with *Leave it opened & ready* leaves no box. Paper tax bills (§5.8) and junk mail arrive at the door as well.
 
 Neither shipping nor buying converts money to time (I3/I4 untouched). The Close The Shop card (§5.4) hides the Shop icon for 30 s.
 
@@ -519,7 +534,7 @@ Hold the mouse on it for `crankTime` and it adds `timePayout` seconds directly t
 
 ### 5.11 Pawn and Buyback
 
-Drag the **Printer** (the Pawn object) onto a pawnable object: it pays out immediately and the object leaves the room. There is no confirmation dialog.
+Drag the **Printer** (the Pawn object) onto a pawnable object, or drag a small pawnable such as an empty box onto the Printer: it pays out immediately and the object leaves the room. There is no confirmation dialog.
 
 **Payout.** An item bought in the Shop pays `floor(80% × price paid)`. Other pawnables pay a fixed value.
 
@@ -529,7 +544,7 @@ Drag the **Printer** (the Pawn object) onto a pawnable object: it pays out immed
 | Card Box | $48 (80% of $60) | catalog |
 | Lucky Nine stack | $24 (80% of $30) | catalog |
 | Power Bank | $20 (80% of $25) | catalog |
-| Junk (small / medium / large) | $5 / $15 / $30 | `junkSmallPawnValue` / `junkMediumPawnValue` / `junkLargePawnValue` |
+| Junk (small / medium / large), including the empty boxes of unboxed parcels | $5 / $15 / $30 | `junkSmallPawnValue` / `junkMediumPawnValue` / `junkLargePawnValue` |
 | A card on the desk | the card's `pawnValue` | `CardSO` |
 
 **Not pawnable:** the starting kit except the Laptop (Egg Timer, Bear, Picture, Triple Match stack, Wire Task, Printer, Collection), licenses, Meter, Clock, Phone, Mail Tray, Cat, and a **triggered Final Countdown card** (§5.14). Pawning the Phone would delete an entire pressure system. Trying to Pawn a protected object shows a hint.
@@ -711,7 +726,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | 2 | **Click** things to use them. **Drag** things to move them. If something doesn't respond, it may be blocked, so look for a hint. |
 | 3 | Everything on the desk can earn **money**. Money alone doesn't save you. |
 | 4 | Click the **Meter** to turn money into time: **$1 = 1 second.** It spends all your money at once. |
-| 5 | Hold the **arrow buttons** to look around the room. Now try your luck. |
+| 5 | Click the **desk** to zoom in and work. Click the **door** when the bell rings. Now try your luck. |
 
 **Hints when a click is rejected or an action fails** (`HintCatalog`):
 
@@ -781,7 +796,7 @@ The public surface other systems rely on:
 | `ClockService.ArmFinalCountdownIntercept(float)` · `OnFinalCountdownTriggered` | Final Countdown only |
 | `GameManager.GameOver(EndReason)` · `OnGameOver` · `IsGameOver` | The one way a run ends |
 | `GameManager.PauseGame()` / `ResumeGame()` | Counted freeze of game time for modal panels |
-| `InputGate` · `InputBlocker` | Every enabled `InputBlocker` increments `InputGate`; while the count is above zero, world input and the camera scroll buttons are disabled |
+| `InputGate` · `InputBlocker` | Every enabled `InputBlocker` increments `InputGate`; while the count is above zero, world input and camera focus clicks are disabled |
 | `PointerReceiver.SetInteractable(bool, HintId? reason)` · `ClickRejected` | One mechanism for debuffs, the Cat and cooldowns; the reason becomes the hint |
 | `HintService.Show / ShowOnce(HintId, args)` | Show a hint (§5.16) |
 | `IPawnable` | `PawnValue`, `CanBePawned`, `OnPawned()` |
@@ -808,7 +823,7 @@ The public surface other systems rely on:
 
 ## 7. Unity implementation notes
 
-- **Scene:** one. Orthographic camera that scrolls vertically within `[minY, maxY]` (I9). No scene loading — restart reloads the scene.
+- **Scene:** one. Orthographic camera with three viewpoints (§4.1). No scene loading — restart reloads the scene.
 - **Platform:** WebGL build with the `Custom1080` template, published on itch.io. `PlayerPrefs` persists in the browser (IndexedDB).
 - **Input:** mouse only. `InputManager` distinguishes click from drag with `dragThreshold` (0.15 world units): a click resolves on release without a drag, a drag fires `DragStart/Update/End`. Press events (`PressStart/Update/End`) serve hold-style objects. Panels mark themselves as input blockers with an `InputBlocker` component (§6.1).
 - **Hotspots:** every interactable has a `PointerReceiver`; `DeskObject` is the base class for `ClickDown` / drag handling. Debuffs, the Cat and cooldowns gate a hotspot with `PointerReceiver.SetInteractable(bool, HintId?)` — one mechanism for all of them.
@@ -851,11 +866,12 @@ Use these exact terms in code, commits, and agent prompts.
 | **Smartphone / Inbox / Taxes app** | The Phone with its power button and apps; the Inbox keeps notifications and license activations; the Taxes app shows bills |
 | **Starting kit** | The items present at the start of every run; everything else is bought in the Shop |
 | **Catalog / License** | The item catalog asset with ids and prices / a permanent digital unlock for the Blackjack or Billiards app |
-| **Parcel / Door / Mailbox** | A delivered purchase / where parcels arrive / where paper bills and mail arrive, higher up the room |
+| **Parcel / Door** | A delivered purchase / where parcels, paper bills and mail arrive (Door view) |
 | **Buyback** | Buying a pawned item back through the Phone at ×1.10 rising to ×1.25 of its pawn payout |
 | **Baseline** | $3/second — the throughput a task is judged against |
 | **Throughput** | Money per real second a task generates |
-| **Room** | The scrollable play space beyond the original desk frame (I9) |
+| **Room** | The play space containing the desk and the door (I9) |
+| **Room / Desk / Door view** | The three camera viewpoints: whole room, zoomed on the desk (orthographic size 6), zoomed on the door (§4.1) |
 | **Wire Task** | The plug-to-socket puzzle that unlocks the Laptop (§5.13) |
 | **Table / Preset** | A Billiards layout: balls, potting order, optional called pockets and forbidden balls (§5.6) |
 | **Ghost ball** | The Billiards assist marker showing where the cue ball will be when it first touches another ball |
