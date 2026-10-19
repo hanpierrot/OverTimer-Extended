@@ -21,10 +21,13 @@ public class InputManager : MonoBehaviour
     private InputAction pointAction;
 
     private IPointerInputHandler currentTarget;
+    private PointerEventData _uiPointer;
     private Vector2 pressWorldPos;
     private bool isDragging;
     
     private static readonly List<RaycastResult> UiHits = new();
+    
+    public bool IsPressing => currentTarget != null;
 
     private void Awake()
     {
@@ -72,17 +75,21 @@ public class InputManager : MonoBehaviour
         }
     }
     
+    public Collider2D PeekTarget()
+    {
+        if (!IsInputEnabled || IsPressing) return null;
+        if (IsPointerOverUI()) return null;
+        return PickTarget(GetPointerWorldPos());
+    }
+
     private bool IsPointerOverUI()
     {
         if (EventSystem.current == null) return false;
+        if (_uiPointer == null) _uiPointer = new PointerEventData(EventSystem.current);
 
-        var data = new PointerEventData(EventSystem.current)
-        {
-            position = pointAction.ReadValue<Vector2>()
-        };
-
+        _uiPointer.position = pointAction.ReadValue<Vector2>();
         UiHits.Clear();
-        EventSystem.current.RaycastAll(data, UiHits);
+        EventSystem.current.RaycastAll(_uiPointer, UiHits);
         return UiHits.Count > 0;
     }
 
