@@ -271,7 +271,7 @@ reward = baseReward × (maxMatchCount − 1) × symbol.payoutMultiplier
 
 **Collection.** The Collection is a registry of card types ever obtained, saved across runs (§5.15). A card enters it by: ending its effect naturally; the *Add to Collection* button in a pack reveal; or being part of a completed win (§5.14). A card with `hideUntilCollected` is hidden in the Collection book until collected; a card with `collectionRegisterAs` is credited as the other card. The Collection book (`CardCollectionPanel`) shows the cards in alphabetical pages, uncollected ones as locked.
 
-**Card roster.** The Billiards effect cards (Chalk Up, Trick Shot, Cue Slip) are specified in §5.6.
+**Card roster.** 29 cards.
 
 | Card | Class | Rarity · weight · pawn | Effect |
 |---|---|---|---|
@@ -309,7 +309,7 @@ reward = baseReward × (maxMatchCount − 1) × symbol.payoutMultiplier
 - `DisableAppIconCardSO` hides the target app's **desktop icon** on the Laptop home screen (`DesktopIconView.SetVisible`), not the app itself, because apps only `Awake()` the first time they open. A hidden-icon request made before the icon exists is remembered and applied when it appears.
 - `ClockSpeedCardSO` writes `ClockService.TickMultiplier` directly (`float`).
 - Cost modifiers go through `CostModifierService`, one multiplier per purchase target (`Ticket`, `CardPack`, `Blackjack`, `Billiards`).
-- Effects that act on systems which may not be initialised yet use the static pending-state pattern (§7 hazards): `MiningApp.Queue…`, `ScratchTicket.QueuePreRevealWindow()` with `OnPreRevealDelivered`, and `BilliardsPendingEffects` (extra shots, trick-shot preview, cue slip) for the next Billiards table.
+- Effects that act on systems which may not be initialised yet use the static pending-state pattern (§7 hazards): `MiningApp.Queue…` and `ScratchTicket.QueuePreRevealWindow()` with `OnPreRevealDelivered`.
 
 ### 5.5 Blackjack — laptop app
 
@@ -352,7 +352,7 @@ A pool-puzzle app. The player is dealt a **pre-made table** (a puzzle), picks a 
 **Round setup.**
 1. The player chooses a **bet** with −/+ buttons (`billiardsBetMin` to `billiardsBetMax` in steps of `billiardsBetStep`), never above the table maximum and never above what they can afford.
 2. The **charge** is `round(bet × CostModifier(Billiards))`, rounded like Ticket and Card Box prices, and is spent at once. The payout is always computed from the **base bet**, so a cost-raising card makes the table worse, never better.
-3. The difficulty sets the **shots granted**: `par + billiardsParOffsets[difficulty]` (Easy +4, Medium +2, Hard +0), unless the preset gives its own `shots`. Cards can add extra shots.
+3. The difficulty sets the **shots granted**: `par + billiardsParOffsets[difficulty]` (Easy +4, Medium +2, Hard +0), unless the preset gives its own `shots`.
 
 **Rules (`BilliardsReferee`).** "Hit the balls in order" is two rules: the cue's **first contact** must be the current head of the queue (`billiardsStrictFirstContact`), and pots are judged **in the order they drop**, so a combination (ball 1 then ball 3 in one shot) counts both. Cushion hits are not contact, so bank shots are legal.
 
@@ -466,16 +466,6 @@ Validation: shots granted never increase with difficulty; Hard grants at least `
 - **Robustness:** 30 seeded replays per solution with each shot's angle jittered by ±0.3° and power by ±0.02 before quantizing. A pass rate under 70% marks the table knife-edge: players cannot aim to 0.1°, so such a table is unfair even if solvable.
 - **Authoring tools** (Editor only): a layout edit mode (drag balls on a 0.005 grid, add/remove balls, set `order`, `forbidden`, `called`) and a record-and-export mode — with the mirror forced to none, every quantized shot of a won table is appended and exported as a preset with `par` = shots used.
 - Self-tests cover rules, mirror, coordinate conversion, payout, preset loading, sim scenarios (straight pot, head-on, cushion reflection, scratch, 200 seeded shots without escapes or overlaps, clone and frame-loop determinism, zero-friction cap) and config validation.
-
-**Cards.** `BilliardsPendingEffects` holds the effects waiting for the next round or shot (static, because the app may not have `Awake`d when a card is placed; reset on every scene load). Three effect cards use it, plus the two cards in the roster (§5.4):
-
-| Card | Type | Effect |
-|---|---|---|
-| Chalk Up | Buff | +1 extra shot on the next table; ends when the round that took it starts |
-| Trick Shot | Buff | On the next shot, while aiming, shows where every ball would end up (a `Sim.Clone()` run up to 10 times a second); ends when the shot fires |
-| Cue Slip | Debuff | The next shot's power is jittered by ±15% (via `RngService`, before quantizing, so the simulation still gets a deterministic input); ends when the shot fires |
-
-`OnRemoved` clears a pending effect that has not been used, so Pawning an unplayed card is a real escape (I7) and cannot keep the effect.
 
 **UI and art.**
 - **Window:** 668 × 474 canvas units on the laptop screen, cleared of the clock/money HUD (top left). The title bar holds the table name and difficulty on the left and the ball queue on the right.
@@ -920,7 +910,7 @@ The public surface other systems rely on:
 
 **Two hazards, standing conventions —**
 
-- **A GameObject (or any ancestor, including a whole closed panel) that starts inactive defers every attached script's `Awake()` until first activation.** Anything that reads another service's `.Instance` can silently no-op if that service hasn't `Awake()`d yet (`MiningApp` and `DesktopIconView` behind the closed Laptop, `ScratchWindow` populated before its `Awake()`). Services read other services in `Start()`, not `Awake()`; apps read services through `.Instance` on use, never through serialized references. Where an `Instance` genuinely might not exist yet, use a **static pending-state field** applied when the real `Awake()` finally runs (`MiningApp.Queue…`, `ScratchTicket.QueuePreRevealWindow()`, `DesktopIconView.SetVisible`, `BilliardsPendingEffects`). Static state is reset on every scene load, because `Restart()` is a scene reload.
+- **A GameObject (or any ancestor, including a whole closed panel) that starts inactive defers every attached script's `Awake()` until first activation.** Anything that reads another service's `.Instance` can silently no-op if that service hasn't `Awake()`d yet (`MiningApp` and `DesktopIconView` behind the closed Laptop, `ScratchWindow` populated before its `Awake()`). Services read other services in `Start()`, not `Awake()`; apps read services through `.Instance` on use, never through serialized references. Where an `Instance` genuinely might not exist yet, use a **static pending-state field** applied when the real `Awake()` finally runs (`MiningApp.Queue…`, `ScratchTicket.QueuePreRevealWindow()`, `DesktopIconView.SetVisible`). Static state is reset on every scene load, because `Restart()` is a scene reload.
 - **`?.` on a `UnityEngine.Object` does not detect Unity's "fake null"** for an object that was `Destroy()`ed but is still referenced (a static field, an event subscriber). Compare explicitly with `!= null` for any Unity object that may be destroyed at an uncertain time.
 
 ---
