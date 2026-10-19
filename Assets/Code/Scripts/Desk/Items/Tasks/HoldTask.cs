@@ -35,8 +35,12 @@ public abstract class HoldTask : TaskBase, IPawnable
         receiver.PressEnd -= HandleHoldEnd;
     }
 
+    /// <summary>A subclass can refuse a new press (the Egg Timer rests after each crank).</summary>
+    protected virtual bool CanStartHold => true;
+
     private void HandleHoldStart(Vector2 worldPos)
     {
+        if (!CanStartHold) return;
         isHolding = true;
     }
 

@@ -10,6 +10,7 @@ public struct PhoneListRowData
     public string title;
     public Sprite icon;      // small icon left of the title (null = none)
     public bool unread;      // shows the unread dot
+    public string detail;    // short text on the right of the row (a price, a status); needs a Detail label on the row
 }
 
 /// <summary>

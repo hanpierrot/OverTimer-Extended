@@ -9,6 +9,8 @@ public class PhoneListRow : MonoBehaviour
     [SerializeField] private Image icon;
     [SerializeField] private TMP_Text title;
     [SerializeField] private GameObject unreadDot;
+    [Tooltip("Optional: short text on the right (the Shop shows the price or status here).")]
+    [SerializeField] private TMP_Text detailLabel;
 
     public void Set(PhoneListRowData d, Sprite backgroundSprite)
     {
@@ -17,5 +19,6 @@ public class PhoneListRow : MonoBehaviour
         icon.enabled = d.icon != null;
         PhoneUi.SetText(title, d.title);
         PhoneUi.SetActive(unreadDot, d.unread);
+        if (detailLabel != null) PhoneUi.SetText(detailLabel, d.detail ?? "");
     }
 }

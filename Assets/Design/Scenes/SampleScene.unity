@@ -2324,6 +2324,7 @@ GameObject:
   - component: {fileID: 800245315}
   - component: {fileID: 800245314}
   - component: {fileID: 800245313}
+  - component: {fileID: 800245319}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -2447,6 +2448,19 @@ MonoBehaviour:
   startOnAwake: 1
   countdownText: {fileID: 408900637}
   timeFormat: mm\:ss
+--- !u!114 &800245319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800245310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba761bca691615840ac98da4bdfe4442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopService
+  catalog: {fileID: 11400000, guid: 4f4e2611d4532f1498c07280718e7037, type: 2}
 --- !u!1001 &821044118
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3071,6 +3085,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f49558473b7ea45ad6003c8890727a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardItem
+--- !u!1 &1123844626 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4660810707313303946, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+  m_PrefabInstance: {fileID: 8254243041262566689}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1123844632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123844626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f714d75ca9593240a63aa455fcc728a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemBinding
+  itemId: triple_stack
 --- !u!4 &1124327961 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8498065361392967386, guid: 078f07a14ca092c40abd6383a77fec2b, type: 3}
@@ -3138,6 +3170,24 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5054563906550231135, guid: 21fa5c46127191643bc5c4e496971675, type: 3}
   m_PrefabInstance: {fileID: 3673800794832137396}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1149257632 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3660579055379039533, guid: eeb889a61f700824b83c7d8be034665e, type: 3}
+  m_PrefabInstance: {fileID: 2476777103868365510}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1149257638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149257632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f714d75ca9593240a63aa455fcc728a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemBinding
+  itemId: card_box
 --- !u!1001 &1194869568
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3323,6 +3373,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e6c8080e95c1214e95b4aba7bcf31f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WireLineView
+--- !u!1 &1237382980 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3570902792096344916, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+  m_PrefabInstance: {fileID: 8254243041262566689}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1237382986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1237382980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f714d75ca9593240a63aa455fcc728a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemBinding
+  itemId: lucky_stack
 --- !u!4 &1238319316 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2495649104615659378, guid: 7a626076271ca4b49b7d086f77fd46cf, type: 3}
@@ -3569,6 +3637,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1369746869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369746863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f714d75ca9593240a63aa455fcc728a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemBinding
+  itemId: phone
 --- !u!114 &1400104598 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5459219579052146460, guid: 175023b48b3763f40b65447b60b77bbd, type: 3}
@@ -4029,6 +4110,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8561004537302652550, guid: 297828727141b1f4a88069976b9fe015, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1369746868}
+    - targetCorrespondingSourceObject: {fileID: 8561004537302652550, guid: 297828727141b1f4a88069976b9fe015, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1369746869}
   m_SourcePrefab: {fileID: 100100000, guid: 297828727141b1f4a88069976b9fe015, type: 3}
 --- !u!4 &1729900446 stripped
 Transform:
@@ -5710,7 +5794,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3660579055379039533, guid: eeb889a61f700824b83c7d8be034665e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1149257638}
   m_SourcePrefab: {fileID: 100100000, guid: eeb889a61f700824b83c7d8be034665e, type: 3}
 --- !u!1001 &2724853168691337914
 PrefabInstance:
@@ -8330,7 +8417,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4660810707313303946, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1123844632}
+    - targetCorrespondingSourceObject: {fileID: 3570902792096344916, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1237382986}
   m_SourcePrefab: {fileID: 100100000, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
 --- !u!4 &8254243041262566690 stripped
 Transform:

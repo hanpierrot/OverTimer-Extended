@@ -88,12 +88,23 @@ public class GameConfig : ScriptableObject
     [Tooltip("Blur the desk behind the Laptop/Phone. Off = plain dark tint only (WebGL read-back fallback).")]
     public bool deviceBlurEnabled = true;
 
+    [Header("Shop (Phone plan, Batch 2)")]
+    public int shopStandardFee = 0;
+    public float shopStandardSeconds = 20f;
+    public int shopExpressFee = 8;
+    public float shopExpressSeconds = 5f;
+    [Tooltip("Batch 3: \"leave it opened & ready\" fee.")]
+    public int shopLeaveOpenFee = 3;
+    [Range(0f, 1f)] public float shopCouponRate = 0.2f;
+
     [Header("Annoyance Manager (§5.7)")]
     public float annoyanceMinGap = 12f;
 
     [Header("Egg Timer (§5.8)")]
     public float crankTime = 2f;
     public float timePayout = 3f;
+    [Tooltip("Game seconds after each completed crank during which the Egg Timer ignores presses (plan P18).")]
+    public float eggTimerCooldown = 0.75f;
     
     [Header("Cat")]
     public float catSitDurationMin = 3f;

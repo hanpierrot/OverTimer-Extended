@@ -66,6 +66,23 @@ public class Pawn : MonoBehaviour
                 return;
             }
             
+            // A catalog item (it has a ShopItemBinding): the catalog decides. A starting item that isn't pawnable, or an item
+            // the player does not own, pays nothing. Objects without a binding (cards, junk) keep their own PawnValue.
+            var binding = other.GetComponentInParent<ShopItemBinding>(true);
+            if (binding != null && ShopService.Instance != null)
+            {
+                var shop = ShopService.Instance;
+                int value = shop.Ownership.Has(binding.ItemId) ? shop.Ownership.MarkPawned(binding.ItemId) : 0;
+                if (value <= 0)
+                {
+                    if (HintService.Instance != null) HintService.Instance.Show(HintId.CannotPawn);
+                    return;
+                }
+                MoneyService.Instance.Add(value, "pawn");
+                pawnable.OnPawned();
+                return;
+            }
+
             MoneyService.Instance.Add(pawnable.PawnValue, "pawn");
             pawnable.OnPawned();
         }

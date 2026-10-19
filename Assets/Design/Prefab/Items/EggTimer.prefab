@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7195199661853746846}
   - component: {fileID: 3811783535577434176}
   - component: {fileID: 6121239979663772902}
+  - component: {fileID: 2382476516094300579}
   - component: {fileID: 4485780861693459156}
   m_Layer: 3
   m_Name: EggTimer
@@ -163,6 +164,19 @@ MonoBehaviour:
   - {fileID: 576724043, guid: d386967dad74a9f4492dac04659e991a, type: 3}
   - {fileID: -1728830657, guid: d386967dad74a9f4492dac04659e991a, type: 3}
   - {fileID: -2115625119, guid: d386967dad74a9f4492dac04659e991a, type: 3}
+--- !u!114 &2382476516094300579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9030890606130479279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f714d75ca9593240a63aa455fcc728a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemBinding
+  itemId: egg_timer
 --- !u!114 &4485780861693459156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +187,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a18e81f99360fc419bf697033f549e0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ViewGate
   allowedViews:
   - 0

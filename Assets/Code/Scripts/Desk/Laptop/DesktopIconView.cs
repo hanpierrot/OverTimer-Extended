@@ -26,6 +26,22 @@ public class DesktopIconView : MonoBehaviour, IPointerClickHandler
 
     public event Action<string> Opened;
 
+    // Visibility now comes from ShopService.IconGate (licenses, "No More X" cards), which calls SetVisible. The statics
+    // are cleared on every scene load so a Restart starts with every icon shown until the gate says otherwise.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Hook()
+    {
+        s_pendingHidden.Clear();
+        s_icons.Clear();
+        _selected = null;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    // Icons register in Awake, which runs BEFORE sceneLoaded, so only the hidden set is cleared here (the old scene's icons
+    // remove themselves in OnDestroy).
+    private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => s_pendingHidden.Clear();
+
     private void Awake()
     {
         _background = GetComponent<Image>();

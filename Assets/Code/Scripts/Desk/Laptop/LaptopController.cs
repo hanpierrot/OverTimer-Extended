@@ -53,6 +53,8 @@ public class LaptopController : MonoBehaviour
 
     public void RequestOpen(string appName)
     {
+        // A hidden icon (no license, or a "No More X" card) can't be opened any other way either.
+        if (ShopService.Instance != null && !ShopService.Instance.IconGate.IsVisible(appName)) return;
         var app = apps.Find(a => a != null && a.AppName == appName);
         if (app != null) RequestOpen(app);
     }
