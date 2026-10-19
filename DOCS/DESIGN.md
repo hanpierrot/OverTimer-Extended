@@ -1,10 +1,10 @@
-# OVERTIME — Design & Implementation Spec
+# OverTimer — Design & Implementation Spec
 
 **Origin:** GMTK Game Jam — theme: **Countdown** · extended into a 4–5 person course project ("Extended")
 **Team:** Ari · Han (+ Extended team)
 **Engine:** Unity (2D, URP) · mouse only · single scene
 **Platform:** WebGL, published on itch.io (custom template `Custom1080`). Windows `.exe` and mobile builds are possible targets; nothing in the design depends on them.
-**Version:** 2.0 (2026-10-15)
+**Version:** 2.1 (2026-10-19) — adds Highlight Hover (§4.2) and Reward Popup (§5.17)
 
 ---
 
@@ -84,14 +84,19 @@ These are the load-bearing rules. Breaking any one of them breaks the game.
 
 ---
 
-## 4. Desk objects
+## 4. Desk objects and HUD
 
-The play space is the room (I9, §4.1). Everything is a clickable hotspot on one scene.
+The play space is the room (I9, §4.1). Every object below is a clickable hotspot on one scene, except the two HUD elements.
+
+**HUD.** The Clock and the Meter are on-screen HUD (uGUI on the Canvas, top left), not desk objects. They are never Pawned, and a click on the Meter is a uGUI button press, not a desk hotspot. They are blurred behind the Phone and the Laptop (§5.9, `DeviceLayer`).
+
+| HUD element | Role |
+|---|---|
+| **Clock** | The countdown, shown as `mm:ss` |
+| **Meter** | Money → time. Shows the balance; one click converts all of it. The only converter (§5.1) |
 
 | Object | Role |
 |---|---|
-| **Alarm Clock** | The countdown. Diegetic — no HUD bar |
-| **Meter** | Money → time. The only converter (§5.1) |
 | **Laptop** | Hosts apps: **Mining** (§5.2), **Blackjack** (§5.5), **Billiards** (§5.6) |
 | **Ticket Stack** ×2 | Two scratch-card tiers: Triple Match, Lucky Nine (§5.3) |
 | **Card Box** | Card packs: buffs, debuffs, collectibles, win/lose cards (§5.4) |
@@ -121,6 +126,41 @@ The camera has three fixed viewpoints:
 - There are no scroll buttons. A view always returns to the Room view first: the delivery flow is Room → Door (receive the parcel) → Room → Desk.
 - **In the Room view only the desk, the door, the Picture and the Egg Timer respond to clicks.** Every other object needs the Desk view.
 - **Back:** click the area outside the desk on its left side. There is no on-screen Back control.
+
+### 4.2 Highlight Hover
+
+When the mouse pointer rests on an object the player can use right now, the **outer edge of that object's sprite glows**. The glow says "you can interact with this" before the player clicks. It is a visual cue only: it never changes what a click does, so it is not a hint (§5.16) and the game stays fully playable without noticing it.
+
+**What glows.** One object at a time: the one `InputManager` would hit for a click at the pointer (the same `Physics2D.OverlapPoint` hit, so the glow never lies about what a click will reach). The object glows only if **all** of these hold:
+- it has a `PointerReceiver` and is on layer 3 `DeskObject`;
+- it is currently interactable (`SetInteractable(true)`). A blocked object (Cat sitting on it, a debuff, a cooldown) does **not** glow; its click still raises the usual `ClickRejected` hint, so "no glow" and "rejected click + hint" read as one consistent signal;
+- desk input is enabled (`InputGate` count is zero). While a panel, the Laptop, a cutscene or a camera move is blocking the desk, nothing glows;
+- the current view accepts clicks on it (§4.1). In the Room view only the desk, the door, the Picture and the Egg Timer glow; everything else needs the Desk view.
+
+This covers every desk object in §4: tickets, Card Box, placed cards, Phone, Mail Tray, Egg Timer, Printer, Cat, tasks, junk items, the Laptop, the Door and the Desk hotspot. The HUD (Clock, Meter) and uGUI buttons inside panels and apps keep their normal button hover; they are not part of this feature.
+
+**Behaviour.**
+- The glow fades in over `hoverGlowFadeInSeconds` when the pointer enters and fades out over `hoverGlowFadeOutSeconds` when it leaves, when the object stops being interactable, or when input becomes blocked.
+- An object that is being dragged keeps its glow until it is dropped.
+- The glow follows the sprite's silhouette (its alpha edge), not its collider box, and is drawn outside the sprite so it does not cover the art.
+- It uses unscaled time, so it still settles correctly if a modal freeze (`Time.timeScale = 0`, I5) starts while an object is glowing.
+- Nothing glows after the run has ended.
+- Pawned or pooled objects (`CardItem`, tickets) must clear their glow when they deactivate (`OnPawned`, `OnDisable`).
+
+| Key | Value | Where |
+|---|---|---|
+| `hoverGlowColor` | warm white-yellow, alpha 1 | `GameConfig` |
+| `hoverGlowWidthPixels` | 3 px at the Desk view | `GameConfig` |
+| `hoverGlowFadeInSeconds` | 0.1 s | `GameConfig` |
+| `hoverGlowFadeOutSeconds` | 0.15 s | `GameConfig` |
+
+The glow width is specified at the Desk view and scales with the camera, so objects look equally outlined in the Room view (orthographic size 14) and the Desk view (6).
+
+**Implementation notes.**
+- The glow is driven by one shared outline material and a `MaterialPropertyBlock` (glow amount, colour, width). There are no per-object material instances, so sprite batching is preserved.
+- Sprites carry a transparent padding of at least `hoverGlowWidthPixels` so the glow is not clipped by the sprite rect.
+- A single `HoverHighlighter` component reads the pointer and the current hit from `InputManager`; objects do not each poll the mouse. It subscribes in `Start` and unsubscribes in `OnDestroy`.
+- `HoverHighlighter` lives in `Scripts/Input/` and is owned by Han (§6.2).
 
 ---
 
@@ -450,7 +490,7 @@ Validation: shots granted never increase with difficulty; Hard grants at least `
 
 ### 5.7 Phone — Shop and Delivery
 
-The Shop is an app on the Phone (§5.9). Everything the player owns that is not in the **starting kit** is bought here. **Starting kit** (present at the start of every run): Laptop (with Mining), Wire Task, Egg Timer, Bear (Click Task), Picture, Triple Match stack, Phone, Printer (Pawn), Meter, Alarm Clock, Card Collection.
+The Shop is an app on the Phone (§5.9). Everything the player owns that is not in the **starting kit** is bought here. **Starting kit** (present at the start of every run): Laptop (with Mining), Wire Task, Egg Timer, Bear (Click Task), Picture, Triple Match stack, Phone, Printer (Pawn), Card Collection. The Clock and the Meter are HUD (§4), always present.
 
 **Catalog.** An item catalog asset gives every item a permanent id, a price and whether it can be Pawned (it replaces any layer-based rule). The Shop shows the catalog, with a cart and a checkout.
 
@@ -775,6 +815,46 @@ Players learn the basics from a short intro panel, and everything else from **hi
 
 **Tutorial panels.** Each new mechanic introduced by the Phone and the Shop (calls, the Inbox, the Taxes app, shipping and delivery, Buyback) gets one short panel, built on the same `TutorialPanel` and `HintService` as the intro.
 
+### 5.17 Reward Popup (Money and Time)
+
+When the player is **paid**, a small floating text appears **at the mouse pointer** and drifts upward while it fades out. Money shows as `+$12`; clock time from the Egg Timer shows as `+3s`. It answers "what did I just earn?" at the spot where the player is already looking, without reading the balance or the Clock. It is feedback only: it never changes a value, so it is not a hint (§5.16).
+
+**What triggers a popup.**
+
+| Event | Popup |
+|---|---|
+| Money added through `MoneyService.Add` with an income reason: Mining bank, ticket Cash Out, Blackjack win, Billiards payout (net of the returned stake), Power Bank, Click / Picture Click / Wire tasks, Pawn payout, card rewards | `+$N`, money colour |
+| Egg Timer payout (`timePayout`, §5.10) | `+Ns`, time colour |
+
+**What does not trigger a popup.**
+- **Non-income money**, i.e. a returned stake (`MoneyService.StakeRefundReason`, "Stake refund" in the glossary). This follows the same rule as ITRS and run statistics: only earnings count. A Billiards win shows the profit, not the gross payout.
+- **Spending.** Prices, antes, bills and penalties show no popup; only gains do.
+- **The Meter.** It converts the whole balance and changes the Clock by a large amount; the player already sees the Clock react.
+- Anything after the run has ended.
+
+**Placement and motion.**
+- The popup spawns at the pointer's screen position at the moment of the event, on a screen-space overlay canvas above the desk and the panels, so it appears over a Laptop app or the desk alike.
+- It rises `rewardPopupRisePixels` while fading out over `rewardPopupSeconds`, with a short scale-in pop at the start.
+- It never blocks input: it is not a raycast target and has no `InputBlocker`.
+- It uses unscaled time, so a popup spawned just before a modal freeze (I5) still finishes instead of hanging on screen.
+- If several rewards land at nearly the same moment, each gets its own popup, stacked upward by one line height. At most `rewardPopupMaxActive` are visible at once; the oldest is recycled.
+- If the pointer is over the Laptop, an app or any other panel, the popup is still drawn at the pointer.
+
+| Key | Value | Where |
+|---|---|---|
+| `rewardPopupSeconds` | 0.9 s | `GameConfig` |
+| `rewardPopupRisePixels` | 48 px | `GameConfig` |
+| `rewardPopupMaxActive` | 8 | `GameConfig` |
+| `rewardPopupMoneyColor` | green | `GameConfig` |
+| `rewardPopupTimeColor` | blue / cyan | `GameConfig` |
+
+**Implementation notes.**
+- `MoneyService.OnMoneyChanged(int current, string reason)` carries the new balance, not the amount added (§6.1). `MoneyService` raises a new event carrying the amount and the reason for every income `Add`; `OnMoneyChanged` is unchanged. The new event is Ari's (`Scripts/Services/`); the popup component is owned by Han.
+- The Egg Timer raises its own event when it pays out, since it adds time directly through `ClockService.AddSeconds` (I3). The popup does not read `OnTimeChanged`, which fires every tick.
+- Popups are pooled (a fixed set of text objects). Never `Instantiate` or `Destroy` one during play. The pool is rebuilt on scene reload, so Restart starts clean; any pending static must be reset on `sceneLoaded` (§7).
+- Format money with the same currency formatting the rest of the UI uses, with no decimals (`MoneyService` is integer).
+- The text and its animation use DOTween with the tween killed in `OnDisable` / `OnDestroy`.
+
 ---
 
 ## 6. Interfaces & ownership
@@ -788,6 +868,7 @@ The public surface other systems rely on:
 | `MoneyService.Add(int amount, string reason)` | Award money. `reason` feeds the balance log |
 | `MoneyService.TrySpend(int amount, string reason) → bool` | Returns false if unaffordable. **Never** lets a caller go negative |
 | `MoneyService.Current` · `OnMoneyChanged(int current, string reason)` | Read-only balance · change event (carries the new balance, not the delta) |
+| `MoneyService` income event (amount, reason) | Raised for every income `Add`, never for stake refunds; the Reward Popup listens to it (§5.17) |
 | `MoneyService.StakeRefundReason` | Reason for money that is only a returned stake; not income |
 | `ClockService.AddSeconds(float s, string reason)` | Meter, Egg Timer and developer tools only |
 | `ClockService.Spend(float s, string reason)` | Blackjack ante, ITRS penalties |
@@ -813,7 +894,7 @@ The public surface other systems rely on:
 |---|---|
 | `Scripts/Services/`, `Scripts/Config/` | Ari |
 | `Scripts/Desk/Laptop/` (Mining, Blackjack, Billiards), `Scripts/Annoyance/` (except Cat) | Ari |
-| `Scripts/Desk/Items/`, `Scripts/Annoyance/Cat/`, `Scripts/Hint/` | Han |
+| `Scripts/Desk/Items/`, `Scripts/Annoyance/Cat/`, `Scripts/Hint/`, `Scripts/Input/` | Han |
 | `Art/`, `Audio/` | Han |
 | `GameConfig.asset` | **Ari only** |
 
@@ -889,3 +970,5 @@ Use these exact terms in code, commits, and agent prompts.
 | **EndReason** | The enum of the twelve ways a run can end (§5.14) |
 | **Omen** | The visible warning before a mechanic loss (a ticket of repeated common symbols, the creaking mine) that lets the player back out |
 | **Hint** | A short tooltip shown when a click is rejected or a mechanic first appears (§5.16) |
+| **Highlight Hover** | The outer glow on the sprite of the interactable object under the pointer (§4.2) |
+| **Reward Popup** | The floating `+$N` / `+Ns` text shown at the pointer when the player earns money or Egg Timer time (§5.17) |
