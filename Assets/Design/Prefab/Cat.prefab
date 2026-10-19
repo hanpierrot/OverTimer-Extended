@@ -215,8 +215,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e874725e43044d498d18097d9414d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CatController
-  areaMin: {x: -6, y: -2.5}
-  areaMax: {x: 6, y: 2}
+  areaMin: {x: 9.56, y: -4.7}
+  areaMax: {x: 23, y: 1.4}
   moveSpeed: 1
   sitClipCheckInterval: 2
   sitClipSwitchChance: 0.25

@@ -268,4 +268,23 @@ public class CatController : MonoBehaviour
     {
         _clipFinishedOnce = true;
     }
+    
+    private void OnDrawGizmos()
+    {
+        Vector2 low = Vector2.Min(areaMin, areaMax);
+        Vector2 high = Vector2.Max(areaMin, areaMax);
+        Vector3 center = new Vector3((low.x + high.x) * 0.5f, (low.y + high.y) * 0.5f, transform.position.z);
+        Vector3 size = new Vector3(high.x - low.x, high.y - low.y, 0f);
+
+        Gizmos.color = new Color(1f, 0.8f, 0.2f, 1f);
+        Gizmos.DrawWireCube(center, size);
+
+        Gizmos.color = new Color(1f, 0.8f, 0.2f, 0.25f);
+        Gizmos.DrawCube(center, size);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(new Vector3(areaMin.x, areaMin.y, transform.position.z), 0.15f);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(new Vector3(areaMax.x, areaMax.y, transform.position.z), 0.15f);
+    }
 }
