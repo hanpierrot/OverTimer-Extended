@@ -227,6 +227,12 @@ public class GameConfig : ScriptableObject
     public float moneyPopupMergeSeconds = 0.3f;
     public float moneyPopupRise = 24f;
     public float moneyPopupSeconds = 0.9f;
+    
+    [Header("Highlight Hover (DESIGN 4.2)")]
+    public Color hoverGlowColor = new Color32(0xFF, 0xD1, 0x66, 0xFF);
+    public float hoverGlowWidthPixels = 3f;
+    public float hoverGlowFadeInSeconds = 0.1f;
+    public float hoverGlowFadeOutSeconds = 0.15f;
 }
 
 public enum AimAssistLevel { DirectionOnly, ContactPoint, FullGhost }
