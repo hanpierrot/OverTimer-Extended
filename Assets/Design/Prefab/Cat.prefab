@@ -152,7 +152,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.3}
+  m_Offset: {x: 0, y: -0.2}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -162,7 +162,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7, y: 0.7}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!50 &997940979462606652
 Rigidbody2D:
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e874725e43044d498d18097d9414d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CatController
-  areaMin: {x: 9.56, y: -4.7}
+  areaMin: {x: 9.56, y: -4.5}
   areaMax: {x: 23, y: 1.4}
   moveSpeed: 1
   sitClipCheckInterval: 2

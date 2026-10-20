@@ -1,4 +1,4 @@
-Shader "Overtime/UI/CardFlip"
+Shader "Overtimer/UI/CardFlip"
 {
     Properties
     {

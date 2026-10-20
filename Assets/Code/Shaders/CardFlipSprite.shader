@@ -1,4 +1,4 @@
-Shader "Overtime/Sprites/CardFlip"
+Shader "Overtimer/Sprites/CardFlip"
 {
     Properties
     {

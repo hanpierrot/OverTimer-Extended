@@ -6500,12 +6500,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9441acde013a8c348867e7bf63fd5672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoverHighlighter
-  padding: 0.15
   checkInterval: 0.05
-  lineMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  lineColor: {r: 1, g: 0.81960785, b: 0.4, a: 1}
-  lineWidth: 0.06
-  sortingOrder: 100
+  glowMaterial: {fileID: 2100000, guid: 331e45dd99fd77a438148b591196d606, type: 2}
+  maxQuads: 8
 --- !u!114 &2035735771072306583
 MonoBehaviour:
   m_ObjectHideFlags: 0
