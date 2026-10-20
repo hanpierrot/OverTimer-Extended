@@ -9802,9 +9802,41 @@ PrefabInstance:
       propertyPath: 'windows.Array.data[8]'
       value: 
       objectReference: {fileID: 464109098}
+    - target: {fileID: 3759204050546974196, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMax.x
+      value: 20.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 3759204050546974196, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMax.y
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3759204050546974196, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMin.x
+      value: 12.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 3759204050546974196, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMin.y
+      value: -3.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3973142533385416381, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 4540119319303446355, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMax.x
+      value: 20.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 4540119319303446355, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMax.y
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4540119319303446355, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMin.x
+      value: 12.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 4540119319303446355, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
+      propertyPath: spawnRangeMin.y
+      value: -3.5
       objectReference: {fileID: 0}
     - target: {fileID: 5350111186110181142, guid: 7a1a3980aba9b694ba29e62e0c879ba0, type: 3}
       propertyPath: panel
