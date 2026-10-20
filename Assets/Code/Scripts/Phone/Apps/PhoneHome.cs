@@ -83,5 +83,6 @@ public class PhoneHome : MonoBehaviour
         var gate = ShopService.Instance != null ? ShopService.Instance.IconGate : null;
         if (gate != null && !gate.IsVisible(id)) return;
         _app = id;
+        if (id == "shop") TutorialService.TryShow("shop_first_open");
     }
 }

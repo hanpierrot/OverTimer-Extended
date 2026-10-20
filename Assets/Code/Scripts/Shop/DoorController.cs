@@ -143,6 +143,7 @@ public class DoorController : MonoBehaviour
         else Depot.Receive(order.id, order.itemIds);
 
         if (audioSource != null && doorbellSound != null) audioSource.PlayOneShot(doorbellSound);
+        TutorialService.TryShow("first_delivery");
         if (!order.leaveOpen && HintService.Instance != null) HintService.Instance.ShowOnce(HintId.PackageArrived);
     }
 
@@ -219,6 +220,7 @@ public class DoorController : MonoBehaviour
 
     private void HandleViewChanged(CameraView view)
     {
+        if (view == CameraView.Door && Depot != null && Depot.Tower.Count > 0) TutorialService.TryShow("door_first_package");
         if (view != CameraView.Desk || _pendingReveal.Count == 0) return;
         float delay = 0.15f;
         foreach (var b in _pendingReveal) { Reveal(b, delay); delay += 0.3f; }

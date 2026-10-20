@@ -2611,6 +2611,7 @@ GameObject:
   - component: {fileID: 800245314}
   - component: {fileID: 800245313}
   - component: {fileID: 800245319}
+  - component: {fileID: 800245320}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -2747,6 +2748,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopService
   catalog: {fileID: 11400000, guid: 4f4e2611d4532f1498c07280718e7037, type: 2}
+--- !u!114 &800245320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800245310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7414b26cd2d9bf4bb426e7fae8a1f1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialService
+  panel: {fileID: 3351594941208147676}
+  catalog: {fileID: 11400000, guid: 1814322b28a57bf48a1890400e8d63b9, type: 2}
 --- !u!1001 &821044118
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6490,6 +6505,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1887537324409944687, guid: bfce0c7cfc9540144a064b3a93bad9a3, type: 3}
   m_PrefabInstance: {fileID: 7557954659052772543}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3351594941208147676 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3010344600024332132, guid: bfce0c7cfc9540144a064b3a93bad9a3, type: 3}
+  m_PrefabInstance: {fileID: 7557954659052772543}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 657d0c3e15d23804da81a9aab19f0966, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialPanel
 --- !u!114 &3362385526804358812 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5326776545044297636, guid: fdc2a0180b0605d49b4e8e44a5e7d472, type: 3}

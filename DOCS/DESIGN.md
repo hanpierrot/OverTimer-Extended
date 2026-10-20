@@ -803,7 +803,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | Blackjack license | Unlocks the Blackjack app on the Laptop. Activate it from your Inbox. |
 | Billiards license | Unlocks the Billiards app on the Laptop. Activate it from your Inbox. |
 
-**Tutorial panels.** Each new mechanic introduced by the Phone and the Shop (calls, the Inbox, the Taxes app, shipping and delivery, Buyback) gets one short panel, built on the same `TutorialPanel` and `HintService` as the intro.
+**Tutorial panels.** Each new mechanic introduced by the Phone and the Shop (calls, the Inbox, the Taxes app, shipping and delivery, Buyback) gets one short panel, built on the same `TutorialPanel` as the intro. A `TutorialService` shows each panel once (a seen flag per id in PlayerPrefs), one at a time, and the Clock is paused while it is open. Ids: `phone_first_open`, `first_call`, `first_paused_call`, `first_tax`, `shop_first_open`, `first_license`, `first_delivery`, `door_first_package`, `first_pawn` (`first_buyback` with Buyback). The text lives in a catalog asset; the cheat menu can reset the flags.
 
 ### 5.17 Reward Popup (Money and Time)
 
