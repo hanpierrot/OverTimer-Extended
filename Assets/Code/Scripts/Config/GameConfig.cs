@@ -102,6 +102,14 @@ public class GameConfig : ScriptableObject
     public int doorParcelSlots = 4;
     [Tooltip("Clicks on a parcel before it springs open.")]
     public int parcelClicksToOpen = 3;
+    [Tooltip("Game seconds after a bill is issued before its tax letter lands at the door.")]
+    public float taxLetterDelay = 10f;
+    [Tooltip("How many letters can lie at the door at once. A new one pushes the oldest junk letter off.")]
+    public int letterSlots = 8;
+    [Tooltip("Junk mail: one letter every min..max game seconds, and none during the first 'grace' seconds.")]
+    public float junkMailIntervalMin = 60f;
+    public float junkMailIntervalMax = 120f;
+    public float junkMailGrace = 60f;
 
     [Header("Annoyance Manager (§5.7)")]
     public float annoyanceMinGap = 12f;

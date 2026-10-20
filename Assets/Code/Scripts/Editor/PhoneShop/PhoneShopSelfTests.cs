@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Random = System.Random;   // the pure classes take a System.Random (RngService); never UnityEngine.Random
@@ -208,6 +209,27 @@ public static class PhoneShopSelfTests
         Check(depot.Click(d1) && depot.Tower.Count == 2 && depot.Tower[0] == d2 && depot.Tower[1] == d3 && depot.Waiting == 0, "door: the third click opens it and the waiting parcel takes its place");
         Check(!depot.Click(d1), "door: an opened parcel can't be clicked again");
         Check(string.Join(",", towerLog) == "+1,+2,open1,+3", "door: events in order (+1,+2,open1,+3)");
+
+        var pile = new LetterPile(3); var pileLog = new System.Collections.Generic.List<string>();
+        pile.Added += l => pileLog.Add("+" + l.kind); pile.Removed += l => pileLog.Add("-" + l.kind);
+        var tax = pile.Add(LetterKind.Tax, ""); var j1 = pile.Add(LetterKind.Junk, "a"); var j2 = pile.Add(LetterKind.Junk, "b");
+        var j3 = pile.Add(LetterKind.Junk, "c");
+        Check(pile.Letters.Count == 3 && !pile.Letters.Contains(j1) && pile.Letters.Contains(tax) && pile.Letters.Contains(j3), "mail: a full pile pushes the OLDEST junk letter off, never the tax letter");
+        pile.Remove(j2); pile.Remove(j3);
+        var t2 = new LetterPile(1); t2.Add(LetterKind.Tax, "");
+        Check(t2.Add(LetterKind.Junk, "x") == null && t2.Letters.Count == 1, "mail: junk can't push a tax letter off a full pile");
+        Check(pile.FirstOf(LetterKind.Tax) == tax && pile.FirstOf(LetterKind.Junk) == null, "mail: FirstOf finds the tax letter");
+        Check(pile.Remove(tax) && !pile.Remove(tax), "mail: a letter is removed once");
+
+        var jt = new JunkMailTimer(new Random(11), 60f, 120f, 60f); float firstJunk = 0f; bool junkDue = false;
+        while (!junkDue && firstJunk < 400f) { firstJunk += 0.5f; junkDue = jt.Tick(0.5f); }
+        Check(junkDue && firstJunk >= 60f && firstJunk <= 120.5f, $"junk mail: the first letter comes between 60 and 120 s (at {firstJunk:F1} s), never before the grace");
+        var jt2 = new JunkMailTimer(new Random(12), 60f, 120f, 60f); int junkCount = 0; float elapsed = 0f;
+        for (int i = 0; i < 6000; i++) { elapsed += 0.1f; if (jt2.Tick(0.1f)) junkCount++; }
+        Check(junkCount >= 5 && junkCount <= 10, $"junk mail: about one every 60-120 s ({junkCount} in {elapsed:F0} s)");
+        var jt3 = new JunkMailTimer(new Random(13), 60f, 120f, 60f); bool paused = false;
+        for (int i = 0; i < 1000; i++) if (jt3.Tick(0f)) paused = true;
+        Check(!paused, "junk mail: a paused clock (gameDelta 0) brings none");
 
         var ds = new DeliveryScheduler(); var arrived = new System.Collections.Generic.List<Order>(); ds.Arrived += arrived.Add;
         ds.Ship(new[] { "power_bank" }, 20f, false); ds.ShipJunk(5f);
