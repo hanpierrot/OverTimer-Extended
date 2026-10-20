@@ -222,6 +222,11 @@ public class GameConfig : ScriptableObject
     public float ratingClockLoss = 0f;
     public float ratingFinalCountdownLoss = 0.1f;
     public float ratingCreepyJesterLoss = 0f;
+    
+    [Header("Money Popup")]
+    public float moneyPopupMergeSeconds = 0.3f;
+    public float moneyPopupRise = 24f;
+    public float moneyPopupSeconds = 0.9f;
 }
 
 public enum AimAssistLevel { DirectionOnly, ContactPoint, FullGhost }

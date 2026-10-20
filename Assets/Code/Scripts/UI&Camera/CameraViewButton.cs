@@ -4,6 +4,8 @@ using UnityEngine;
 public class CameraViewButton : MonoBehaviour
 {
     [SerializeField] private CameraView target;
+    
+    public CameraView Target => target;
 
     private PointerReceiver _receiver;
 
