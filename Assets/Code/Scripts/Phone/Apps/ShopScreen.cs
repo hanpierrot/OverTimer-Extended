@@ -37,6 +37,8 @@ public class ShopScreen : MonoBehaviour
     [SerializeField] private Image standardTileImage;
     [SerializeField] private Button expressTile;
     [SerializeField] private Image expressTileImage;
+    [SerializeField] private Button openTile;
+    [SerializeField] private Image openTileImage;
     [SerializeField] private Sprite tileNormal;
     [SerializeField] private Sprite tileSelected;
     [SerializeField] private Button backButton;
@@ -64,6 +66,7 @@ public class ShopScreen : MonoBehaviour
         backButton.onClick.AddListener(() => { _cartView = false; _signature = -1; });
         standardTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetShipping(Shipping.Standard); });
         expressTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetShipping(Shipping.Express); });
+        openTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetLeaveOpen(!ShopService.Instance.LeaveOpen); });
         buyButton.onClick.AddListener(() =>
         {
             var shop = ShopService.Instance;
@@ -169,6 +172,8 @@ public class ShopScreen : MonoBehaviour
             if (quote.hasPhysical)
                 _text.Append(shop.Shipping == Shipping.Express ? "Express $" : "Standard $").Append(quote.shipping)
                      .Append("  ").Append(Mathf.CeilToInt(quote.etaSeconds)).Append('s');
+            if (shop.LeaveOpen && quote.hasPhysical) _text.Append("\nOpened $").Append(quote.leaveOpenFee);
+            _text.Append("\nTOTAL $").Append(quote.total);
         }
         AppendOrders(shop);
         PhoneUi.SetText(receiptLabel, _text.ToString());
@@ -178,8 +183,10 @@ public class ShopScreen : MonoBehaviour
         expressTileImage.sprite = express ? tileSelected : tileNormal;
         PhoneUi.SetActive(standardTile.gameObject, quote.hasPhysical);
         PhoneUi.SetActive(expressTile.gameObject, quote.hasPhysical);
+        openTileImage.sprite = shop.LeaveOpen ? tileSelected : tileNormal;
+        PhoneUi.SetActive(openTile.gameObject, quote.hasPhysical);
 
-        PhoneUi.SetText(summaryLabel, any ? "TOTAL\n$" + quote.total : "");
+        if (summaryLabel != null) PhoneUi.SetText(summaryLabel, "");      // the total is on the receipt now (three tiles fill the row)
 
         PhoneUi.SetActive(buyButton.gameObject, any);
         PhoneUi.SetText(buyLabel, "BUY $" + quote.total);

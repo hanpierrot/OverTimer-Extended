@@ -191,11 +191,23 @@ public static class PhoneShopSelfTests
         var cart = new ShopCart(); var own2 = new Ownership(cat);
         Check(cart.TryAdd(cat[3], own2) && !cart.TryAdd(cat[3], own2), "cart: an item goes in once");
         Check(!cart.TryAdd(cat[0], own2), "cart: an owned item (Laptop) can't be added");
-        cart.TryAdd(cat[6], own2); var cq = cart.Quote(Shipping.Standard, sc);
+        cart.TryAdd(cat[6], own2); var cq = cart.Quote(Shipping.Standard, false, sc);
         Check(cq.total == 85 && cart.Count == 2, "cart: Power Bank + Blackjack quote $85");
         own2.MarkOrdered("power_bank", 25); Check(!cart.TryAdd(cat[3], own2), "cart: an item already on the way can't be added again");
         Check(cart.Remove("power_bank") && !cart.Remove("power_bank") && cart.Count == 1, "cart: remove works once");
-        cart.Clear(); Check(cart.Count == 0 && cart.Quote(Shipping.Express, sc).total == 0, "cart: empty cart costs nothing");
+        cart.Clear(); Check(cart.Count == 0 && cart.Quote(Shipping.Express, true, sc).total == 0, "cart: empty cart costs nothing");
+
+        var lo = new ShopCart(); lo.TryAdd(cat[3], new Ownership(cat));
+        Check(lo.Quote(Shipping.Standard, true, sc).total == 28 && lo.Quote(Shipping.Express, true, sc).total == 36, "cart: leave it opened adds $3 once (25 -> 28, express 36)");
+
+        var depot = new DoorDepot(2, 3); var towerLog = new System.Collections.Generic.List<string>();
+        depot.Added += p => towerLog.Add("+" + p.orderId); depot.Opened += p => towerLog.Add("open" + p.orderId);
+        var d1 = depot.Receive(1, new[] { "power_bank" }); var d2 = depot.Receive(2, new[] { "card_box" }); var d3 = depot.Receive(3, new[] { "lucky_stack" });
+        Check(depot.Tower.Count == 2 && depot.Waiting == 1 && depot.Tower[0] == d1 && depot.Tower[1] == d2, "door: a full tower makes the next parcel wait (nothing lost)");
+        Check(!depot.Click(d1) && !depot.Click(d1) && depot.Tower.Count == 2, "door: two clicks do not open a 3-click parcel");
+        Check(depot.Click(d1) && depot.Tower.Count == 2 && depot.Tower[0] == d2 && depot.Tower[1] == d3 && depot.Waiting == 0, "door: the third click opens it and the waiting parcel takes its place");
+        Check(!depot.Click(d1), "door: an opened parcel can't be clicked again");
+        Check(string.Join(",", towerLog) == "+1,+2,open1,+3", "door: events in order (+1,+2,open1,+3)");
 
         var ds = new DeliveryScheduler(); var arrived = new System.Collections.Generic.List<Order>(); ds.Arrived += arrived.Add;
         ds.Ship(new[] { "power_bank" }, 20f, false); ds.ShipJunk(5f);
