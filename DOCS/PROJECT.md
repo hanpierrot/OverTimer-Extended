@@ -492,23 +492,23 @@ Other tuning assets: `BlockConfig.asset` (block HP, §13.2), `TripleMatchSymbols
 ### 11.3 Scratch tickets
 
 - `TicketStack` (desk) holds a pool of **2 tickets per tier**; a third purchase shows `TooManyTickets`. Purchase charges `round(baseCost × CostModifier[Ticket])` and rolls every window's symbol **at purchase**. Scratching only reveals.
-- Windows: **Triple Match 3**, **Lucky Nine 9**. A window reveals at 60% scratched (`ScratchWindow.revealThreshold`); the ticket resolves when all are revealed or on close (Cash Out).
-- **Reward as coded:** `round(baseReward × (maxMatch − 1) × multiplier[bestSymbol])`, where `maxMatch` counts **revealed** windows only and `bestSymbol` is the symbol with the **highest count** (ties → higher multiplier). It is *not* the best-paying symbol. Closing early locks the reward computed from revealed windows; closing unscratched pays $0.
+- Windows: **Triple Match 3**, **Lucky Nine 9**. A window reveals at 60% scratched (`ScratchWindow.revealThreshold`); the ticket is **paid only on Cash Out** (scratching every window just finishes the scratching; a full Lucky Nine jackpot ends the run at that moment).
+- **Reward as coded:** `round(Σ over every repeating symbol of baseReward × (count − 1) × multiplier)`, where `count` is per symbol among **revealed** windows only. Only the open ticket updates the result label (the two pooled tickets of a tier share one panel). Cash Out locks the reward computed from revealed windows; cashing out unscratched pays $0.
 
 | Symbols | weights | multipliers |
 |---|---|---|
-| Triple Match (3) | 75 / 20 / 5 | 0.25 / 0.6 / 2 |
-| Lucky Nine (5) | 40 / 27 / 18 / 10 / 5 | 0.3 / 0.6 / 1.2 / 2.5 / 6 |
+| Triple Match (3) | 60 / 28 / 12 | 0.25 / 0.55 / 1.6 |
+| Lucky Nine (5) | 30 / 25 / 20 / 15 / 10 | 0.2 / 0.3 / 0.45 / 0.65 / 1.1 |
 
 | EV (exact enumeration, live values) | Triple Match | Lucky Nine |
 |---|---|---|
 | Cost / base reward | $25 / 55 | $55 / 26 |
-| EV, all windows revealed | **$22.23** (RTP 88.9%) | **$47.76** (RTP 86.8%) |
-| P(profit) | 53% | 26% |
-| Min / max payout | $0 (4.5%) / $220 | **$16** (never $0: 9 windows over 5 symbols) / $1,248 |
-| Optimal early stopping | no gain | **$52.13** (stop on a high pair before low triples bury it) |
+| EV, all windows revealed | **$22.16** (RTP 88.7%) | **$48.36** (RTP 87.9%) |
+| P(profit) | 45% | 28% |
+| Min / max payout | $0 (12.1%) / $176 | **$21** (never $0: 9 windows over 5 symbols) / $229 |
+| Optimal early stopping | no gain | no gain (more revealed windows can only add to the reward) |
 
-Both tiers are negative-EV gambles, as intended after the hotfix (base 110 → 26). The "stop early" quirk is discoverable because the panel shows a live total — decide whether to keep it (§15).
+Both tiers are negative-EV gambles, as intended. The values were rebalanced with the new reward formula; the old sets were 75/20/5 and 40/27/18/10/5. Each scratch panel has a `TicketPayoutTable` (`TicketPayoutTable.cs`, on `NinePanel`/`TriplePanel`).
 
 ### 11.4 Pawning
 
@@ -704,7 +704,7 @@ Both tiers are negative-EV gambles, as intended after the hotfix (base 110 → 2
 | Blackjack | ~$5–9/s | needs clock ≥ 35 s, burns ~31 s per hand |
 | Billiards | ~$1.6 / $4.3 / $4.4 per s (E/M/H, model) | needs ≤ $40 capital |
 | Triple Match | −$2.77 per ticket | 53% chance of profit |
-| Lucky Nine | −$7.24 per ticket (−$2.87 stopping early) | 26% chance of profit |
+| Lucky Nine | −$6.64 per ticket (stopping early never pays more) | 28% chance of profit |
 | Phone ring | costs ≈ 0.75–5 s of clock each | ~9% extra drain if always ignored |
 | ITRS | 20% of gross income, min $20 / 45 s | ignore = 2 s per $ |
 
@@ -730,7 +730,6 @@ Only genuine defects live here. Behaviour that matches `DESIGN.md` is not a bug 
 | L10 | Low | `ultrRareWeight` typo; docs used other rarity names | `GameConfig.cs` | rename with `[FormerlySerializedAs]` |
 | L12a | Low | Vestigial `InputManager.FocusRoot` | `InputManager` | delete |
 | — | Low | `TicketSymbolConfig` lives in `TicketSymbolPool.cs` | `Config/` | rename file (keep `.meta`) |
-| — | Low | Lucky Nine pays more if you stop early (best-count rule) | `ScratchTicket.ComputeCurrentReward` | decide: keep as skill, or pay the best symbol |
 | — | Low | `GameOver` has no re-entry guard | `GameManager.GameOver` | early return |
 | — | Low | `CreepyJesterCardSO` `artPool` index is unguarded (length 0 or 1 throws on the first tick). The `PlayerPrefs.DeleteAll()` wipe is **deliberate** (DESIGN §5.14 C), not a bug | `CreepyJesterCardSO` | guard the index |
 | — | Low | `HoverHighlighter` colour/width/padding are serialized fields, not `GameConfig` (I10) and DESIGN's `hoverGlow*` keys do not exist; the glow is a rectangle, not a sprite-edge outline (§8.3a) | `HoverHighlighter` | Han: move to config when the shader outline is built |
@@ -751,6 +750,7 @@ Only genuine defects live here. Behaviour that matches `DESIGN.md` is not a bug 
 | ID | Was | Fixed by |
 |---|---|---|
 | L2 | Lucky Nine always profitable (EV $203 on $55) | `luckyNineBaseReward` 110 → 26 (hotfix 2026-10-17). Note: still can't pay $0 (min $16) |
+| T1 | Lucky Nine paid by the symbol with the highest count, so stopping early paid more; ticket auto-paid on the last window; the label of a shared panel could show another ticket's reward | Reward is now the sum of every repeating symbol; payout only on Cash Out; only the open ticket updates the label (2026-10) |
 | L3 | Phone pawnable | `Phone` no longer implements `IPawnable` |
 | L6 | `handCap` 3 in asset | asset 5; `HasRoom` reads config |
 | L7 | Vein length invisible | status nodes show the length |
@@ -827,7 +827,7 @@ Branch names: Batch 1 used `ari/Phone-Revamp` (made by Ari). Pick the names for 
 
 | Feature | DESIGN § | State in code | Owner |
 |---|---|---|---|
-| Six mechanic/card-adjacent endings: `TicketJackpotWin`/`TicketCurseLoss` (Lucky Nine jackpot/curse tickets), `MotherLodeWin`/`CaveInLoss` (Mining streak, cursed length-10 vein), `BlackjackCharlieWin`/`BlackjackRuinLoss` (7 cards / 3 doubled losses) and their `GameConfig` keys (`luckyNineJackpotChance` 0.2%, `luckyNineCurseChance` 0.5%, `miningStreakTarget` 3, `miningFullVeinStreakChance` 0.3, `caveInChance` 3%, `blackjackCharlieCards` 7, `blackjackRuinStreak` 3), ending texts, rating outcome values (0.95 wins / 0 losses). `EndReason` is append-only | 5.3, 5.5, 5.14 D, 5.15 | none (`EndReason` has 6 values) | Ari (apps) + Han (ticket, texts) |
+| Four mechanic endings: `TicketJackpotWin`/`TicketCurseLoss` (Lucky Nine jackpot/curse tickets), `MotherLodeWin` (Mining streak) and `BlackjackCharlieWin` (7 cards) and their `GameConfig` keys (`luckyNineJackpotChance` 0.6%, `luckyNineCurseChance` 0.5%, `miningStreakTarget` 3, `miningFullVeinStreakChance` 0.3, `blackjackCharlieCards` 7, `blackjackCharlieChance` 4%), ending texts, rating outcome values (0.95 wins / 0 losses). `EndReason` is append-only. **Built:** `BlackjackCharlieWin`, `TicketJackpotWin`. **Not built yet:** `TicketCurseLoss`, `MotherLodeWin` (`CaveInLoss` and `BlackjackRuinLoss` were cut) | 5.3, 5.5, 5.14 D, 5.15 | `EndReason` has 10 values | Ari (apps) + Han (ticket, texts) |
 | Door object, Door view content, doorbell, parcels, unboxing, empty-box junk item, paper bills and junk mail at the door | 4.1, 5.7 | only `DoorAnchor` and `doorCameraSize` | Batch 3 |
 | Buyback (`IRestorable`, pawn ledger) | 5.11 | none | Batch 4 |
 | "Leave it opened & ready" shipping option | 5.7 | `shopLeaveOpenFee` exists, unused | Batch 3 |
@@ -850,7 +850,6 @@ Coffee Mug, Dish Rack, achievements, settings menu, daily challenge (fixed seed)
 | Win target 600 s vs shorter runs | after playtests (Batch 5) |
 | Card Box shop price/pawn: $40 / $32 (code, A13) or $60 / $48 (DESIGN)? | Ari and Han to align DESIGN or the catalog |
 | Approve first-pass shop prices for playtesting | open |
-| Lucky Nine "stop early" pays more (best-count rule on revealed windows) | open: DESIGN describes Cash Out but does not comment on the quirk |
 | Who builds the six mechanic endings, and when (§17.3a) | open |
 | Hover glow: keep the rectangle or build the sprite-edge shader | Han |
 | `dragThreshold` feel | untuned |

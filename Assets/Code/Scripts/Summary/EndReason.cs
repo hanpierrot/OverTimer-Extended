@@ -6,4 +6,8 @@ public enum EndReason
     ClockLoss,
     FinalCountdownLoss,
     CreepyJesterLoss,
+    TicketJackpotWin,
+    TicketCurseLoss,
+    MotherLodeWin,
+    BlackjackCharlieWin,
 }

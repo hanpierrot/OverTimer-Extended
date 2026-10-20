@@ -93,7 +93,6 @@ public class GameManager : MonoBehaviour
         IsGameOver = true;
         LastEndReason = reason;
         InputManager.Instance.IsInputEnabled = false;
-        // Own holder, never released: no later Resume() from another system can restart the clock after the end.
         ClockService.Instance.Pause(this);
         Freeze(true);
 
@@ -147,6 +146,10 @@ public class GameManager : MonoBehaviour
             case EndReason.ClockLoss: return "Time out.";
             case EndReason.FinalCountdownLoss: return "The countdown betrayed you.";
             case EndReason.CreepyJesterLoss: return "The Pierrot found you...";
+            case EndReason.TicketJackpotWin: return "Nine of a kind. The ticket was real.";
+            case EndReason.TicketCurseLoss: return "The ticket was cursed.";
+            case EndReason.MotherLodeWin: return "You struck the mother lode.";
+            case EndReason.BlackjackCharlieWin: return "Seven cards, no bust. The dealer folds.";
             default: return "";
         }
     }

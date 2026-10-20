@@ -47,7 +47,7 @@ These are the load-bearing rules. Breaking any one of them breaks the game.
 | I9 | No physics simulation of the world and no character. The camera moves only between **fixed viewpoints** (Room, Desk, Door; §4.1) by click-driven transitions; no scrolling, no drag-pan, no free zoom, no rotation. `Physics2D` is used only for hit-testing and trigger overlaps (clicking, Pawn, Cat). Billiards runs its own deterministic vector-math simulation inside its app (§5.6) | Scope |
 | I10 | All tuning values live in data assets, never in script logic | The last hours of a project are for tuning, not refactoring |
 
-> **I1 detail — alternate endings.** The Clock stays the default route. Two kinds of alternate ending exist. Three **cards** end the run deterministically from placement state: **Set completion** (win), **Final Countdown** (win or loss), **Creepy Jester** (loss). Three **mechanics** end it from play: a **Lucky Nine** ticket of nine identical symbols, a **Mining** streak or cave-in, and a **Blackjack** seven-card hand or ruin streak. None of them converts money to time (I3) or grants clock time (I4). Each alternate ending is meant to occur in roughly 1–3% of runs, and every loss has a warning and a way out. Full spec: §5.14.
+> **I1 detail — alternate endings.** The Clock stays the default route. Two kinds of alternate ending exist. Three **cards** end the run deterministically from placement state: **Set completion** (win), **Final Countdown** (win or loss), **Creepy Jester** (loss). Three **mechanics** end it from play: a **Lucky Nine** ticket of nine identical symbols, a **Mining** streak of maximum-length veins, and a **Blackjack** seven-card hand. None of them converts money to time (I3) or grants clock time (I4). Each alternate ending is meant to occur in roughly 1–3% of runs, and every loss has a warning and a way out. Full spec: §5.14.
 
 > **I9 detail — the Room.** The play space is a **room** containing the desk and a door. It is one scene with no loading. The camera starts with the whole room in view and zooms to the desk or the door on a click (§4.1). Camera moves never pause the Clock (I5). Anything that assumes a single unmoving frame (visibility checks, fixed layouts) must account for the three viewpoints.
 
@@ -203,7 +203,7 @@ A **vein** is a fixed walk through the ordered block list (Dirt → Wood → Sto
 - **Progress is visible:** a status node per block of the current vein, plus *Unconfirmed* and *Received* totals.
 - **No clock penalty on closing the app.** Losing the ore is enough (I7).
 - Mining is the highest-risk number in the economy: if it dominates, lower `blockPayout` before touching anything else.
-- **Alternate endings:** completing `miningStreakTarget` (3) veins of the maximum length (10 blocks) in a row without closing or leaving the app wins the run; a maximum-length vein can collapse and lose it (§5.14 D).
+- **Alternate endings:** completing `miningStreakTarget` (3) veins of the maximum length (10 blocks) in a row without closing or leaving the app wins the run (§5.14 D).
 - **Implementation note:** `MiningApp` has no usable static instance and its GameObject only `Awake()`s the first time the Laptop opens it. Anything outside the Laptop that must affect Mining (a card) uses static pending-state fields applied when the next vein banks: `MiningApp.QueueNextVeinMultiplier(float)` and `MiningApp.QueueNextVeinSlip()`, plus the static event `MiningApp.OnNextVeinEffectResolved` (§7 hazards).
 
 ### 5.3 Ticket Stack — Scratch cards
@@ -220,23 +220,24 @@ Money → money, high variance, no lockout. Two tiers, each its own desk stack a
 **Reward formula — the same for every tier:**
 
 ```
-reward = baseReward × (maxMatchCount − 1) × symbol.payoutMultiplier
+reward = Σ over every symbol that repeats:  baseReward × (count − 1) × symbol.payoutMultiplier
 ```
 
-`maxMatchCount` is the highest number of times any one symbol repeats among the **revealed** windows. `payoutMultiplier` lives on the matched symbol. Weights and multipliers are deliberately **inverse** (rarer symbol → higher multiplier). On a tie for `maxMatchCount`, the symbol with the higher multiplier wins.
+`count` is how many **revealed** windows show that symbol. A symbol that appears once pays nothing, and every repeating symbol pays on its own, so two or three sets add up. `payoutMultiplier` lives on the symbol. Weights and multipliers are deliberately **inverse** (rarer symbol → higher multiplier). With three windows only one symbol can repeat, so Triple Match pays as before.
 
 | Symbol pool (`TicketSymbolConfig`) | Weights | Multipliers |
 |---|---|---|
-| Triple Match (3 symbols) | 75 / 20 / 5 | 0.25 / 0.6 / 2 |
-| Lucky Nine (5 symbols) | 40 / 27 / 18 / 10 / 5 | 0.3 / 0.6 / 1.2 / 2.5 / 6 |
+| Triple Match (3 symbols) | 60 / 28 / 12 | 0.25 / 0.55 / 1.6 |
+| Lucky Nine (5 symbols) | 30 / 25 / 20 / 15 / 10 | 0.2 / 0.3 / 0.45 / 0.65 / 1.1 |
 
-- **EV with every window revealed:** Triple Match $22.23 per $25 ticket (RTP 88.9%, 53% chance of a profit); Lucky Nine $47.76 per $55 ticket (RTP 86.8%, 26% chance of a profit). **Payout range:** Triple Match $0–$220 (three of the rarest); Lucky Nine $16–$1,248 (nine windows over five symbols can never pay $0; the maximum is nine of the rarest: 26 × 8 × 6).
+- **EV with every window revealed:** Triple Match $22.16 per $25 ticket (RTP 88.7%, 45% chance of a profit, all three windows alike 24% of the time); Lucky Nine $48.36 per $55 ticket (RTP 87.9%, 28% chance of a profit). Exact enumeration, not playtest data. **Payout range:** Triple Match $0 (12% of tickets) to $176 (three of the rarest); Lucky Nine $21–$229 (nine windows over five symbols can never pay $0; the maximum is nine of the rarest: 26 × 8 × 1.1). Because every revealed window can only add to the reward, scratching more never lowers it.
 - **Symbols are rolled once, at purchase.** Scratching is a pure reveal animation and never changes the outcome.
-- **Reveal:** each window reveals itself when ≥ 60% of it is scratched (`revealThreshold`, `ScratchWindow` component). The ticket **resolves automatically** when every window is revealed. The live result label shows the reward from the windows revealed so far.
+- **Reveal:** each window reveals itself when ≥ 60% of it is scratched (`revealThreshold`, `ScratchWindow` component). When every window is revealed the scratching is finished, but the ticket is **paid only when the player presses Cash Out**. The result label on the Cash Out button shows the reward from the windows revealed so far (only the open ticket updates it).
 - **Cash Out** is always allowed: it resolves the ticket on the windows revealed so far (unrevealed windows pay nothing), reveals the rest, pays, then closes the panel and returns the ticket to its pool.
 - **Scratch mechanic:** per-window CPU `Texture2D` alpha mask (circular windows, corner pixels excluded from progress, optional foil art texture).
 - **Insider Tip** (card, §5.4) pre-reveals one random window of the next purchased ticket.
-- **Lucky Nine special tickets.** At purchase, after the symbols are rolled, a second roll can turn a Lucky Nine ticket into a **jackpot** (`luckyNineJackpotChance`: all nine windows become the symbol with the highest `payoutMultiplier`) or a **curse** (`luckyNineCurseChance`: all nine become the symbol with the lowest). Natural odds are ≈ 1 in 3,800 for nine of the commonest symbol and effectively zero for nine of the rarest, so the chances are set explicitly. The ending fires only when **all nine windows are revealed by the player's own scratching** (the automatic resolve), never from Cash Out — a cursed ticket can be abandoned once the omen is visible. A jackpot or a curse is the only way a ticket ends the run (§5.14 D). Triple Match has no special tickets.
+- **Lucky Nine special tickets.** At purchase, after the symbols are rolled, a second roll can turn a Lucky Nine ticket into a **jackpot** (`luckyNineJackpotChance`: all nine windows become the symbol with the highest `payoutMultiplier`) or a **curse** (`luckyNineCurseChance`: all nine become the symbol with the lowest). Natural odds are ≈ 1 in 50,000 for nine of the commonest symbol and effectively zero for nine of the rarest, so the chances are set explicitly. The ending fires only when **all nine windows are revealed by the player's own scratching** (finishing the last window), never from Cash Out — a cursed ticket can be abandoned once the omen is visible. A jackpot or a curse is the only way a ticket ends the run (§5.14 D). Triple Match has no special tickets.
+- **Payout table.** Each scratch panel shows a table on its right (`TicketPayoutTable`, built from that tier's symbol config): one row per symbol with its icon, odds and multiplier. The Lucky Nine table adds a final block "9x [rarest symbol] = Win the game"; Triple Match has no such row. The layout is computed from `iconSize` and `fontSize`, so resizing them never overlaps the text. It reads the live weights and multipliers, so it cannot drift from the real values.
 - The Lucky Nine stack can be Pawned for $24; the Triple Match stack cannot be Pawned (§5.11).
 
 ### 5.4 Card Box — cards
@@ -335,7 +336,7 @@ reward = baseReward × (maxMatchCount − 1) × symbol.payoutMultiplier
 - Self-balancing: attractive when you are rich in time, suicidal when you are not. A hand burns about 31 s of clock, so the app needs the clock above the margin.
 - The Laptop **must not go fullscreen** — Mining, Blackjack and Billiards are high-throughput; if they cover the desk, the Phone, Cat and Mail Tray stop existing.
 - `BlackjackApp` owns ante, payout, safety rails and UI; `BlackjackGame` owns cards and rules (pure logic, seeded from `RngService`).
-- **Alternate endings:** holding `blackjackCharlieCards` (7) cards without busting wins the run; losing `blackjackRuinStreak` (3) doubled-down hands in a row loses it (§5.14 D).
+- **Alternate endings:** holding `blackjackCharlieCards` (7) cards without busting wins the run (§5.14 D).
 
 ### 5.6 Laptop — Billiards
 
@@ -629,9 +630,7 @@ Besides the normal Clock check, three cards (A–C) and three mechanics (D) can 
 | `TicketJackpotWin` | Win | Lucky Nine: all nine windows revealed as the rarest symbol |
 | `TicketCurseLoss` | Loss | Lucky Nine: all nine windows revealed as the commonest symbol |
 | `MotherLodeWin` | Win | Three maximum-length veins banked in a row |
-| `CaveInLoss` | Loss | A cursed maximum-length vein is banked |
 | `BlackjackCharlieWin` | Win | Seven cards held without busting |
-| `BlackjackRuinLoss` | Loss | Three doubled-down hands lost in a row |
 
 **A. Set completion (`SetCompletionCardSO` + `SetCompletionTracker`).** The anchor card is **Mei – The Tester**. Its pieces are four groups: **Han** (Han – The Jester *or* Han – The Pierrot), **Ari – The Gambler**, **Sybil – The Caster**, **CtrlZ – The Boy Skull**. While the anchor is Placed, the tracker counts Placed cards (`CardHandManager`'s live Placed set — **not** the Collection, which means "ever obtained"). The moment every group is satisfied, the run is won. The check re-runs on every place and remove. On a win the anchor and the satisfying pieces are registered in the Collection. Removing the anchor stops tracking.
 
@@ -667,12 +666,10 @@ Besides the normal Clock check, three cards (A–C) and three mechanics (D) can 
 
 | Mechanic | Ending | Rule | Values |
 |---|---|---|---|
-| Lucky Nine | `TicketJackpotWin` | A jackpot ticket (§5.3) has all nine windows revealed by scratching | `luckyNineJackpotChance` 0.2% per ticket |
+| Lucky Nine | `TicketJackpotWin` | A jackpot ticket (§5.3) has all nine windows revealed by scratching | `luckyNineJackpotChance` 0.6% per ticket |
 | Lucky Nine | `TicketCurseLoss` | A cursed ticket (§5.3) has all nine windows revealed by scratching. Stopping early with Cash Out avoids it | `luckyNineCurseChance` 0.5% per ticket |
 | Mining | `MotherLodeWin` | `miningStreakTarget` consecutive veins of length 10, banked without closing or leaving the Mining app. Any shorter vein, or leaving the app, resets the streak | `miningStreakTarget` 3. After a full vein, the next vein is length 10 with `miningFullVeinStreakChance` (0.3) instead of the normal 1 in 5 |
-| Mining | `CaveInLoss` | A length-10 vein may be cursed when it starts. From block 8 of a cursed vein the app shows a warning ("The ceiling is creaking."); banking it ends the run. Closing the app (forfeiting the unconfirmed ore) avoids it | `caveInChance` 3% per length-10 vein |
-| Blackjack | `BlackjackCharlieWin` | The player holds `blackjackCharlieCards` cards without busting | `blackjackCharlieCards` 7 |
-| Blackjack | `BlackjackRuinLoss` | `blackjackRuinStreak` doubled-down hands lost in a row. A doubled-down win or push resets the count; hands that are not doubled do not count | `blackjackRuinStreak` 3 |
+| Blackjack | `BlackjackCharlieWin` | The player holds `blackjackCharlieCards` cards without busting. A natural Charlie is ~0.09% per hand, so each deal rolls `blackjackCharlieChance`; on success the player's cards are pre-picked 2s and 3s (never bust). From the 4th card on, each hit shows the `CharlieTease` hint. A double never draws from the rigged cards | `blackjackCharlieCards` 7, `blackjackCharlieChance` 4% per hand |
 
 These endings are meant for roughly 1–3% of runs each: a run buys about five Lucky Nine tickets, banks about eight veins and plays a handful of hands.
 
@@ -689,9 +686,7 @@ These endings are meant for roughly 1–3% of runs each: a run buys about five L
 | `TicketJackpotWin` | "Nine of a kind. The ticket was real." |
 | `TicketCurseLoss` | "The ticket was cursed." |
 | `MotherLodeWin` | "You struck the mother lode." |
-| `CaveInLoss` | "The mine collapsed." |
 | `BlackjackCharlieWin` | "Seven cards, no bust. The dealer folds." |
-| `BlackjackRuinLoss` | "The house always wins." |
 
 ### 5.15 Run Save, Summary & Rating
 
@@ -785,7 +780,8 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `MiningCloseLosesOre` | Closing with unconfirmed ore | Closing now loses your unconfirmed ore. Finish the vein to bank it. |
 | `BlackjackOpen` | First time Blackjack opens | Betting costs clock time, wins pay money. |
 | `BlackjackLeaveMidHand` | First deal | Leaving now forfeits your ante and hand. |
-| `TicketOpen` | First time a ticket opens | Scratch with the mouse. Cash Out to collect. |
+| `TicketOpen` | (unused since `TicketCashOut`) | Scratch with the mouse. Cash Out to collect. |
+| `TicketCashOut` | First time any ticket panel opens | You can Cash Out any time. Windows you haven't scratched pay nothing. |
 | `WireOpen` | First time the Wire Task opens | Drag each plug to the socket of the same colour. |
 | `PhoneFirstRing` | First ring | The phone is ringing! Click it. The clock runs faster until it stops. |
 | `MailTrayFirstBill` | First bill | A tax bill arrived. A letter is at the door. |
@@ -957,7 +953,7 @@ Use these exact terms in code, commits, and agent prompts.
 | **Armed / Triggered** | Final Countdown phases: waiting for the Clock to reach 0 / the intercept has been used |
 | **Creepy Jester** | The "Han – The Pierrot" loss card that wipes saved data when it finishes |
 | **Run Record** | One saved run's summary, written to one of 20 circular slots |
-| **EndReason** | The enum of the twelve ways a run can end (§5.14) |
+| **EndReason** | The enum of the ten ways a run can end (§5.14) |
 | **Omen** | The visible warning before a mechanic loss (a ticket of repeated common symbols, the creaking mine) that lets the player back out |
 | **Hint** | A short tooltip shown when a click is rejected or a mechanic first appears (§5.16) |
 | **Highlight Hover** | The outer glow on the sprite of the interactable object under the pointer (§4.2) |

@@ -59,6 +59,7 @@ namespace Overtime.Blackjack
     {
         private readonly Random _rng;
         private readonly List<Card> _deck = new List<Card>(52);
+        private readonly Queue<Card> _rigged = new Queue<Card>();
 
         public readonly List<Card> PlayerHand = new List<Card>(8);
         public readonly List<Card> DealerHand = new List<Card>(8);
@@ -69,6 +70,7 @@ namespace Overtime.Blackjack
 
         /// <summary>True while the dealer's hole card should render face down.</summary>
         public bool DealerHoleHidden => State == HandState.PlayerTurn;
+        public bool HasCharlie(int cards) => PlayerHand.Count >= cards && PlayerValue <= 21;
 
         /// <summary>Pass the shared seeded RNG from RngService so runs stay reproducible.</summary>
         public BlackjackGame(Random rng)
@@ -143,7 +145,6 @@ namespace Overtime.Blackjack
         private void BuildAndShuffle()
         {
             _deck.Clear();
-
             for (int s = 0; s < 4; s++)
             for (int r = 1; r <= 13; r++)
                 _deck.Add(new Card(r, (Suit)s));
@@ -170,17 +171,20 @@ namespace Overtime.Blackjack
         /// Deal a new hand. The ante must already have been charged by the caller
         /// (BlackjackApp), because only CountdownTimer may touch the clock.
         /// </summary>
-        public void Deal()
+        public void Deal(int charlieCards = 0)
         {
             BuildAndShuffle();
+            _rigged.Clear();
+            if (charlieCards > 0) RigPlayerCards(charlieCards);
+            
             PlayerHand.Clear();
             DealerHand.Clear();
             DoubledDown = false;
             Result = Outcome.None;
 
-            PlayerHand.Add(Draw());
-            DealerHand.Add(Draw());   // index 0 = up card
-            PlayerHand.Add(Draw());
+            PlayerHand.Add(DrawPlayer());
+            DealerHand.Add(Draw());
+            PlayerHand.Add(DrawPlayer());
             DealerHand.Add(Draw());   // index 1 = hole card
 
             State = HandState.PlayerTurn;
@@ -190,6 +194,34 @@ namespace Overtime.Blackjack
             {
                 Result = IsNatural(DealerHand) ? Outcome.Push : Outcome.PlayerNatural;
                 State = HandState.Resolved;
+            }
+        }
+        
+        private Card DrawPlayer() => _rigged.Count > 0 ? _rigged.Dequeue() : Draw();
+        
+        private void RigPlayerCards(int count)
+        {
+            var low = new List<Card>();
+            for (int i = _deck.Count - 1; i >= 0; i--)
+            {
+                if (_deck[i].Rank == 2 || _deck[i].Rank == 3)
+                {
+                    low.Add(_deck[i]);
+                    _deck.RemoveAt(i);
+                }
+            }
+
+            for (int i = low.Count - 1; i > 0; i--)
+            {
+                int j = _rng.Next(i + 1);
+                (low[i], low[j]) = (low[j], low[i]);
+            }
+
+            int take = Math.Min(count, low.Count);
+            for (int i = 0; i < low.Count; i++)
+            {
+                if (i < take) _rigged.Enqueue(low[i]);
+                else _deck.Insert(_rng.Next(_deck.Count + 1), low[i]);
             }
         }
 
@@ -202,7 +234,7 @@ namespace Overtime.Blackjack
         {
             if (!CanHit) return;
 
-            PlayerHand.Add(Draw());
+            PlayerHand.Add(DrawPlayer());
 
             if (PlayerValue > 21)
             {
@@ -220,6 +252,7 @@ namespace Overtime.Blackjack
             if (!CanDouble) return;
 
             DoubledDown = true;
+            _rigged.Clear();   // a double never draws from a Charlie rig
             PlayerHand.Add(Draw());
 
             if (PlayerValue > 21)

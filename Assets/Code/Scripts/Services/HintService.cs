@@ -29,15 +29,20 @@ public class HintService : MonoBehaviour
 
     private void HandleRejected(HintId id) => Show(id);
 
-    public void Show(HintId id, params object[] args)
+    public void Show(HintId id, params object[] args) => ShowInternal(id, true, args);
+
+    /// <summary>Shows the hint every call, ignoring the per-id repeat cooldown.</summary>
+    public void ShowAlways(HintId id, params object[] args) => ShowInternal(id, false, args);
+
+    private void ShowInternal(HintId id, bool useCooldown, object[] args)
     {
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
         var config = GameManager.Instance != null ? GameManager.Instance.GameConfig : null;
         float cooldown = config != null ? config.hintRepeatCooldown : 3f;
-        
+
         float now = Time.unscaledTime;
-        if (_lastShown.TryGetValue(id, out float last) && now - last < cooldown) return;
+        if (useCooldown && _lastShown.TryGetValue(id, out float last) && now - last < cooldown) return;
         _lastShown[id] = now;
         
         string text = HintCatalog.Get(id);
