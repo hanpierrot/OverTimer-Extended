@@ -31,6 +31,9 @@ public static class HintCatalog
             case HintId.CatFirstBlock: return "Drag the cat to move it.";
             case HintId.EggTimerPlaced: return "Hold to wind it. Release and hold again to repeat.";
             case HintId.ShopPurchased: return "Your item is on the desk.";
+            case HintId.PackageArrived: return "A package is at the door. Click the door.";
+            case HintId.ParcelOpen: return "Click the box to open it.";
+            case HintId.JunkFlyer: return "{0}";
             default: return "";
         }
     }

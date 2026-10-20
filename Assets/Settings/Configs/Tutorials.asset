@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b3f93a14f4785645b1ba51cfbeb8ccf, type: 3}
+  m_Name: Tutorials
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialCatalogSO
+  entries:
+  - id: phone_first_open
+    whenShown: The first time the Phone is opened
+    steps:
+    - text: 'This is your <color=#FFD166>Phone</color>. Click an app icon to open
+        it.
+
+        <color=#FFD166>Call</color>, <color=#FFD166>Inbox</color>, <color=#FFD166>Taxes</color>
+        and the <color=#FFD166>Shop</color> live here. [placeholder]'
+      image: {fileID: 0}
+  - id: first_call
+    whenShown: The first time the phone rings
+    steps:
+    - text: 'The phone is <color=#FFD166>ringing</color>! Open it and press ACCEPT
+        or DECLINE.
+
+        While it rings the clock runs <color=#FFD166>faster</color>.
+        [placeholder]'
+      image: {fileID: 0}
+  - id: first_paused_call
+    whenShown: The first call that pauses the clock (client, ITRS)
+    steps:
+    - text: 'Some callers need your whole attention.
+
+        The clock <color=#FFD166>pauses</color>
+        and the Laptop locks until you hang up. [placeholder]'
+      image: {fileID: 0}
+  - id: first_tax
+    whenShown: The first tax bill
+    steps:
+    - text: 'ITRS sent a <color=#FFD166>tax bill</color>. Pay it in the Taxes app,
+        or from the letter that lands at the door.
+
+        You have <color=#FFD166>30
+        seconds</color> of running clock. [placeholder]'
+      image: {fileID: 0}
+  - id: shop_first_open
+    whenShown: The first time the Shop app is opened
+    steps:
+    - text: 'The <color=#FFD166>Shop</color> sells things your desk does not have.
+
+        Add
+        items to the cart, choose shipping, and buy. [placeholder]'
+      image: {fileID: 0}
+  - id: first_license
+    whenShown: The first license purchase
+    steps:
+    - text: 'A <color=#FFD166>license</color> arrives in your Inbox.
+
+        Press
+        <color=#FFD166>Activate</color> to unlock the app on the Laptop. [placeholder]'
+      image: {fileID: 0}
+  - id: first_delivery
+    whenShown: The first parcel to reach the door
+    steps:
+    - text: 'The doorbell rang: a <color=#FFD166>package</color> is at the door.
+
+        Click
+        the door to take a look. [placeholder]'
+      image: {fileID: 0}
+  - id: door_first_package
+    whenShown: The first time the Door view is entered with a parcel waiting
+    steps:
+    - text: 'Click the box a few times to <color=#FFD166>open</color> it.
+
+        Your
+        item will appear on the desk. [placeholder]'
+      image: {fileID: 0}
+  - id: first_pawn
+    whenShown: The first time something is pawned
+    steps:
+    - text: 'The <color=#FFD166>Printer</color> pays you for things you drop on it.
+
+        A
+        pawned item is gone, so choose carefully. [placeholder]'
+      image: {fileID: 0}

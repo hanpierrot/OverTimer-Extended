@@ -31,6 +31,6 @@ public sealed class ShopCart
 
     public void Clear() => _items.Clear();
 
-    /// No coupon (Ari, Q3) and no "leave it opened" yet (Batch 3).
-    public CheckoutQuote Quote(Shipping shipping, ShopConfig config) => Checkout.Quote(_items, shipping, false, false, config);
+    /// No coupon (Ari, Q3). leaveOpen = "Leave it opened & ready": +fee, and the parcel skips the unboxing.
+    public CheckoutQuote Quote(Shipping shipping, bool leaveOpen, ShopConfig config) => Checkout.Quote(_items, shipping, leaveOpen, false, config);
 }

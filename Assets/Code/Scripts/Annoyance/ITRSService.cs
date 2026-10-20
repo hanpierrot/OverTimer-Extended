@@ -124,6 +124,7 @@ public class ITRSService : MonoBehaviour
         if (phone != null)
             phone.Inbox.Add(MessageKind.Tax, $"Tax bill ${amountDue}", $"Pay within {config.taxPayWindow:0} seconds.", "app:taxes");
 
+        TutorialService.TryShow("first_tax");
         OnAssessmentIssued?.Invoke(CurrentAssessment);
     }
 

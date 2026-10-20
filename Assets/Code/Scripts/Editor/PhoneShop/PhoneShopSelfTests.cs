@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Random = System.Random;   // the pure classes take a System.Random (RngService); never UnityEngine.Random
@@ -191,11 +192,63 @@ public static class PhoneShopSelfTests
         var cart = new ShopCart(); var own2 = new Ownership(cat);
         Check(cart.TryAdd(cat[3], own2) && !cart.TryAdd(cat[3], own2), "cart: an item goes in once");
         Check(!cart.TryAdd(cat[0], own2), "cart: an owned item (Laptop) can't be added");
-        cart.TryAdd(cat[6], own2); var cq = cart.Quote(Shipping.Standard, sc);
+        cart.TryAdd(cat[6], own2); var cq = cart.Quote(Shipping.Standard, false, sc);
         Check(cq.total == 85 && cart.Count == 2, "cart: Power Bank + Blackjack quote $85");
         own2.MarkOrdered("power_bank", 25); Check(!cart.TryAdd(cat[3], own2), "cart: an item already on the way can't be added again");
         Check(cart.Remove("power_bank") && !cart.Remove("power_bank") && cart.Count == 1, "cart: remove works once");
-        cart.Clear(); Check(cart.Count == 0 && cart.Quote(Shipping.Express, sc).total == 0, "cart: empty cart costs nothing");
+        cart.Clear(); Check(cart.Count == 0 && cart.Quote(Shipping.Express, true, sc).total == 0, "cart: empty cart costs nothing");
+
+        var lo = new ShopCart(); lo.TryAdd(cat[3], new Ownership(cat));
+        Check(lo.Quote(Shipping.Standard, true, sc).total == 28 && lo.Quote(Shipping.Express, true, sc).total == 36, "cart: leave it opened adds $3 once (25 -> 28, express 36)");
+
+        var depot = new DoorDepot(2, 3); var towerLog = new System.Collections.Generic.List<string>();
+        depot.Added += p => towerLog.Add("+" + p.orderId); depot.Opened += p => towerLog.Add("open" + p.orderId);
+        var d1 = depot.Receive(1, new[] { "power_bank" }); var d2 = depot.Receive(2, new[] { "card_box" }); var d3 = depot.Receive(3, new[] { "lucky_stack" });
+        Check(depot.Tower.Count == 2 && depot.Waiting == 1 && depot.Tower[0] == d1 && depot.Tower[1] == d2, "door: a full tower makes the next parcel wait (nothing lost)");
+        Check(!depot.Click(d1) && !depot.Click(d1) && depot.Tower.Count == 2, "door: two clicks do not open a 3-click parcel");
+        Check(depot.Click(d1) && depot.Tower.Count == 2 && depot.Tower[0] == d2 && depot.Tower[1] == d3 && depot.Waiting == 0, "door: the third click opens it and the waiting parcel takes its place");
+        Check(!depot.Click(d1), "door: an opened parcel can't be clicked again");
+        Check(string.Join(",", towerLog) == "+1,+2,open1,+3", "door: events in order (+1,+2,open1,+3)");
+
+        var pile = new LetterPile(3); var pileLog = new System.Collections.Generic.List<string>();
+        pile.Added += l => pileLog.Add("+" + l.kind); pile.Removed += l => pileLog.Add("-" + l.kind);
+        var tax = pile.Add(LetterKind.Tax, ""); var j1 = pile.Add(LetterKind.Junk, "a"); var j2 = pile.Add(LetterKind.Junk, "b");
+        var j3 = pile.Add(LetterKind.Junk, "c");
+        Check(pile.Letters.Count == 3 && !pile.Letters.Contains(j1) && pile.Letters.Contains(tax) && pile.Letters.Contains(j3), "mail: a full pile pushes the OLDEST junk letter off, never the tax letter");
+        pile.Remove(j2); pile.Remove(j3);
+        var t2 = new LetterPile(1); t2.Add(LetterKind.Tax, "");
+        Check(t2.Add(LetterKind.Junk, "x") == null && t2.Letters.Count == 1, "mail: junk can't push a tax letter off a full pile");
+        Check(pile.FirstOf(LetterKind.Tax) == tax && pile.FirstOf(LetterKind.Junk) == null, "mail: FirstOf finds the tax letter");
+        Check(pile.Remove(tax) && !pile.Remove(tax), "mail: a letter is removed once");
+
+        var jt = new JunkMailTimer(new Random(11), 60f, 120f, 60f); float firstJunk = 0f; bool junkDue = false;
+        while (!junkDue && firstJunk < 400f) { firstJunk += 0.5f; junkDue = jt.Tick(0.5f); }
+        Check(junkDue && firstJunk >= 60f && firstJunk <= 120.5f, $"junk mail: the first letter comes between 60 and 120 s (at {firstJunk:F1} s), never before the grace");
+        var jt2 = new JunkMailTimer(new Random(12), 60f, 120f, 60f); int junkCount = 0; float elapsed = 0f;
+        for (int i = 0; i < 6000; i++) { elapsed += 0.1f; if (jt2.Tick(0.1f)) junkCount++; }
+        Check(junkCount >= 5 && junkCount <= 10, $"junk mail: about one every 60-120 s ({junkCount} in {elapsed:F0} s)");
+        var jt3 = new JunkMailTimer(new Random(13), 60f, 120f, 60f); bool paused = false;
+        for (int i = 0; i < 1000; i++) if (jt3.Tick(0f)) paused = true;
+        Check(!paused, "junk mail: a paused clock (gameDelta 0) brings none");
+
+        var seenSet = new System.Collections.Generic.HashSet<string>();
+        var tut = new TutorialTracker(id => seenSet.Contains(id), id => seenSet.Add(id));
+        Check(tut.Request("a") && tut.Request("b") && !tut.Request("a"), "tutorial: an id can wait in line only once");
+        Check(tut.TakeNext() == "a" && tut.TakeNext() == null && tut.Current == "a", "tutorial: one panel at a time, in order");
+        Check(!tut.Request("a"), "tutorial: the id on screen can't be requested again");
+        tut.Finish(); Check(seenSet.Contains("a") && tut.TakeNext() == "b", "tutorial: closing marks it seen and the next one follows");
+        tut.Finish(); Check(!tut.Request("a") && !tut.Request("b") && tut.TakeNext() == null, "tutorial: seen ids never come back");
+        seenSet.Clear(); Check(tut.Request("a"), "tutorial: after a reset they show again");
+
+        var tcat = UnityEditor.AssetDatabase.LoadAssetAtPath<TutorialCatalogSO>("Assets/Settings/Configs/Tutorials.asset");
+        Check(tcat != null, "Tutorials.asset exists");
+        if (tcat != null)
+        {
+            bool allThere = true;
+            foreach (var id in new[] { "phone_first_open", "first_call", "first_paused_call", "first_tax", "shop_first_open", "first_license", "first_delivery", "door_first_package", "first_pawn" })
+            { var e = tcat.Find(id); if (e == null || e.steps == null || e.steps.Length == 0 || string.IsNullOrEmpty(e.steps[0].text)) { allThere = false; Debug.LogError("[PhoneShop] tutorial text missing: " + id); } }
+            Check(allThere, "every planned tutorial has placeholder text");
+        }
 
         var ds = new DeliveryScheduler(); var arrived = new System.Collections.Generic.List<Order>(); ds.Arrived += arrived.Add;
         ds.Ship(new[] { "power_bank" }, 20f, false); ds.ShipJunk(5f);

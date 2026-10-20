@@ -131,7 +131,17 @@ public class ShopService : MonoBehaviour
         Version++;
     }
 
-    public CheckoutQuote Quote() => Cart.Quote(Shipping, Config);
+    /// <summary>"Leave it opened &amp; ready": +fee, the parcel skips the door and the unboxing (the items go to the desk).</summary>
+    public bool LeaveOpen { get; private set; }
+
+    public void SetLeaveOpen(bool on)
+    {
+        if (LeaveOpen == on) return;
+        LeaveOpen = on;
+        Version++;
+    }
+
+    public CheckoutQuote Quote() => Cart.Quote(Shipping, LeaveOpen, Config);
 
     /// <summary>Buys the cart. False (nothing changes) when the cart is empty or the player cannot afford the total.</summary>
     public bool TryBuy()
@@ -158,7 +168,8 @@ public class ShopService : MonoBehaviour
             }
             else physical.Add(def.id);
         }
-        if (physical.Count > 0) Delivery.Ship(physical, quote.etaSeconds, false);
+        if (physical.Count > 0) Delivery.Ship(physical, quote.etaSeconds, LeaveOpen);
+        if (physical.Count < Cart.Count) TutorialService.TryShow("first_license");   // a license was bought
 
         Cart.Clear();
         Version++;
@@ -190,22 +201,31 @@ public class ShopService : MonoBehaviour
     private void HandleArrived(Order order)
     {
         Version++;
-        if (order.junk) return;                                 // junk boxes arrive with Batch 3
+        if (order.junk) return;                                 // junk mail arrives with Phase 3.2
 
+        // The door takes it (doorbell, box in the tower, or straight to the desk when left opened). Without a door in the
+        // scene the items simply appear on the desk.
+        if (DoorController.Instance != null) DoorController.Instance.Receive(order);
+        else Deliver(order.itemIds);
+    }
+
+    /// <summary>The items are in the player's hands: mark them owned and put each one on the desk.</summary>
+    public void Deliver(IEnumerable<string> itemIds)
+    {
         var phone = PhoneController.Instance;
-        foreach (var id in order.itemIds)
+        foreach (var id in itemIds)
         {
+            if (!Ownership.Has(id)) continue;
             Ownership.MarkDelivered(id);
             var binding = BindingFor(id);
             if (binding != null)
             {
-                binding.gameObject.SetActive(true);
-                binding.transform.DOPunchScale(Vector3.one * 0.25f, 0.45f, 6, 0.5f).SetUpdate(true).SetTarget(this);
+                if (DoorController.Instance != null) DoorController.Instance.RevealOnDesk(binding);
+                else binding.gameObject.SetActive(true);
             }
-            if (phone != null && Ownership.Has(id))
+            if (phone != null)
                 phone.Inbox.Add(MessageKind.Delivery, $"{Ownership.Def(id).displayName} delivered", "It is on your desk.");
         }
-        if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.ShopPurchased);
     }
 
     // ---- Catalog lookups and checks ----

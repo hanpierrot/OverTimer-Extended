@@ -71,6 +71,7 @@ public class CheatMenuController : MonoBehaviour
             AddButton(cutsceneButtonContainer, $"GameOver {r}", () => TriggerGameOver(r));
         }
         
+        AddButton(cutsceneButtonContainer, "Reset tutorials", () => { if (TutorialService.Instance != null) TutorialService.Instance.ResetAll(); });
         AddButton(cutsceneButtonContainer, "FC Intro", PreviewFinalCountdownIntro);
         AddButton(cutsceneButtonContainer, "Stop Cutscene", () => CutsceneController.Instance?.StopAll());
     }

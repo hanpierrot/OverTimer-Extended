@@ -94,7 +94,11 @@ public class DeviceLayer : MonoBehaviour
     // ---- Phone ----
 
     /// <summary>Phone-only view. From the Laptop view the Laptop slides out to the left.</summary>
-    public void OpenPhone() => Apply(Mode.Phone);
+    public void OpenPhone()
+    {
+        Apply(Mode.Phone);
+        TutorialService.TryShow("phone_first_open");
+    }
 
     /// <summary>Back to the Laptop if it is open (it slides back in), otherwise back to the desk.</summary>
     public void ClosePhone()

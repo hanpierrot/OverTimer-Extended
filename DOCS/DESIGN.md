@@ -102,8 +102,8 @@ The play space is the room (I9, §4.1). Every object below is a clickable hotspo
 | **Card Box** | Card packs: buffs, debuffs, collectibles, win/lose cards (§5.4) |
 | **Card Collection** | Book showing every card type collected, across runs (§5.4) |
 | **Phone** | Smartphone: calls, Shop, Inbox, Taxes (§5.7–§5.9) |
-| **Mail Tray ("Taxes")** | Paper copy of ITRS tax bills (§5.8) |
-| **Door** | Parcels, tax letters and junk mail arrive here (§5.7) |
+| **Mail Tray ("Taxes")** | Skipped for now: tax letters arrive at the door instead (§5.8) |
+| **Door** | Parcels (a tower of boxes on the left) and letters (tax letters and junk mail, scattered on the right) arrive here (§5.7) |
 | **Egg Timer** | Direct clock source (§5.10) |
 | **Printer (Pawn)** | Sell your own objects; Buyback through the Phone (§5.11) |
 | **Cat** | Roaming chaos (§5.12) |
@@ -487,7 +487,7 @@ The Shop is an app on the Phone (§5.9). Everything the player owns that is not 
 | Item | Price | Notes |
 |---|---|---|
 | Power Bank | $25 | |
-| Card Box | $60 | Packs are still bought repeatedly from the Card Box on the desk (§5.4) |
+| Card Box | $40 | Packs are still bought repeatedly from the Card Box on the desk (§5.4) |
 | Lucky Nine stack | $30 | |
 | Blackjack license | $60 | Digital and permanent; activated from the Inbox; cannot be Pawned |
 | Billiards license | $60 | Digital and permanent; activated from the Inbox; cannot be Pawned |
@@ -498,11 +498,11 @@ Blackjack and Billiards cannot be opened until their license is activated.
 
 | Option | Cost | Wait |
 |---|---|---|
-| Standard | free | `shopStandardShipSeconds` 20 s |
-| Express | `shopExpressCost` $8 | `shopExpressSeconds` 5 s |
-| Leave it opened & ready | `shopReadyCost` +$3 | skips the unboxing |
+| Standard | free | `shopStandardSeconds` (fee `shopStandardFee`) 20 s |
+| Express | `shopExpressFee` $8 | `shopExpressSeconds` 5 s |
+| Leave it opened & ready | `shopLeaveOpenFee` +$3 | skips the unboxing |
 
-A parcel is announced by a doorbell. The **door** is part of the room. When the doorbell rings, the player clicks the door to focus the camera on it (Door view, §4.1), receives and unboxes the parcel, goes back to the Room view, and clicks the desk to return to the Desk view; the item appears in its place on the desk. An unboxed parcel leaves an **empty cardboard box**, which is a Junk item (a `JunkItem` component, pawnable like any other, small tier by default): the player can drag it onto the Printer to Pawn it for a little money. A parcel shipped with *Leave it opened & ready* leaves no box. Paper tax bills (§5.8) and junk mail arrive at the door as well.
+A parcel is announced by a doorbell. The **door** is part of the room. When the doorbell rings, the player clicks the door to focus the camera on it (Door view, §4.1), receives and unboxes the parcel (the boxes stand in a tower on the carpet; click one a few times and it springs open in a puff of smoke, `parcelClicksToOpen` = 3, and the box goes back to a small pool for the next delivery; at most `doorParcelSlots` = 4 stand at once, later ones wait), goes back to the Room view, and clicks the desk to return to the Desk view; the item appears in its place on the desk. An unboxed parcel leaves an **empty cardboard box**, which is a Junk item (a `JunkItem` component, pawnable like any other, small tier by default): the player can drag it onto the Printer to Pawn it for a little money. A parcel shipped with *Leave it opened & ready* leaves no box. Paper tax bills (§5.8) and junk mail arrive at the door as well.
 
 Neither shipping nor buying converts money to time (I3/I4 untouched). The Close The Shop card (§5.4) hides the Shop icon for 30 s.
 
@@ -514,13 +514,13 @@ Neither shipping nor buying converts money to time (I3/I4 untouched). The Close 
 | `billRate` | 20% of money **earned since the last bill** | `GameConfig` |
 | `billMinimum` | $20 | `GameConfig` |
 | `shortfallPenalty` | 2 s off the clock per $1 | `GameConfig` |
-| `billDeadline` | 30 s to pay | `GameConfig` |
+| `taxPayWindow` | 30 s to pay | `GameConfig` |
 
 Scaling with **earnings, not elapsed time** punishes hoarding and gives a difficulty curve for one line of code. **Only profit is income:** a stake returned to the player (the `MoneyService.StakeRefundReason` credit paid on a Billiards win, §5.6) is not counted as earnings, either for the bill or for the run statistics.
 
-**Flow.** Every `billInterval` seconds of running clock, `ITRSService` issues a bill, `max(billMinimum, earned × billRate)`, unless one is already pending (ITRS never issues a second bill while one is pending). The bill reaches the player two ways at once: a notification and a record in the **Taxes** app on the Phone, and a paper copy at the Mail Tray ("Taxes" desk object), which nags with a repeating sound every 2 s until opened. Paying through either one cancels the other.
+**Flow.** Every `billInterval` seconds of running clock, `ITRSService` issues a bill, `max(billMinimum, earned × billRate)`, unless one is already pending (ITRS never issues a second bill while one is pending). The bill reaches the player two ways at once: a notification and a record in the **Taxes** app on the Phone, and a **tax letter delivered at the door** (it arrives on the letters pile at the right of the door; opening it shows the paper copy). Paying through either one cancels the other. The Mail Tray ("Taxes" desk object, the clipboard on the desk) is skipped for now: the letter replaces it.
 - **Pay** spends the full amount; it is refused with a hint if the player cannot afford it.
-- **No Ignore button.** If the bill is not paid within `billDeadline`, the penalty applies once: `amountDue × shortfallPenalty` seconds come off the clock. Closing a panel is not ignoring.
+- **No Ignore button.** If the bill is not paid within `taxPayWindow`, the penalty applies once: `amountDue × shortfallPenalty` seconds come off the clock. Closing a panel is not ignoring.
 
 Bills, mail and the doorbell are non-blocking notifications; only phone calls interrupt (I8). A $0 bill (Tax Exemption) still has to be resolved.
 
@@ -788,7 +788,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `TicketOpen` | First time a ticket opens | Scratch with the mouse. Cash Out to collect. |
 | `WireOpen` | First time the Wire Task opens | Drag each plug to the socket of the same colour. |
 | `PhoneFirstRing` | First ring | The phone is ringing! Click it. The clock runs faster until it stops. |
-| `MailTrayFirstBill` | First bill | A tax bill arrived. Click the mail tray. |
+| `MailTrayFirstBill` | First bill | A tax bill arrived. A letter is at the door. |
 | `CatFirstBlock` | First time the Cat blocks an object | Drag the cat to move it. |
 | `EggTimerPlaced` | First time the Egg Timer is placed | Hold to wind it. Release and hold again to repeat. |
 | `ShopPurchased` | After a purchase | Your item is on the desk. |
@@ -803,7 +803,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | Blackjack license | Unlocks the Blackjack app on the Laptop. Activate it from your Inbox. |
 | Billiards license | Unlocks the Billiards app on the Laptop. Activate it from your Inbox. |
 
-**Tutorial panels.** Each new mechanic introduced by the Phone and the Shop (calls, the Inbox, the Taxes app, shipping and delivery, Buyback) gets one short panel, built on the same `TutorialPanel` and `HintService` as the intro.
+**Tutorial panels.** Each new mechanic introduced by the Phone and the Shop (calls, the Inbox, the Taxes app, shipping and delivery, Buyback) gets one short panel, built on the same `TutorialPanel` as the intro. A `TutorialService` shows each panel once (a seen flag per id in PlayerPrefs), one at a time, and the Clock is paused while it is open. Ids: `phone_first_open`, `first_call`, `first_paused_call`, `first_tax`, `shop_first_open`, `first_license`, `first_delivery`, `door_first_package`, `first_pawn` (`first_buyback` with Buyback). The text lives in a catalog asset; the cheat menu can reset the flags.
 
 ### 5.17 Reward Popup (Money and Time)
 

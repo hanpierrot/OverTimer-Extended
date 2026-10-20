@@ -264,6 +264,7 @@ public class PhoneController : DeskObject
         ClockService.Instance.SetSpeed(this, Config.ringClockMultiplier);
         if (ringingVisual != null) ringingVisual.SetActive(true);
         PlayRingSound();
+        TutorialService.TryShow("first_call");
         if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.PhoneFirstRing);
         Version++;
     }
@@ -305,6 +306,7 @@ public class PhoneController : DeskObject
                 DeviceLayer.Instance.LockPhoneOpen(this);   // can't walk away from a paused call
             }
         }
+        if (call.PausesClock) TutorialService.TryShow("first_paused_call");
         ShowLine();                                  // the caller's first line (a one-line script pays off right away)
     }
 
