@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
     
     public void GameOver(EndReason reason)
     {
+        if (IsGameOver) return;   // two endings in the same frame must not save two runs or play two cutscenes
         IsGameOver = true;
         LastEndReason = reason;
         InputManager.Instance.IsInputEnabled = false;
@@ -126,14 +127,14 @@ public class GameManager : MonoBehaviour
         Sequence fade = DOTween.Sequence().SetUpdate(true);
         fade.Join(group.DOFade(1f, endPanelFadeDuration));
         if (endGameText != null)
-        {
             fade.Join(endGameText.transform.DOScale(1f, endPanelFadeDuration).SetEase(Ease.OutBack));
-            fade.OnComplete(() =>
-            {
-                group.interactable = true;
-                group.blocksRaycasts = true;
-            });
-        }
+
+        // Outside the text check: without an end text the panel must still become clickable.
+        fade.OnComplete(() =>
+        {
+            group.interactable = true;
+            group.blocksRaycasts = true;
+        });
     }
     
     private string GetEndGameText(EndReason reason)

@@ -204,7 +204,7 @@ A **vein** is a fixed walk through the ordered block list (Dirt → Wood → Sto
 - **No clock penalty on closing the app.** Losing the ore is enough (I7).
 - Mining is the highest-risk number in the economy: if it dominates, lower `blockPayout` before touching anything else.
 - **Alternate endings:** completing `miningStreakTarget` (3) veins of the maximum length (10 blocks) in a row without closing or leaving the app wins the run (§5.14 D).
-- **Implementation note:** `MiningApp` has no usable static instance and its GameObject only `Awake()`s the first time the Laptop opens it. Anything outside the Laptop that must affect Mining (a card) uses static pending-state fields applied when the next vein banks: `MiningApp.QueueNextVeinMultiplier(float)` and `MiningApp.QueueNextVeinSlip()`, plus the static event `MiningApp.OnNextVeinEffectResolved` (§7 hazards).
+- **Implementation note:** `MiningApp` has no usable static instance and its GameObject only `Awake()`s the first time the Laptop opens it. Anything outside the Laptop that must affect Mining (a card) uses static pending-state fields applied when the next vein banks: `MiningApp.QueueNextVeinMultiplier(float)` and `MiningApp.QueueNextVeinSlip()` (§7 hazards).
 
 ### 5.3 Ticket Stack — Scratch cards
 
@@ -227,10 +227,12 @@ reward = Σ over every symbol that repeats:  baseReward × (count − 1) × symb
 
 | Symbol pool (`TicketSymbolConfig`) | Weights | Multipliers |
 |---|---|---|
-| Triple Match (3 symbols) | 60 / 28 / 12 | 0.25 / 0.55 / 1.6 |
-| Lucky Nine (5 symbols) | 30 / 25 / 20 / 15 / 10 | 0.2 / 0.3 / 0.45 / 0.65 / 1.1 |
+| Triple Match (3 symbols) | 50 / 33 / 17 | 0.25 / 0.5 / 1.2 |
+| Lucky Nine (5 symbols) | 30 / 25 / 20 / 15 / 10 | 0.15 / 0.25 / 0.5 / 0.8 / 1.2 |
 
-- **EV with every window revealed:** Triple Match $22.16 per $25 ticket (RTP 88.7%, 45% chance of a profit, all three windows alike 24% of the time); Lucky Nine $48.36 per $55 ticket (RTP 87.9%, 28% chance of a profit). Exact enumeration, not playtest data. **Payout range:** Triple Match $0 (12% of tickets) to $176 (three of the rarest); Lucky Nine $21–$229 (nine windows over five symbols can never pay $0; the maximum is nine of the rarest: 26 × 8 × 1.1). Because every revealed window can only add to the reward, scratching more never lowers it.
+The two tiers share one picture set and one rank order, from the commonest symbol to the rarest and best-paying one. Triple Match uses the 1st, 3rd and 5th symbol of Lucky Nine, with the same relative rarity (30 : 20 : 10 is 50 : 33 : 17), so a picture means the same thing in both tickets.
+
+- **EV with every window revealed:** Triple Match $22.25 per $25 ticket (RTP 89.0%, 46% chance of a profit, all three windows alike 17% of the time); Lucky Nine $48.62 per $55 ticket (RTP 88.4%, 32% chance of a profit). Exact enumeration, not playtest data. **Payout range:** Triple Match $0 (17% of tickets) to $132 (three of the rarest); Lucky Nine $16–$250 (nine windows over five symbols can never pay $0; the maximum is nine of the rarest: 26 × 8 × 1.2). Because every revealed window can only add to the reward, scratching more never lowers it.
 - **Symbols are rolled once, at purchase.** Scratching is a pure reveal animation and never changes the outcome.
 - **Reveal:** each window reveals itself when ≥ 60% of it is scratched (`revealThreshold`, `ScratchWindow` component). When every window is revealed the scratching is finished, but the ticket is **paid only when the player presses Cash Out**. The result label on the Cash Out button shows the reward from the windows revealed so far (only the open ticket updates it).
 - **Cash Out** is always allowed: it resolves the ticket on the windows revealed so far (unrevealed windows pay nothing), reveals the rest, pays, then closes the panel and returns the ticket to its pool.
@@ -538,7 +540,6 @@ The Phone is a smartphone with a **power button**: it boots in 5 s (the clock ke
 |---|---|---|
 | `ringIntervalMin` / `ringIntervalMax` | 30–60 s (random) | `GameConfig` |
 | `ringEffectMultiplier` | Clock ticks at **1.5×** while a call rings | `GameConfig` |
-| `answerTime` | 1.5 s after the click | `GameConfig` |
 | `maxRingDuration` | 10 s, then auto-stops | `GameConfig` |
 | `annoyanceMinGap` | 12 s between calls | `GameConfig` |
 
@@ -780,7 +781,6 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `MiningCloseLosesOre` | Closing with unconfirmed ore | Closing now loses your unconfirmed ore. Finish the vein to bank it. |
 | `BlackjackOpen` | First time Blackjack opens | Betting costs clock time, wins pay money. |
 | `BlackjackLeaveMidHand` | First deal | Leaving now forfeits your ante and hand. |
-| `TicketOpen` | (unused since `TicketCashOut`) | Scratch with the mouse. Cash Out to collect. |
 | `TicketCashOut` | First time any ticket panel opens | You can Cash Out any time. Windows you haven't scratched pay nothing. |
 | `MotherLodeTease` | Two full veins banked in a row | The ore is singing. One more full vein. |
 | `TicketCursed` | A cursed Lucky Nine ticket has `luckyNineCurseOmenWindows` windows open | Something is wrong with this ticket. Cash Out now. |
@@ -788,7 +788,6 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `PhoneFirstRing` | First ring | The phone is ringing! Click it. The clock runs faster until it stops. |
 | `MailTrayFirstBill` | First bill | A tax bill arrived. A letter is at the door. |
 | `CatFirstBlock` | First time the Cat blocks an object | Drag the cat to move it. |
-| `EggTimerPlaced` | First time the Egg Timer is placed | Hold to wind it. Release and hold again to repeat. |
 | `ShopPurchased` | After a purchase | Your item is on the desk. |
 
 **Shop catalogue.** The Shop (§5.7) sells everything outside the starting kit. Each entry has a one-line description of what the item does and how to use it; it never states a cost the player is meant to discover. Prices are separate fields.
@@ -801,7 +800,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | Blackjack license | Unlocks the Blackjack app on the Laptop. Activate it from your Inbox. |
 | Billiards license | Unlocks the Billiards app on the Laptop. Activate it from your Inbox. |
 
-**Tutorial panels.** Each new mechanic introduced by the Phone and the Shop (calls, the Inbox, the Taxes app, shipping and delivery, Buyback) gets one short panel, built on the same `TutorialPanel` as the intro. A `TutorialService` shows each panel once (a seen flag per id in PlayerPrefs), one at a time, and the Clock is paused while it is open. Ids: `phone_first_open`, `first_call`, `first_paused_call`, `first_tax`, `shop_first_open`, `first_license`, `first_delivery`, `door_first_package`, `first_pawn` (`first_buyback` with Buyback). The text lives in a catalog asset; the cheat menu can reset the flags.
+**First-time guidance.** The mechanics of the Phone, the Shop, the door and the Printer are explained with one-line hints (`ShowOnce`, so each shows once), not panels, and the Clock keeps running. Hint ids: `PhoneFirstOpen`, `PhoneFirstRing`, `PausedCall`, `MailTrayFirstBill` (the tax bill), `ShopFirstOpen`, `LicenseBought`, `PackageArrived`, `ParcelOpen`, `FirstPawn`. Only the intro at the start of the game uses the click-through `TutorialPanel`. The service-panel system (`TutorialService`, its catalog asset) was removed.
 
 ### 5.17 Reward Popup (Money and Time)
 

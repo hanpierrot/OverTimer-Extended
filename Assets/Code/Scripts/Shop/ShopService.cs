@@ -169,7 +169,7 @@ public class ShopService : MonoBehaviour
             else physical.Add(def.id);
         }
         if (physical.Count > 0) Delivery.Ship(physical, quote.etaSeconds, LeaveOpen);
-        if (physical.Count < Cart.Count) TutorialService.TryShow("first_license");   // a license was bought
+        if (physical.Count < Cart.Count && HintService.Instance != null) HintService.Instance.ShowOnce(HintId.LicenseBought);   // a license was bought
 
         Cart.Clear();
         Version++;

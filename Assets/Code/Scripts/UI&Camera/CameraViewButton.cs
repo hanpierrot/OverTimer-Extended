@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PointerReceiver))]
+[RequireComponent(typeof(PointerReceiver), typeof(ViewGate))]
 public class CameraViewButton : MonoBehaviour
 {
     [SerializeField] private CameraView target;

@@ -27,18 +27,16 @@ public class Meter : MonoBehaviour
 
     private void Start()
     {
+        // Read in Start, not OnEnable: the order of OnEnable between the Meter and MoneyService is not guaranteed.
+        MoneyService.Instance.OnMoneyChanged += HandleMoneyChanged;
         UpdateDisplay(MoneyService.Instance.Current);
     }
-    
-    private void OnEnable()
-    {
-        MoneyService.Instance.OnMoneyChanged += HandleMoneyChanged;
-    }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if (MoneyService.Instance != null)
             MoneyService.Instance.OnMoneyChanged -= HandleMoneyChanged;
+        if (Instance == this) Instance = null;
     }
 
     private void HandleFeedClicked()

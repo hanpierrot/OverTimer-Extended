@@ -49,30 +49,6 @@ PrefabInstance:
       propertyPath: panel
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2389709001777769897, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: closeButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2389709001777769897, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: resultLabel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2389709001777769897, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: scratchPanel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2389709001777769897, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: 'windows.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2389709001777769897, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: 'windows.Array.data[1]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2389709001777769897, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: 'windows.Array.data[2]'
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4193115759304318195, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
       propertyPath: 'ticketPool.Array.data[0]'
       value: 
@@ -81,30 +57,6 @@ PrefabInstance:
       propertyPath: 'ticketPool.Array.data[1]'
       value: 
       objectReference: {fileID: 8740196350086587522}
-    - target: {fileID: 5659454951777565010, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: closeButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5659454951777565010, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: resultLabel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5659454951777565010, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: scratchPanel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5659454951777565010, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: 'windows.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5659454951777565010, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: 'windows.Array.data[1]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5659454951777565010, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
-      propertyPath: 'windows.Array.data[2]'
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 5671463630271275149, guid: 65cb804175f6c5b46bfb63b1ee6f4bed, type: 3}
       propertyPath: m_Name
       value: TripleStack
@@ -410,60 +362,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1093238221414583096}
     - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: closeButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: resultLabel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: scratchPanel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
       propertyPath: tier.displayName
       value: Lucky Nine
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: windows.Array.size
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[1]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[2]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[3]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[4]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[5]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[6]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[7]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3515900173453443684, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[8]'
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4156830127801000941, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
       propertyPath: panel
@@ -474,60 +374,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: closeButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: resultLabel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: scratchPanel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
       propertyPath: tier.displayName
       value: Lucky Nine
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: windows.Array.size
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[1]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[2]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[3]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[4]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[5]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[6]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[7]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8981472211147900867, guid: 9fd73a6b3e6fe974da8d6806fc6ae3f1, type: 3}
-      propertyPath: 'windows.Array.data[8]'
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -630,10 +478,6 @@ PrefabInstance:
     - target: {fileID: 6809522940718714932, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6999371724034519915, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: windows.Array.size
-      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7202292046275394650, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
       propertyPath: m_Layer
@@ -751,10 +595,6 @@ PrefabInstance:
     - target: {fileID: 6809522940718714932, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6999371724034519915, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
-      propertyPath: windows.Array.size
-      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7202292046275394650, guid: 80907fe49436c5a4d91d74d4b2e9ecb3, type: 3}
       propertyPath: m_Layer

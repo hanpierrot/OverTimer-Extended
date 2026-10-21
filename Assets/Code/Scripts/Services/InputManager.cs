@@ -43,14 +43,28 @@ public class InputManager : MonoBehaviour
 
     private void OnEnable()
     {
+        if (pointAction == null) return;   // a duplicate that Awake destroyed never built its actions
         pointAction.Enable();
         clickAction.Enable();
     }
-    
+
     private void OnDisable()
     {
+        if (pointAction == null) return;
         pointAction.Disable();
         clickAction.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        if (clickAction != null)
+        {
+            clickAction.started -= OnClickStarted;
+            clickAction.canceled -= OnClickCanceled;
+            clickAction.Dispose();
+        }
+        if (pointAction != null) pointAction.Dispose();
+        if (Instance == this) Instance = null;
     }
 
     private void Update()

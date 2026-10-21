@@ -26,11 +26,14 @@ public class ScratchTicket : MonoBehaviour
     [SerializeField] private TicketSymbolConfig symbolConfig;
     
     [Header("Scratch Panel")]
-    [SerializeField] private GameObject scratchPanel;
-    [SerializeField] private ScratchWindow[] windows;
-    [SerializeField] private TMP_Text resultLabel;
-    [SerializeField] private Button closeButton;
-    
+    [SerializeField] private ScratchPanelView panelView;
+
+    // The panel is reached through one reference; these keep the code below readable.
+    private GameObject scratchPanel => panelView != null ? panelView.gameObject : null;
+    private ScratchWindow[] windows => panelView != null ? panelView.Windows : System.Array.Empty<ScratchWindow>();
+    private TMP_Text resultLabel => panelView != null ? panelView.ResultLabel : null;
+    private Button closeButton => panelView != null ? panelView.CloseButton : null;
+
     private int[] _activeSymbolIndex;
     private bool _isResolved;
     private bool _isPurchased;
