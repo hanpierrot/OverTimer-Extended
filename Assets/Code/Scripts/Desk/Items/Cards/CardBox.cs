@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PointerReceiver))]
 [RequireComponent(typeof(Collider2D))]
-public class CardBox : MonoBehaviour, IPawnable
+public class CardBox : MonoBehaviour, IPawnable, IRestorable
 {
     [SerializeField] private int packSize = 3;
     [SerializeField] private CardPackRevealPanel revealPanel;
@@ -11,7 +11,8 @@ public class CardBox : MonoBehaviour, IPawnable
     [SerializeField] private string cardResourcesPath = "CardSO";
 
     public int PawnValue => GameManager.Instance.GameConfig.cardBoxPawnValue;
-    public bool CanBePawned => true;
+    // Not while the pack reveal is open: the cards are already rolled and paid for.
+    public bool CanBePawned => revealPanel == null || !revealPanel.gameObject.activeInHierarchy;
 
     private PointerReceiver _receiver;
     private CardSO[] _allCards;
@@ -102,4 +103,7 @@ public class CardBox : MonoBehaviour, IPawnable
     }
     
     public void OnPawned() => gameObject.SetActive(false);
+
+    /// <summary>Bought back: nothing to reset, the box holds no state.</summary>
+    public void OnRestored() { }
 }

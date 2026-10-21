@@ -72,6 +72,7 @@ public class Pawn : MonoBehaviour
             if (binding != null && ShopService.Instance != null)
             {
                 var shop = ShopService.Instance;
+                int basis = shop.Ownership.Has(binding.ItemId) ? shop.Ownership.PawnBasis(binding.ItemId) : 0;
                 int value = shop.Ownership.Has(binding.ItemId) ? shop.Ownership.MarkPawned(binding.ItemId) : 0;
                 if (value <= 0)
                 {
@@ -79,6 +80,7 @@ public class Pawn : MonoBehaviour
                     return;
                 }
                 MoneyService.Instance.Add(value, "pawn");
+                if (pawnable is IRestorable) shop.RecordPawn(binding.ItemId, basis);     // before OnPawned(): the buyback clock starts now
                 pawnable.OnPawned();
                 TutorialService.TryShow("first_pawn");
                 return;

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(PointerReceiver))]
 [RequireComponent(typeof(Collider2D))]
-public class TicketStack : MonoBehaviour, IPawnable
+public class TicketStack : MonoBehaviour, IPawnable, IRestorable
 {
     [SerializeField] private ScratchTicket[] ticketPool;
     [SerializeField] private Vector2 spawnRangeMin = new Vector2(-4f, -3f);
@@ -23,7 +23,15 @@ public class TicketStack : MonoBehaviour, IPawnable
     }
 
     // Triple Match is part of the starting kit: it can't be sold for cash.
-    public bool CanBePawned => IsNine;
+    // Not while one of its tickets is on the desk or open.
+    public bool CanBePawned => IsNine && !AnyTicketOut();
+
+    private bool AnyTicketOut()
+    {
+        if (ticketPool == null) return false;
+        foreach (var t in ticketPool) if (t != null && t.gameObject.activeSelf) return true;
+        return false;
+    }
     
     private PointerReceiver receiver;
     
@@ -78,4 +86,7 @@ public class TicketStack : MonoBehaviour, IPawnable
     }
     
     public void OnPawned() => gameObject.SetActive(false);
+
+    /// <summary>Bought back: the pool is empty (a stack cannot be pawned while a ticket is out).</summary>
+    public void OnRestored() { }
 }
