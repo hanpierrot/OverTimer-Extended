@@ -17,6 +17,7 @@ public class CutsceneController : MonoBehaviour
     [SerializeField] private GameObject cutsceneRoot;
     [SerializeField] private EndCutscene[] endCutscenes;
     [SerializeField] private PlayableDirector finalCountdownDirector;
+    [SerializeField] private EndingFlourish mechanicWinFlourish;
     
     [Header("Clock End")]
     [SerializeField] private GameObject clockEndRoot;
@@ -52,9 +53,19 @@ public class CutsceneController : MonoBehaviour
         if (reason == EndReason.ClockWin || reason == EndReason.ClockLoss)
             return PlayClockEnding(reason, onFinished);
         
-        if (!_endDirectors.TryGetValue(reason, out var director)) return false;
-        PlayAndHold(director, onFinished);
-        return true;
+        if (_endDirectors.TryGetValue(reason, out var director))
+        {
+            PlayAndHold(director, onFinished);
+            return true;
+        }
+
+        if (mechanicWinFlourish != null && RunRating.IsMechanicWin(reason))
+        {
+            mechanicWinFlourish.Play(RunRating.Title(reason), onFinished);
+            return true;
+        }
+
+        return false;
     }
 
     public void StopAll()
@@ -69,6 +80,7 @@ public class CutsceneController : MonoBehaviour
         foreach (var d in _endDirectors.Values)
             ResetDirector(d);
         if (finalCountdownDirector != null) ResetDirector(finalCountdownDirector);
+        if (mechanicWinFlourish != null) mechanicWinFlourish.StopNow();
 
         if (cutsceneRoot != null) cutsceneRoot.SetActive(false);
         if (clockEndRoot != null) clockEndRoot.SetActive(false);

@@ -7,9 +7,18 @@ public static class RunRating
 
     public static bool IsWin(EndReason reason)
     {
-        return reason == EndReason.ClockWin
-               || reason == EndReason.SetCompletionWin
-               || reason == EndReason.FinalCountdownWin;
+        switch (reason)
+        {
+            case EndReason.ClockWin:
+            case EndReason.SetCompletionWin:
+            case EndReason.FinalCountdownWin:
+            case EndReason.TicketJackpotWin:
+            case EndReason.MotherLodeWin:
+            case EndReason.BlackjackCharlieWin:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static string Title(EndReason reason)
@@ -22,6 +31,10 @@ public static class RunRating
             case EndReason.ClockLoss: return "Time Out";
             case EndReason.FinalCountdownLoss: return "Countdown Lost";
             case EndReason.CreepyJesterLoss: return "The Han";
+            case EndReason.TicketJackpotWin: return "Jackpot";
+            case EndReason.TicketCurseLoss: return "Cursed Ticket";
+            case EndReason.MotherLodeWin: return "Mother Lode";
+            case EndReason.BlackjackCharlieWin: return "Seven-Card Charlie";
             default: return "";
         }
     }
@@ -52,6 +65,13 @@ public static class RunRating
 
         return 100f * weighted / weightSum;
     }
+    
+    public static bool IsMechanicWin(EndReason reason)
+    {
+        return reason == EndReason.TicketJackpotWin
+               || reason == EndReason.MotherLodeWin
+               || reason == EndReason.BlackjackCharlieWin;
+    }
 
     private static float OutcomeValue(EndReason reason, GameConfig config)
     {
@@ -63,6 +83,12 @@ public static class RunRating
             case EndReason.ClockLoss: return config.ratingClockLoss;
             case EndReason.FinalCountdownLoss: return config.ratingFinalCountdownLoss;
             case EndReason.CreepyJesterLoss: return config.ratingCreepyJesterLoss;
+            case EndReason.TicketJackpotWin:
+            case EndReason.MotherLodeWin:
+            case EndReason.BlackjackCharlieWin:
+                return config.ratingMechanicWin;
+            case EndReason.TicketCurseLoss:
+                return config.ratingMechanicLoss;
             default: return 0f;
         }
     }

@@ -34,6 +34,8 @@ public static class HintCatalog
             case HintId.PackageArrived: return "A package is at the door. Click the door.";
             case HintId.ParcelOpen: return "Click the box to open it.";
             case HintId.JunkFlyer: return "{0}";
+            case HintId.TicketCashOut: return "You can Cash Out any time. Windows you haven't scratched pay nothing.";
+            case HintId.CharlieTease: return "99% of gamblers quit right before the big win.";
             default: return "";
         }
     }

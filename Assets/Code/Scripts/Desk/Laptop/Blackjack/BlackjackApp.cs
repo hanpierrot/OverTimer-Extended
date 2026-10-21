@@ -37,7 +37,7 @@ public class BlackjackApp : LaptopApp
     [Tooltip("Hot Table streak readout. Shown only while the streak is 1 or more")]
     [SerializeField] private TMP_Text streakLabel;
 
-    private GameConfig config => GameManager.Instance.GameConfig;
+    private GameConfig Config => GameManager.Instance.GameConfig;
 
     private BlackjackGame _game;
     private bool _resolving;
@@ -85,7 +85,7 @@ public class BlackjackApp : LaptopApp
             float mult = CostModifierService.Instance != null
                 ? CostModifierService.Instance.GetMultiplier(CostModifierService.Target.Blackjack)
                 : 1f;
-            return Mathf.Round(config.blackjackAnte * mult);
+            return Mathf.Round(Config.blackjackAnte * mult);
         }
     }
     
@@ -116,7 +116,7 @@ public class BlackjackApp : LaptopApp
         doubleButton.onClick.AddListener(OnDouble);
 
         // Static for the session - ante/payouts don't change mid-run.
-        _payoutInfoText = $"win ${config.blackjackWinPayout} · push ${config.blackjackPushPayout} · bj ${config.blackjackNaturalPayout}";
+        _payoutInfoText = $"win ${Config.blackjackWinPayout} · push ${Config.blackjackPushPayout} · bj ${Config.blackjackNaturalPayout}";
         winningOutcomeLabel.text = _payoutInfoText;
 
         HideWinBadges();
@@ -129,9 +129,9 @@ public class BlackjackApp : LaptopApp
     /// Requires a margin above the ante so a loss is survivable.
     /// </summary>
     private bool CanAffordAnte =>
-        ClockService.Instance.CurrentSeconds >= CurrentAnte + config.blackjackClockMargin;
+        ClockService.Instance.CurrentSeconds >= CurrentAnte + Config.blackjackClockMargin;
 
-    private bool Available => !Banned && !_resolving;
+    private bool Available => !Banned && !_resolving && !GameManager.Instance.IsGameOver;
 
     // ---------- Actions ----------
 
@@ -141,7 +141,7 @@ public class BlackjackApp : LaptopApp
         if (!CanAffordAnte)
         {
             Flash("NOT ENOUGH TIME");
-            HintService.Instance?.Show(HintId.NotEnoughTime, Mathf.CeilToInt(CurrentAnte + config.blackjackClockMargin));
+            HintService.Instance?.Show(HintId.NotEnoughTime, Mathf.CeilToInt(CurrentAnte + Config.blackjackClockMargin));
             return;
         }
 
@@ -150,7 +150,8 @@ public class BlackjackApp : LaptopApp
         HintService.Instance?.ShowOnce(HintId.BlackjackLeaveMidHand);
         HideWinBadges();
         winningOutcomeLabel.text = _payoutInfoText; // clear any lingering flash/warning
-        _game.Deal();
+        bool charlieHand = RngService.Instance.Random.NextDouble() < Config.blackjackCharlieChance;
+        _game.Deal(charlieHand ? Config.blackjackCharlieCards : 0);
 
         if (_game.State == HandState.Resolved)
             StartCoroutine(Resolve());   // natural on the deal
@@ -163,6 +164,17 @@ public class BlackjackApp : LaptopApp
         if (!Available) return;
 
         _game.Hit();
+        
+        if (_game.PlayerHand.Count >= 4 && HintService.Instance != null)
+            HintService.Instance.ShowAlways(HintId.CharlieTease);
+        
+        if (_game.HasCharlie(Config.blackjackCharlieCards))
+        {
+            Refresh();
+            GameManager.Instance.GameOver(EndReason.BlackjackCharlieWin);
+            return;
+        }
+        
         if (_game.State == HandState.Resolved) StartCoroutine(Resolve());
         Refresh();
     }
@@ -185,7 +197,7 @@ public class BlackjackApp : LaptopApp
         if (!CanAffordAnte)
         {
             Flash("NOT ENOUGH TIME");
-            HintService.Instance?.Show(HintId.NotEnoughTime, Mathf.CeilToInt(CurrentAnte + config.blackjackClockMargin));
+            HintService.Instance?.Show(HintId.NotEnoughTime, Mathf.CeilToInt(CurrentAnte + Config.blackjackClockMargin));
             return;
         }
 
@@ -205,9 +217,9 @@ public class BlackjackApp : LaptopApp
 
         // Reveal beat. Keep this SHORT - the clock is running and dead
         // time on a resolved hand feels like theft.
-        yield return new WaitForSeconds(config.blackjackRevealDelay);
+        yield return new WaitForSeconds(Config.blackjackRevealDelay);
 
-        int payout = SettleHand(config, _game.Result, _game.DoubledDown, ref _streak);
+        int payout = SettleHand(Config, _game.Result, _game.DoubledDown, ref _streak);
         RefreshStreak();
 
         if (payout > 0)
@@ -225,7 +237,7 @@ public class BlackjackApp : LaptopApp
         playerWinLabel.SetActive(!dealerSide);
         dealerWinLabel.SetActive(dealerSide);
 
-        yield return new WaitForSeconds(config.blackjackResultDelay);
+        yield return new WaitForSeconds(Config.blackjackResultDelay);
 
         winningOutcomeLabel.text = _payoutInfoText; // back to the payout table, WIN badge stays until next deal
         _game.Reset();
@@ -269,7 +281,7 @@ public class BlackjackApp : LaptopApp
         if (streakLabel == null) return;
         streakLabel.gameObject.SetActive(_streak >= 1);
         if (_streak >= 1)
-            streakLabel.text = $"Hot Table x{_streak}  +{Mathf.RoundToInt(StreakBonus(config, _streak) * 100f)}% next win";
+            streakLabel.text = $"Hot Table x{_streak}  +{Mathf.RoundToInt(StreakBonus(Config, _streak) * 100f)}% next win";
     }
 
     private void Refresh()

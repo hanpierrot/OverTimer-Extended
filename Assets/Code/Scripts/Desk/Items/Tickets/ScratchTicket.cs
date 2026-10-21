@@ -36,13 +36,14 @@ public class ScratchTicket : MonoBehaviour
     private PointerReceiver _receiver;
     
     private bool _hasPreRevealWindow;
-    
+    private bool _isJackpot;
+    private bool _scratchedAll;
+
     private static bool _pendingPreRevealWindow;
     public static event Action OnPreRevealDelivered;
     
     public TicketTierKind TierKind => tierKind;
-    // Cards that queued the window and have not been served yet. A ticket takes them when it is bought and ends them when
-    // the window is delivered; a card that goes away first withdraws (see MiningApp for why).
+    
     private static readonly List<CardItem> _preRevealCards = new List<CardItem>();
     private CardItem[] _windowOwners = System.Array.Empty<CardItem>();
 
@@ -57,8 +58,7 @@ public class ScratchTicket : MonoBehaviour
         if (owner == null) return;
         if (_preRevealCards.Remove(owner) && _preRevealCards.Count == 0) _pendingPreRevealWindow = false;
     }
-
-    /// Restart is a scene reload and statics survive it: without this an unused Insider Tip leaked into the next run.
+    
     public static void ResetPending()
     {
         _pendingPreRevealWindow = false;
@@ -114,7 +114,7 @@ public class ScratchTicket : MonoBehaviour
         if (!_isPurchased || _isBeingViewed) return;
         _isBeingViewed = true;
 
-        HintService.Instance?.ShowOnce(HintId.TicketOpen);
+        HintService.Instance?.ShowOnce(HintId.TicketCashOut);
 
         if (closeButton != null) closeButton.onClick.AddListener(CashOut);
         
@@ -127,12 +127,13 @@ public class ScratchTicket : MonoBehaviour
         
         _isPurchased = true;
         _isResolved = false;
+        _scratchedAll = false;
 
         if (_pendingPreRevealWindow)
         {
             _pendingPreRevealWindow = false;
             _hasPreRevealWindow = true;
-            _windowOwners = _preRevealCards.ToArray();            // this ticket now owes the window to these cards
+            _windowOwners = _preRevealCards.ToArray(); 
             _preRevealCards.Clear();
         }
         
@@ -163,6 +164,23 @@ public class ScratchTicket : MonoBehaviour
         _activeSymbolIndex = new int[windows.Length];
         for (int i = 0; i < windows.Length; i++)
             _activeSymbolIndex[i] = PickWeightedIndex(symbolConfig.symbolPool, RngService.Instance.Random);
+
+        _isJackpot = false;
+        if (tierKind == TicketTierKind.LuckyNine
+            && RngService.Instance.Random.NextDouble() < Config.luckyNineJackpotChance)
+        {
+            _isJackpot = true;
+            int top = IndexOfHighestMultiplier(symbolConfig.symbolPool);
+            for (int i = 0; i < windows.Length; i++) _activeSymbolIndex[i] = top;
+        }
+    }
+
+    public static int IndexOfHighestMultiplier(SymbolEntry[] pool)
+    {
+        int best = 0;
+        for (int i = 1; i < pool.Length; i++)
+            if (pool[i].payoutMultiplier > pool[best].payoutMultiplier) best = i;
+        return best;
     }
 
     private void PopulateWindows()
@@ -186,7 +204,7 @@ public class ScratchTicket : MonoBehaviour
     
     private void RefreshLiveResult()
     {
-        if (_isResolved || resultLabel == null) return;
+        if (!_isBeingViewed || _isResolved || resultLabel == null) return;
 
         int reward = ComputeCurrentReward();
         resultLabel.text = reward > 0 ? $"+${reward}" : "$0";
@@ -209,12 +227,24 @@ public class ScratchTicket : MonoBehaviour
 
     private void Update()
     {
-        if (!_isBeingViewed || _isResolved) return;
+        if (!_isBeingViewed || _isResolved || _scratchedAll) return;
 
         foreach (var w in windows)
             if (!w.IsRevealed) return;
 
-        Resolve();
+        FinishScratching();
+    }
+
+    private void FinishScratching()
+    {
+        _scratchedAll = true;
+        RefreshLiveResult();
+
+        if (_isJackpot)
+        {
+            _isJackpot = false;
+            GameManager.Instance.GameOver(EndReason.TicketJackpotWin);
+        }
     }
 
     private void Resolve()
@@ -231,20 +261,11 @@ public class ScratchTicket : MonoBehaviour
         if (resultLabel != null)
             resultLabel.text = reward > 0 ? $"+${reward}" : "$0";
     }
-    
+
     private int ComputeCurrentReward()
     {
-        int maxMatch = CountBestMatch(out int bestSymbolIndex);
-        if (maxMatch <= 1) return 0;
-
-        float multiplier = symbolConfig.symbolPool[bestSymbolIndex].payoutMultiplier;
-        return Mathf.RoundToInt(BaseReward * (maxMatch - 1) * multiplier);
-    }
-
-    private int CountBestMatch(out int bestSymbolIndex)
-    {
         var counts = new Dictionary<int, int>();
-        
+
         for (int i = 0; i < windows.Length; i++)
         {
             if (!windows[i].IsRevealed) continue;
@@ -254,21 +275,13 @@ public class ScratchTicket : MonoBehaviour
             counts[idx] = c + 1;
         }
 
-        int best = 0;
-        int bestIdx = -1;
+        float reward = 0f;
         foreach (var kv in counts)
         {
-            bool better = kv.Value > best 
-                          || (kv.Value == best && bestIdx >= 0 && symbolConfig.symbolPool[kv.Key].payoutMultiplier > symbolConfig.symbolPool[bestIdx].payoutMultiplier);
-
-            if (better)
-            {
-                best = kv.Value;
-                bestIdx = kv.Key;
-            }
+            if (kv.Value <= 1) continue;
+            reward += BaseReward * (kv.Value - 1) * symbolConfig.symbolPool[kv.Key].payoutMultiplier;
         }
-        
-        bestSymbolIndex = bestIdx;
-        return best;
+
+        return Mathf.RoundToInt(reward);
     }
 }

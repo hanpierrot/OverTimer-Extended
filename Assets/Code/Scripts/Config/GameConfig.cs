@@ -236,6 +236,16 @@ public class GameConfig : ScriptableObject
     public float ratingClockLoss = 0f;
     public float ratingFinalCountdownLoss = 0.1f;
     public float ratingCreepyJesterLoss = 0f;
+    public float ratingMechanicWin = 0.95f;
+    public float ratingMechanicLoss = 0f;
+    
+    [Header("Alternate Endings (§5.14 D)")]
+    [Range(0f, 1f)] public float luckyNineJackpotChance = 0.006f;
+    [Range(0f, 1f)] public float luckyNineCurseChance = 0.005f;
+    public int miningStreakTarget = 3;
+    [Range(0f, 1f)] public float miningFullVeinStreakChance = 0.3f;
+    public int blackjackCharlieCards = 7;
+    [Range(0f, 1f)] public float blackjackCharlieChance = 0.04f;
     
     [Header("Money Popup")]
     public float moneyPopupMergeSeconds = 0.3f;
