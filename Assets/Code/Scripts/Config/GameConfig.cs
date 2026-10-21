@@ -241,9 +241,13 @@ public class GameConfig : ScriptableObject
     
     [Header("Alternate Endings (§5.14 D)")]
     [Range(0f, 1f)] public float luckyNineJackpotChance = 0.006f;
-    [Range(0f, 1f)] public float luckyNineCurseChance = 0.005f;
+    [Range(0f, 1f)] public float luckyNineCurseChance = 0.01f;
+    [Tooltip("Revealed windows of a cursed ticket before the warning hint appears")]
+    public int luckyNineCurseOmenWindows = 6;
+    [Tooltip("Seconds of shaking before the curse ends the run")]
+    public float curseBeatSeconds = 1.2f;
     public int miningStreakTarget = 3;
-    [Range(0f, 1f)] public float miningFullVeinStreakChance = 0.3f;
+    [Range(0f, 1f)] public float miningFullVeinStreakChance = 0.2f;
     public int blackjackCharlieCards = 7;
     [Range(0f, 1f)] public float blackjackCharlieChance = 0.04f;
     

@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,7 +39,11 @@ public class ScratchTicket : MonoBehaviour
     
     private bool _hasPreRevealWindow;
     private bool _isJackpot;
+    private bool _isCursed;       // Lucky Nine only: all nine windows are the lowest symbol; finishing the last window ends the run
+    private bool _omenShown;
     private bool _scratchedAll;
+
+    private static readonly Color CurseColor = new Color(0.85f, 0.15f, 0.15f, 1f);
 
     private static bool _pendingPreRevealWindow;
     public static event Action OnPreRevealDelivered;
@@ -107,6 +113,7 @@ public class ScratchTicket : MonoBehaviour
         foreach (var w in windows) w.OnRevealed -= HandleWindowRevealed;
         
         if (closeButton != null) closeButton.onClick.RemoveListener(CashOut);
+        if (scratchPanel != null) scratchPanel.transform.DOKill();
     }
 
     private void HandleTicketClicked(Vector2 worldPos)
@@ -166,13 +173,35 @@ public class ScratchTicket : MonoBehaviour
             _activeSymbolIndex[i] = PickWeightedIndex(symbolConfig.symbolPool, RngService.Instance.Random);
 
         _isJackpot = false;
-        if (tierKind == TicketTierKind.LuckyNine
-            && RngService.Instance.Random.NextDouble() < Config.luckyNineJackpotChance)
+        _isCursed = false;
+        _omenShown = false;
+        if (tierKind != TicketTierKind.LuckyNine) return;
+
+        // One roll, two exclusive bands: [0, jackpot) is a jackpot, [jackpot, jackpot + curse) is cursed.
+        double roll = RngService.Instance.Random.NextDouble();
+        if (roll < Config.luckyNineJackpotChance)
         {
             _isJackpot = true;
-            int top = IndexOfHighestMultiplier(symbolConfig.symbolPool);
-            for (int i = 0; i < windows.Length; i++) _activeSymbolIndex[i] = top;
+            FillAll(IndexOfHighestMultiplier(symbolConfig.symbolPool));
         }
+        else if (roll < Config.luckyNineJackpotChance + Config.luckyNineCurseChance)
+        {
+            _isCursed = true;
+            FillAll(IndexOfLowestMultiplier(symbolConfig.symbolPool));
+        }
+    }
+
+    private void FillAll(int symbolIndex)
+    {
+        for (int i = 0; i < windows.Length; i++) _activeSymbolIndex[i] = symbolIndex;
+    }
+
+    public static int IndexOfLowestMultiplier(SymbolEntry[] pool)
+    {
+        int best = 0;
+        for (int i = 1; i < pool.Length; i++)
+            if (pool[i].payoutMultiplier < pool[best].payoutMultiplier) best = i;
+        return best;
     }
 
     public static int IndexOfHighestMultiplier(SymbolEntry[] pool)
@@ -200,8 +229,25 @@ public class ScratchTicket : MonoBehaviour
         }
     }
     
-    private void HandleWindowRevealed(ScratchWindow window) => RefreshLiveResult();
-    
+    private void HandleWindowRevealed(ScratchWindow window)
+    {
+        RefreshLiveResult();
+        CheckCurseOmen();
+    }
+
+    // The way out of a cursed ticket: once enough windows are open the player is told to Cash Out.
+    private void CheckCurseOmen()
+    {
+        if (!_isCursed || _omenShown || !_isBeingViewed || _isResolved) return;
+
+        int revealed = 0;
+        foreach (var w in windows) if (w.IsRevealed) revealed++;
+        if (revealed < Config.luckyNineCurseOmenWindows) return;
+
+        _omenShown = true;
+        if (HintService.Instance != null) HintService.Instance.Show(HintId.TicketCursed);
+    }
+
     private void RefreshLiveResult()
     {
         if (!_isBeingViewed || _isResolved || resultLabel == null) return;
@@ -240,11 +286,31 @@ public class ScratchTicket : MonoBehaviour
         _scratchedAll = true;
         RefreshLiveResult();
 
+        if (_isCursed)
+        {
+            _isCursed = false;
+            StartCoroutine(CurseBeat());
+            return;
+        }
+
         if (_isJackpot)
         {
             _isJackpot = false;
             GameManager.Instance.GameOver(EndReason.TicketJackpotWin);
         }
+    }
+
+    // A short beat before the loss: the panel shakes and the label turns red, and Cash Out is locked so the player cannot flee.
+    private IEnumerator CurseBeat()
+    {
+        float seconds = Config.curseBeatSeconds;
+        if (closeButton != null) closeButton.interactable = false;
+        if (resultLabel != null) resultLabel.color = CurseColor;
+        if (scratchPanel != null) scratchPanel.transform.DOShakePosition(seconds, 8f, 30).SetUpdate(true);
+
+        yield return new WaitForSecondsRealtime(seconds);
+
+        if (!GameManager.Instance.IsGameOver) GameManager.Instance.GameOver(EndReason.TicketCurseLoss);
     }
 
     private void Resolve()
