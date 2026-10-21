@@ -49,7 +49,6 @@ MonoBehaviour:
   ringIntervalMin: 30
   ringIntervalMax: 60
   ringEffectMultiplier: 1.5
-  answerTime: 1.5
   maxRingDuration: 10
   annoyanceMinGap: 12
   crankTime: 1

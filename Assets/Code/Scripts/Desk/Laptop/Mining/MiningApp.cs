@@ -51,9 +51,6 @@ public class MiningApp : LaptopApp
     private static readonly List<CardItem> _multiplierCards = new List<CardItem>();
     private static readonly List<CardItem> _slipCards = new List<CardItem>();
 
-    /// Still raised when a queued effect is used; the cards no longer rely on it (they are ended directly).
-    public static event Action OnNextVeinEffectResolved;
-
     public static void QueueNextVeinMultiplier(float multiplier, CardItem owner = null)
     {
         _pendingNextVeinMultiplier = multiplier;
@@ -88,7 +85,6 @@ public class MiningApp : LaptopApp
         _pendingNextVeinSlip = false;
         _multiplierCards.Clear();
         _slipCards.Clear();
-        OnNextVeinEffectResolved = null;
         _open = null;
     }
 
@@ -220,8 +216,6 @@ public class MiningApp : LaptopApp
     /// <returns>True when this vein completes the Mother Lode streak.</returns>
     private bool BankVein()
     {
-        bool hadPendingEffect = _pendingNextVeinSlip || _pendingNextVeinMultiplier != 1f;
-
         bool slipUsed = false, multiplierUsed = false;
         if (_pendingNextVeinSlip)
         {
@@ -249,8 +243,6 @@ public class MiningApp : LaptopApp
         // End exactly the cards whose effect was just used (a slip no longer ends a Lucky Ruby that is still waiting).
         if (slipUsed) EndOwners(_slipCards);
         if (multiplierUsed) EndOwners(_multiplierCards);
-
-        if (hadPendingEffect) OnNextVeinEffectResolved?.Invoke();
 
         bool won = _fullVeinStreak >= config.miningStreakTarget;
         if (!won && _fullVeinStreak == config.miningStreakTarget - 1 && HintService.Instance != null)

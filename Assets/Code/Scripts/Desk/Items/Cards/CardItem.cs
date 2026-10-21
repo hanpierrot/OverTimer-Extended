@@ -37,6 +37,7 @@ public class CardItem : MonoBehaviour, IPawnable
     
     public void Setup(CardSO data)
     {
+        CancelInvoke(nameof(EndEffect));   // a pooled card must not inherit the previous card's timer
         _hasEnded = false;
         
         _data = data;
@@ -106,6 +107,7 @@ public class CardItem : MonoBehaviour, IPawnable
 
     public void OnPawned()
     {
+        CancelInvoke(nameof(EndEffect));
         if (CardHandManager.Instance != null) CardHandManager.Instance.Release(this);
         
         _effect?.OnPawned(this);

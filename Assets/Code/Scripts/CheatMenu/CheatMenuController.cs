@@ -126,7 +126,7 @@ public class CheatMenuController : MonoBehaviour
             AddCheat(TabEndings, $"GameOver {r}", () => TriggerGameOver(r));
         }
 
-        AddCheat(TabDev, "Reset tutorials", () => { if (TutorialService.Instance != null) TutorialService.Instance.ResetAll(); });
+        AddCheat(TabDev, "Reset intro tutorial", TutorialPanel.ResetSeen);
         AddCheat(TabDev, "FC Intro", PreviewFinalCountdownIntro);
         AddCheat(TabDev, "Stop Cutscene", () => CutsceneController.Instance?.StopAll());
     }

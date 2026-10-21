@@ -65,7 +65,6 @@ public class GameConfig : ScriptableObject
     public float ringIntervalMin = 30f;
     public float ringIntervalMax = 60f;
     public float ringEffectMultiplier = 1.5f;
-    public float answerTime = 1.5f;
     public float maxRingDuration = 10f;
     [Header("Phone - calls (Phone plan)")]
     public int callWeightTelemarketer = 25;

@@ -167,7 +167,7 @@ public class BlackjackApp : LaptopApp
 
         _game.Hit();
         
-        if (_game.PlayerHand.Count >= 4 && HintService.Instance != null)
+        if (_game.PlayerHand.Count >= 4 && _game.State == HandState.PlayerTurn && HintService.Instance != null)
             HintService.Instance.ShowAlways(HintId.CharlieTease);
         
         if (_game.HasCharlie(Config.blackjackCharlieCards))

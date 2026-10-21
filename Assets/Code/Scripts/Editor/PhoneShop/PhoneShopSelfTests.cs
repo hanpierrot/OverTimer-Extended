@@ -231,25 +231,6 @@ public static class PhoneShopSelfTests
         for (int i = 0; i < 1000; i++) if (jt3.Tick(0f)) paused = true;
         Check(!paused, "junk mail: a paused clock (gameDelta 0) brings none");
 
-        var seenSet = new System.Collections.Generic.HashSet<string>();
-        var tut = new TutorialTracker(id => seenSet.Contains(id), id => seenSet.Add(id));
-        Check(tut.Request("a") && tut.Request("b") && !tut.Request("a"), "tutorial: an id can wait in line only once");
-        Check(tut.TakeNext() == "a" && tut.TakeNext() == null && tut.Current == "a", "tutorial: one panel at a time, in order");
-        Check(!tut.Request("a"), "tutorial: the id on screen can't be requested again");
-        tut.Finish(); Check(seenSet.Contains("a") && tut.TakeNext() == "b", "tutorial: closing marks it seen and the next one follows");
-        tut.Finish(); Check(!tut.Request("a") && !tut.Request("b") && tut.TakeNext() == null, "tutorial: seen ids never come back");
-        seenSet.Clear(); Check(tut.Request("a"), "tutorial: after a reset they show again");
-
-        var tcat = UnityEditor.AssetDatabase.LoadAssetAtPath<TutorialCatalogSO>("Assets/Settings/Configs/Tutorials.asset");
-        Check(tcat != null, "Tutorials.asset exists");
-        if (tcat != null)
-        {
-            bool allThere = true;
-            foreach (var id in new[] { "phone_first_open", "first_call", "first_paused_call", "first_tax", "shop_first_open", "first_license", "first_delivery", "door_first_package", "first_pawn" })
-            { var e = tcat.Find(id); if (e == null || e.steps == null || e.steps.Length == 0 || string.IsNullOrEmpty(e.steps[0].text)) { allThere = false; Debug.LogError("[PhoneShop] tutorial text missing: " + id); } }
-            Check(allThere, "every planned tutorial has placeholder text");
-        }
-
         var ds = new DeliveryScheduler(); var arrived = new System.Collections.Generic.List<Order>(); ds.Arrived += arrived.Add;
         ds.Ship(new[] { "power_bank" }, 20f, false); ds.ShipJunk(5f);
         for (int i = 0; i < 49; i++) ds.Tick(0.1f); Check(arrived.Count == 0, "nothing at 4.9 s");

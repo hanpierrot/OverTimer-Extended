@@ -917,13 +917,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScratchTicket
   tierKind: 1
   symbolConfig: {fileID: 11400000, guid: 91bcc36e189d12047b79e829f05f79b9, type: 2}
-  scratchPanel: {fileID: 0}
-  windows:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  resultLabel: {fileID: 0}
-  closeButton: {fileID: 0}
+  panelView: {fileID: 0}
 --- !u!1 &7202292046275394650
 GameObject:
   m_ObjectHideFlags: 0

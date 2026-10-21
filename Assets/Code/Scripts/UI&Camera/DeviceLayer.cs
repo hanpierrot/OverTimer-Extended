@@ -97,7 +97,7 @@ public class DeviceLayer : MonoBehaviour
     public void OpenPhone()
     {
         Apply(Mode.Phone);
-        TutorialService.TryShow("phone_first_open");
+        if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.PhoneFirstOpen);
     }
 
     /// <summary>Back to the Laptop if it is open (it slides back in), otherwise back to the desk.</summary>

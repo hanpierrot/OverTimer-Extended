@@ -5,9 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// The click-through tutorial panel. At the start of a run it shows the intro (once, stored in PlayerPrefs); after that
-/// TutorialService reuses it for the first-time Phone / Shop / Delivery panels through Present(). The intro freezes the
-/// whole game (GameManager.PauseGame, as before); a service panel pauses the clock only (Q5).
+/// The click-through tutorial shown once at the start of the first run (stored in PlayerPrefs). It freezes the whole game
+/// (GameManager.PauseGame) until it is closed. Everything the Phone, Shop and Delivery add is explained with hints instead.
 /// </summary>
 public class TutorialPanel : MonoBehaviour, IPointerClickHandler
 {
@@ -34,15 +33,15 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
         new Step { text = "Click the <color=#FFD166>desk</color> to zoom in and work. Click the <color=#FFD166>door</color> when the bell rings.\nNow try your luck." },
     };
 
-    private Step[] _active;
-    private Action _onClosed;
-    private bool _isIntro;
-    private bool _clockHeld;
     private int _index;
     private bool _open;
 
-    /// <summary>True while any panel (the intro or a service panel) is on screen.</summary>
-    public bool IsOpen => _open;
+    /// <summary>Cheat menu: the intro will show again on the next run.</summary>
+    public static void ResetSeen()
+    {
+        PlayerPrefs.DeleteKey(SeenKey);
+        PlayerPrefs.Save();
+    }
 
     private void Awake()
     {
@@ -53,41 +52,26 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
     {
         if (PlayerPrefs.GetInt(SeenKey, 0) == 1 || steps.Length == 0)
         {
-            if (!_open) gameObject.SetActive(false);
+            gameObject.SetActive(false);
             return;
         }
 
-        if (!_open) Open();
+        Open();
     }
 
     private void OnDisable()
     {
-        ReleaseHolds();
+        // Never leave the game paused if the panel is switched off while it is open.
+        if (!_open) return;
+        _open = false;
+        if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
     }
 
     private void Open()
     {
-        _isIntro = true;
-        _active = steps;
-        _onClosed = null;
         _open = true;
         _index = 0;
         if (GameManager.Instance != null) GameManager.Instance.PauseGame();
-        ShowStep();
-    }
-
-    /// <summary>A first-time tutorial from TutorialService: shows these steps, pauses the clock, calls onClosed when done.</summary>
-    public void Present(Step[] panelSteps, Action onClosed)
-    {
-        if (_open || panelSteps == null || panelSteps.Length == 0) return;
-
-        _isIntro = false;
-        _active = panelSteps;
-        _onClosed = onClosed;
-        _open = true;
-        _index = 0;
-        gameObject.SetActive(true);
-        if (ClockService.Instance != null) { ClockService.Instance.Pause(this); _clockHeld = true; }
         ShowStep();
     }
 
@@ -96,13 +80,13 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
         if (!_open) return;
 
         _index++;
-        if (_index >= _active.Length) Close();
+        if (_index >= steps.Length) Close();
         else ShowStep();
     }
 
     private void ShowStep()
     {
-        Step step = _active[_index];
+        Step step = steps[_index];
         stepText.text = step.text;
 
         bool hasImage = step.image != null;
@@ -111,9 +95,8 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
 
         if (progressText != null)
         {
-            bool last = _index == _active.Length - 1;
-            string end = _isIntro ? "Click to start" : "Click to close";
-            progressText.text = $"{_index + 1}/{_active.Length}  -  {(last ? end : "Click to continue")}";
+            bool last = _index == steps.Length - 1;
+            progressText.text = $"{_index + 1}/{steps.Length}  -  {(last ? "Click to start" : "Click to continue")}";
         }
     }
 
@@ -122,23 +105,9 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
         if (!_open) return;
 
         _open = false;
-        if (_isIntro)
-        {
-            PlayerPrefs.SetInt(SeenKey, 1);
-            PlayerPrefs.Save();
-            if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
-        }
-        ReleaseHolds();
-
-        var done = _onClosed;
-        _onClosed = null;
+        PlayerPrefs.SetInt(SeenKey, 1);
+        PlayerPrefs.Save();
+        if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
         gameObject.SetActive(false);
-        if (done != null) done();
-    }
-
-    private void ReleaseHolds()
-    {
-        if (_clockHeld && ClockService.Instance != null) ClockService.Instance.Resume(this);
-        _clockHeld = false;
     }
 }

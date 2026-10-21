@@ -80,13 +80,17 @@ public class Pawn : MonoBehaviour
                 }
                 MoneyService.Instance.Add(value, "pawn");
                 pawnable.OnPawned();
-                TutorialService.TryShow("first_pawn");
+                ShowFirstPawnHint();
                 return;
             }
 
             MoneyService.Instance.Add(pawnable.PawnValue, "pawn");
             pawnable.OnPawned();
-            TutorialService.TryShow("first_pawn");
+            ShowFirstPawnHint();
         }
+    }
+    private static void ShowFirstPawnHint()
+    {
+        if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.FirstPawn);
     }
 }
