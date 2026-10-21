@@ -904,7 +904,7 @@ The public surface other systems rely on:
 - **Update loop:** each service ticks in its own `Update` (`ClockService`, `ITRSService`, `Phone`). Short-lived coroutines are fine for local sequencing (Blackjack reveal delay, Mining respawn, Cat clips).
 - **Libraries:** DOTween (card flips, hint fades, end panel fade), Unity Input System, TextMeshPro, Timeline.
 - **Billiards tests:** Editor self-tests and a preset verifier menu replay every stored solution headless (§5.6).
-- **Dev tools:** a cheat menu (F1 toggles it, F2 stops a cutscene) can give money and time, give any card, and preview or trigger every ending. It is a development tool, not a game feature, and is excluded from release builds.
+- **Dev tools:** a cheat menu (F1 toggles it, F2 stops a cutscene) can give money and time, give any card, preview or trigger every ending, and force the mechanic endings (next Blackjack hand a Charlie, next Lucky Nine a jackpot or a curse, open ticket windows, free tickets, every vein maximum length, set the Mother Lode streak, bank the current vein). The menu has five tabs (Endings, Games, Economy, Annoyance, Dev) and also covers clock and money presets, a hint browser, sample run history, and forcing the Phone, tax bill, junk flyer, package or Cat. The force switches live in `CheatFlags`, work only in the Editor and development builds, and reset on Restart. It is a development tool, not a game feature, and is excluded from release builds.
 
 **Two hazards, standing conventions —**
 

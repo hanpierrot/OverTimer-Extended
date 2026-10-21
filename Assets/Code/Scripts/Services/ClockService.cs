@@ -3,7 +3,6 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-// -1: every timer that reads GameDelta must see this frame's value, not last frame's (plan P3).
 [DefaultExecutionOrder(-1)]
 public class ClockService : MonoBehaviour
 {
@@ -23,7 +22,6 @@ public class ClockService : MonoBehaviour
     private readonly PauseLock _pause = new PauseLock();
     private readonly SpeedModifiers _speed = new SpeedModifiers();
     private bool _started;
-    // Immutable token for the legacy PauseCountdown/ResumeCountdown pair (Final Countdown intro).
     private static readonly object LegacyHolder = new object();
 
     /// <summary>True while the clock ticks: started, no pause holder, not over.</summary>
@@ -40,6 +38,7 @@ public class ClockService : MonoBehaviour
     
     public bool HasFinalCountdownIntercept { get; private set; }
     private float _finalCountdownResetSeconds;
+    
     public event Action OnFinalCountdownTriggered;
 
     /// <summary>Read-only product of every keyed speed modifier. Write through SetSpeed/ClearSpeed.</summary>
@@ -66,10 +65,7 @@ public class ClockService : MonoBehaviour
         UpdateDisplay();
 
         if (startOnAwake)
-        {
             StartCountdown();
-            //PauseCountdown();
-        }
     }
 
     private void Update()
@@ -85,7 +81,6 @@ public class ClockService : MonoBehaviour
         _started = true;
     }
 
-    // Kept so the Final Countdown intro works unchanged: thin wrappers around one holder.
     public void PauseCountdown() => Pause(LegacyHolder);
 
     public void ResumeCountdown() => Resume(LegacyHolder);

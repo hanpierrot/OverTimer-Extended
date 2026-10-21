@@ -111,4 +111,11 @@ public sealed class CallScheduler
         Call = null; Current = State.Gap; _timer = _cfg.callMinGap;
         RingStopped?.Invoke(c, how);
     }
+    
+    public void ForceRingNow()
+    {
+        if (Current != State.Waiting && Current != State.Gap) return;
+        Current = State.Waiting;
+        _timer = 0f;
+    }
 }

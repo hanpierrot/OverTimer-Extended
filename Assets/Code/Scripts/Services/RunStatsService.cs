@@ -86,6 +86,27 @@ public class RunStatsService : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    /// <summary>Dev: store a fabricated run in the history (cheat menu).</summary>
+    public void DebugAddRecord(RunRecord record)
+    {
+        if (!Debug.isDebugBuild) return;
+
+        record.runNumber = PlayerPrefs.GetInt("RunHistory_Total", 0) + 1;
+        PlayerPrefs.SetInt("RunHistory_Total", record.runNumber);
+        SaveRecord(record);
+    }
+
+    /// <summary>Dev: erase the whole run history (cheat menu).</summary>
+    public void DebugClearHistory()
+    {
+        if (!Debug.isDebugBuild) return;
+
+        for (int i = 0; i < HistorySize; i++) PlayerPrefs.DeleteKey($"RunHistory_{i}");
+        PlayerPrefs.DeleteKey("RunHistory_NextSlot");
+        PlayerPrefs.DeleteKey("RunHistory_Total");
+        PlayerPrefs.Save();
+    }
+
     public RunRecord[] LoadHistory()
     {
         var list = new List<RunRecord>();

@@ -150,7 +150,9 @@ public class BlackjackApp : LaptopApp
         HintService.Instance?.ShowOnce(HintId.BlackjackLeaveMidHand);
         HideWinBadges();
         winningOutcomeLabel.text = _payoutInfoText; // clear any lingering flash/warning
-        bool charlieHand = RngService.Instance.Random.NextDouble() < Config.blackjackCharlieChance;
+        bool charlieHand = CheatFlags.ConsumeCharlie()
+                           || RngService.Instance.Random.NextDouble() < Config.blackjackCharlieChance;
+        if (charlieHand && Debug.isDebugBuild) Debug.Log("[Ending] Blackjack: this hand is rigged for a Charlie");
         _game.Deal(charlieHand ? Config.blackjackCharlieCards : 0);
 
         if (_game.State == HandState.Resolved)
