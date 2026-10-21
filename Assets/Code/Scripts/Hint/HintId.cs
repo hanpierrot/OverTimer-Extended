@@ -4,5 +4,5 @@ public enum HintId
     HandFull, NoRoomToPlace, NotEnoughTime, TaxCannotAfford, ClickCooling, PowerBankRecharging, CannotPawn,
     LaptopIconDoubleClick, MiningOpen, MiningCloseLosesOre, BlackjackOpen, BlackjackLeaveMidHand,
     TicketOpen, WireOpen, PhoneFirstRing, MailTrayFirstBill, CatFirstBlock, EggTimerPlaced, ShopPurchased, PackageArrived, ParcelOpen, JunkFlyer,
-    CharlieTease, TicketCashOut
+    CharlieTease, TicketCashOut, TicketCursed, MotherLodeTease
 }

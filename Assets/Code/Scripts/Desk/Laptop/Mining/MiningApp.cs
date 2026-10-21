@@ -38,7 +38,10 @@ public class MiningApp : LaptopApp
     private int _damageDealt;
     private int _unconfirmed;
     private int _totalReceived;
-    
+    private int _fullVeinStreak;   // consecutive maximum-length veins banked without leaving the app (Mother Lode)
+
+    private int MaxVeinLength => Mathf.Min(config.veinLengthMax, blocks.blocks.Length, statusNodes.Length);
+
     private static float _pendingNextVeinMultiplier = 1f;
     private static bool _pendingNextVeinSlip;
 
@@ -114,7 +117,15 @@ public class MiningApp : LaptopApp
 
     private void StartVein()
     {
-        int length = RngService.Instance.Random.Next(config.veinLengthMin, config.veinLengthMax + 1);
+        var rng = RngService.Instance.Random;
+        int length = rng.Next(config.veinLengthMin, config.veinLengthMax + 1);
+        if (_fullVeinStreak > 0)
+        {
+            // After a full vein the chance of another replaces the normal 1 in 5 (it does not add to it).
+            length = rng.NextDouble() < config.miningFullVeinStreakChance
+                ? config.veinLengthMax
+                : rng.Next(config.veinLengthMin, config.veinLengthMax);
+        }
         length = Mathf.Min(length, blocks.blocks.Length, statusNodes.Length);
 
         _vein = new List<BlockTypeDefinition>(length);
@@ -161,7 +172,11 @@ public class MiningApp : LaptopApp
 
             if (_blockIndex >= _vein.Count)
             {
-                BankVein();
+                if (BankVein())
+                {
+                    GameManager.Instance.GameOver(EndReason.MotherLodeWin);
+                    return;   // the run is over: no next vein
+                }
                 StartCoroutine(RespawnAfterDelay());
                 return;
             }
@@ -174,7 +189,8 @@ public class MiningApp : LaptopApp
         RefreshLabels();
     }
 
-    private void BankVein()
+    /// <returns>True when this vein completes the Mother Lode streak.</returns>
+    private bool BankVein()
     {
         bool hadPendingEffect = _pendingNextVeinSlip || _pendingNextVeinMultiplier != 1f;
 
@@ -197,11 +213,21 @@ public class MiningApp : LaptopApp
 
         RefreshLabels();
 
+        // The streak counts consecutive maximum-length veins; a slipped vein or any shorter vein breaks it.
+        if (slipUsed) _fullVeinStreak = 0;
+        else if (_vein.Count >= MaxVeinLength) _fullVeinStreak++;
+        else _fullVeinStreak = 0;
+
         // End exactly the cards whose effect was just used (a slip no longer ends a Lucky Ruby that is still waiting).
         if (slipUsed) EndOwners(_slipCards);
         if (multiplierUsed) EndOwners(_multiplierCards);
 
         if (hadPendingEffect) OnNextVeinEffectResolved?.Invoke();
+
+        bool won = _fullVeinStreak >= config.miningStreakTarget;
+        if (!won && _fullVeinStreak == config.miningStreakTarget - 1 && HintService.Instance != null)
+            HintService.Instance.Show(HintId.MotherLodeTease);
+        return won;
     }
 
     private IEnumerator RespawnAfterDelay()
@@ -232,6 +258,7 @@ public class MiningApp : LaptopApp
     public override void OnAppClosed()
     {
         _unconfirmed = 0;
+        _fullVeinStreak = 0;   // leaving the app loses the streak
         RefreshLabels();
     }
 }
