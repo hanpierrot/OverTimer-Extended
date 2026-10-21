@@ -55,6 +55,15 @@ public class HintService : MonoBehaviour
         _sequence.Append(group.DOFade(0f, config != null ? config.hintFadeSeconds : 0.5f));
     }
     
+    /// <summary>Dev: forget which hints were already shown, in this session and in PlayerPrefs.</summary>
+    public void ResetSeen()
+    {
+        foreach (HintId id in System.Enum.GetValues(typeof(HintId))) PlayerPrefs.DeleteKey($"HintSeen_{id}");
+        PlayerPrefs.Save();
+        _seen.Clear();
+        _lastShown.Clear();
+    }
+
     public void ShowOnce(HintId id, params object[] args)
     {
         string key = $"HintSeen_{id}";

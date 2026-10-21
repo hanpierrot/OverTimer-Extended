@@ -65,8 +65,12 @@ public class ScratchTicket : MonoBehaviour
         if (_preRevealCards.Remove(owner) && _preRevealCards.Count == 0) _pendingPreRevealWindow = false;
     }
     
+    /// <summary>The ticket whose panel is open (dev tools use it to open windows).</summary>
+    public static ScratchTicket Viewed { get; private set; }
+
     public static void ResetPending()
     {
+        Viewed = null;
         _pendingPreRevealWindow = false;
         _preRevealCards.Clear();
         OnPreRevealDelivered = null;
@@ -114,12 +118,14 @@ public class ScratchTicket : MonoBehaviour
         
         if (closeButton != null) closeButton.onClick.RemoveListener(CashOut);
         if (scratchPanel != null) scratchPanel.transform.DOKill();
+        if (Viewed == this) Viewed = null;
     }
 
     private void HandleTicketClicked(Vector2 worldPos)
     {
         if (!_isPurchased || _isBeingViewed) return;
         _isBeingViewed = true;
+        Viewed = this;
 
         HintService.Instance?.ShowOnce(HintId.TicketCashOut);
 
@@ -130,7 +136,7 @@ public class ScratchTicket : MonoBehaviour
 
     public bool TryPurchase()
     {
-        if (!MoneyService.Instance.TrySpend(Cost, "ticket")) return false;
+        if (!CheatFlags.FreeTicketsOn && !MoneyService.Instance.TrySpend(Cost, "ticket")) return false;
         
         _isPurchased = true;
         _isResolved = false;
@@ -157,7 +163,8 @@ public class ScratchTicket : MonoBehaviour
         
         _isPurchased = false;
         _isBeingViewed = false;
-        
+        if (Viewed == this) Viewed = null;
+
         if (scratchPanel != null)
         {
             scratchPanel.SetActive(false);
@@ -178,16 +185,26 @@ public class ScratchTicket : MonoBehaviour
         if (tierKind != TicketTierKind.LuckyNine) return;
 
         // One roll, two exclusive bands: [0, jackpot) is a jackpot, [jackpot, jackpot + curse) is cursed.
+        // The roll is always drawn, so a cheat that forces the result does not change the random stream.
+        var forced = CheatFlags.ConsumeNextLuckyNine();
         double roll = RngService.Instance.Random.NextDouble();
-        if (roll < Config.luckyNineJackpotChance)
+        bool jackpot = forced == CheatFlags.NextTicket.Jackpot
+                       || (forced == CheatFlags.NextTicket.None && roll < Config.luckyNineJackpotChance);
+        bool cursed = !jackpot && (forced == CheatFlags.NextTicket.Cursed
+                       || (forced == CheatFlags.NextTicket.None
+                           && roll < Config.luckyNineJackpotChance + Config.luckyNineCurseChance));
+
+        if (jackpot)
         {
             _isJackpot = true;
             FillAll(IndexOfHighestMultiplier(symbolConfig.symbolPool));
+            if (Debug.isDebugBuild) Debug.Log("[Ending] Lucky Nine: this ticket is a JACKPOT");
         }
-        else if (roll < Config.luckyNineJackpotChance + Config.luckyNineCurseChance)
+        else if (cursed)
         {
             _isCursed = true;
             FillAll(IndexOfLowestMultiplier(symbolConfig.symbolPool));
+            if (Debug.isDebugBuild) Debug.Log("[Ending] Lucky Nine: this ticket is CURSED");
         }
     }
 
@@ -229,6 +246,21 @@ public class ScratchTicket : MonoBehaviour
         }
     }
     
+    /// <summary>Dev: open windows until `total` are revealed (9 = all), as if the player had scratched them.</summary>
+    public void RevealWindows(int total)
+    {
+        if (!_isBeingViewed || _isResolved) return;
+
+        int revealed = 0;
+        foreach (var w in windows) if (w.IsRevealed) revealed++;
+        for (int i = 0; i < windows.Length && revealed < total; i++)
+        {
+            if (windows[i].IsRevealed) continue;
+            windows[i].Reveal();
+            revealed++;
+        }
+    }
+
     private void HandleWindowRevealed(ScratchWindow window)
     {
         RefreshLiveResult();

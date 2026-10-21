@@ -269,6 +269,19 @@ public class CatController : MonoBehaviour
         _clipFinishedOnce = true;
     }
     
+    public void DebugBlock(PointerReceiver target)
+    {
+        if (!Debug.isDebugBuild || target == null || _sm.CurrentState == CatState.SittingBlocking) return;
+        _blockedTarget = target;
+        transform.position = target.transform.position;
+        _sm.ChangeState(CatState.SittingBlocking);
+    }
+
+    public void DebugRelease()
+    {
+        if (Debug.isDebugBuild && _sm.CurrentState == CatState.SittingBlocking) _sm.ChangeState(CatState.Wandering);
+    }
+    
     private void OnDrawGizmos()
     {
         Vector2 low = Vector2.Min(areaMin, areaMax);

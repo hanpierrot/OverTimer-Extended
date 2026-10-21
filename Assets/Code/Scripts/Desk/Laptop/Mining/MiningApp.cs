@@ -89,6 +89,7 @@ public class MiningApp : LaptopApp
         _multiplierCards.Clear();
         _slipCards.Clear();
         OnNextVeinEffectResolved = null;
+        _open = null;
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -117,6 +118,8 @@ public class MiningApp : LaptopApp
 
     private void StartVein()
     {
+        if (CheatFlags.TryConsumeMiningStreak(out int cheatStreak)) _fullVeinStreak = cheatStreak;
+
         var rng = RngService.Instance.Random;
         int length = rng.Next(config.veinLengthMin, config.veinLengthMax + 1);
         if (_fullVeinStreak > 0)
@@ -127,8 +130,9 @@ public class MiningApp : LaptopApp
                 : rng.Next(config.veinLengthMin, config.veinLengthMax);
         }
         length = Mathf.Min(length, blocks.blocks.Length, statusNodes.Length);
+        if (CheatFlags.FullVeinOn) length = MaxVeinLength;
 
-        _vein = new List<BlockTypeDefinition>(length);
+        _vein =new List<BlockTypeDefinition>(length);
         _totalVeinHp = 0;
         for (int i = 0; i < length; i++)
         {
@@ -172,12 +176,7 @@ public class MiningApp : LaptopApp
 
             if (_blockIndex >= _vein.Count)
             {
-                if (BankVein())
-                {
-                    GameManager.Instance.GameOver(EndReason.MotherLodeWin);
-                    return;   // the run is over: no next vein
-                }
-                StartCoroutine(RespawnAfterDelay());
+                CompleteVein();
                 return;
             }
 
@@ -187,6 +186,35 @@ public class MiningApp : LaptopApp
 
         RefreshProgress();
         RefreshLabels();
+    }
+
+    private void CompleteVein()
+    {
+        if (BankVein())
+        {
+            GameManager.Instance.GameOver(EndReason.MotherLodeWin);
+            return;   // the run is over: no next vein
+        }
+        StartCoroutine(RespawnAfterDelay());
+    }
+
+    /// <summary>The Mining app that is open (dev tools use it); null when it is closed or never opened.</summary>
+    private static MiningApp _open;
+
+    /// <summary>Dev: break the rest of the current vein at once and bank it, as if every swing had landed.</summary>
+    public static void DebugFinishVein()
+    {
+        if (_open != null) _open.FinishVeinNow();
+    }
+
+    private void FinishVeinNow()
+    {
+        if (_vein == null || _blockIndex >= _vein.Count) return;
+
+        for (; _blockIndex < _vein.Count; _blockIndex++)
+            _unconfirmed += config.blockPayout[Mathf.Min(_blockIndex, config.blockPayout.Length - 1)];
+
+        CompleteVein();
     }
 
     /// <returns>True when this vein completes the Mother Lode streak.</returns>
@@ -253,12 +281,17 @@ public class MiningApp : LaptopApp
         receivedLabel.text = $"Received: ${_totalReceived}";
     }
     
-    public override void OnAppOpened() => HintService.Instance?.ShowOnce(HintId.MiningOpen);
+    public override void OnAppOpened()
+    {
+        _open = this;
+        HintService.Instance?.ShowOnce(HintId.MiningOpen);
+    }
 
     public override void OnAppClosed()
     {
         _unconfirmed = 0;
         _fullVeinStreak = 0;   // leaving the app loses the streak
+        if (_open == this) _open = null;
         RefreshLabels();
     }
 }
