@@ -15,7 +15,7 @@ public class ItemDefSO : ScriptableObject
     public ItemKind kind;
     [Tooltip("Shop price. 0 for starting items that are never sold.")]
     public int price;
-    [Tooltip("Pawn basis for a pawnable STARTING item (Laptop: 150). Bought items pawn for 80% of the price paid.")]
+    [Tooltip("Pawn basis for a pawnable STARTING item (Laptop: 135). Bought items pawn for 80% of the price paid.")]
     public int catalogValue;
     public bool startsOwned, pawnable, sold;
     [Tooltip("A physical item that is its own object on the desk: it needs a ShopItemBinding in the scene (hides until owned, is looked up when pawned). Leave off for things that are UI or part of the wall.")]

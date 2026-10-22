@@ -572,7 +572,7 @@ Drag the **Printer** (the Pawn object) onto a pawnable object, or drag a small p
 
 | Pawnable | Value | Where |
 |---|---|---|
-| Laptop | $120 | `laptopPawnValue` |
+| Laptop | $108 (80% of its $135 catalog value) | `laptop.asset` `catalogValue` |
 | Card Box | $48 (80% of $60) | catalog |
 | Lucky Nine stack | $24 (80% of $30) | catalog |
 | Power Bank | $20 (80% of $25) | catalog |
@@ -583,7 +583,7 @@ Drag the **Printer** (the Pawn object) onto a pawnable object, or drag a small p
 
 **Pawnable interface.** `IPawnable` exposes `PawnValue`, `CanBePawned` and `OnPawned()`. After paying out, `Pawn` calls `OnPawned()`. Most objects deactivate themselves there; `CardItem` returns to its pool instead.
 
-**Buyback.** Buyback is a function of the Phone. Before `OnPawned()` runs, a pawn ledger records the item (any `IRestorable` item). The player can buy a pawned item back through the Phone: the price starts at ×1.10 of the pawn payout and rises to ×1.25 over 90 s of game time. The item returns to its place. Licenses are never in the ledger.
+**Buyback.** Buyback is a function of the Phone. Before `OnPawned()` runs, a pawn ledger records the item (any `IRestorable` item). The player can buy a pawned item back in the Shop app, on its PAWNED tab: the price starts at ×1.05 of the item's **full price** (the price paid, or the catalog value of a starting item) and rises in steps to ×1.15 over 90 s of game time (×1.08 at 30 s, ×1.12 at 60 s), so the round trip always costs money (Laptop: $135 catalog value, $108 payout, $142 to $156 to buy back). A buyback ships like a purchase (Standard or Express, optional Leave it opened, paid on top), arrives in a parcel at the door, and the item returns to its starting spot on the desk, reset (cooldowns and progress cleared). Licenses are never in the ledger and survive a pawned Laptop. Items refuse to be pawned while busy (Card Box with its reveal open, Lucky Nine stack with a ticket out).
 
 ### 5.12 Cat
 
@@ -935,7 +935,7 @@ Use these exact terms in code, commits, and agent prompts.
 | **Starting kit** | The items present at the start of every run; everything else is bought in the Shop |
 | **Catalog / License** | The item catalog asset with ids and prices / a permanent digital unlock for the Blackjack or Billiards app |
 | **Parcel / Door** | A delivered purchase / where parcels, paper bills and mail arrive (Door view) |
-| **Buyback** | Buying a pawned item back through the Phone at ×1.10 rising to ×1.25 of its pawn payout |
+| **Buyback** | Buying a pawned item back in the Shop app's PAWNED tab at ×1.05 rising to ×1.15 of its full price |
 | **Baseline** | $3/second — the throughput a task is judged against |
 | **Throughput** | Money per real second a task generates |
 | **Room** | The play space containing the desk and the door (I9) |

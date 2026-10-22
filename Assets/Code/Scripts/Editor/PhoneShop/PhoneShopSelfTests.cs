@@ -123,7 +123,7 @@ public static class PhoneShopSelfTests
     {
         var cat = new System.Collections.Generic.List<ItemDef>
         {
-            new ItemDef { id = "laptop", kind = ItemKind.Physical, catalogValue = 150, startsOwned = true, pawnable = true },
+            new ItemDef { id = "laptop", kind = ItemKind.Physical, catalogValue = 135, startsOwned = true, pawnable = true },
             new ItemDef { id = "phone", kind = ItemKind.Physical, startsOwned = true, pawnable = false },
             new ItemDef { id = "triple_stack", kind = ItemKind.Physical, startsOwned = true, pawnable = false },
             new ItemDef { id = "power_bank", kind = ItemKind.Physical, price = 25, pawnable = true, sold = true },
@@ -134,15 +134,15 @@ public static class PhoneShopSelfTests
         };
         var own = new Ownership(cat);
         Check(own.IsOwned("laptop") && !own.CanBuy("laptop") && own.CanBuy("power_bank"), "starting kit owned; shop items buyable");
-        Check(PawnMath.PawnValue(cat[0], 0, true) == 120, "Laptop pawns for $120 (80% of $150)");
+        Check(PawnMath.PawnValue(cat[0], 0, true) == 108, "Laptop pawns for $108 (80% of $135)");
         Check(PawnMath.PawnValue(cat[1], 0, true) == 0 && PawnMath.PawnValue(cat[2], 0, true) == 0, "Phone and Triple stack can't be pawned");
         Check(PawnMath.PawnValue(cat[6], 60, true) == 0, "licenses can't be pawned");
 
         // (pawn, buyback at 0 s, 30 s, 60 s, 95 s). Card Box is $40 (Ari, 2026-10-18), so its row differs from the plan's $60 row.
         var expect = new System.Collections.Generic.Dictionary<string, (int pawn, int b0, int b30, int b60, int b90)>
         {
-            { "laptop", (120, 165, 173, 180, 188) }, { "power_bank", (20, 28, 29, 30, 32) },
-            { "card_box", (32, 44, 46, 48, 50) }, { "lucky_stack", (24, 33, 35, 36, 38) },
+            { "laptop", (108, 142, 146, 152, 156) }, { "power_bank", (20, 27, 27, 28, 29) },
+            { "card_box", (32, 42, 44, 45, 46) }, { "lucky_stack", (24, 32, 33, 34, 35) },
         };
         bool tableOk = true;
         foreach (var kv in expect)
@@ -154,7 +154,7 @@ public static class PhoneShopSelfTests
             if (got != kv.Value) { tableOk = false; Debug.LogError($"[PhoneShop]    {kv.Key}: got {got} want {kv.Value}"); }
         }
         Check(tableOk, "pawn + buyback table matches the decision log for every item");
-        Check(PawnMath.BuybackMultiplier(29.9f) == 1.10f && PawnMath.BuybackMultiplier(90f) == 1.25f && PawnMath.NextStepIn(95f) < 0, "buyback steps, capped at 90 s");
+        Check(PawnMath.BuybackMultiplier(29.9f) == 1.05f && PawnMath.BuybackMultiplier(90f) == 1.15f && PawnMath.NextStepIn(95f) < 0, "buyback steps, capped at 90 s");
         bool roundTripLoses = true;
         for (int price = 1; price <= 500; price++) for (int s = 0; s <= 120; s += 15)
             if (PawnMath.BuybackPrice(price, s) <= (int)Math.Floor(price * 0.8)) roundTripLoses = false;
@@ -240,8 +240,17 @@ public static class PhoneShopSelfTests
         ds.Arrived += o => { if (!o.junk) ds.ShipJunk(1f); };
         ds.Ship(new[] { "card_box" }, 1f, true); ds.Tick(1.1f); Check(ds.InTransit.Count == 1, "a handler can ship from inside Arrived safely");
 
-        var led = new PawnLedger(); led.Record("laptop", 150, 100f);
-        Check(led.Price("laptop", 100f) == 165 && led.Price("laptop", 131f) == 173 && led.Price("laptop", 500f) == 188, "ledger buyback uses game time since pawn");
+        var led = new PawnLedger(); led.Record("laptop", 135, 100f);
+        Check(led.Price("laptop", 100f) == 142 && led.Price("laptop", 131f) == 146 && led.Price("laptop", 500f) == 156, "ledger buyback uses game time since pawn");
+        var bq = Checkout.QuoteBuyback("laptop", led.Price("laptop", 100f), Shipping.Standard, false, new ShopConfig());
+        Check(bq.total == 142 && bq.etaSeconds == 20f && bq.hasPhysical, "buyback quote, standard: item price only, 20 s");
+        bq = Checkout.QuoteBuyback("laptop", 171, Shipping.Express, true, new ShopConfig());
+        Check(bq.total == 171 + 8 + 3 && bq.etaSeconds == 5f, "buyback quote, express + leave open: fees on top of the price");
+        led.Remove("laptop"); Check(!led.TryGet("laptop", out _), "ledger: Remove forgets the entry");
+        var bbOwn = new Ownership(new[] { new ItemDef { id = "laptop", startsOwned = true, pawnable = true, catalogValue = 135 } });
+        Check(bbOwn.PawnBasis("laptop") == 135 && bbOwn.MarkPawned("laptop") == 108 && bbOwn.Of("laptop") == Ownership.Status.Pawned, "starting item: basis = catalog value, pays 108");
+        bbOwn.MarkBoughtBack("laptop"); Check(bbOwn.Of("laptop") == Ownership.Status.Ordered && bbOwn.PawnBasis("laptop") == 135, "bought back: Ordered again, same basis");
+        bbOwn.MarkDelivered("laptop"); Check(bbOwn.IsOwned("laptop"), "delivered: Owned again");
 
         var defs = new System.Collections.Generic.List<ItemDefCheck>
         {
@@ -273,7 +282,7 @@ public static class PhoneShopSelfTests
         if (!all) return;
         Check(own.Def("power_bank").price == 25 && own.Def("card_box").price == 40 && own.Def("lucky_stack").price == 30 &&
               own.Def("license_blackjack").price == 60 && own.Def("license_billiards").price == 60, "catalog prices: Power Bank 25, Card Box 40, Lucky Nine 30, licenses 60");
-        Check(own.Def("laptop").catalogValue == 150 && own.Def("laptop").pawnable && PawnMath.PawnValue(own.Def("laptop"), 0, true) == 120, "Laptop: value $150, pawns for $120");
+        Check(own.Def("laptop").catalogValue == 135 && own.Def("laptop").pawnable && PawnMath.PawnValue(own.Def("laptop"), 0, true) == 108, "Laptop: value $135, pawns for $108");
         bool startingOk = true;
         foreach (var id in new[] { "laptop", "phone", "printer", "meter", "collection", "egg_timer", "bear", "picture", "triple_stack" }) if (!own.IsOwned(id)) startingOk = false;
         foreach (var id in new[] { "power_bank", "card_box", "lucky_stack", "license_blackjack", "license_billiards" }) if (own.IsOwned(id) || !own.CanBuy(id)) startingOk = false;

@@ -18,7 +18,7 @@ MonoBehaviour:
   description: Your Laptop. Pawn it only if you must.
   kind: 0
   price: 0
-  catalogValue: 150
+  catalogValue: 135
   startsOwned: 1
   pawnable: 1
   sold: 0

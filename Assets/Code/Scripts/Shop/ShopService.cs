@@ -176,6 +176,57 @@ public class ShopService : MonoBehaviour
         return true;
     }
 
+    // ---- Pawn and buyback ----
+
+    /// <summary>Everything pawned that can come back, with the basis and the game time it was pawned.</summary>
+    public PawnLedger Ledger { get; } = new PawnLedger();
+    private readonly HashSet<string> _comingBack = new HashSet<string>();
+
+    /// <summary>Written by Pawn.cs BEFORE OnPawned() runs, only for items that implement IRestorable.</summary>
+    public void RecordPawn(string id, int basis)
+    {
+        Ledger.Record(id, basis, ClockService.Instance.GameTime);
+        Version++;
+    }
+
+    /// <summary>Live buyback price of a pawned item, or -1 when it is not in the ledger.</summary>
+    public int BuybackPrice(string id) => Ledger.TryGet(id, out _) ? Ledger.Price(id, ClockService.Instance.GameTime) : -1;
+
+    /// <summary>Seconds of game time until the buyback price steps up; -1 once capped (or not in the ledger).</summary>
+    public float BuybackNextStepIn(string id) =>
+        Ledger.TryGet(id, out var e) ? PawnMath.NextStepIn(ClockService.Instance.GameTime - e.pawnedAtGameTime) : -1f;
+
+    /// <summary>The receipt for buying a pawned item back with the current shipping choices, or null.</summary>
+    public CheckoutQuote QuoteBuyback(string id)
+    {
+        int price = BuybackPrice(id);
+        return price < 0 || Config == null ? null : Checkout.QuoteBuyback(id, price, Shipping, LeaveOpen, Config);
+    }
+
+    /// <summary>
+    /// Pays the buyback price plus shipping and ships the item like a purchase. On delivery it is Owned again and
+    /// restored (IRestorable). False (nothing changes) when it is not pawned or the player cannot afford it.
+    /// </summary>
+    public bool TryBuyBack(string id)
+    {
+        if (GameManager.Instance.IsGameOver || !Ownership.Has(id) || Ownership.Of(id) != Ownership.Status.Pawned) return false;
+        var quote = QuoteBuyback(id);
+        if (quote == null) return false;
+
+        if (!MoneyService.Instance.TrySpend(quote.total, "shop"))
+        {
+            if (HintService.Instance != null) HintService.Instance.Show(HintId.NotEnoughMoney);
+            return false;
+        }
+
+        Ledger.Remove(id);
+        Ownership.MarkBoughtBack(id);
+        _comingBack.Add(id);
+        Delivery.Ship(new[] { id }, quote.etaSeconds, LeaveOpen);
+        Version++;
+        return true;
+    }
+
     /// <summary>The Inbox's Activate button on a license message.</summary>
     public bool ActivateLicense(string itemId)
     {
@@ -220,6 +271,12 @@ public class ShopService : MonoBehaviour
             var binding = BindingFor(id);
             if (binding != null)
             {
+                // A bought-back item is reset while it is still hidden, then appears like a new purchase.
+                if (_comingBack.Remove(id))
+                {
+                    binding.transform.position = binding.HomePosition;     // not on the printer: it would be pawned again at once
+                    foreach (var r in binding.GetComponentsInChildren<IRestorable>(true)) r.OnRestored();
+                }
                 if (DoorController.Instance != null) DoorController.Instance.RevealOnDesk(binding);
                 else binding.gameObject.SetActive(true);
             }

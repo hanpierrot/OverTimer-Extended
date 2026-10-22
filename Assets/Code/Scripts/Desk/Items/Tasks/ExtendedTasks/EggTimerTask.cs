@@ -29,6 +29,12 @@ public class EggTimerTask : HoldTask
         spriteRenderer.sprite = holdSprites[index];
     }
 
+    public override void OnRestored()
+    {
+        _restUntil = 0f;
+        base.OnRestored();
+    }
+
     protected override void OnHoldReset()
     {
         if (spriteRenderer != null && holdSprites.Length > 0)

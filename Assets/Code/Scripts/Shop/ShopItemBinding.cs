@@ -13,7 +13,14 @@ public class ShopItemBinding : MonoBehaviour
 
     public string ItemId => itemId;
 
-    private void Awake() => ShopService.Register(this);      // queued if the service has not woken up yet
+    /// <summary>Where the item sat at the start of the run. A bought-back item returns here, not to the printer it was pawned on.</summary>
+    public Vector3 HomePosition { get; private set; }
+
+    private void Awake()
+    {
+        HomePosition = transform.position;
+        ShopService.Register(this);      // queued if the service has not woken up yet
+    }
 
     private void Start()
     {

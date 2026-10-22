@@ -5,7 +5,7 @@ using UnityEngine;
 /// UI panel (the home screen with the app icons). Closing happens via the
 /// panel's own CloseButton, not by clicking the desk object again.
 /// </summary>
-public class DeskLaptopOpener : DeskObject, IPawnable
+public class DeskLaptopOpener : DeskObject, IPawnable, IRestorable
 {
     [SerializeField] private GameObject laptopPanel;
     [SerializeField] private LaptopController laptopController;
@@ -24,5 +24,17 @@ public class DeskLaptopOpener : DeskObject, IPawnable
         laptopPanel.SetActive(true);
     }
     
-    public void OnPawned() => gameObject.SetActive(false);
+    public void OnPawned()
+    {
+        // Close the laptop (and the open app, which forfeits unbanked money) first. Licenses and the solved wire puzzle
+        // are not touched: they live in Ownership / LaptopController.Disabled.
+        if (laptopController != null) laptopController.CloseLaptop();
+        gameObject.SetActive(false);
+    }
+
+    /// <summary>Bought back: comes back closed.</summary>
+    public void OnRestored()
+    {
+        if (laptopPanel != null) laptopPanel.SetActive(false);
+    }
 }

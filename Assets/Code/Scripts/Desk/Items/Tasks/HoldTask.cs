@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(PointerReceiver))]
-public abstract class HoldTask : TaskBase, IPawnable
+public abstract class HoldTask : TaskBase, IPawnable, IRestorable
 {
     protected virtual float CrankTime => GameManager.Instance.GameConfig.crankTime;
     protected abstract int ConfigPawnValue { get; }
@@ -84,5 +84,15 @@ public abstract class HoldTask : TaskBase, IPawnable
         ClockService.Instance.AddSeconds(GameManager.Instance.GameConfig.timePayout, "hold task");
     }
     
-    public void OnPawned() => gameObject.SetActive(false);
+    public void OnPawned() => gameObject.SetActive(false);   // coroutines (the Power Bank's cooldown) stop with the object
+
+    /// <summary>Bought back: no progress, no cooldown, pressable again. Runs while the object is still hidden.</summary>
+    public virtual void OnRestored()
+    {
+        ResetHoldState();
+        var r = receiver != null ? receiver : GetComponent<PointerReceiver>();
+        if (r != null) r.SetInteractable(true);
+        OnHoldReset();
+        UpdateHoldSprite();
+    }
 }

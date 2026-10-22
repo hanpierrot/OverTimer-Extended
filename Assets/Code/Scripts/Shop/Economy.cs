@@ -11,7 +11,7 @@ public sealed class ItemDef
     public string displayName;
     public ItemKind kind;
     public int price;            // shop price; 0 for starting items that are never sold
-    public int catalogValue;     // pawn basis for starting items that ARE pawnable (Laptop: 150)
+    public int catalogValue;     // pawn basis for starting items that ARE pawnable (Laptop: 135)
     public bool startsOwned;
     public bool pawnable;
     public bool sold;            // appears in the shop
@@ -20,16 +20,18 @@ public sealed class ItemDef
 public static class PawnMath
 {
     public const float PawnRate = 0.8f;
-    static readonly (float afterSeconds, float mult)[] Steps = { (0f, 1.10f), (30f, 1.15f), (60f, 1.20f), (90f, 1.25f) };
+    static readonly (float afterSeconds, float mult)[] Steps = { (0f, 1.05f), (30f, 1.08f), (60f, 1.12f), (90f, 1.15f) };   // Ari 2026-10-21: gentler than the plan's 1.10-1.25
 
     /// What pawning pays. basis = price actually paid (after coupons), or catalogValue for a
     /// pawnable starting item. 0 = not pawnable.
     public static int PawnValue(ItemDef def, int pricePaid, bool owned)
     {
         if (!owned || !def.pawnable || def.kind == ItemKind.Digital) return 0;
-        int basis = pricePaid > 0 ? pricePaid : (def.startsOwned ? def.catalogValue : 0);
-        return (int)Math.Floor(basis * PawnRate);
+        return (int)Math.Floor(Basis(def, pricePaid) * PawnRate);
     }
+
+    /// The value both the pawn payout and the buyback price are taken from: what the player paid, or the catalog value of a starting item.
+    public static int Basis(ItemDef def, int pricePaid) => pricePaid > 0 ? pricePaid : (def.startsOwned ? def.catalogValue : 0);
 
     public static float BuybackMultiplier(float secondsSincePawn)
     {
@@ -98,6 +100,14 @@ public static class Checkout
         q.total = q.subtotal - q.discount + q.shipping + q.leaveOpenFee;
         return q;
     }
+
+    /// A buyback is one physical item at the live buyback price. It ships like a purchase: same Standard / Express and
+    /// Leave-it-opened fees, never discounted by a coupon.
+    public static CheckoutQuote QuoteBuyback(string itemId, int buybackPrice, Shipping ship, bool leaveOpen, ShopConfig c)
+    {
+        var def = new ItemDef { id = itemId, kind = ItemKind.Physical, price = buybackPrice };
+        return Quote(new[] { def }, ship, leaveOpen, false, c);
+    }
 }
 
 /// Run-time ownership of catalog items. One instance per run (scene object), never static.
@@ -131,10 +141,13 @@ public sealed class Ownership
     /// Only items that are sold, not owned and not already on the way.
     public bool CanBuy(string id) => _defs[id].sold && _state[id].status == Status.NotOwned;
 
+    /// The basis for pawn payout and buyback price (see PawnMath.Basis).
+    public int PawnBasis(string id) => PawnMath.Basis(_defs[id], _state[id].pricePaid);
+
     public void MarkOrdered(string id, int pricePaid) { var e = _state[id]; e.pricePaid = pricePaid; Set(id, Status.Ordered); }
     public void MarkDelivered(string id) => Set(id, Status.Owned);
 
-    /// Returns what the Printer pays. Batch 2: pawned items stay Pawned (shown "Sold") until Batch 4.
+    /// Returns what the Printer pays. The item stays Pawned until it is bought back.
     public int MarkPawned(string id)
     {
         int v = PawnMath.PawnValue(_defs[id], _state[id].pricePaid, IsOwned(id));

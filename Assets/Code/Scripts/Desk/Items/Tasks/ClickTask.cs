@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(PointerReceiver))]
-public class ClickTask : TaskBase, IPawnable
+public class ClickTask : TaskBase, IPawnable, IRestorable
 {
     [Header("Wobble")]
     [SerializeField] private float wobbleAngle = 5f;
@@ -92,7 +92,18 @@ public class ClickTask : TaskBase, IPawnable
     
     public void OnPawned()
     {
-        DOTween.Kill(this);
-        gameObject.SetActive(false);
+        DOTween.Kill(this, true);     // finish a wobble in progress so the item is not left tilted
+        gameObject.SetActive(false);  // also stops the unlock coroutine
+    }
+
+    /// <summary>Bought back: fresh click count, not locked, normal colour.</summary>
+    public void OnRestored()
+    {
+        currentClicks = 0;
+        RollRequiredClicks();
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null) sr.color = Color.white;
+        ResetCompletion();
+        OnWobbleFinished();
     }
 }

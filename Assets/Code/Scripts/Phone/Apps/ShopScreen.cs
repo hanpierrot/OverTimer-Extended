@@ -45,7 +45,19 @@ public class ShopScreen : MonoBehaviour
     [SerializeField] private Button buyButton;
     [SerializeField] private TMP_Text buyLabel;
 
+    [Header("Tabs (SHOP / PAWNED)")]
+    [SerializeField] private Button shopTabButton;
+    [SerializeField] private Image shopTabImage;
+    [SerializeField] private Button pawnedTabButton;
+    [SerializeField] private Image pawnedTabImage;
+    [SerializeField] private TMP_Text pawnedTabLabel;
+
+    private static readonly Color TabDim = new Color(0.65f, 0.65f, 0.65f, 1f);
+    private static readonly Color TabSelectedText = new Color(0.16f, 0.16f, 0.35f, 1f);
+
     private bool _cartView;
+    private bool _pawnedTab;       // the second tab: what the player pawned, with the live buyback price
+    private bool _buybackView;      // the receipt for buying the selected pawned item back (reuses the cart receipt)
     private string _selectedId;
     private int _signature = -1;
 
@@ -60,34 +72,82 @@ public class ShopScreen : MonoBehaviour
         {
             var shop = ShopService.Instance;
             if (shop == null || _selectedId == null) return;
+            if (_pawnedTab) { _buybackView = true; _signature = -1; return; }        // BUY BACK: on to the receipt
             if (shop.Cart.Contains(_selectedId)) shop.RemoveFromCart(_selectedId); else shop.AddToCart(_selectedId);
         });
         cartButton.onClick.AddListener(() => { _cartView = true; _signature = -1; });
-        backButton.onClick.AddListener(() => { _cartView = false; _signature = -1; });
+        backButton.onClick.AddListener(() => { _cartView = false; _buybackView = false; _signature = -1; });
+        if (shopTabButton != null) shopTabButton.onClick.AddListener(() => SelectTab(false));
+        if (pawnedTabButton != null) pawnedTabButton.onClick.AddListener(() => SelectTab(true));
         standardTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetShipping(Shipping.Standard); });
         expressTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetShipping(Shipping.Express); });
         openTile.onClick.AddListener(() => { if (ShopService.Instance != null) ShopService.Instance.SetLeaveOpen(!ShopService.Instance.LeaveOpen); });
         buyButton.onClick.AddListener(() =>
         {
             var shop = ShopService.Instance;
-            if (shop != null && shop.TryBuy()) { _cartView = false; _signature = -1; }
+            if (shop == null) return;
+            if (_buybackView)
+            {
+                if (shop.TryBuyBack(_selectedId)) { _buybackView = false; _selectedId = null; _signature = -1; }
+            }
+            else if (shop.TryBuy()) { _cartView = false; _signature = -1; }
         });
     }
 
     private void OnEnable() => _signature = -1;
+
+    private void SelectTab(bool pawned)
+    {
+        if (_pawnedTab == pawned && !_cartView && !_buybackView) return;
+        _pawnedTab = pawned;
+        _cartView = false;
+        _buybackView = false;
+        _selectedId = null;
+        _signature = -1;
+    }
 
     private void Update()
     {
         var shop = ShopService.Instance;
         if (shop == null || shop.Config == null) return;
 
-        int sig = shop.Version * 31 + (_cartView ? 1 : 0) + (_selectedId != null ? _selectedId.GetHashCode() : 0) * 7 + OrderSeconds(shop);
+        int sig = shop.Version * 31 + (_cartView ? 1 : 0) + (_pawnedTab ? 2 : 0) + (_buybackView ? 4 : 0)
+                  + (_selectedId != null ? _selectedId.GetHashCode() : 0) * 7 + OrderSeconds(shop) + (_pawnedTab ? PawnedSeconds(shop) : 0);
         if (sig == _signature) return;
         _signature = sig;
 
-        PhoneUi.SetActive(browseGroup, !_cartView);
-        PhoneUi.SetActive(cartGroup, _cartView);
-        if (_cartView) ShowCart(shop); else ShowBrowse(shop);
+        UpdateTabs();
+        bool receipt = _cartView || _buybackView;
+        PhoneUi.SetActive(browseGroup, !receipt);
+        PhoneUi.SetActive(cartGroup, receipt);
+        if (_buybackView) ShowBuybackReceipt(shop);
+        else if (_cartView) ShowCart(shop);
+        else if (_pawnedTab) ShowPawned(shop);
+        else ShowBrowse(shop);
+    }
+
+    private void UpdateTabs()
+    {
+        // The chosen tab is full colour, the other is dimmed (the tabs use the button sprite, not the 70x70 tile art).
+        if (shopTabImage != null) shopTabImage.color = _pawnedTab ? TabDim : Color.white;
+        if (pawnedTabImage != null) pawnedTabImage.color = _pawnedTab ? Color.white : TabDim;
+        TintTabLabel(shopTabButton, !_pawnedTab);
+        TintTabLabel(pawnedTabButton, _pawnedTab);
+    }
+
+    private static void TintTabLabel(Button tab, bool selected)
+    {
+        if (tab == null) return;
+        var label = tab.GetComponentInChildren<TMP_Text>(true);
+        if (label != null) label.color = selected ? TabSelectedText : Color.white;
+    }
+
+    // Whole seconds to the next price step of every pawned item, so the "goes up in" text redraws once a second.
+    private static int PawnedSeconds(ShopService shop)
+    {
+        int n = 0;
+        foreach (var e in shop.Ledger.All) n += Mathf.CeilToInt(shop.BuybackNextStepIn(e.itemId)) * 17 + shop.BuybackPrice(e.itemId);
+        return n;
     }
 
     // Whole seconds left on the orders, so the countdown redraws once a second.
@@ -113,6 +173,7 @@ public class ShopScreen : MonoBehaviour
         }
         list.SetRows(_rows, selectedIndex);
 
+        PhoneUi.SetActive(cartButton.gameObject, true);
         PhoneUi.SetText(cartLabel, shop.Cart.Count > 0 ? "CART " + shop.Cart.Count : "CART");
 
         if (selectedIndex < 0)
@@ -178,17 +239,89 @@ public class ShopScreen : MonoBehaviour
         AppendOrders(shop);
         PhoneUi.SetText(receiptLabel, _text.ToString());
 
+        SetShippingTiles(shop, quote.hasPhysical);
+
+        PhoneUi.SetActive(buyButton.gameObject, any);
+        PhoneUi.SetText(buyLabel, "BUY $" + quote.total);
+    }
+
+    private void SetShippingTiles(ShopService shop, bool visible)
+    {
         bool express = shop.Shipping == Shipping.Express;
         standardTileImage.sprite = express ? tileNormal : tileSelected;
         expressTileImage.sprite = express ? tileSelected : tileNormal;
-        PhoneUi.SetActive(standardTile.gameObject, quote.hasPhysical);
-        PhoneUi.SetActive(expressTile.gameObject, quote.hasPhysical);
+        PhoneUi.SetActive(standardTile.gameObject, visible);
+        PhoneUi.SetActive(expressTile.gameObject, visible);
         openTileImage.sprite = shop.LeaveOpen ? tileSelected : tileNormal;
-        PhoneUi.SetActive(openTile.gameObject, quote.hasPhysical);
+        PhoneUi.SetActive(openTile.gameObject, visible);
 
         if (summaryLabel != null) PhoneUi.SetText(summaryLabel, "");      // the total is on the receipt now (three tiles fill the row)
+    }
 
-        PhoneUi.SetActive(buyButton.gameObject, any);
+    // ---- Pawned tab ----
+
+    private void ShowPawned(ShopService shop)
+    {
+        _rows.Clear(); _rowIds.Clear();
+        int selectedIndex = -1;
+        foreach (var e in shop.Ledger.All)
+        {
+            if (e.itemId == _selectedId) selectedIndex = _rows.Count;
+            _rows.Add(new PhoneListRowData { title = shop.Ownership.Def(e.itemId).displayName, detail = "$" + shop.BuybackPrice(e.itemId) });
+            _rowIds.Add(e.itemId);
+        }
+        list.SetRows(_rows, selectedIndex);
+
+        PhoneUi.SetActive(cartButton.gameObject, false);       // buybacks are bought one at a time, from their own receipt
+        if (selectedIndex < 0)
+        {
+            SetPicture(null);
+            PhoneUi.SetText(nameLabel, "PAWNED");
+            PhoneUi.SetText(priceLabel, "");
+            PhoneUi.SetText(statusLabel, "");
+            _text.Clear().Append(_rows.Count == 0 ? "Nothing pawned." : "Pick an item on the left.");
+            AppendOrders(shop);
+            PhoneUi.SetText(descriptionLabel, _text.ToString());
+            PhoneUi.SetActive(addButton.gameObject, false);
+            return;
+        }
+
+        var item = shop.Ownership.Def(_selectedId);
+        var so = shop.Catalog != null ? shop.Catalog.Find(_selectedId) : null;
+        SetPicture(so != null ? so.icon : null);
+        PhoneUi.SetText(nameLabel, item.displayName);
+        PhoneUi.SetText(priceLabel, "$" + shop.BuybackPrice(_selectedId));
+        float next = shop.BuybackNextStepIn(_selectedId);
+        PhoneUi.SetText(statusLabel, next < 0f ? "Price is final" : "Goes up in " + Mathf.CeilToInt(next) + "s");
+        PhoneUi.SetText(descriptionLabel, so != null ? so.description : "");
+        PhoneUi.SetActive(addButton.gameObject, true);
+        PhoneUi.SetText(addLabel, "BUY BACK");
+        addButton.interactable = true;
+    }
+
+    private void ShowBuybackReceipt(ShopService shop)
+    {
+        var quote = shop.QuoteBuyback(_selectedId);
+        _rows.Clear(); _rowIds.Clear();
+        if (quote == null) { _buybackView = false; _signature = -1; return; }      // no longer pawned: back to the list
+
+        var def = shop.Ownership.Def(_selectedId);
+        _rows.Add(new PhoneListRowData { title = def.displayName, detail = "$" + quote.subtotal });
+        _rowIds.Add(def.id);
+        list.SetRows(_rows, -1);
+
+        _text.Clear().Append(def.displayName).Append(" (buy back)  $").Append(quote.subtotal).Append('\n')
+             .Append(shop.Shipping == Shipping.Express ? "Express $" : "Standard $").Append(quote.shipping)
+             .Append("  ").Append(Mathf.CeilToInt(quote.etaSeconds)).Append('s');
+        if (shop.LeaveOpen) _text.Append("\nOpened $").Append(quote.leaveOpenFee);
+        float next = shop.BuybackNextStepIn(_selectedId);
+        if (next >= 0f) _text.Append("\nPrice goes up in ").Append(Mathf.CeilToInt(next)).Append('s');
+        _text.Append("\nTOTAL $").Append(quote.total);
+        AppendOrders(shop);
+        PhoneUi.SetText(receiptLabel, _text.ToString());
+
+        SetShippingTiles(shop, true);
+        PhoneUi.SetActive(buyButton.gameObject, true);
         PhoneUi.SetText(buyLabel, "BUY $" + quote.total);
     }
 
@@ -216,7 +349,7 @@ public class ShopScreen : MonoBehaviour
         {
             case Ownership.Status.Owned: return "OWNED";
             case Ownership.Status.Ordered: return "ON WAY";
-            case Ownership.Status.Pawned: return "SOLD";
+            case Ownership.Status.Pawned: return shop.Ledger.TryGet(def.id, out _) ? "PAWNED" : "SOLD";
             default: return "$" + def.price;
         }
     }
@@ -228,7 +361,7 @@ public class ShopScreen : MonoBehaviour
         {
             case Ownership.Status.Owned: return "Owned";
             case Ownership.Status.Ordered: return def.kind == ItemKind.Digital ? "Activate it" : "On the way";
-            case Ownership.Status.Pawned: return "Sold";
+            case Ownership.Status.Pawned: return shop.Ledger.TryGet(def.id, out _) ? "Pawned (see PAWNED)" : "Sold";
             default: return "For sale";
         }
     }
@@ -237,6 +370,7 @@ public class ShopScreen : MonoBehaviour
     {
         var shop = ShopService.Instance;
         if (shop == null || index < 0 || index >= _rowIds.Count) return;
+        if (_buybackView) return;
         if (_cartView) shop.RemoveFromCart(_rowIds[index]);
         else _selectedId = _rowIds[index];
         _signature = -1;
