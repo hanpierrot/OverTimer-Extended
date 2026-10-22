@@ -10,6 +10,7 @@ public class CheatMenuToggle : MonoBehaviour
     private void Awake()
     {
         if (cheatPanel != null) cheatPanel.SetActive(false);
+        if (!Debug.isDebugBuild) enabled = false;
     }
 
     private void Update()

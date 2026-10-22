@@ -4,7 +4,7 @@
 **Team:** Ari · Han (+ Extended team)
 **Engine:** Unity (2D, URP) · mouse only · single scene
 **Platform:** WebGL, published on itch.io (custom template `Custom1080`). Windows `.exe` and mobile builds are possible targets; nothing in the design depends on them.
-**Version:** 2.1 (2026-10-19) — adds Highlight Hover (§4.2) and Reward Popup (§5.17)
+**Version:** 2.2 (2026-10-22) — v2.1 added Highlight Hover (§4.2) and Reward Popup (§5.17). v2.2 syncs the spec with what was built: the four mechanic endings and their cuts (§5.14 D), the ticket reward formula and symbol sets (§5.3), the licensed-card pool and the debuff dismiss fee (§5.4), pay-before-reveal in Blackjack (§5.5), keyed cost modifiers, hints instead of tutorial panels (§5.16), the Reward Popup config (§5.17) and the debug-only cheat menu (§7). Open question: phone call weights (§5.9)
 
 ---
 
@@ -37,12 +37,12 @@ These are the load-bearing rules. Breaking any one of them breaks the game.
 | # | Rule | Why |
 |---|---|---|
 | I1 | Clock starts at **120s**. The run is **won** at **≥600s** or by an alternate ending (§5.14). The run is **lost** at **≤0s** (unless the Final Countdown intercepts it once) or by an alternate ending (§5.14) | Core loop. The Clock path is the default; the alternate endings are additional and rare |
-| I2 | The Clock counts down in **real time**. Only a ringing call or a beneficial call (§5.9) and timed card effects (§5.4, including the Time Scarab freeze) may change its tick rate, through `ClockService.TickMultiplier`. The player can never pause it. Time Scarab is a buff that slows or stops the Clock only; the game keeps running and the player can still act | The countdown must never feel safe |
+| I2 | The Clock counts down in **real time**. Only a ringing call or a beneficial call (§5.9) and timed card effects (§5.4, including the Time Scarab freeze) may change its tick rate, through keyed speed modifiers (`ClockService.SetSpeed` / `ClearSpeed`; `TickMultiplier` is their read-only product). The player can never pause it. Time Scarab is a buff that slows or stops the Clock only; the game keeps running and the player can still act | The countdown must never feel safe |
 | I3 | **Only the Meter converts money → time.** One conversion point. (The Egg Timer is a direct time source, not a conversion; Blackjack converts time → money) | Keeps the economy legible and tunable |
 | I4 | **Nothing random may grant clock time directly** | Random gifts on the win condition kill tension and make balance impossible |
 | I5 | **The player never acts while game time is frozen.** Scratching, wiring, Billiards and ordinary panels never pause the Clock. A beneficial call stops the Clock only while the Laptop is locked and desk input is blocked. Game time freezes (`Time.timeScale = 0`) only for modal information panels (the intro tutorial and the card inspector), for scripted cutscenes (the Final Countdown intro and the end-of-run sequences) and after the run has ended | Trivially exploitable — pause, mine safely, unpause |
 | I6 | Exchange rate is **$1 = 1 second** (`exchangeRate`) | Every number in this doc assumes it |
-| I7 | Debuffs **close a door**, never drain the clock directly. Every debuff ends by time or can be escaped by Pawning the card (the one exception is a triggered Final Countdown, §5.14) | Player must be able to route around punishment |
+| I7 | Debuffs **close a door**, never drain the clock directly. Every debuff ends by time or can be escaped by Pawning the card, which costs a small money fee while the effect runs (the one exception is a triggered Final Countdown, §5.14) | Player must be able to route around punishment |
 | I8 | **Only calls interrupt, one at a time**, with at least 12 s between calls (§5.9). Bills, mail and the doorbell are non-blocking notifications. The Cat is exempt | Overlapping nags read as bugs, not pressure |
 | I9 | No physics simulation of the world and no character. The camera moves only between **fixed viewpoints** (Room, Desk, Door; §4.1) by click-driven transitions; no scrolling, no drag-pan, no free zoom, no rotation. `Physics2D` is used only for hit-testing and trigger overlaps (clicking, Pawn, Cat). Billiards runs its own deterministic vector-math simulation inside its app (§5.6) | Scope |
 | I10 | All tuning values live in data assets, never in script logic | The last hours of a project are for tuning, not refactoring |
@@ -248,28 +248,30 @@ The two tiers share one picture set and one rank order, from the commonest symbo
 
 **Data model.** `CardSO` (ScriptableObject) is the base: `cardName`, `image`, `description`, `rarity` (`C`/`R`/`SR`/`UR`), `weight`, `pawnValue`, `hideUntilCollected`, `collectionRegisterAs`. A plain `CardSO` with no effect is a valid collectible. `EffectCardSO : CardSO` is abstract and adds `isDebuff`, `BlocksPawning`, `OnPlaced(CardItem)`, `OnRemoved(CardItem)` and `OnPawned(CardItem)`. `CardItem` is the one shared prefab that gets `Setup(CardSO)` — **pooled, fixed 7 instances, never instantiated or destroyed.**
 
-**Rolling a pack.** A pack is 3 cards (`packSize` on `CardBox`). Each card rolls rarity first, then a specific card inside that rarity by `CardSO.weight`. Both rolls are weighted and independent.
+**Rolling a pack.** A pack is 3 cards (`packSize` on `CardBox`). Each card rolls rarity first, then a specific card inside that rarity by `CardSO.weight`. Both rolls are weighted and independent. A card whose `IsAvailable` is false is skipped: the cards tied to an app (No More Gambling, Not Valid 8-Ball, Bet More Money, High Risk, High Reward) are not rolled until that app's license is activated, because they would do nothing.
 
 | Key | Value | Where |
 |---|---|---|
 | `handCap` | **5** — counts every card currently Placed as a live `CardItem`, including ones already flipped face-down | `GameConfig` |
 | `packCost` | $35 | `GameConfig` |
+| `debuffDismissFee` | $6: the price of pawning a debuff whose effect is still running | `GameConfig` |
 | Rarity weights `commonWeight` / `rareWeight` / `superRareWeight` / `ultrRareWeight` | 60 / 25 / 12 / 3 (rarities `C` / `R` / `SR` / `UR`) | `GameConfig` |
 | `unrevealedCardSellValue` | $10 flat | `GameConfig` |
-| `cardBoxPawnValue` | $48 | `GameConfig` |
 
 **Pack reveal flow.** Buying a pack opens a panel showing a single pack image; clicking it shows a grid of 3 face-down cards that resolve **independently, in any order**. Per card:
 - **Sell** is available the whole time: `unrevealedCardSellValue` while face-down, the card's `pawnValue` once revealed.
 - Clicking the card art reveals it in place. Once revealed, **Place** always appears and is never gated by `handCap`; it is refused with a hint only when all 7 pooled `CardItem`s are in use. **Add to Collection** appears unless the card is a debuff or its Collection entry is already owned. **Sell** and **Add to Collection** are hidden for debuffs: a debuff can only be Placed.
 - Clicking an already-revealed card opens the shared `CardPanel` (name, rarity, pawn value, description) — the same panel used to inspect any Placed card. The panel freezes game time while open (I5).
 - The panel closes when all 3 cards are resolved.
+- While the panel is open a dark layer (`Dim`) covers the screen and blocks clicks, the HUD included, so the Meter cannot be used during a reveal. The Clock stays readable through the dim and keeps running. The panel itself is a rounded dark plate behind the pack and the three cards (`Plate`).
 
 **Card lifecycle.** A card does **not** disappear when its effect ends. `EffectCardSO.OnPlaced()` schedules its own end via `CardItem.ScheduleAutoRemove(duration)` or waits for a resolved-event; when it ends (`EndEffect()`), the card **flips face-down and stays on the desk, still counting against `handCap`, until the player Pawns it.** The first time a card type is spent to completion this way it is registered in the Collection. A card Pawned early does **not** earn Collection credit.
 
 - **Placing never checks `handCap`; the cap gates buying.** A pack bought with 4 cards Placed can bring the hand to 7, and debuffs are forced on the player even with a full hand. A hand kept at 5 cannot buy a pack, so it dodges new debuffs.
 - **`CardBox` refuses new purchases while the hand is full (≥ `handCap`).** The pool is exactly 7 `CardItem`s: 4 (last allowed purchase point) + 3 (pack size, worst case all forced debuffs). There is no path to instantiate a fresh `CardItem`, since each pooled instance holds scene-only UI references.
+- **Pawning a debuff early costs money.** If a debuff's effect is still running (the card has not ended), pawning it pays **nothing** and costs `debuffDismissFee` instead. If the player cannot afford the fee, the pawn is refused, the hint `DebuffDismissCost` shows, and the card moves to another spot of the placement area (a card still held moves when dropped). A card whose effect has ended pays its `pawnValue` as before. The penalty is money, never clock time (I7).
 - **I7 compliance:** `EffectCardSO.OnRemoved()` fires exactly once however a card's active period ends — natural expiry or an early Pawn — behind one `_hasEnded` guard on `CardItem`. This is what makes Pawning a debuff early a real escape hatch.
-- **Speed effects don't stack.** Every card or Phone ring that changes tick rate *writes* `ClockService.TickMultiplier` (the Phone sets 1.5 while ringing). When any of them ends it sets the multiplier back to 1. The last writer wins.
+- **Speed effects stack by multiplication, each under its own key.** A card or a Phone ring that changes the tick rate registers its multiplier with `ClockService.SetSpeed(key, multiplier)` (the Phone uses 1.5 while ringing) and removes it with `ClearSpeed(key)` when it ends. `TickMultiplier` is the product of every active modifier, clamped to 0–3, so Clock Up! (×1.5) during a ring (×1.5) ticks at ×2.25 and a Time Scarab (×0) freezes the Clock whatever else is active. Ending one effect never cancels another.
 - **Card backs hint at rarity** so holding is an informed bet.
 
 **Collection.** The Collection is a registry of card types ever obtained, saved across runs (§5.15). A card enters it by: ending its effect naturally; the *Add to Collection* button in a pack reveal; or being part of a completed win (§5.14). A card with `hideUntilCollected` is hidden in the Collection book until collected; a card with `collectionRegisterAs` is credited as the other card. The Collection book (`CardCollectionPanel`) shows the cards in alphabetical pages, uncollected ones as locked.
@@ -310,8 +312,8 @@ The two tiers share one picture set and one rank order, from the commonest symbo
 
 **Implementation notes.**
 - `DisableAppIconCardSO` hides the target app's **desktop icon** on the Laptop home screen (`DesktopIconView.SetVisible`), not the app itself, because apps only `Awake()` the first time they open. A hidden-icon request made before the icon exists is remembered and applied when it appears.
-- `ClockSpeedCardSO` writes `ClockService.TickMultiplier` directly (`float`).
-- Cost modifiers go through `CostModifierService`, one multiplier per purchase target (`Ticket`, `CardPack`, `Blackjack`, `Billiards`).
+- `ClockSpeedCardSO` registers its multiplier with `ClockService.SetSpeed(card, multiplier)` in `OnPlaced` and clears it in `OnRemoved`.
+- Cost modifiers go through `CostModifierService`: each card registers its own multiplier on a purchase target (`Ticket`, `CardPack`, `Blackjack`, `Billiards`) with `SetMultiplier(target, card, value)` and removes it with `ClearMultiplier(target, card)`. The multiplier of a target is the product of its cards (two ×1.5 cards give ×2.25), and one card ending never resets the other.
 - Effects that act on systems which may not be initialised yet use the static pending-state pattern (§7 hazards): `MiningApp.Queue…` and `ScratchTicket.QueuePreRevealWindow()` with `OnPreRevealDelivered`.
 
 ### 5.5 Blackjack — laptop app
@@ -334,7 +336,7 @@ The two tiers share one picture set and one rank order, from the commonest symbo
 
 - **The ante is `round(blackjackAnte × CostModifier(Blackjack))`**; the margin check and the Double label use the same figure. A refused deal shows a *Not enough time* hint.
 - **Hot Table:** a win or dealer bust raises a streak by 1, a push keeps it, a loss or bust resets it; each payout is multiplied by `1 + min(streak × blackjackStreakStep, blackjackStreakCap)`. Money only. The streak also resets when the app is closed or switched.
-- **Closing the app mid-hand forfeits the ante and the hand.**
+- **Closing the app mid-hand forfeits the ante and the hand.** A hand that has already resolved is paid at once, before the reveal animation, so closing the app during the reveal does not lose the payout.
 - Self-balancing: attractive when you are rich in time, suicidal when you are not. A hand burns about 31 s of clock, so the app needs the clock above the margin.
 - The Laptop **must not go fullscreen** — Mining, Blackjack and Billiards are high-throughput; if they cover the desk, the Phone, Cat and Mail Tray stop existing.
 - `BlackjackApp` owns ante, payout, safety rails and UI; `BlackjackGame` owns cards and rules (pure logic, seeded from `RngService`).
@@ -549,7 +551,7 @@ The Phone is a smartphone with a **power button**: it boots in 5 s (the clock ke
 
 > **Cat is exempt.** Its block is resolved by a single drag (pick the cat up, drop it elsewhere), so it carries no "two nags stacking" risk. If the Cat's interaction ever becomes a timed nag, it joins the call scheduler.
 
-Cards interact with the Phone: Cable Eater turns the Phone and the Laptop off (§5.4); Spam Robocall halves the call interval (`StartRobocalls` / `StopRobocalls`).
+Cards interact with the Phone: Cable Eater turns the Phone and the Laptop off (§5.4); Spam Robocall halves the call interval (`PhoneController.AddRobocalls(holder)` / `RemoveRobocalls(holder)`, one holder per card).
 
 The Phone's real job is making Mining scary. Without it, the laptop has no tension.
 
@@ -573,13 +575,13 @@ Drag the **Printer** (the Pawn object) onto a pawnable object, or drag a small p
 | Pawnable | Value | Where |
 |---|---|---|
 | Laptop | $108 (80% of its $135 catalog value) | `laptop.asset` `catalogValue` |
-| Card Box | $48 (80% of $60) | catalog |
+| Card Box | $32 (80% of $40) | catalog |
 | Lucky Nine stack | $24 (80% of $30) | catalog |
 | Power Bank | $20 (80% of $25) | catalog |
 | Junk (small / medium / large), including the empty boxes of unboxed parcels | $5 / $15 / $30 | `junkSmallPawnValue` / `junkMediumPawnValue` / `junkLargePawnValue` |
 | A card on the desk | the card's `pawnValue` | `CardSO` |
 
-**Not pawnable:** the starting kit except the Laptop (Egg Timer, Bear, Picture, Triple Match stack, Wire Task, Printer, Collection), licenses, Meter, Clock, Phone, Mail Tray, Cat, and a **triggered Final Countdown card** (§5.14). Pawning the Phone would delete an entire pressure system. Trying to Pawn a protected object shows a hint.
+**Not pawnable:** the starting kit except the Laptop (Egg Timer, Bear, Picture, Triple Match stack, Wire Task, Printer, Collection), licenses, Meter, Clock, Phone, Mail Tray, Cat, and a **triggered Final Countdown card** (§5.14). Pawning the Phone would delete an entire pressure system. Trying to Pawn a protected object shows a hint. A debuff that is still active is the exception to "a card pays its `pawnValue`": see §5.4 (it costs `debuffDismissFee`).
 
 **Pawnable interface.** `IPawnable` exposes `PawnValue`, `CanBePawned` and `OnPawned()`. After paying out, `Pawn` calls `OnPawned()`. Most objects deactivate themselves there; `CardItem` returns to its pool instead.
 
@@ -767,7 +769,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `HandFull` | Hand full when buying a pack | Your hand is full (5). Pawn a card to make room. |
 | `NoRoomToPlace` | No free card slot to Place a revealed card | No room to place it. Pawn a card first. |
 | `NotEnoughTime` | Clock below ante + margin | Not enough time to play. You need 35 s on the clock. |
-| `TaxCannotAfford` | Cannot afford the bill | Not enough money to pay. Missing the deadline costs clock time. |
+| `TaxCannotAfford` | Cannot afford the bill | Not enough money to pay. Ignoring costs clock time. |
 | `ClickCooling` | Click Task cooling down | Still cooling down. |
 | `PowerBankRecharging` | Power Bank recharging | Recharging... |
 | `CannotPawn` | Object cannot be pawned | This can't be pawned. |
@@ -786,9 +788,19 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `TicketCursed` | A cursed Lucky Nine ticket has `luckyNineCurseOmenWindows` windows open | Something is wrong with this ticket. Cash Out now. |
 | `WireOpen` | First time the Wire Task opens | Drag each plug to the socket of the same colour. |
 | `PhoneFirstRing` | First ring | The phone is ringing! Click it. The clock runs faster until it stops. |
-| `MailTrayFirstBill` | First bill | A tax bill arrived. A letter is at the door. |
+| `MailTrayFirstBill` | First bill (also when its letter lands at the door) | A tax bill arrived. Pay it in the Taxes app or click the mail tray. |
 | `CatFirstBlock` | First time the Cat blocks an object | Drag the cat to move it. |
 | `ShopPurchased` | After a purchase | Your item is on the desk. |
+| `DebuffDismissCost` | Pawning an active debuff without enough money | Not enough money to dismiss it. Pawning an active debuff costs ${0}. |
+| `PhoneFirstOpen` | First time the Phone opens | Open an app: Call, Inbox, Taxes or Shop. |
+| `PausedCall` | First call that stops the Clock (Client, ITRS) | This caller pauses the clock and locks the Laptop until you hang up. |
+| `ShopFirstOpen` | First time the Shop app opens | Add items to the cart, pick shipping, then Buy. |
+| `LicenseBought` | First license purchase | The license is in your Inbox. Press Activate to unlock the app. |
+| `PackageArrived` | A parcel reaches the door (first time, not when shipped "left opened") | A package is at the door. Click the door. |
+| `ParcelOpen` | First time the Door view opens with a parcel waiting | Click the box to open it. |
+| `JunkFlyer` | Every time a junk letter is read | The flyer's own joke (one of the `junkLines` of `DoorController`) |
+| `FirstPawn` | First time something is pawned | The Printer pays for what you drop on it. A pawned item is gone. |
+| `CharlieTease` | Each Blackjack hit while the hand holds 4 or more cards and is still playing | 99% of gamblers quit right before the big win. |
 
 **Shop catalogue.** The Shop (§5.7) sells everything outside the starting kit. Each entry has a one-line description of what the item does and how to use it; it never states a cost the player is meant to discover. Prices are separate fields.
 
@@ -834,6 +846,8 @@ When the player is **paid**, a small floating text appears **at the mouse pointe
 | `rewardPopupMaxActive` | 8 | `GameConfig` |
 | `rewardPopupMoneyColor` | green | `GameConfig` |
 | `rewardPopupTimeColor` | blue / cyan | `GameConfig` |
+| `rewardPopupStackSeconds` | 0.25 s: rewards closer together than this stack upward | `GameConfig` |
+| `rewardPopupPopSeconds` | 0.1 s: the scale-in pop at the start | `GameConfig` |
 
 **Implementation notes.**
 - `MoneyService.OnMoneyChanged(int current, string reason)` carries the new balance, not the amount added (§6.1). `MoneyService` raises a new event carrying the amount and the reason for every income `Add`; `OnMoneyChanged` is unchanged. The new event is Ari's (`Scripts/Services/`); the popup component is owned by Han.
@@ -860,19 +874,19 @@ The public surface other systems rely on:
 | `ClockService.AddSeconds(float s, string reason)` | Meter, Egg Timer and developer tools only |
 | `ClockService.Spend(float s, string reason)` | Blackjack ante, ITRS penalties |
 | `ClockService.CurrentSeconds` · `OnTimeChanged` · `OnCountdownFinished` | Read-only value · events |
-| `ClockService.TickMultiplier` | Phone and speed cards write this |
+| `ClockService.SetSpeed(object key, float multiplier)` · `ClearSpeed(key)` · `TickMultiplier` | Phone and speed cards register one keyed multiplier each; `TickMultiplier` is the read-only product |
 | `ClockService.ArmFinalCountdownIntercept(float)` · `OnFinalCountdownTriggered` | Final Countdown only |
-| `GameManager.GameOver(EndReason)` · `OnGameOver` · `IsGameOver` | The one way a run ends |
+| `GameManager.GameOver(EndReason)` · `OnGameOver` · `IsGameOver` | The one way a run ends; a second call after the run has ended is ignored |
 | `GameManager.PauseGame()` / `ResumeGame()` | Counted freeze of game time for modal panels |
 | `InputGate` · `InputBlocker` | Every enabled `InputBlocker` increments `InputGate`; while the count is above zero, world input and camera focus clicks are disabled |
 | `PointerReceiver.SetInteractable(bool, HintId? reason)` · `ClickRejected` | One mechanism for debuffs, the Cat and cooldowns; the reason becomes the hint |
-| `HintService.Show / ShowOnce(HintId, args)` | Show a hint (§5.16) |
+| `HintService.Show / ShowAlways / ShowOnce(HintId, args)` | Show a hint (§5.16); `ShowAlways` ignores the repeat cooldown (used for teases) |
 | `IPawnable` | `PawnValue`, `CanBePawned`, `OnPawned()` |
 | `IRestorable` · pawn ledger | An item that Buyback can bring back; the ledger records it before `OnPawned()` runs |
 | `CallScheduler` | One active call, minimum 12 s gap, queue of the next |
 | Item catalog | Ids, prices and pawnability of every purchasable item |
 | `RngService.Random` | Shared seeded `System.Random`. Never use `UnityEngine.Random` |
-| `CostModifierService.GetMultiplier / SetMultiplier(Target)` | Price multipliers per target: `Ticket`, `CardPack`, `Blackjack`, `Billiards` |
+| `CostModifierService.GetMultiplier(Target)` · `SetMultiplier(Target, key, value)` · `ClearMultiplier(Target, key)` | Price multipliers per target (`Ticket`, `CardPack`, `Blackjack`, `Billiards`), one per key (the card), multiplied together |
 | `GameConfig` | All economy tuning values (I10) |
 
 ### 6.2 File ownership — do not cross
@@ -955,7 +969,11 @@ Use these exact terms in code, commits, and agent prompts.
 | **Creepy Jester** | The "Han – The Pierrot" loss card that wipes saved data when it finishes |
 | **Run Record** | One saved run's summary, written to one of 20 circular slots |
 | **EndReason** | The enum of the ten ways a run can end (§5.14) |
-| **Omen** | The visible warning before a mechanic loss (a ticket of repeated common symbols, the creaking mine) that lets the player back out |
+| **Omen** | The visible warning before a mechanic loss (the cursed ticket's shaking symbols and its hint) that lets the player back out |
 | **Hint** | A short tooltip shown when a click is rejected or a mechanic first appears (§5.16) |
 | **Highlight Hover** | The outer glow on the sprite of the interactable object under the pointer (§4.2) |
+| **Mechanic ending** | A win or loss caused by a mini-game rather than by the Clock or a card: Lucky Nine jackpot or curse, Mother Lode, Blackjack Charlie (§5.14 D) |
+| **Mother Lode** | Three maximum-length Mining veins banked in a row |
+| **Charlie** | A Blackjack hand of seven cards without busting |
+| **Dismiss fee** | The price (`debuffDismissFee`, $6) of Pawning a debuff whose effect is still running (§5.4) |
 | **Reward Popup** | The floating `+$N` / `+Ns` text shown at the pointer when the player earns money or Egg Timer time (§5.17) |

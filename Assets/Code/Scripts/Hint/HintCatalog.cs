@@ -36,6 +36,7 @@ public static class HintCatalog
             case HintId.PausedCall: return "This caller pauses the clock and locks the Laptop until you hang up.";
             case HintId.ShopFirstOpen: return "Add items to the cart, pick shipping, then Buy.";
             case HintId.LicenseBought: return "The license is in your Inbox. Press Activate to unlock the app.";
+            case HintId.DebuffDismissCost: return "Not enough money to dismiss it. Pawning an active debuff costs ${0}.";
             case HintId.FirstPawn: return "The Printer pays for what you drop on it. A pawned item is gone.";
             case HintId.MotherLodeTease: return "The ore is singing. One more full vein.";
             case HintId.TicketCursed: return "Something is wrong with this ticket. Cash Out now.";

@@ -214,13 +214,8 @@ public class BlackjackApp : LaptopApp
 
     private IEnumerator Resolve()
     {
-        _resolving = true;
-        Refresh();
-
-        // Reveal beat. Keep this SHORT - the clock is running and dead
-        // time on a resolved hand feels like theft.
-        yield return new WaitForSeconds(Config.blackjackRevealDelay);
-
+        // Pay first, animate after: a resolved hand is already won or lost, so closing the app during the reveal
+        // must not take the payout away (N14).
         int payout = SettleHand(Config, _game.Result, _game.DoubledDown, ref _streak);
         RefreshStreak();
 
@@ -229,6 +224,13 @@ public class BlackjackApp : LaptopApp
             MoneyService.Instance.Add(payout, "blackjack");
             _totalReceived += payout;
         }
+
+        _resolving = true;
+        Refresh();
+
+        // Reveal beat. Keep this SHORT - the clock is running and dead
+        // time on a resolved hand feels like theft.
+        yield return new WaitForSeconds(Config.blackjackRevealDelay);
 
         winningOutcomeLabel.text = payout > 0 ? $"{_game.ResultText}  +${payout}" : _game.ResultText;
 

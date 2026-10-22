@@ -41,6 +41,10 @@ public class Meter : MonoBehaviour
 
     private void HandleFeedClicked()
     {
+        // The Meter sits above most panels, so it stays clickable while the CardPanel freezes game time.
+        // The player never acts while game time is frozen (I5).
+        if (Time.timeScale == 0f) return;
+
         if (IsLocked)
         {
             HintService.Instance?.Show(HintId.MeterLocked);

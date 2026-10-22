@@ -32,7 +32,9 @@ public class GameConfig : ScriptableObject
     [Header("Card Box (§5.4)")]
     public int handCap = 5;
     public int packCost = 35;
-    
+    [Tooltip("Pawning a debuff whose effect is still running pays nothing and costs this much instead")]
+    public int debuffDismissFee = 6;
+
     [Header("Card Box - Rarity Weights (§5.4)")]
     public float commonWeight = 60f;
     public float rareWeight = 25f;
@@ -250,10 +252,14 @@ public class GameConfig : ScriptableObject
     public int blackjackCharlieCards = 7;
     [Range(0f, 1f)] public float blackjackCharlieChance = 0.04f;
     
-    [Header("Money Popup")]
-    public float moneyPopupMergeSeconds = 0.3f;
-    public float moneyPopupRise = 24f;
-    public float moneyPopupSeconds = 0.9f;
+    [Header("Reward Popup (§5.17)")]
+    public float rewardPopupSeconds = 0.9f;
+    public float rewardPopupRisePixels = 48f;
+    public int rewardPopupMaxActive = 8;
+    public Color rewardPopupMoneyColor = new Color32(0x4C, 0xAF, 0x72, 0xFF);
+    public Color rewardPopupTimeColor = new Color32(0x4F, 0xC3, 0xF7, 0xFF);
+    public float rewardPopupStackSeconds = 0.25f;
+    public float rewardPopupPopSeconds = 0.1f;
     
     [Header("Highlight Hover (DESIGN 4.2)")]
     public Color hoverGlowColor = new Color32(0xFF, 0xD1, 0x66, 0xFF);
