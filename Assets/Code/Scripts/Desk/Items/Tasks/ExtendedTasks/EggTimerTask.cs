@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class EggTimerTask : HoldTask
@@ -6,18 +7,20 @@ public class EggTimerTask : HoldTask
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite[] holdSprites;
 
-    private float _restUntil;       // game time: presses are ignored until then (cooldown after each crank)
+    private float _restUntil;
+    
+    public static event Action<float> TimePaid;
 
     protected override int ConfigPawnValue => GameManager.Instance.GameConfig.eggTimerPawnValue;
 
-    // The cooldown lives here, not in HoldTask: the Power Bank shares that base and has its own timing.
     protected override bool CanStartHold => ClockService.Instance == null || ClockService.Instance.GameTime >= _restUntil;
 
     protected override void ApplyReward()
     {
         base.ApplyReward();
+        TimePaid?.Invoke(GameManager.Instance.GameConfig.timePayout);
         _restUntil = ClockService.Instance.GameTime + GameManager.Instance.GameConfig.eggTimerCooldown;
-        OnHoldReset();              // show the resting frame while it cools down
+        OnHoldReset();
     }
 
     protected override void UpdateHoldSprite()

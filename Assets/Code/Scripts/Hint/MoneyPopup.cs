@@ -2,66 +2,75 @@ using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MoneyPopup : MonoBehaviour
 {
     [SerializeField] private TMP_Text[] pool;
-    [SerializeField] private Color popupColor = new Color32(0x4C, 0xAF, 0x72, 0xFF);
     
-    private int _last;
-    private int _pending;
-    private float _flushAt;
+    private Canvas _canvas;
     private int _next;
+    private float _lastSpawn = -10f;
+    private int _stack;
 
+    private GameConfig Config => GameManager.Instance.GameConfig;
+    
     private void Start()
     {
-        _last = GameManager.Instance.GameConfig.startMoney;
-        foreach (var t in pool) t.gameObject.SetActive(false);
-        MoneyService.Instance.OnMoneyChanged += HandleMoneyChanged;
+        _canvas = GetComponentInParent<Canvas>().rootCanvas;
+        transform.SetAsLastSibling(); 
+        foreach (var t in pool) { t.raycastTarget = false; t.gameObject.SetActive(false); }
+
+        MoneyService.Instance.OnIncome += HandleIncome;
+        EggTimerTask.TimePaid += HandleTimePaid;
     }
 
     private void OnDestroy()
     {
-        if (MoneyService.Instance != null) MoneyService.Instance.OnMoneyChanged -= HandleMoneyChanged;
+        if (MoneyService.Instance != null) MoneyService.Instance.OnIncome -= HandleIncome;
+        EggTimerTask.TimePaid -= HandleTimePaid;
         foreach (var t in pool) DOTween.Kill(t);
     }
 
-    private void HandleMoneyChanged(int current, string reason)
-    {
-        int delta = current - _last;
-        _last = current;
+    private void HandleIncome(int amount, string reason) => Spawn("+$" + amount, Config.rewardPopupMoneyColor);
+    private void HandleTimePaid(float seconds) => Spawn($"+{seconds:0.#}s", Config.rewardPopupTimeColor);
 
-        if (delta <= 0 || reason == MoneyService.StakeRefundReason) return;
+    private void Spawn(string label, Color color)
+    {
         if (GameManager.Instance.IsGameOver) return;
 
-        if (_pending == 0) _flushAt = Time.time + GameManager.Instance.GameConfig.moneyPopupMergeSeconds;
-        _pending += delta;
-    }
-
-    private void Update()
-    {
-        if (_pending > 0 && Time.time >= _flushAt)
-        {
-            Spawn(_pending);
-            _pending = 0;
-        }
-    }
-    
-    private void Spawn(int amount)
-    {
-        var config = GameManager.Instance.GameConfig;
+        var cfg = Config;
+        int cap = Mathf.Clamp(cfg.rewardPopupMaxActive, 1, pool.Length);
         TMP_Text text = pool[_next];
-        _next = (_next + 1) % pool.Length;
+        _next = (_next + 1) % cap; 
 
         DOTween.Kill(text);
-        text.text = "+$" + amount;
-        text.color = popupColor;
-        text.rectTransform.anchoredPosition = Vector2.zero;
+        text.text = label;
+        text.color = color;
+
+        float now = Time.unscaledTime;
+        _stack = now - _lastSpawn <= cfg.rewardPopupStackSeconds ? _stack + 1 : 0;
+        _lastSpawn = now;
+
+        float scale = _canvas.scaleFactor;
+        Vector2 start = PointerScreenPosition() + Vector2.up * (_stack * text.preferredHeight * scale);
+
+        RectTransform rt = text.rectTransform;
+        rt.position = start;
+        rt.localScale = Vector3.one * 0.6f;
         text.gameObject.SetActive(true);
 
-        Sequence s = DOTween.Sequence().SetId(text);
-        s.Join(text.rectTransform.DOAnchorPosY(config.moneyPopupRise, config.moneyPopupSeconds).SetEase(Ease.OutQuad));
-        s.Join(text.DOFade(0f, config.moneyPopupSeconds).SetEase(Ease.InQuad));
+        Sequence s = DOTween.Sequence().SetId(text).SetUpdate(true);
+        s.Join(rt.DOMoveY(start.y + cfg.rewardPopupRisePixels * scale, cfg.rewardPopupSeconds).SetEase(Ease.OutQuad));
+        s.Join(text.DOFade(0f, cfg.rewardPopupSeconds).SetEase(Ease.InQuad));
+        s.Insert(0f, rt.DOScale(1f, cfg.rewardPopupPopSeconds).SetEase(Ease.OutBack));
         s.OnComplete(() => text.gameObject.SetActive(false));
+    }
+
+    private static Vector2 PointerScreenPosition()
+    {
+        return Mouse.current != null
+            ? Mouse.current.position.ReadValue()
+            : new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
     }
 }

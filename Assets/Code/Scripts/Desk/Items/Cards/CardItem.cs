@@ -14,8 +14,14 @@ public class CardItem : MonoBehaviour, IPawnable
     private EffectCardSO _effect;
     private bool _hasEnded;
     private Coroutine _repeatRoutine;
+    private bool _dragging;
+    private bool _relocateWhenDropped;
 
-    public int PawnValue => _data != null ? _data.pawnValue : 0;
+    /// <summary>A debuff pawned while its effect still runs pays nothing (it costs debuffDismissFee, charged by the Printer).</summary>
+    public int PawnValue => _data == null || IsDebuffActive ? 0 : _data.pawnValue;
+
+    /// <summary>A debuff that has been placed and has not ended yet.</summary>
+    public bool IsDebuffActive => _effect != null && _effect.isDebuff && !_hasEnded && gameObject.activeInHierarchy;
     public bool CanBePawned => _effect == null || !_effect.BlocksPawning;
     public CardSO Data => _data;
     public Sprite CurrentArt => artRenderer != null ? artRenderer.sprite : null;
@@ -26,13 +32,19 @@ public class CardItem : MonoBehaviour, IPawnable
     private void OnEnable()
     {
         _receiver.ClickDown += HandleCardClicked;
+        _receiver.DragStart += HandleDragStart;
         _receiver.DragUpdate += HandleDragMoved;
+        _receiver.DragEnd += HandleDragEnd;
     }
 
     private void OnDisable()
     {
         _receiver.ClickDown -= HandleCardClicked;
+        _receiver.DragStart -= HandleDragStart;
         _receiver.DragUpdate -= HandleDragMoved;
+        _receiver.DragEnd -= HandleDragEnd;
+        _dragging = false;
+        _relocateWhenDropped = false;
     }
     
     public void Setup(CardSO data)
@@ -60,7 +72,34 @@ public class CardItem : MonoBehaviour, IPawnable
         CardPanel.Instance?.Show(_data, artRenderer != null ? artRenderer.sprite : null);
     }
 
+    private void HandleDragStart(Vector2 worldPos) => _dragging = true;
+
     private void HandleDragMoved(Vector2 worldPos) => transform.position = worldPos;
+
+    private void HandleDragEnd(Vector2 worldPos)
+    {
+        _dragging = false;
+        if (!_relocateWhenDropped) return;
+
+        _relocateWhenDropped = false;
+        MoveToPlacementSpot();
+    }
+
+    /// <summary>
+    /// Moves the card to another spot of the placement area (the Printer refused to pawn it). A card the player is still
+    /// holding moves when it is dropped, otherwise the drag would pull it straight back.
+    /// </summary>
+    public void Relocate()
+    {
+        if (_dragging) _relocateWhenDropped = true;
+        else MoveToPlacementSpot();
+    }
+
+    private void MoveToPlacementSpot()
+    {
+        if (CardHandManager.Instance != null)
+            transform.position = CardHandManager.Instance.GetRandomPlacementPosition();
+    }
     
     public void SetArt(Sprite sprite)
     {

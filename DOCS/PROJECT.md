@@ -6,12 +6,12 @@
 
 | Snapshot | Value |
 |---|---|
-| Last verified against code | **2026-10-20**, static read of `main` @ `4d940c0` plus `DESIGN.md` v2.1 (nothing run in Play mode). Sections not touched by the 2026-10-20 sync keep their 2026-10-17 verification |
-| Branch / commit | **`main` @ `4d940c0`** (2026-10-20). Batch 1 (`ari/Phone-Revamp`) and Batch 2 (`ari/shop-system`, Phases 2.1–2.3) are merged; Han's camera system, Highlight Hover and Money Popup are merged. Next: Batch 3 (Delivery). Phone/Shop work was verified in the Editor by Ari's agent (frame-stepping); WebGL, sound and real mouse clicks not checked |
+| Last verified against code | **2026-10-22**, static read of branch `Han/RefactorSystem` (based on `main` @ `ac381ad`) plus `DESIGN.md` v2.2; the Editor compiled the code and the scene/prefab edits were checked in the Editor Console only. Nothing was played through in Play mode, so every new mechanic is `[unverified]` at run time. Sections not touched by the 2026-10-22 sync keep their 2026-10-17/20 verification |
+| Branch / commit | **`Han/RefactorSystem`** (uncommitted work on top of `main` @ `ac381ad`, 2026-10-22). `main` already has Batch 1 (Phone), Batch 2 (Shop), Batch 3 (Delivery/Door/Mail) and `ari/buyback`. This branch adds the four mechanic endings, the ticket rework, the cheat-menu rebuild, hints instead of service tutorials, the keyed cost modifiers, the Reward Popup and the scene clean-up (§21 changelog). Not yet committed or merged |
 | Engine | Unity **6000.3.14f1**, URP 2D, single scene |
 | Replaces | `GAME_STRUCTURE.md`, `CODE_GROUND_TRUTH.md`, `ITEMS_INVENTORY.md`, `BILLIARDS_BALANCE.md`, `BILLIARDS_DECISIONS.md` (see §21) |
-| Design spec | `DOCS/DESIGN.md` **v2.1** (2026-10-19) is the design source of truth; this file records what the code does and where it differs (§17.3) |
-| Related plan | `PHONE_SHOP_DELIVERY_IMPLEMENTATION.md` + `PHONE_DELIVERY_DECISIONS.md` (claude.ai project "Overtimer"); Batches 1–2 built, 3–4 open |
+| Design spec | `DOCS/DESIGN.md` **v2.2** (2026-10-22) is the design source of truth; this file records what the code does and where it differs (§17.3) |
+| Related plan | `PHONE_SHOP_DELIVERY_IMPLEMENTATION.md` + `PHONE_DELIVERY_DECISIONS.md` (claude.ai project "Overtimer"); Batches 1–3 built (Batch 4 Buyback merged as `ari/buyback`) |
 
 **Source-of-truth order:** *behaviour* = code and live assets → this file → plan docs. *Intent* = `DESIGN.md` (invariants and economy). When the code differs from `DESIGN.md`, that is either a bug (§15) or a design feature not built yet (§17.3): never record a deliberate design rule as a bug. When this file and the code disagree, the code wins: fix this file and say so in the commit.
 
@@ -75,16 +75,16 @@ These are **[LOCKED]** design rules, worded as in `DESIGN.md` v2.1 §2. Do not b
 
 | # | Rule (DESIGN v2.1) | Status in code (2026-10-20) |
 |---|---|---|
-| I1 | Clock starts at **120 s**; the run is won at **≥ 600 s** or by an alternate ending, lost at **≤ 0 s** (unless the Final Countdown intercepts it once) or by an alternate ending. Alternate endings: 3 cards (Set Completion, Final Countdown, Creepy Jester) + 3 mechanics (Lucky Nine ticket, Mining streak/cave-in, Blackjack seven-card/ruin), 12 `EndReason`s in all | Holds for the clock (`startClock 120`, `winClock 600`, `loseClock 0`). The three **card** endings are built; the three **mechanic** endings are **designed, not built** (§17.3). End-screen and tutorial texts hard-code "10 minutes" / "2 minutes" |
+| I1 | Clock starts at **120 s**; the run is won at **≥ 600 s** or by an alternate ending, lost at **≤ 0 s** (unless the Final Countdown intercepts it once) or by an alternate ending. Alternate endings: 3 cards (Set Completion, Final Countdown, Creepy Jester) + 3 mechanics (Lucky Nine ticket jackpot **or** curse, Mining Mother Lode streak, Blackjack five-to-seven-card Charlie), **10** `EndReason`s in all (the Blackjack ruin loss and the cave-in loss were cut) | Holds for the clock (`startClock 120`, `winClock 600`, `loseClock 0`). All **ten** endings are built (§7.2); the mechanic ones are `[unverified]` in Play mode. End-screen and intro-tutorial texts hard-code "10 minutes" / "2 minutes" |
 | I2 | The Clock counts down in **real time**. Only a ringing or beneficial call and timed card effects (including the Time Scarab freeze) change its tick rate, through `ClockService.TickMultiplier`. The player can never pause it. Time Scarab is a buff that slows or stops the Clock only; the game keeps running and the player can still act | Holds. Tick rate = product of keyed modifiers (Phone ring ×1.5, speed cards). Time Scarab asset: `tickMultiplier 0`, 20 s [verified] |
 | I3 | **Only the Meter converts money → time** (the Egg Timer is a direct time source; Blackjack converts time → money) | Holds. `AddSeconds` callers: Meter, `HoldTask` (Egg Timer), cheat. `Spend` callers: Blackjack ×2, ITRS unpaid-bill penalty, cheat |
 | I4 | **Nothing random may grant clock time directly** | Holds |
-| I5 | **The player never acts while game time is frozen.** Scratching, wiring, Billiards and ordinary panels never pause the Clock. A beneficial call stops the Clock only while the Laptop is locked and desk input is blocked. Game time freezes (`Time.timeScale = 0`) only for modal information panels (intro tutorial, card inspector), scripted cutscenes (Final Countdown intro, endings) and after the run has ended | The freezes match: only `CardPanel`/`TutorialPanel` call `PauseGame`. **Gap:** the Meter Feed button (uGUI) is not gated, and `CardPanel` (696×384 centred) probably does not cover it, so Feed may work while frozen. Fix rule decided (§9.2, §18 A19): **Feed does nothing while `InputGate.IsBlocked` or `Time.timeScale == 0`**; code pending (§15) |
+| I5 | **The player never acts while game time is frozen.** Scratching, wiring, Billiards and ordinary panels never pause the Clock. A beneficial call stops the Clock only while the Laptop is locked and desk input is blocked. Game time freezes (`Time.timeScale = 0`) only for modal information panels (intro tutorial, card inspector), scripted cutscenes (Final Countdown intro, endings) and after the run has ended | The freezes match: only `CardPanel`/`TutorialPanel` call `PauseGame`. The Meter Feed button (uGUI) now returns early while `Time.timeScale == 0` (`Meter.HandleFeedClicked`, 2026-10-22). It is still not gated by `InputGate.IsBlocked`: panels with a full-screen raycast dim (e.g. `CardRevealPanel`'s Dim, 4000×4000) cover it instead (§9.2) |
 | I6 | **$1 = 1 s** fixed | Holds (`exchangeRate 1`) |
-| I7 | Debuffs **close a door**, never drain the clock directly. Every debuff ends by time or can be escaped by Pawning the card (only exception: a triggered Final Countdown) | Holds directly. Indirect drains by design: Robocalls (more rings), Audit (a bill you may ignore). Known leak: Audit's handler survives a pawn (N5) |
+| I7 | Debuffs **close a door**, never drain the clock directly. Every debuff ends by time or can be escaped by Pawning the card (only exception: a triggered Final Countdown) | Holds directly. Indirect drains by design: Robocalls (more rings), Audit (a bill you may ignore). Pawning an **active** debuff costs `debuffDismissFee` (the escape is paid, not free; DESIGN §5.4). The Audit handler leak (N5) is fixed |
 | I8 | **Only calls interrupt, one at a time**, ≥ 12 s apart. Bills, mail and the doorbell are non-blocking notifications. The Cat is exempt | **Holds.** `CallScheduler` enforces one call / 12 s gap; bills are no longer an interruption (no new bill while one is open) |
-| I9 | No physics simulation of the world and no character. The camera moves only between **three fixed viewpoints** (Room 14 / Desk 6 / Door 7 ortho size) by click-driven tweens; no scrolling, drag-pan, free zoom or rotation. `Physics2D` only for hit-testing and trigger overlaps. Billiards runs its own vector maths | **Holds** (`CameraRig`, §8.3). The old vertical scroller and Up/Down buttons are gone. The Door has an anchor but no door object yet (Batch 3) |
-| I10 | All tuning values live in **data assets** (`GameConfig`, `BlockConfig`, `TicketSymbolConfig`, `ItemCatalog`/`ItemDefSO`, `CardSO`, Billiards presets), never in script logic | **Partial:** `PickaxeView.hitCooldown` 0.7 s (sets Mining throughput), `TaxNotice.nagInterval`, Cat speed/sleep, `ScratchWindow.revealThreshold`, `CardBox.packSize`, `HoverHighlighter` colour/width/padding, hint/tutorial/end texts are literals |
+| I9 | No physics simulation of the world and no character. The camera moves only between **three fixed viewpoints** (Room 14 / Desk 6 / Door 7 ortho size) by click-driven tweens; no scrolling, drag-pan, free zoom or rotation. `Physics2D` only for hit-testing and trigger overlaps. Billiards runs its own vector maths | **Holds** (`CameraRig`, §8.3). The old vertical scroller and Up/Down buttons are gone. The Door view has its door objects (`BackZone_Door_L/_R` camera zones, `DoorController`) |
+| I10 | All tuning values live in **data assets** (`GameConfig`, `BlockConfig`, `TicketSymbolConfig`, `ItemCatalog`/`ItemDefSO`, `CardSO`, Billiards presets), never in script logic | **Partial:** `PickaxeView.hitCooldown` 0.7 s (sets Mining throughput), Cat speed/sleep, `ScratchWindow.revealThreshold`, `CardBox.packSize`, hint/tutorial/end texts are literals. Moved into `GameConfig` since 2026-10-20: Highlight Hover (`hoverGlow*`), Reward Popup (`rewardPopup*`), ending tuning, `debuffDismissFee`. Ticket symbol weights/multipliers live on the `TicketSymbolConfig` assets |
 
 **Adopted from the old "proposed amendments" (now in DESIGN v2.1):** the I2/I5 wording above, the I8 wording, the I10 wording, the I9 three-viewpoint wording, and the pawn rule (an object is pawnable only if the run stays winnable without it: DESIGN §5.11 not-pawnable list). Ari's sign-off on the Time Scarab exception and the I9 rewrite is assumed from DESIGN v2.1 being committed to `main`; record it here if Ari says otherwise.
 
@@ -97,7 +97,7 @@ These came from real bugs. Follow them in every change.
 | Rule | Why |
 |---|---|
 | Read another service's `.Instance` in **`Start`**, never `Awake`/`OnEnable`, and never assume Awake order across scripts | A GameObject (or any ancestor) saved inactive defers `Awake` until first activation. Services behind closed panels are unreachable |
-| For effects that target something that may not have woken yet, use a **static "pending state"** that the target applies in its own `Awake` (pattern: `MiningApp`, `ScratchTicket`, `BilliardsPendingEffects`, `DesktopIconView.s_pendingHidden`) | Same as above |
+| For effects that target something that may not have woken yet, use a **static "pending state"** that the target applies in its own `Awake` (pattern: `MiningApp`, `ScratchTicket`, `BilliardsPendingEffects`, `DesktopIconView.s_pendingHidden`, `CheatFlags`) | Same as above |
 | **Every mutable static must be reset on scene load** (`[RuntimeInitializeOnLoadMethod(SubsystemRegistration)]` + `SceneManager.sceneLoaded`) | Restart = scene reload. Documented exceptions: `BilliardsRoundLog` (dev telemetry), `BilliardsDebug` (cheat switches) |
 | Compare Unity objects with explicit **`!= null`**, never `?.` / `??` | `?.` misses Unity's fake-null on destroyed objects. ~45 legacy `Instance?.` sites remain (mostly `HintService`) — clean up when touched |
 | **No `UnityEngine.Random`.** Use `RngService.Instance.Random` (seedable `System.Random`) | Reproducible bugs, deterministic Billiards. One cosmetic exception left: `Cutscene/ImageCycler.cs` |
@@ -105,7 +105,7 @@ These came from real bugs. Follow them in every change.
 | **Enums are append-only** (`CostModifierService.Target`, `EndReason`, `HintId`, `Rarity`…) | Serialized as ints; `EndReason` is also persisted **by name** in run history |
 | Asset names of `CardSO`s and future item ids are **permanent** | Collection save keys on `CardSO.name` |
 | New `GameConfig` fields: add with a sensible default, then **touch them in the Inspector** so the asset serializes them | C# defaults are stale for ~20 fields; the asset is the live value |
-| Card effects own their grant: `OnPlaced` adds, `OnRemoved` withdraws, using it calls `card.EndEffect()`; `CardItem._hasEnded` guarantees `OnRemoved` runs once | Pawning a card must be a real escape (I7) |
+| Card effects own their grant: `OnPlaced` adds, `OnRemoved` withdraws, using it calls `card.EndEffect()`; `CardItem._hasEnded` guarantees `OnRemoved` runs once. Shared scalars (`CostModifierService`, `SpeedModifiers`) are **keyed by the card** so two copies never overwrite each other | Pawning a card must be a real escape (I7) |
 | Pure logic in plain C# classes (no `MonoBehaviour`, `Time`, `Physics2D`), views only read state | Testable headless (Billiards sim, Blackjack rules) |
 | No coroutines for the core economy tick; short local coroutines are fine | Debuggability |
 | Kill your DOTween tweens on close/disable; UI tweens that must run during freeze use `SetUpdate(true)` | No global `DOTween.KillAll` on reload |
@@ -185,10 +185,10 @@ Nothing is `DontDestroyOnLoad`; **Restart = reload this scene.**
 |---|---|
 | `Background` | Desk, DeskLegs, Shadow, carpet |
 | `CameraZones` | five instances of the `CameraZone` prefab (`DoorZone`, `BackZone_Door_L/R`, `DeskZone`, `BackZone_Desk`): `BoxCollider2D` + `PointerReceiver` + `CameraViewButton` + `ViewGate`; `CameraViewButton` requires `ViewGate` |
-| `DeskObject` | prefab instances: PrinterPawn, Laptop (desk opener), EggTimer, Taxes, Phone, PowerBank, ElectricSocket (wire puzzle), CardItems (7 pooled), Picture, Backpack, CardCollection, Cat, Bear, Tickets (2 Triple + 2 Nine pooled tickets) |
+| `DeskObject` | prefab instances: PrinterPawn, Laptop (desk opener), EggTimer, Phone, PowerBank, ElectricSocket (wire puzzle), CardItems (7 pooled), Picture, Backpack, CardCollection, Cat, Bear, Tickets (2 Triple + 2 Nine pooled tickets) |
 | `Main Camera` | orthographic (size set by `CameraRig`), AudioListener |
 | `Global Light 2D` | |
-| `MANAGERS` | `Managers` (GameManager, InputManager, CheatMenuToggle) · `Services` (ClockService, RngService, MoneyService, RunStatsService, CostModifierService, ITRSService) · `CardRelatedManager` (CardCollectionManager, CardHandManager, FinalCountdownTracker, SetCompletionTracker) · `ClickFeedback` (prefab `ClickFeedbackPool`: ClickFeedbackService + 10 pooled `ClickFeedbackVFX`) · `Audio` (one AudioSource, no clip; shared by the Door and the cutscenes) · `CameraRig` (Room / Desk / Door anchors) · `HoverOutline` (`HoverHighlighter` + `LineRenderer`) |
+| `MANAGERS` | `Managers` (GameManager, InputManager, CheatMenuToggle) · `Services` (ClockService, RngService, MoneyService, RunStatsService, CostModifierService, ITRSService) · `CardRelatedManager` (CardCollectionManager, CardHandManager, FinalCountdownTracker, SetCompletionTracker) · `ClickFeedback` (prefab `ClickFeedbackPool`: ClickFeedbackService + 10 pooled `ClickFeedbackVFX`) · `Audio` (one AudioSource, no clip; shared by the Door and the cutscenes) · `CameraRig` (Room / Desk / Door anchors) · `HoverOutline` (`HoverHighlighter`, shader glow) |
 | `EventSystem` | `InputSystemUIInputModule` |
 | `Canvas` | `Timer` (TimerText, MeterText, FeedButton, and the `Meter` component), `MoneyPopup` (pooled `+$N` texts), `DeviceLayer` (§13.1), panel prefabs: Laptop (UI), Mining App, Blackjack App, Billiards App, Tax, CardRevealPanel, CardPanel, CardCollectionPanel, NinePanel, TriplePanel, WirePanel, EndGamePanel, CheatMenuPanel, TutorialPanel, HintRoot |
 | `CutsceneRoot`, `Cutscenes`, `ClockRoot` | cutscene canvas, `CutsceneController` + PlayableDirectors, clock-ending ticker |
@@ -199,30 +199,31 @@ Scene rules: don't save the scene with the Billiards app open (layout overrides 
 
 ## 6. Code map and services
 
-### 6.1 Folders (130 `.cs` files + 4 unstaged in `WinConditionCard/`)
+### 6.1 Folders (176 `.cs` files in all, 10 of them Editor-only)
 
 | Folder | Files | Purpose |
 |---|---|---|
 | `Config/` | 3 | `GameConfig` (all tuning), `BlockConfig` (mining blocks), `TicketSymbolConfig` (declared in **`TicketSymbolPool.cs`**) |
-| `Services/` | 12 | GameManager, ClockService, MoneyService, Meter, RngService, RunStatsService, InputManager, HintService, ClickFeedbackService, CostModifierService, CardHandManager, CardCollectionManager |
+| `Services/` (+`Clock/`) | 12 + 2 | GameManager, ClockService, MoneyService, Meter, RngService, RunStatsService, InputManager, HintService, ClickFeedbackService, CostModifierService, CardHandManager, CardCollectionManager; `PauseLock`, `SpeedModifiers` |
 | `Input/` | 5 | `IPointerInputHandler`, `PointerReceiver`, `DeskObject` base, `InputGate` (static counter), `InputBlocker` |
-| `Hint/` | 8 | `HintId`, `HintCatalog`, `TutorialPanel` (intro only); `HoverHighlighter` (Highlight Hover), `MoneyPopup` (Reward Popup, money only) |
+| `Hint/` | 5 | `HintId`, `HintCatalog`, `TutorialPanel` (intro only); `HoverHighlighter` (Highlight Hover, shader glow), `MoneyPopup` (Reward Popup: money and Egg Timer time) |
 | `Cutscene/` | 3 | `CutsceneController`, `TimerTicker`, `ImageCycler` |
-| `CheatMenu/` | 3 | `CheatMenuController`, `CheatMenuToggle`, `BilliardsCheats` |
-| `UI&Camera/` (+`Summary/`) | 6 + 6 | `CameraRig` (+`CameraView` enum), `CameraViewButton`, `ViewGate`, `DeviceLayer` (Laptop/Phone layout, lock), `BlurSnapshot`, `DeviceClock`; `EndReason`, `RunRecord`, `RunRating`, `EndGameSummaryUI`, `RunHistoryPanel`, `RunHistoryEntryView` |
-| `Annoyance/` (+`Cat/`) | 4 + 2 | `ITRSService`, `TaxDeadline` (pure), `Tax` (paper-copy panel), `TaxNotice` (desk); `CatController`, `CatStateMachine` |
-| `Shop/` | 10 | pure: `Door` (`Parcel`, `DoorDepot`), `ShopCart`, `Economy` (`ItemDef`, `PawnMath`, `Checkout`, `Ownership`, `IconGate`, `ShopValidation`), `Delivery` (`DeliveryScheduler`, `PawnLedger`); Unity: `ItemDefSO`, `ItemCatalogSO`, `ShopService` (on `MANAGERS/Services`), `ShopItemBinding`, `DoorController`, `ParcelView`, `PoofEffect` |
-| `Phone/` (+`Apps/`) | 5 + 7 | pure: `Calls` (`CallerRoller`, `PhoneConfig`, `CallRecord`, `CallDialogue`), `CallScheduler`, `PhonePower`, `Notifications` (`Inbox`, `BannerQueue`); `PhoneController` (desk object, was `Phone`); views `PhoneHome`, `CallScreen`, `CallHistoryView`, `InboxScreen`, `PhoneListView` + `PhoneListRow` (scrolling list), `TaxesScreen`, `BannerStack`, `PhoneIconView` (+`PhoneUi`), `IncomingCallPill` |
+| `CheatMenu/` | 4 | `CheatMenuController` (5 tabs), `CheatMenuToggle` (debug builds only), `CheatFlags` (static switches), `BilliardsCheats` |
+| `UI&Camera/` | 6 | `CameraRig` (+`CameraView` enum), `CameraViewButton`, `ViewGate`, `DeviceLayer` (Laptop/Phone layout, lock), `BlurSnapshot`, `DeviceClock` |
+| `Summary/` | 7 | `EndReason`, `RunRecord`, `RunRating` (+`IsMechanicWin`), `EndGameSummaryUI`, `RunHistoryPanel`, `RunHistoryEntryView`, `EndingFlourish` (coin rain on mechanic wins) |
+| `Annoyance/` (+`Cat/`) | 4 + 2 | `ITRSService`, `TaxDeadline` (pure), `Tax` (paper-copy panel), `TaxNotice` (**orphan**: its `Taxes.prefab` was deleted and nothing references it; see §15 N15); `CatController`, `CatStateMachine` |
+| `Shop/` | 13 | pure: `Door` (`Parcel`, `DoorDepot`), `ShopCart`, `Economy` (`ItemDef`, `PawnMath`, `Checkout`, `Ownership`, `IconGate` with `IsLicensed`, `ShopValidation`), `Delivery` (`DeliveryScheduler`, `PawnLedger`), `Mail` (`Letter`s); Unity: `ItemDefSO`, `ItemCatalogSO`, `ShopService` (on `MANAGERS/Services`), `ShopItemBinding`, `DoorController`, `ParcelView`, `LetterView`, `PoofEffect` |
+| `Phone/` (+`Apps/`) | 6 + 11 | pure: `Calls` (`CallerRoller`, `PhoneConfig`, `CallRecord`, `CallDialogue`), `CallScheduler`, `PhonePower`, `Notifications` (`Inbox`, `BannerQueue`); `CallerProfileCatalog`; `PhoneController` (desk object, was `Phone`); views `PhoneHome`, `CallScreen`, `CallHistoryView`, `InboxScreen`, `ShopScreen`, `PhoneListView` + `PhoneListRow` (scrolling list), `TaxesScreen`, `BannerStack`, `PhoneIconView`, `IncomingCallPill` |
 | `Desk/Items/Cards/` | 8 | `CardItem`, `CardBox`, `CardPanel`, `CardPackRevealPanel`, `CardRevealSlot`, `CardFlip`, `CardCollectionPanel/Slot` |
-| `Desk/Items/Cards/CardData/` | 16 (+4) | `CardSO`, `EffectCardSO`, 14 effect classes; `WinConditionCard/{FinalCountdown,SetCompletion}/*` |
-| `Desk/Items/Pawn/` | 3 | `Pawn` (the printer), `IPawnable`, `JunkItem` |
+| `Desk/Items/Cards/CardData/` | 13 (+4) | `CardSO`, `EffectCardSO`, 11 effect classes; `WinConditionCard/{FinalCountdown,SetCompletion}/*` (a `SO` + a `Tracker` each) |
+| `Desk/Items/Pawn/` | 4 | `Pawn` (the printer), `IPawnable`, `IRestorable`, `JunkItem` |
 | `Desk/Items/Tasks/` (+`ExtendedTasks/`, `WireComponents/`) | 5 + 3 + 4 | `TaskBase`, `ClickTask`, `HoldTask`, `WireTask`, `DeskObjectFocus`; `EggTimerTask`, `PictureClickTask`, `PowerBankTask`; wire plug/socket/line/initializer |
-| `Desk/Items/Tickets/` | 3 | `ScratchTicket`, `ScratchWindow`, `TicketStack` |
-| `Desk/Laptop/` | 6 | `LaptopController`, `LaptopApp`, `LaptopHome`, `DesktopIconView`, `DeskLaptopOpener`, `CloseAppButton` |
+| `Desk/Items/Tickets/` | 5 | `ScratchTicket`, `ScratchWindow`, `TicketStack`, `ScratchPanelView` (the ticket panel's UI references), `TicketPayoutTable` (the payout table beside the panel) |
+| `Desk/Laptop/` | 7 | `LaptopController`, `LaptopApp`, `LaptopHome`, `LaptopLock`, `DesktopIconView`, `DeskLaptopOpener`, `CloseAppButton` |
 | `Desk/Laptop/Mining/` | 2 | `MiningApp`, `PickaxeView` |
 | `Desk/Laptop/Blackjack/` | 5 | `BlackjackApp`, `BlackjackGame` (pure C#), `CardDeckConfig`, `CardRowView`, `CardSlotView` |
 | `Desk/Laptop/Billiards/` (+`View/`) | 14 + 9 | §13.4 |
-| `Editor/Billiards/` | 8 | authoring, solver, verifier, self-tests, balance report |
+| `Editor/` | 10 | `Billiards/` (8: authoring, solver, verifier, self-tests, balance report), `PhoneShop/PhoneShopSelfTests`, `Fonts/BitmapFontBuilder` |
 
 ### 6.2 Singletons
 
@@ -230,17 +231,17 @@ All use `if (Instance != null && Instance != this) { Destroy(gameObject); return
 
 | Class | Owns | Key API |
 |---|---|---|
-| `GameManager` | config ref, game-over state, pause refcount, restart | `GameConfig`, `IsGameOver`, `LastEndReason`, `OnGameOver(EndReason)`, `PauseGame()/ResumeGame()` (refcounted, `timeScale`), `GameOver(reason)`, `Restart()` |
+| `GameManager` | config ref, game-over state, pause refcount, restart | `GameConfig`, `IsGameOver`, `LastEndReason`, `OnGameOver(EndReason)`, `PauseGame()/ResumeGame()` (refcounted, `timeScale`), `GameOver(reason)` (**ignored if already over**), `Restart()` |
 | `ClockService` | `RemainingTime`, `GameDelta`/`GameTime`, `TickMultiplier` (read-only), final-countdown intercept; owns `Clock/PauseLock` + `Clock/SpeedModifiers` | `AddSeconds(s, reason)`, `Spend(s, reason)`, `Pause(holder)/Resume(holder)`, `SetSpeed(key, m)/ClearSpeed(key)`, `PauseCountdown()/ResumeCountdown()` (legacy wrappers around one holder), `ArmFinalCountdownIntercept(reset)`, `OnTimeChanged`, `OnCountdownFinished`, `OnFinalCountdownTriggered` |
-| `MoneyService` | `Current` | `Add(int, reason)`, `TrySpend(int, reason) → bool` (never negative), `OnMoneyChanged(current, reason)`, `const StakeRefundReason = "stake refund"` |
-| `Meter` | Feed button | `SetLocked(bool)`, `IsLocked` |
+| `MoneyService` | `Current` | `Add(int, reason)`, `TrySpend(int, reason) → bool` (never negative), `OnMoneyChanged(current, reason)`, `OnIncome(amount, reason)` (positive income only; not stake refunds; feeds the Reward Popup), `const StakeRefundReason = "stake refund"` |
+| `Meter` | Feed button (subscribes in `Start`, unsubscribes in `OnDestroy`; ignores clicks while `Time.timeScale == 0`) | `SetLocked(bool)`, `IsLocked` |
 | `RngService` | one `System.Random` | `Random`; serialized `useFixedSeed`, `seed` (scene: unseeded) |
 | `RunStatsService` | run stats + history | `LastRecord`, `LoadHistory()` |
 | `InputManager` | press/drag state machine | `IsInputEnabled`, `dragThreshold` 0.15, `PeekTarget()` (what a click would hit now; used by hover), view-aware `PickTarget` (honours `ViewGate`), vestigial `FocusRoot` |
 | `CameraRig` | the three viewpoints | `CurrentView`, `IsMoving`, `GoTo(CameraView)`, `ViewChanged`; holds an `InputGate` block while moving |
-| `HintService` | toast hints | `Show(id, args)`, `ShowOnce(id, args)` |
+| `HintService` | toast hints | `Show(id, args)` (per-id cooldown), `ShowAlways(id, args)` (ignores the cooldown; used for repeating teases), `ShowOnce(id, args)`, `ResetSeen()` |
 | `ClickFeedbackService` | 10 pooled particle systems | `PlayAt(Vector2)` |
-| `CostModifierService` | price multiplier per target | `enum Target { Ticket, CardPack, Blackjack, Billiards }`, `GetMultiplier`, `SetMultiplier` (overwrite) |
+| `CostModifierService` | price multiplier per target, **keyed** (the card is the key); the effective value is the product of all keys | `enum Target { Ticket, CardPack, Blackjack, Billiards }`, `GetMultiplier(target)`, `SetMultiplier(target, key, value)`, `ClearMultiplier(target, key)` |
 | `CardHandManager` | 7-card pool, placed set | `HasRoom` (`< handCap`), `TryGetFreeCard`, `CardPlaced/CardRemoved` |
 | `CardCollectionManager` | collected card types | `Register(card)`, `IsCollected`, `AllCards`, `NewCardRegistered` |
 | `CardPanel` | card detail popup | `Show(CardSO, Sprite)` — **pauses the game while open** |
@@ -248,7 +249,7 @@ All use `if (Instance != null && Instance != this) { Destroy(gameObject); return
 | `PhoneController` | `Power`, `Calls`, `Inbox`, `Banners`, `ActiveCall`, `CallHistory` (`CallRecord` list, newest first) | `Answer/Decline/Reply`, `PressPower`, `ForceOff/ReleaseForceOff(holder)`, `AddRobocalls/RemoveRobocalls(holder)` |
 | `ITRSService` | tax bills (`TaxDeadline`) | `Pay()`, `ExtendCurrentBill(s)`, `SkipNextBill(owner)`, `ForceBillNow()`, `DoubleCurrentBill()`, `CurrentAmountDue`, `SecondsLeft`, `OnAssessmentIssued/Resolved`, `AssessmentChanged` |
 
-Static helpers: `InputGate` (counted global input lock), `RunRating` (score maths).
+Static helpers: `InputGate` (counted global input lock), `RunRating` (score maths), `CheatFlags` (dev-only "force the next X" switches; every flag is gated on `Debug.isDebugBuild` and reset on scene load).
 
 ---
 
@@ -257,7 +258,7 @@ Static helpers: `InputGate` (counted global input lock), `RunRating` (score math
 ### 7.1 Run lifecycle
 
 1. Scene loads. `GameManager.Awake` unfreezes (`timeScale 1`). `ClockService.Start` sets 120 s and starts. `MoneyService.Start` sets $40.
-2. First launch only: `TutorialPanel` (5 click-through steps, skippable) opens and **pauses the game** until closed (`PlayerPrefs TutorialSeen`).
+2. First launch only: `TutorialPanel` (the intro, 5 click-through steps, skippable) opens and **pauses the game** until closed (`PlayerPrefs TutorialSeen`). Every other tutorial is a one-line hint (§8.2).
 3. The **Laptop starts disabled** until the wire puzzle (ElectricSocket) is solved.
 4. **Win:** any `OnTimeChanged` with clock ≥ `winClock` → `GameOver(ClockWin)`. **Lose:** clock reaches 0 (`EndCountdown`) → `GameOver(ClockLoss)`.
 5. `GameOver(reason)`: sets `IsGameOver`, disables input, pauses the clock, **freezes `timeScale = 0` and `AudioListener.pause`**, fires `OnGameOver` (run record saved here), then plays the ending cutscene if one exists, then shows `EndGamePanel` (fade, DOTween unscaled).
@@ -273,8 +274,12 @@ Static helpers: `InputGate` (counted global input lock), `RunRating` (score math
 | `ClockLoss` | clock 0 | code ticker toward 0 | 0 |
 | `FinalCountdownLoss` | 2nd card placed while Final Countdown armed | director may be empty [unverified] | 0.1 |
 | `CreepyJesterLoss` | Creepy Jester finishes its art cycle | none mapped [unverified] | 0 |
+| `TicketJackpotWin` | a Lucky Nine ticket rolls the Jackpot (`luckyNineJackpotChance` 0.006) and is fully scratched | `EndingFlourish` coin rain | `ratingMechanicWin` 0.95 |
+| `TicketCurseLoss` | a Lucky Nine ticket rolls the Curse (`luckyNineCurseChance` 0.01), is fully scratched and the `curseBeatSeconds` (1.2 s) beat runs | none (shake, red label) | `ratingMechanicLoss` 0 |
+| `MotherLodeWin` | `miningStreakTarget` (3) consecutive length-10 veins banked | `EndingFlourish` coin rain | 0.95 |
+| `BlackjackCharlieWin` | a hand reaches `blackjackCharlieCards` (7) cards without busting; rolled at the deal with `blackjackCharlieChance` (0.04) by rigging the first draws | `EndingFlourish` coin rain | 0.95 |
 
-If a reason has no director, the end panel shows immediately. `GameOver` has **no re-entry guard** (a second call saves a second record).
+If a reason has no director, the end panel shows immediately; the three mechanic wins (`RunRating.IsMechanicWin`) play `EndingFlourish` instead. `GameManager.GameOver` now ignores a second call (re-entry guard), so a record is saved once. The Blackjack ruin loss and the Mining cave-in loss were cut (§18 A22).
 
 ### 7.3 Pause model (two separate mechanisms)
 
@@ -297,7 +302,7 @@ Everything gameplay-side uses scaled time, so it freezes with `timeScale`. Cutsc
 
 | Key | Content |
 |---|---|
-| `TutorialSeen` | 1 after tutorial closed |
+| `TutorialSeen` | 1 after the intro tutorial closed |
 | `HintSeen_<HintId>` | 1 per first-time hint shown |
 | `CardCollection_UnlockedIds` | comma-joined **`CardSO` asset names** (a comma or rename breaks it) |
 | `RunHistory_Total`, `RunHistory_NextSlot`, `RunHistory_0..19` | lifetime counter, ring head, `RunRecord` JSON |
@@ -336,12 +341,13 @@ Three fixed viewpoints, no scrolling (I9, DESIGN §4.1). The run starts in the *
 |---|---|---|
 | Room | `roomCameraSize` 14 | start; a Back hotspot (`CameraViewButton` target Room) |
 | Desk | `deskCameraSize` 6 | click the desk in the Room view |
-| Door | `doorCameraSize` 7 | click the door in the Room view (**no door object in the scene yet**: only `DoorAnchor`; Batch 3) |
+| Door | `doorCameraSize` 7 | click the door in the Room view (the door objects exist since Batch 3) |
 
 - `CameraRig.GoTo(view)` tweens position and size over `cameraFocusSeconds` (0.5 s, `Ease.InOutSine`), holds an `InputGate` block until done, then raises `ViewChanged`. Calls while moving or to the current view are ignored. It kills its tween in `OnDisable`.
 - The clock keeps running during a move (I5).
 - There are no scroll buttons and no on-screen Back control: Back is a hotspot outside the desk. `HoverHighlighter` skips Back (Room) buttons so they never glow.
-- **Tutorial text** step 5 now says "Click the desk to zoom in and work. Click the door when the bell rings." The door does not exist yet, so that line is ahead of the build.
+- **Tutorial text** step 5 says "Click the desk to zoom in and work. Click the door when the bell rings."
+- The camera zones (desk / door / back hotspots) are the `CameraZone` prefab (instances `BackZone_*`, `BackZone_Door_L/_R`); each carries its `CameraViewButton` and `ViewGate`.
 
 ### 8.3a Highlight Hover and Money Popup (Han, merged 2026-10-19)
 
@@ -349,16 +355,17 @@ Both are DESIGN features (§4.2, §5.17), built as a **simpler first pass**; dif
 
 | | DESIGN v2.1 | As built |
 |---|---|---|
-| Highlight Hover | glow along the sprite's alpha edge, shared outline material + `MaterialPropertyBlock`, fade in 0.1 s / out 0.15 s, width 3 px scaling with the camera, config `hoverGlow*` | `HoverHighlighter` draws a **4-point rectangular `LineRenderer`** around the hovered collider's bounds (padding 0.15, width 0.06, colour `#FFD166`, sorting 100), picked every 0.05 s from `InputManager.PeekTarget()`. No fade, no sprite silhouette, values are serialized fields on the component (I10 gap), no `hoverGlow*` config fields |
-| Respects interactable / input blocked / view | yes | interactable: yes (`PointerReceiver.IsInteractable`); input blocked and view: yes through `PeekTarget` (null while input is disabled, honours `ViewGate`); drag keeps glow and glow-clear on pawn: not specially handled (hides when the object deactivates) |
-| Reward Popup | `+$N` **at the pointer**, money and Egg Timer `+Ns`, stacked, pooled (8), unscaled time, config `rewardPopup*` | `MoneyPopup`: pooled `+$N` texts that **rise from a fixed anchor** (not the pointer), income only (skips stake refunds and game over), deltas merged inside `moneyPopupMergeSeconds` 0.3 s, `moneyPopupRise` 24, `moneyPopupSeconds` 0.9, colour literal green. **No Egg Timer `+Ns` popup yet.** It derives income from `OnMoneyChanged` deltas (spending is ignored), not from a dedicated income event; it uses `Time.time`, so it freezes with a modal freeze |
+| Highlight Hover | glow along the sprite's alpha edge, shared outline material + `MaterialPropertyBlock`, fade in 0.1 s / out 0.15 s, width 3 px scaling with the camera, config `hoverGlow*` | **Matches the spec now.** `HoverHighlighter` draws up to `maxQuads` (8) quads per hovered object with the `SpriteOutlineGlow` shader (`Assets/Code/Shaders/`) and a `MaterialPropertyBlock`; colour, pixel width and fade times come from `GameConfig.hoverGlow*`; the hovered collider is picked every `checkInterval` (0.05 s) from `InputManager.PeekTarget()`. The old rectangular `LineRenderer` is gone |
+| Respects interactable / input blocked / view | yes | interactable: yes; input blocked and view: yes through `PeekTarget` (null while input is disabled, honours `ViewGate`); the glow hides when the object deactivates (pawn) and when the game is over |
+| Reward Popup | `+$N` **at the pointer**, money and Egg Timer `+Ns`, stacked, pooled (8), unscaled time, config `rewardPopup*` | Built: `MoneyPopup` listens to `MoneyService.OnIncome` (income only, never stake refunds or after game over) and `EggTimerTask.TimePaid`; one popup per reward at the pointer, stacked within `rewardPopupStackSeconds`, 8 pooled texts, unscaled time, scale-in pop, config `rewardPopup*` (serialized in `GameConfig.asset`) |
 | Owner | Han | Han |
 
-### 8.4 Cheat menu (ships in builds — no `#if` guard)
+### 8.4 Cheat menu (debug builds only)
 
-- Toggle key: script default F1, **scene override = value 10** (most likely Backslash `\`) [unverified]; F2 stops a cutscene.
-- DESIGN §7 says the cheat menu is excluded from release builds; **the code has no `#if` guard yet** (§15).
-- Buttons: give money, give time (negative amounts silently do nothing), place any card, preview / force every ending, FC intro, stop cutscene; Billiards: debug overlay, mirror cycle, table cycle, verify presets, round log (dev builds).
+- Toggle key: F1 (F2 stops a cutscene). `CheatMenuToggle` disables itself in a release build (`Debug.isDebugBuild`), so the menu cannot open there; `CheatFlags` is gated the same way (closes the old "no guard" issue).
+- `CheatMenuController` builds **five tabs** in code from the existing button grid (`AddCheat` / `AddCheatToggle`, `BuildTabStrip`): **Endings** (preview and force each of the 10 endings; next hand = Charlie; next Lucky Nine = Jackpot / Cursed), **Games** (open the viewed ticket with N windows scratched, free tickets, every vein = max, Mother Lode streak = N, next vein = Slip, bank vein now), **Economy** (clock near loss / near win, ±60 s, freeze clock, money +100 / +1000 / 0), **Annoyance** (ring phone, tax bill, junk flyer, empty package, Cat blocks Laptop / Phone, Cat leaves), **Dev** (hint next / previous / reset seen, history samples / clear, reset intro tutorial, FC intro, stop cutscene, restart, close panels, clear hand).
+- Two lists sit outside the tabs: the **card list** (one button per card asset, `GiveCard`) and the Billiards cheats (`BilliardsCheats`: debug overlay, mirror cycle, table cycle, verify presets, round log).
+- Panel prefab `CheatMenuPanel.prefab` (840×480, centred, `TabBar` + scroll lists); its scene overrides were removed.
 
 ### 8.5 Audio
 
@@ -373,13 +380,13 @@ No audio manager or mixer. Per-object `AudioSource`s: Phone ring loop, Pawn loop
 - Tick: `GameDelta = IsRunning ? Time.deltaTime : 0`; `RemainingTime -= GameDelta * TickMultiplier` every frame while running. Gameplay timers use `GameDelta`, not `TickMultiplier`; `OnTimeChanged` fires every frame.
 - At ≤ 0: if the Final Countdown intercept is armed, reset to its value (180 s) and raise `OnFinalCountdownTriggered`; else end the countdown (loss).
 - `AddSeconds(s, reason)` ignores `s ≤ 0` and game over; no cap. `Spend(s, reason)` clamps at 0 and **ends the run directly, bypassing the Final Countdown intercept by design** (DESIGN §5.14 B). The `reason` strings are **discarded** — there is no balance log yet.
-- **`TickMultiplier` is the product of keyed modifiers** (read-only, clamped 0–3). Writers: `Phone` (key = the phone, 1.5 while ringing) and `ClockSpeedCardSO` (key = the `CardItem`). Overlaps stack (Slow Hand 0.75 × ring 1.5 = 1.125). Never write it directly; use `SetSpeed/ClearSpeed`. Known gap: `Phone.OnPawned` deactivates without clearing its key (replaced in Phase 1.3).
+- **`TickMultiplier` is the product of keyed modifiers** (read-only, clamped 0–3). Writers: the phone (key = the phone, 1.5 while ringing) and `ClockSpeedCardSO` (key = the `CardItem`). Overlaps stack (Slow Hand 0.75 × ring 1.5 = 1.125). Never write it directly; use `SetSpeed/ClearSpeed`. The phone is never pawnable, so the old `Phone.OnPawned` gap no longer exists.
 
 ### 9.2 Money and Meter
 
 - `MoneyService` is the only writer of money. `Add` ignores ≤ 0; `TrySpend` fails rather than going negative.
 - **Meter Feed spends *all* current money** and adds `money × exchangeRate` seconds. Minimum feed $10 (hint `MeterMinFeed`). Blocked while `IsLocked` (set when the Final Countdown triggers, hint `MeterLocked`). It is the only money → time path.
-- **Feed gate (rule decided 2026-10-20, option A, code pending):** the Feed button does nothing while desk input is blocked (`InputGate.IsBlocked`) or game time is frozen (`Time.timeScale == 0`). Reason: Feed is uGUI, so `InputManager.IsInputEnabled` does not stop it, and `CardPanel` (696×384, centred) probably leaves it uncovered (I5). A rejected Feed shows no hint (the modal panel is already on screen). Today `Meter.HandleFeedClicked` checks only `IsLocked` and `meterMinFeed`. Meter is Ari's file: Ari applies or approves the change.
+- **Feed gate (built 2026-10-22):** `Meter.HandleFeedClicked` returns at once while `Time.timeScale == 0` (a modal panel such as `CardPanel` or the intro tutorial is open, or the run is over). It is **not** gated on `InputGate.IsBlocked`: ordinary panels that block the desk (Laptop, ticket panels) do not pause time and Feed is a legitimate action there. `CardRevealPanel` covers the Meter with its full-screen raycast Dim. A rejected Feed shows no hint (the modal panel is already on screen). `Meter` now subscribes in `Start` and unsubscribes in `OnDestroy`. Meter is Ari's file: Ari should review the diff.
 - `MoneyService.StakeRefundReason` ("stake refund") marks money that is not income (Billiards bet returned on a win): excluded from ITRS and run stats. **Everything else counts as earned**, including pawning and card sales.
 
 ### 9.3 ITRS (taxes)
@@ -389,20 +396,20 @@ No audio manager or mixer. Per-object `AudioSource`s: Phone ring loop, Pawn loop
 | Bill interval | every **45 s** of running clock (`GameDelta`), counted only while **no bill is open** |
 | Amount | `max($20, round(20% × money earned since last bill))` |
 | Deadline | each bill has a `TaxDeadline`: `taxPayWindow` **30 s of running clock** (stops during paused calls) |
-| Pay | `TrySpend(due)` from the **Taxes phone app** or the **desk paper copy** (`Tax` panel); either resolves both. Pay is disabled when you can't afford it |
+| Pay | `TrySpend(due)` from the **Taxes phone app** or the **paper copy** (`Tax` panel, opened from the tax letter at the door); either resolves both. Pay is disabled when you can't afford it |
 | Unpaid at 0 s | costs **due × 2 s** of clock, **once** (`ClockService.Spend`; bypasses the Final Countdown intercept by design). Closing the panel does nothing; the **Ignore button is gone** (Q1) |
 | Gate | ITRS issues **no new bill while one is open** (P6 fixed) |
 | Card hooks | Tax Exemption → `SkipNextBill` (next bill issued at $0, resolved like any other); Audit → `ForceBillNow` (ignored while a bill is open) or `DoubleCurrentBill` (also raises `AssessmentChanged`); ITRS call "payment plan" → `ExtendCurrentBill(itrsCallExtension)` |
 
 - A new bill also posts an Inbox message "Tax bill $X" (action "Open Taxes") and a banner while the phone is usable.
-- `TaxNotice` (desk "Taxes" object) = the paper copy: shows when a bill is issued, nags every 2 s until first opened, stays on the desk until the bill is resolved (then hides itself), and opens the `Tax` panel (`Show()`). `Tax` reads `ITRSService` every frame while open (no event subscription: it starts inactive) and closes itself when the bill is gone. Phase 3.2 moves the paper copy to the mailbox.
+- **Paper copy = the tax letter (Phase 3.2).** `taxLetterDelay` (10 s) after a bill is issued, `DoorController` drops a TAX `Letter` on the carpet in the Door view; clicking it opens the `Tax` panel; the letter disappears when the bill is settled. `Tax` reads `ITRSService` every frame while open (no event subscription: it starts inactive) and closes itself when the bill is gone. The old desk "Taxes" object (`TaxNotice`, `Taxes.prefab`) was deleted from the scene and prefabs; `TaxNotice.cs` is an orphan script (§15 N15).
 - Effective tax is above 20% for low earners (a $1.2/s grinder pays ~36%). The Egg Timer earns no money, so it is never taxed.
 
 ---
 
 ## 10. GameConfig — live tuning values
 
-`Assets/Settings/Configs/GameConfig.asset` held **106 fields, all serialized, no stale keys** on 2026-10-17; fields added since (Phone, Shop, Egg Timer cooldown, Camera, Money Popup) exist only as C# defaults until Ari touches the asset in the Inspector. The **asset is the truth**: C# defaults in `Config/GameConfig.cs` are stale for the rows marked ⚠ (a freshly created GameConfig would play the old, pre-hotfix game — e.g. Lucky Nine paying $0).
+`Assets/Settings/Configs/GameConfig.asset` holds **123 serialized fields** of the 160 declared in `GameConfig.cs` (checked 2026-10-22 by comparing the field list with the asset keys). The other **47** exist only as C# defaults until Ari touches the asset in the Inspector: Phone (`taxPayWindow`, call weights and timers, `deviceBlurEnabled`), Shop, Door/Mail, `eggTimerCooldown`, Camera, `ratingMechanicWin/Loss`, every Alternate Endings field and the four `hoverGlow*` fields. The Reward Popup fields and `debuffDismissFee` were serialized on 2026-10-22. The **asset is the truth**: C# defaults in `Config/GameConfig.cs` are stale for the rows marked ⚠ (a freshly created GameConfig would play the old, pre-hotfix game — e.g. Lucky Nine paying $0).
 
 | Group | Field | Live | C# default |
 |---|---|---|---|
@@ -414,6 +421,7 @@ No audio manager or mixer. Per-object `AudioSource`s: Phone ring loop, Pawn loop
 | Tickets | `tripleMatchCost` / `tripleMatchBaseReward` | 25 / 55 | same |
 | | `luckyNineCost` / `luckyNineBaseReward` | **55 / 26** ⚠ | 80 / 0 |
 | Card Box | `handCap` / `packCost` | 5 / 35 | same |
+| | `debuffDismissFee` (new 2026-10-22) | $6 (pawning a debuff whose effect still runs costs this, pays nothing) | same |
 | | `commonWeight` / `rareWeight` / `superRareWeight` / **`ultrRareWeight`** (typo) | 60 / 25 / 12 / 3 | same |
 | Blackjack | `blackjackAnte` / `blackjackClockMargin` | **20 s / 15 s** ⚠ | 15 / 10 |
 | | `blackjackWinPayout` / `PushPayout` / `NaturalPayout` | **100 / 25 / 130** ⚠ | 120 / 60 / 200 |
@@ -428,7 +436,7 @@ No audio manager or mixer. Per-object `AudioSource`s: Phone ring loop, Pawn loop
 | Phone | `deviceBlurEnabled` (new, C# default only until `GameConfig.asset` is touched in the Inspector) | true | false = dark tint instead of blur (WebGL fallback) |
 | Annoyance | `annoyanceMinGap` | 12 s | same |
 | Egg Timer | `crankTime` / `timePayout` | **1 s** ⚠ / 3 s | 2 / 3 |
-| | `eggTimerCooldown` (new, P18) | 0.75 s after each crank (C# default until the asset is touched) | 0.75 |
+| | `eggTimerCooldown` (P18) | 0.75 s after each crank (C# default until the asset is touched) | 0.75 |
 | Cat | `catSitDurationMin/Max` | **6 / 14 s** ⚠ | 3 / 8 |
 | | `catBlockChance` / `catBlockDurationMin/Max` | 0.4 / **3 / 6 s** ⚠ | 0.4 / 4 / 8 |
 | Click Task (Bear) | `clickTaskMinClicks/MaxClicks` / `LockDuration` / `MoneyReward` | 3–8 / 3 s / $5 | same |
@@ -436,7 +444,7 @@ No audio manager or mixer. Per-object `AudioSource`s: Phone ring loop, Pawn loop
 | Power Bank | `powerBankCrankTime` / `MoneyReward` / `FullHoldDelay` / `Cooldown` / `RestTime` | 2 s / **$8** ⚠ / 1.5 / 5 / 2 s | reward 10 |
 | Wire | `wireTaskMoneyReward` | $20 | same |
 | Pawn values (**no longer used for catalog items** after Phase 2.3: the item catalog decides; they only still drive objects without a `ShopItemBinding`, i.e. nothing important) | `eggTimerPawnValue` / `powerBankPawnValue` / `clickTaskPawnValue` / `pictureClickTaskPawnValue` / `wireTaskPawnValue` | 150 / 45 / 40 / 40 / 15 | same |
-| | `cardBoxPawnValue` / `nineStackPawnValue` / `laptopPawnValue` | **48 / 24 / 120** ⚠ | 180 / 100 / 300 |
+| | `cardBoxPawnValue` / `nineStackPawnValue` / `laptopPawnValue` | **48 / 24 / 120** (legacy: no longer read, catalog items pay 80% of the price paid) | 180 / 100 / 300 |
 | | `tripleStackPawnValue` (never paid: stack unpawnable) | 50 | same |
 | | `junkSmall/Medium/LargePawnValue` / `unrevealedCardSellValue` | 5 / 15 / 30 / 10 | same |
 | Billiards economy | `billiardsBetMin/Max/Step` | $10 / $40 / $5 | same |
@@ -447,14 +455,21 @@ No audio manager or mixer. Per-object `AudioSource`s: Phone ring loop, Pawn loop
 | Billiards physics ⚠ re-run verifier after any change | `billiardsBallRadius` / `CornerPocketRadius` / `SidePocketRadius` | **0.0614 / 0.12 / 0.09** ⚠ | 0.0714 / 0.15 / 0.12 |
 | | `MaxShotSpeed` / `RollingDecel` / `BallRestitution` / `CushionRestitution` / `StopSpeed` / `MaxShotSeconds` | 5 / 1.2 / 0.95 / 0.75 / 0.01 / 20 | same |
 | Camera (new, Han) | `roomCameraSize` / `deskCameraSize` / `doorCameraSize` / `cameraFocusSeconds` | 14 / 6 / 7 / 0.5 s (C# defaults until the asset is touched) | same |
-| Money Popup (new, Han) | `moneyPopupMergeSeconds` / `moneyPopupRise` / `moneyPopupSeconds` | 0.3 s / 24 px / 0.9 s (C# defaults until the asset is touched) | same |
+| Reward Popup (Han; replaced the old `moneyPopup*` fields) | `rewardPopupSeconds` / `RisePixels` / `MaxActive` / `StackSeconds` / `PopSeconds` | 0.9 s / 48 px / 8 / 0.25 s / 0.1 s (serialized) | same |
+| | `rewardPopupMoneyColor` / `TimeColor` | green `#4CAF72` / blue `#4FC3F7` (serialized) | same |
+| Highlight Hover | `hoverGlowColor` / `WidthPixels` / `FadeInSeconds` / `FadeOutSeconds` | `#FFD166` / 3 px / 0.1 s / 0.15 s (C# defaults until the asset is touched) | same |
+| Alternate endings (DESIGN §5.14 D; all C# defaults until the asset is touched) | `luckyNineJackpotChance` / `luckyNineCurseChance` | 0.006 / 0.01 per ticket | same |
+| | `luckyNineCurseOmenWindows` / `curseBeatSeconds` | 6 windows / 1.2 s | same |
+| | `miningStreakTarget` / `miningFullVeinStreakChance` | 3 veins / 0.2 per vein | same |
+| | `blackjackCharlieCards` / `blackjackCharlieChance` | 7 cards / 0.04 per hand | same |
 | Hints | `hintHoldSeconds` / `hintFadeSeconds` / `hintRepeatCooldown` | 2.5 / 0.5 / 3 | same |
 | Run rating | weights outcome / survival / money; `ratingMoneyHalfPoint` | 0.5 / 0.3 / 0.2; 300 | same |
 | | outcome scores ClockWin / SetCompletion / FCWin / ClockLoss / FCLoss / Jester | 1 / 0.95 / 0.95 / 0 / 0.1 / 0 | same |
+| | `ratingMechanicWin` / `ratingMechanicLoss` (Jackpot, Mother Lode, Charlie / Curse) | 0.95 / 0 (C# default until the asset is touched) | same |
 
 Billiards validation (`GameConfig.ValidateBilliards`): `maxShotSpeed/120 < ballRadius` (0.042 < 0.0614 ✓), corner ≥ 1.9 × ball (0.12 ≥ 0.1167, 3% margin), side ≥ 1.4 × ball (0.09 ≥ 0.086, 5% margin). Failing it shows "Billiards unavailable".
 
-Other tuning assets: `BlockConfig.asset` (block HP, §13.2), `TripleMatchSymbols.asset` / `LuckyNineSymbols.asset` (§11.3), each `CardSO` asset (durations/multipliers), Billiards preset JSONs.
+Other tuning assets: `BlockConfig.asset` (block HP, §13.2), `TripleMatchSymbols.asset` / `LuckyNineSymbols.asset` (§11.3; weights and multipliers live there, not in `GameConfig`), each `CardSO` asset (durations/multipliers), Billiards preset JSONs.
 
 ---
 
@@ -471,12 +486,12 @@ Other tuning assets: `BlockConfig.asset` (block HP, §13.2), `TripleMatchSymbols
 | Wire puzzle (ElectricSocket) | `WireTask` | drag 5 plugs to shuffled sockets | $20 once; **unlocks the Laptop** | **not pawnable** (`CanBePawned` false; part of the wall) |
 | Laptop (desk opener) | `DeskLaptopOpener` | opens laptop panel unless `Disabled` | apps (§13) | **$108 ($135 catalog value × 80%), pawnable** by design (the only pawnable starting item; removes all apps until it is bought back from the Shop's PAWNED tab, $142-$156) |
 | Backpack | `JunkItem` (Medium) | none | — | $15 |
-| Card Box | `CardBox` | buy a 3-card pack | §12 | shop item ($40); pawns for $32 |
+| Card Box | `CardBox` | buy a 3-card pack; the pool skips cards whose license is not owned (`CardSO.IsAvailable`) | §12 | shop item ($40); pawns for $32 |
 | Triple Match stack | `TicketStack` | sells $25 tickets | §11.3 | **unpawnable** (`CanBePawned => IsNine`) |
 | Lucky Nine stack | `TicketStack` | sells $55 tickets | §11.3 | shop item ($30); pawns for $24 |
 | Printer | `Pawn` | drag onto an item to pawn it | money | — |
 | Phone | `PhoneController : DeskObject` | rings | — | **never** |
-| Taxes | `TaxNotice` | bill notice | — | no |
+| Tax letter | `LetterView` (Door view) | paper copy of the bill; opens `Tax` | — | no |
 | Cat | `CatController` | roams, blocks | — | no |
 | Card Collection | binder UI | view only | — | no |
 | Meter | uGUI | money → clock | — | — |
@@ -493,7 +508,8 @@ Other tuning assets: `BlockConfig.asset` (block HP, §13.2), `TripleMatchSymbols
 
 - `TicketStack` (desk) holds a pool of **2 tickets per tier**; a third purchase shows `TooManyTickets`. Purchase charges `round(baseCost × CostModifier[Ticket])` and rolls every window's symbol **at purchase**. Scratching only reveals.
 - **Panel wiring:** each `ScratchTicket` has one reference, `panelView`, to the `ScratchPanelView` on its panel's root (`TriplePanel` / `NinePanel`). The view holds the result label and the Cash Out button and collects the `ScratchWindow`s from its children, so adding a window needs no re-wiring (before: 36 scene overrides).
-- Windows: **Triple Match 3**, **Lucky Nine 9**. A window reveals at 60% scratched (`ScratchWindow.revealThreshold`); the ticket is **paid only on Cash Out** (scratching every window just finishes the scratching; a full Lucky Nine jackpot ends the run at that moment).
+- Windows: **Triple Match 3**, **Lucky Nine 9**. A window reveals at 60% scratched (`ScratchWindow.revealThreshold`); the ticket is **paid only on Cash Out** (scratching every window just finishes the scratching). `ScratchTicket.Viewed` is the ticket whose panel is open; `RevealWindows(n)` is the dev hook the cheat menu uses.
+- **Alternate endings on Lucky Nine (built 2026-10-22):** at purchase one banded roll (`RngService`) decides Jackpot (`luckyNineJackpotChance` 0.006), Curse (`luckyNineCurseChance` 0.01) or normal. A Jackpot ticket is pre-filled with nine of the highest-multiplier (rarest) symbol and, once all windows are scratched, calls `GameOver(TicketJackpotWin)` (no Cash Out needed). A Curse ticket is pre-filled with nine of the lowest-multiplier symbol, gives the hint `TicketCursed` when `luckyNineCurseOmenWindows` (6) windows are revealed, and when fully scratched runs the `CurseBeat` coroutine (shake, red label, Cash Out locked, `curseBeatSeconds` 1.2 s) and then calls `GameOver(TicketCurseLoss)`. Cashing out before every window is scratched forfeits the ending (the ticket pays what its revealed windows pay). `CheatFlags.NextLuckyNine` forces either roll in debug builds. Expected frequency per run is `[model]` only: 1.6% of Lucky Nine tickets end the run.
 - **Reward as coded:** `round(Σ over every repeating symbol of baseReward × (count − 1) × multiplier)`, where `count` is per symbol among **revealed** windows only. Only the open ticket updates the result label (the two pooled tickets of a tier share one panel). Cash Out locks the reward computed from revealed windows; cashing out unscratched pays $0.
 
 | Symbols | weights | multipliers |
@@ -509,12 +525,12 @@ Other tuning assets: `BlockConfig.asset` (block HP, §13.2), `TripleMatchSymbols
 | Min / max payout | $0 (17%) / $132 | **$16** (never $0: 9 windows over 5 symbols) / $250 |
 | Optimal early stopping | no gain | no gain (more revealed windows can only add to the reward) |
 
-Both tiers are negative-EV gambles, as intended. The values were rebalanced with the new reward formula; the old sets were 75/20/5 and 40/27/18/10/5, then 60/28/12 and 30/25/20/15/10 with other multipliers. Triple Match uses the 1st, 3rd and 5th symbol of Lucky Nine (same relative rarity), so a picture has the same rank in both tickets. Each scratch panel has a `TicketPayoutTable` (`TicketPayoutTable.cs`, on `NinePanel`/`TriplePanel`).
+Both tiers are negative-EV gambles, as intended. The values were rebalanced with the new reward formula; the old sets were 75/20/5 and 40/27/18/10/5, then 60/28/12 and 30/25/20/15/10 with other multipliers. Triple Match uses the 1st, 3rd and 5th symbol of Lucky Nine (same relative rarity), so a picture has the same rank in both tickets. Each scratch panel has a `TicketPayoutTable` (`TicketPayoutTable.cs`, on `NinePanel`/`TriplePanel`) that is built once from the symbol asset: one row per symbol (icon, odds, multiplier) plus, on Lucky Nine, the "9x rarest symbol = Win the game" row (pixel layout from `iconSize` / `fontSize`), so it cannot drift from the real weights. Tickets are free when `CheatFlags.FreeTicketsOn`.
 
 ### 11.4 Pawning
 
 - Drag the **Printer** (`Pawn`, kinematic trigger) onto an item. It only sees colliders on **layer 3 `DeskObject`** (`pawnableLayers` = 8 in prefab and scene). It then needs `IPawnable` and `CanBePawned`; else hint `CannotPawn`. Pays `MoneyService.Add(PawnValue, "pawn")` then calls `OnPawned()`.
-- **Catalog items (Phase 2.3):** any object with a `ShopItemBinding` is priced by `ShopService.Ownership.MarkPawned` = `floor(80% × price paid)`; Phone, Egg Timer, Bear, Picture, Triple stack and anything not owned pay 0 with the `CannotPawn` hint. A pawned item with an `IRestorable` component is recorded in `ShopService.Ledger` and can be bought back from the Shop's PAWNED tab (Batch 4, A21). Cards and junk keep their own `PawnValue`. The old `GameConfig` pawn values no longer drive catalog items (§10).
+- **Catalog items (Phase 2.3):** any object with a `ShopItemBinding` is priced by `ShopService.Ownership.MarkPawned` = `floor(80% × price paid)`; Phone, Egg Timer, Bear, Picture, Triple stack and anything not owned pay 0 with the `CannotPawn` hint. A pawned item with an `IRestorable` component is recorded in `ShopService.Ledger` and can be bought back from the Shop's PAWNED tab (Batch 4, A21). Cards and junk keep their own `PawnValue`. **An active debuff card** (`CardItem.IsDebuffActive`: placed, not yet ended) has `PawnValue` 0; `Pawn` charges `debuffDismissFee` (`TrySpend(fee, "debuff dismiss")`, not income) and pawns it. If the player cannot pay, the pawn is refused: hint `DebuffDismissCost`, and the card is moved to a new spot of the placement area (`CardItem.Relocate()`, deferred to the drop if the card is being dragged). A debuff that has already ended pawns for its normal value. The old `GameConfig` pawn values no longer drive catalog items (§10).
 - `IPawnable { int PawnValue; bool CanBePawned; void OnPawned(); }`. Implementors: `ClickTask` (+Picture), `HoldTask` (Egg Timer, Power Bank), `WireTask`, `DeskLaptopOpener`, `CardBox`, `TicketStack`, `JunkItem`, `CardItem`.
 - **Every `OnPawned` deactivates (`SetActive(false)`); nothing is destroyed.** Catalog items also implement `IRestorable.OnRestored()` (Batch 4): called when a bought-back parcel is opened, while the object is hidden.
 - Five prefabs still carry a stale serialized `pawnValue: 20` that no script reads.
@@ -523,7 +539,7 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 
 ### 11.5 Phone (built in Batch 1)
 
-- **Phone (rebuilt in Phase 1.3, `PhoneController` on the desk object `DeskObject/Phone`).** `CallScheduler`: a call every 30–60 s of running clock (×0.5 under Robocalls), one at a time, 12 s gap, ring times out at 10 s (missed). Caller ID weights 25/25/40/10 (Telemarketer / Client / Unknown / ITRS; ITRS only while a bill is pending; Unknown is 60% telemarketer, 40% client; so with no bill 54% of calls are Unknown, and about 54% of all calls are really telemarketers). **While ringing:** clock ×1.5 (speed key = the phone), own `AudioSource` (no longer shared with the tax notice), desk phone shakes and shows the chat bubble, and an "Incoming call" pill shows at the top when a device hides the desk. **Answering:** clicking the desk phone only opens the phone-only view; the call is answered and declined there (declining is free). While ringing the screen shows only the caller ID (name + picture, which is the shown-as kind, so "Unknown" hides the truth) and **ACCEPT / DECLINE**: no details, no timers. **After ACCEPT the call is a short conversation** (`CallerProfileCatalog` scripts, edited by Ari/Han; `CallDialogue` is the pure line counter): DECLINE greys out for the whole call; each caller line is shown with the player's reply button ("Got you."); the **last line** is the payoff, its button reads "Hang up.", and a stalling player is hung up on after `callHangUpDelay` (5 real seconds, never shown). Client: clock **paused** from ACCEPT, Laptop locked, the phone can't be closed; on the last line +`clientGigMoney` ($22, reason `client`) goes to the player's money; a client who never answers the first line says "Hello? Are you there?" after `beneficialCallTimeout` (8 real seconds, hidden), shows it for `callGoodbyeSeconds` (2 real seconds) with the reply button greyed, then hangs up (no money). Telemarketer: clock keeps **running**; the first reply is greyed out for `telemarketerPitch` game seconds (hidden); no reward. ITRS: clock paused; on the last line the open bill gets `itrsCallExtension` (+15 s) more time; if the bill was already paid the ITRS agent says so and the +15 s is added to the **gap before the next bill** (45 s becomes 60 s; `ITRSService.GrantNextBillTime`; the 30 s pay window is unchanged). After hang-up the Call window returns to the call history. Every call (answered, declined, missed) is a `CallRecord` in the history; missed and declined calls also go to the Inbox. **Power:** side button, Off → Booting (5 s of running clock) → On; off means no rings (due calls are logged missed, never queued), no ×1.5, banners dropped. **Cable Eater** (`DoNotDisturbCardSO`) forces it off and kills the button for its duration; the phone stays off afterwards. Game over or restart releases every hold (verified).
+- **Phone (rebuilt in Phase 1.3, `PhoneController` on the desk object `DeskObject/Phone`).** `CallScheduler`: a call every 30–60 s of running clock (×0.5 under Robocalls), one at a time, 12 s gap, ring times out at 10 s (missed). Caller ID weights 25/25/40/10 (Telemarketer / Client / Unknown / ITRS; **DESIGN §5.9 says 40/25/25/10, left as is for now, §17.5**; ITRS only while a bill is pending; Unknown is 60% telemarketer, 40% client; so with no bill 54% of calls are Unknown, and about 54% of all calls are really telemarketers). **While ringing:** clock ×1.5 (speed key = the phone), own `AudioSource` (no longer shared with the tax notice), desk phone shakes and shows the chat bubble, and an "Incoming call" pill shows at the top when a device hides the desk. **Answering:** clicking the desk phone only opens the phone-only view; the call is answered and declined there (declining is free). While ringing the screen shows only the caller ID (name + picture, which is the shown-as kind, so "Unknown" hides the truth) and **ACCEPT / DECLINE**: no details, no timers. **After ACCEPT the call is a short conversation** (`CallerProfileCatalog` scripts, edited by Ari/Han; `CallDialogue` is the pure line counter): DECLINE greys out for the whole call; each caller line is shown with the player's reply button ("Got you."); the **last line** is the payoff, its button reads "Hang up.", and a stalling player is hung up on after `callHangUpDelay` (5 real seconds, never shown). Client: clock **paused** from ACCEPT, Laptop locked, the phone can't be closed; on the last line +`clientGigMoney` ($22, reason `client`) goes to the player's money; a client who never answers the first line says "Hello? Are you there?" after `beneficialCallTimeout` (8 real seconds, hidden), shows it for `callGoodbyeSeconds` (2 real seconds) with the reply button greyed, then hangs up (no money). Telemarketer: clock keeps **running**; the first reply is greyed out for `telemarketerPitch` game seconds (hidden); no reward. ITRS: clock paused; on the last line the open bill gets `itrsCallExtension` (+15 s) more time; if the bill was already paid the ITRS agent says so and the +15 s is added to the **gap before the next bill** (45 s becomes 60 s; `ITRSService.GrantNextBillTime`; the 30 s pay window is unchanged). After hang-up the Call window returns to the call history. Every call (answered, declined, missed) is a `CallRecord` in the history; missed and declined calls also go to the Inbox. **Power:** side button, Off → Booting (5 s of running clock) → On; off means no rings (due calls are logged missed, never queued), no ×1.5, banners dropped. **Cable Eater** (`DoNotDisturbCardSO`) forces it off and kills the button for its duration; the phone stays off afterwards. Game over or restart releases every hold (verified).
 - **Phone UI** (inside `DeviceLayer`, placeholder art from `Assets/Art/Phone UI/Smartphone.png`, body sprite `Smartphone_70`, icons `Smartphone_0/24/34`): home screen with Call, Inbox (unread badge) and Taxes icons; in the phone-only view each app opens in **its own window frame** (sprites from `Assets/Art/Phone UI/Premade Menus.png`, scaled ×2.5, pointer tail aimed at the phone) to the right of the phone: `CallWindow` teal (`Premade Menus_72`), `InboxWindow` magenta (`_74`), `TaxesWindow` yellow (`_75`); blue (`_73`) is kept for the Shop. `PhoneHome` shows one window at a time. **Every text under `PhoneSlot` uses `BoldPixels Pixel.asset`**, sized in multiples of 16 (the banners, the incoming-call pill and the Laptop clock are outside `PhoneSlot` and still use the old font). **Call app = `CallScreen`:** a headline, a `Body` vertical layout group (caller picture in a circle = ring + `Mask` + nested `Portrait` image, then the caller's name, then what the caller says; there is no timer label) and a `Buttons` horizontal layout group (`Accept` / `Decline`, which also hold the other call actions). Caller names and pictures come from **`Assets/Settings/Configs/CallerProfiles.asset`** (`CallerProfileCatalog`: lists per caller kind, each with a `displayName` and a square `portrait`; one entry is picked at random per call and stored in `CallInfo.profileSeed`, so the ringing and answered screens show the same face; an empty portrait shows the blank circle). **Inbox and call history share one list + reading-pane layout** drawn from the Premade Menus Mail pieces (row `_126` / selected row `_127`, scroll track `_52`, handle dot `_123`, pane `_53`; all positions are the frame's native pixels x2.5): `PhoneListView` (a ScrollRect with a hand-synced `Scrollbar` so the handle stays a fixed dot, rows cloned from a template, click highlights a row) + `PhoneListRow`. **Inbox** = `InboxScreen`: every message, newest first, an icon (envelope; alert icon for tax bills and missed calls) and an unread dot per row, click to read (marks read), "FROM:" shows the sender kind, an "Open" action for `app:taxes`, license actions shown but inert until Batch 2. **Call history** = `CallHistoryView` (the `History` object under `CallWindow`, shown by `CallScreen` only when no call rings or is active): one row per call (icon for answered vs missed/declined, newest first, 30 kept), the right pane shows the outcome, the result (e.g. +$22) and the transcript. (Other apps: **Taxes** = `TaxesScreen`: bill, seconds left, Pay; the Taxes icon shows a badge while a bill is open). **Banners** = `BannerStack` (top-right of the screen, max 3, `bannerLifetime` real seconds, only while the phone is usable; a phone-top variant waits for final art).
 - Shop app (Phase 2.2, built): see below. The Shop icon and the Shop window title icon are placeholders (the Taxes icon tinted blue, an envelope) until Han draws them. Icon layout and status bar are placeholders until Ari arranges them.
 
@@ -538,7 +554,7 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 
 ### 12.1 Data model
 
-- `CardSO` (`Create > Overtime > Cards > Normal`): `cardName, image, description, rarity, weight, pawnValue, hideUntilCollected, collectionRegisterAs`. A plain `CardSO` (no effect) is a valid collectible.
+- `CardSO` (`Create > Overtime > Cards > Normal`): `cardName, image, description, rarity, weight, pawnValue, hideUntilCollected, collectionRegisterAs`, plus the virtual `IsAvailable` (default true; `CardBox.RollCard` skips cards that return false). A plain `CardSO` (no effect) is a valid collectible.
 - `Rarity { C, R, SR, UR }` (weights 60/25/12/3). Older docs say Common/Uncommon/Rare/Legendary — **"Rare" means a different tier there**; use the code names.
 - `EffectCardSO` (abstract): `_isDebuff` (`[FormerlySerializedAs("isDebuff")]`), `BlocksPawning` (false by default), `OnPlaced(CardItem)`, `OnRemoved(CardItem)`, `OnPawned`. Each timed subclass declares its own `duration`.
 
@@ -547,9 +563,9 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 | `ClockSpeedCardSO` | duration 15, tickMultiplier 0.75 | `SetSpeed(card, x)` / `ClearSpeed(card)` | timer |
 | `CableEaterCardSo` (Cable Eater; replaced `DoNotDisturbCardSO`) | duration 20 | `PhoneController.ForceOff(card)` + `LaptopLock.Add(card)`: the phone is forced off with a dead power button **and the Laptop is locked**; released in `OnRemoved`. Asset: debuff, SR, weight 20, pawn $10 [verified] | timer |
 | `RobocallsCardSO` | duration 30 | `PhoneController.AddRobocalls(card)` / `RemoveRobocalls(card)`: call interval ×0.5 | timer |
-| `DisableAppIconCardSO` | duration 15, targetAppName | hides a laptop desktop icon (open app keeps running) | timer |
-| `TaskCostModifierCardSO` | target, ×1.5, 20 s | `CostModifierService.SetMultiplier` (overwrite, no stacking) | timer |
-| `AuditCardSO` | — | force a bill or double the open one | bill resolved — **`OnRemoved` is empty (bug N5, §15)** |
+| `DisableAppIconCardSO` | duration 15, targetAppName | hides an icon (open app keeps running). `IsAvailable` = `IconGate.IsLicensed(targetAppName)`: not rolled until the player owns that app | timer |
+| `TaskCostModifierCardSO` | target, ×1.5, 20 s | `CostModifierService.SetMultiplier(target, card, x)` (keyed by the card, so two copies multiply instead of overwriting). `IsAvailable` is false for the Blackjack / Billiards targets until that license is owned | timer |
+| `AuditCardSO` | — | force a bill or double the open one | bill resolved; `OnRemoved` detaches its handler (N5 fixed) |
 | `TaxExemptionCardSO` | — | `SkipNextBill(card)` / withdraw | exempt bill resolved |
 | `OvertimeCardSO` | ×2 | next mining vein multiplier | vein banked |
 | `ButterfingersCardSO` | — | next vein pays 0 | vein banked |
@@ -560,9 +576,10 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 ### 12.2 Lifecycle
 
 1. **Buy a pack** at the Card Box: needs `CardHandManager.HasRoom` (placed < `handCap` 5) else hint `HandFull`; costs `round(35 × CostModifier[CardPack])`.
-2. **Roll** 3 cards independently (duplicates possible): rarity by weight, then a card of that rarity by `CardSO.weight` (`RngService`). Empty rarity → whole pool. All-zero weights → always the first card.
+2. **Roll** 3 cards independently (duplicates possible): rarity by weight, then a card of that rarity by `CardSO.weight` (`RngService`). Cards with `IsAvailable == false` (Blackjack/Billiards cards before their license) are skipped. Empty rarity → whole pool. All-zero weights → always the first card.
 3. **Reveal panel:** pack image, then 3 face-down slots resolved in any order. Before reveal: **Sell $10** (works on debuffs too). After reveal: **Place** always; **Collection** and **Sell (pawnValue)** hidden for debuffs.
 4. **Place** → a pooled `CardItem` (7 fixed instances in the scene, never instantiated) → `Setup(card)` → `OnPlaced`. `TryPlaceCard` checks only the pool, **not the hand cap**, so a pack bought at 4 placed can reach 7.
+4a. **Pawning an active debuff** (`CardItem.IsDebuffActive`): the Printer charges `debuffDismissFee` ($6, `GameConfig`) and pays nothing; without the money it shows `DebuffDismissCost` and `CardItem.Relocate()` moves the card to another placement spot (after the drop if it is held). An ended card pays `pawnValue` as before.
 5. **Effect ends** (`EndEffect`, guarded by `_hasEnded`): `OnRemoved`, card **flips face-down and stays**, still using a hand slot, and its type is registered in the Collection. Clicking a face-up card opens `CardPanel` (pauses the game).
 6. **Pawn** the card (only way to clear a slot): releases the slot, ends the effect early if still running (**no collection credit**), pays full `pawnValue` even for spent cards, returns to pool.
 7. Scene reload: `CardItem.OnDestroy` runs `OnRemoved` once if needed; every effect static is cleared on `sceneLoaded`.
@@ -608,10 +625,11 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 ### 12.4 Card notes
 
 - Debuffs bypass the cap only in the sense that placement never checks the cap; the cap gates **buying**. Keeping 5 cards on the desk dodges new debuffs (accepted trade-off).
-- Card Box pawns for $48 against a $35 pack; spent cards pawn for full value. Cash-flow positive by design? Revisit in the shop pass.
+- Card Box pawns for $32 (80% of its $40 catalog price) against a $35 pack, so pawning a box always loses money; spent cards pawn for full value; an **active debuff** costs `debuffDismissFee` ($6) to pawn instead (§11.4).
+- The licensed-app cards (No More Gambling, Not Valid 8-Ball, Bet More Money, High Risk High Reward, plus any `DisableAppIcon` card aimed at a licensed app) appear in packs only after the matching license is bought, so a pack never rolls a card that does nothing.
 - `CardItem.EndEffect` registers `_data`, while reveal-to-Collection registers `CollectionTarget` — inconsistent for alias cards (Jester → Han).
 
-### 12.5 Win/lose cards (`WinConditionCard/`, described from GAME_STRUCTURE — these files were not readable in this snapshot)
+### 12.5 Win/lose cards (`WinConditionCard/`, described from GAME_STRUCTURE — not re-read in the 2026-10-22 sync; the folder now holds `FinalCountdown/{FinalCountdownCardSO,FinalCountdownTracker}` and `SetCompletion/{SetCompletionCardSO,SetCompletionTracker}`)
 
 - **Final Countdown** (`FinalCountdownTracker`: None → Armed → Triggered). First placement arms `ClockService.ArmFinalCountdownIntercept(180)` (Meter still works). When the clock hits 0 it resets to 180 s, **locks the Meter for the rest of the run** (`HandleTriggered`, as DESIGN §5.14 B says; the 2026-10-17 text had this backwards) and plays the intro (clock paused during it). A second card placed while **Armed = loss**, while **Triggered = win**. Pawning the armed card is a free escape. `ClockService.Spend` (ITRS unpaid-bill penalty, Blackjack ante) bypasses the intercept **by design** (DESIGN §5.14 B) and ends the run as `ClockLoss` whatever the phase.
 - **Set Completion / "MASCH"** (anchor **Mei**): wins when Mei plus one card of each group is on the desk: {Han or Creepy Jester}, {Ari}, {Sybil}, {CtrlZ} — exactly 5 cards = the whole hand at `handCap` 5.
@@ -635,7 +653,8 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 - **Input:** hold the pickaxe, drag it into the ore and back out = one swing; `hitCooldown` **0.7 s** (literal on `PickaxeView`, not GameConfig). No hold mechanic any more (landmine L8, design question open).
 - **Vein:** length uniform **6–10**, shown up front by status nodes (L7 fixed). Blocks always in order: Dirt 1 HP, Wood 2, Stone 2, Coal 3, Copper 3, Iron 4, Quartz 4, Gold 5, Diamond 6, Ruby 7. Payout per block from `blockPayout`; vein totals L6 $29 / L7 $41 / L8 $56 / L9 $73 / L10 $94 (mean **$58.6, 25 hits**).
 - **Banking:** paid only when the vein completes; closing/switching mid-vein zeroes the unbanked ore (but block damage persists, so reopening resumes the vein with nothing banked). Respawn 1 s.
-- Overtime (×2) and Butterfingers (slip → 0) queue through statics, reset on scene load. "Received" label ignores the Overtime multiplier.
+- Overtime (×2) and Butterfingers (slip → 0) queue through statics (`QueueNextVeinMultiplier` / `QueueNextVeinSlip`, each with the owning card), reset on scene load. "Received" label ignores the Overtime multiplier.
+- **Mother Lode (ending, built 2026-10-22):** `_fullVeinStreak` counts consecutive banked veins of maximum length (`MaxVeinLength` = min of `veinLengthMax`, the block list and the status nodes). While the streak is above 0, the next vein is maximum with `miningFullVeinStreakChance` (0.2; this **replaces** the normal 1-in-5, it does not add) and otherwise 6–9. Banking the `miningStreakTarget`-th (3) full vein calls `GameOver(MotherLodeWin)`. A slip (Butterfingers) or a shorter vein sets the streak to 0, and so does closing the app (`OnAppClosed`). Reaching `target − 1` shows the hint `MotherLodeTease`. No progress label (decision A22). Dev hooks: `CheatFlags.PendingMiningStreak`, `ForceFullVein`, `MiningApp.DebugFinishVein()`. `BankVein()` returns whether the run was won; `CompleteVein()` finishes the vein.
 - **Throughput ceiling $3.17/s** (perfect 0.7 s rhythm), ~$2.25/s at 1 swing/s; $2.53/s after 20% tax.
 
 ### 13.3 Blackjack (`BlackjackApp`, `BlackjackGame`)
@@ -644,7 +663,8 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 - Ante **20 s of clock** × `CostModifier[Blackjack]`; deal/double need clock ≥ ante + **15 s** margin (35 s). Double spends a second ante.
 - Payouts: win/dealer bust **$100**, push **$25**, natural **$130** (× 2 if doubled).
 - **Hot Table:** payout × (1 + min(streak × 0.10, 0.50)); streak +1 per win, kept on push, reset on loss/bust and **on closing or switching the app**. Money only.
-- Closing during the 0.6 s reveal forfeits even a won hand (payout is credited after the delay).
+- **Pay before reveal (N14 fixed 2026-10-22):** `Resolve()` settles the hand and credits the payout (`MoneyService.Add`, `_totalReceived`) **before** the `blackjackRevealDelay` wait, so closing the app during the reveal no longer forfeits a won hand.
+- **Charlie (ending, built 2026-10-22):** at each deal `BlackjackApp.OnDeal` rolls `CheatFlags.ConsumeCharlie() || NextDouble() < blackjackCharlieChance` (0.04). On a hit `BlackjackGame.Deal(charlieCards)` rigs the player's draws through a `_rigged` queue of low cards (2s and 3s), so a patient player can reach 7 cards. `HasCharlie(n)`; reaching `blackjackCharlieCards` without busting calls `GameOver(BlackjackCharlieWin)` immediately. Doubling down clears the rig. From the 4th card on, every Hit shows the hint `CharlieTease` (`ShowAlways`, bypasses the cooldown). Normal hands and EV are unchanged (the 4% rigged hands only help the player).
 - EV: about **+$30–35 per hand** pre-tax (basic vs money-optimal play), +15% with Hot Table; at 4–6 s per hand that is **~$5–9/s**, roughly 2–3× Mining. HANDOFF D6 "Blackjack vs Mining" is **not closed** by the hotfix; the plan treats it as needing playtest.
 - Dead code: `BlackjackApp.Banned` is never set; `BlackjackGame.Payout` is unused.
 
@@ -689,7 +709,7 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 
 **Aim:** press on the felt, drag away from the shot, release; power = pull / (0.6 × felt height); < 5% power or right-click cancels. Every shot is quantized (0.1°, 0.01 power) so replays are exact. Mirror (none/X/Y/XY) is view-only, so one stored solution covers all four. Felt 588×294 canvas units, window 668×474; balls drawn 36 px from 42 px sprites.
 
-**Balance status:** model numbers only (no real playtest rounds). Typical player at $40: Easy +$1.6/s, Medium +$4.3/s, Hard +$4.4/s; choosing difficulty after seeing the table adds ~$1/s. BILLIARDS_BALANCE's recommendation (0.6/1.8/2.3) is **overridden**: retune so Easy/Med/Hard ≈ 0.6×/1.0×/1.3× Mining ≈ **1.9/3.2/4.1 $/s** after measuring real rounds (pending). Per-table `winRates` in preset JSON proposed, not built. **No license gate exists yet** (Billiards is free today; licenses come with the shop).
+**Balance status:** model numbers only (no real playtest rounds). Typical player at $40: Easy +$1.6/s, Medium +$4.3/s, Hard +$4.4/s; choosing difficulty after seeing the table adds ~$1/s. BILLIARDS_BALANCE's recommendation (0.6/1.8/2.3) is **overridden**: retune so Easy/Med/Hard ≈ 0.6×/1.0×/1.3× Mining ≈ **1.9/3.2/4.1 $/s** after measuring real rounds (pending). Per-table `winRates` in preset JSON proposed, not built. Billiards is now behind a license (`license_billiards.asset`; Blackjack: `license_blackjack.asset`), bought in the Shop app.
 
 ---
 
@@ -704,8 +724,8 @@ Both tiers are negative-EV gambles, as intended. The values were rebalanced with
 | Mining | ≤ $3.17/s ($2.53 after tax) | free, no capital |
 | Blackjack | ~$5–9/s | needs clock ≥ 35 s, burns ~31 s per hand |
 | Billiards | ~$1.6 / $4.3 / $4.4 per s (E/M/H, model) | needs ≤ $40 capital |
-| Triple Match | −$2.77 per ticket | 53% chance of profit |
-| Lucky Nine | −$6.64 per ticket (stopping early never pays more) | 28% chance of profit |
+| Triple Match | −$2.75 per ticket (RTP 89.0%) | 46% chance of profit |
+| Lucky Nine | −$6.38 per ticket (RTP 88.4%; stopping early never pays more) | 32% chance of profit; 1.6% of tickets are a Jackpot or a Curse (ending) |
 | Phone ring | costs ≈ 0.75–5 s of clock each | ~9% extra drain if always ignored |
 | ITRS | 20% of gross income, min $20 / 45 s | ignore = 2 s per $ |
 
@@ -715,33 +735,28 @@ Baseline to beat: **$3/s**. Any future paid earner (licenses in the shop plan) m
 
 ## 15. Known issues (open)
 
-Only genuine defects live here. Behaviour that matches `DESIGN.md` is not a bug (see §17.3 for designed-but-unbuilt features and §18 for deliberate choices). Ranked by impact. IDs: `L#` landmine pass (2026-08-31), `P#` Phone-plan problem list, `N#` 2026-10-17 audit. When you fix one, move it to §16 in the same commit.
+Only genuine defects live here. Behaviour that matches `DESIGN.md` is not a bug (see §17.3 for designed-but-unbuilt features and §18 for deliberate choices). Ranked by impact. IDs: `L#` landmine pass (2026-08-31), `P#` Phone-plan problem list, `N#` audits (2026-10-17, 2026-10-22). When you fix one, move it to §16 in the same commit.
 
 | # | Sev | Issue | Where | Fix / owner |
 |---|---|---|---|---|
-| I5 | Med | **Meter Feed is not gated while input is blocked or time is frozen.** Rule decided (§9.2, A19): Feed does nothing while `InputGate.IsBlocked` or `Time.timeScale == 0`. `CardPanel` (696×384 centred) probably does not cover the Feed button; `TutorialPanel` (full screen) does. Verify in the Editor | `Meter.HandleFeedClicked` | **code pending**, Ari applies (Meter is his file) |
-| N5 | Med | Audit card: `OnRemoved` empty → after pawning, its handler ends a *different* pooled card later | `AuditCardSO` | unsubscribe in `OnRemoved` |
 | — | Med | Blackjack ≈ 2–3× Mining after the hotfix | `GameConfig` Blackjack | playtest, then tune `blackjackWinPayout` / ante / cycle time |
 | — | Med | Billiards payouts not retuned (targets still 1.5/3/4) | `billiardsTargetRate` | measure 20 real rounds → 1.9/3.2/4.1 $/s |
-| N2 | Med | Consumers cache `MoneyService.Current` in their `Start`; `Meter` subscribes in `OnEnable` | `Meter`, `ITRSService`, `RunStatsService` | safe only with the execution order in §5.4; move to `Start`/lazy init |
+| N2 | Low | Consumers cache `MoneyService.Current` in their `Start` (`Meter` now subscribes in `Start`, so it is safe) | `ITRSService`, `RunStatsService` | safe only with the execution order in §5.4; move to lazy init |
 | N3 | Med | Pawning, card sales (and future buyback refunds) count as income for ITRS and run stats | `ITRSService`, `RunStatsService` | non-income reason class before the shop/buyback |
-| N4 | Med | `CostModifierService` overwrite: two cost cards on one target, first expiry resets both | `CostModifierService` | keyed multipliers |
-| N6 | Med | Cat can block the Phone (unanswerable ring) and anything else | `CatController` | exclude Phone/TaxNotice or gate |
 | — | Med | `PointerReceiver.SetInteractable` is a bool: a Cat block ending re-enables a solved wire puzzle or a cooling Power Bank | `PointerReceiver` | refcount / reason set |
 | L10 | Low | `ultrRareWeight` typo; docs used other rarity names | `GameConfig.cs` | rename with `[FormerlySerializedAs]` |
 | L12a | Low | Vestigial `InputManager.FocusRoot` | `InputManager` | delete |
 | — | Low | `TicketSymbolConfig` lives in `TicketSymbolPool.cs` | `Config/` | rename file (keep `.meta`) |
-| — | Low | `GameOver` has no re-entry guard | `GameManager.GameOver` | early return |
 | — | Low | `CreepyJesterCardSO` `artPool` index is unguarded (length 0 or 1 throws on the first tick). The `PlayerPrefs.DeleteAll()` wipe is **deliberate** (DESIGN §5.14 C), not a bug | `CreepyJesterCardSO` | guard the index |
-| — | Low | `HoverHighlighter` colour/width/padding are serialized fields, not `GameConfig` (I10) and DESIGN's `hoverGlow*` keys do not exist; the glow is a rectangle, not a sprite-edge outline (§8.3a) | `HoverHighlighter` | Han: move to config when the shader outline is built |
-| — | Low | Tutorial step 5 tells the player to click the door, but no door object exists yet | `TutorialPanel`, scene | Batch 3 builds the door; until then reword or accept |
-| — | Low | Cheat menu ships in builds (DESIGN §7 says it is excluded from release builds); negative money/time cheats do nothing | `CheatMenu*` | `#if UNITY_EDITOR \|\| DEVELOPMENT_BUILD` |
 | N10 | Low | `AddSeconds/Spend` discard `reason` (no clock balance log) | `ClockService` | `OnClockChanged(delta, reason)` event |
-| N14 | Low | Blackjack forfeits a won hand closed during the reveal | `BlackjackApp.Resolve` | credit before animating |
 | — | Low | Collection saved by asset name, comma-joined | `CardCollectionManager` | never rename card assets; avoid commas |
-| — | Low | `CardItem` timed `Invoke` not cancelled on pawn/reuse [unverified risk] | `CardItem` | `CancelInvoke()` in `Setup`/`OnPawned` |
-| — | Low | Stale C# defaults on ~20 GameConfig fields (§10) | `GameConfig.cs` | update defaults to the live values |
-| — | Info | Orphan code: `BilliardsPendingEffects` and its hooks (the three Billiards cards were removed). Dead code: `TaxNotice.OnPawned`, `BlackjackApp.Banned`, `BlackjackGame.Payout`, unused event `ScratchTicket.OnPreRevealDelivered`; stale `pawnValue: 20` in 5 prefabs | various | clean when touched |
+| — | Med | **47 of 160 `GameConfig` fields are not serialized in the asset** (§10): they run on C# defaults, which are the intended values today but are invisible to the Inspector and to anyone editing the asset | `GameConfig.asset` | Ari: select the asset in the Inspector and save |
+| — | Low | Stale C# defaults on ~20 older GameConfig fields (§10) | `GameConfig.cs` | update defaults to the live values |
+| N15 | Low | `TaxNotice.cs` is an orphan: its `Taxes.prefab` was deleted and nothing in the scene or any prefab references the script; `Tax.cs` comments still mention it | `Annoyance/TaxNotice.cs` | delete the script (and its `.meta`) once Ari agrees |
+| N16 | Low | Phone call weights in code/asset are 25/25/40/10 (Telemarketer / Client / Unknown / ITRS) while DESIGN §5.9 says 40/25/25/10 | `GameConfig` call weights | decision pending (§17.5) |
+| N17 | Low | `CardPanel` shows the card's normal `pawnValue` even for an active debuff, whose real pawn result is a $6 fee | `CardPanel` | show the fee for an active debuff |
+| N18 | Low | The scene has more than one cutscene root (audit item A4); not yet merged into one | `SampleScene.unity` | Editor step (A4), Han |
+| — | Info | Orphan code: `BilliardsPendingEffects` and its hooks (the three Billiards cards were removed). Dead code: `BlackjackApp.Banned`, `BlackjackGame.Payout`, unused event `ScratchTicket.OnPreRevealDelivered`; stale `pawnValue: 20` in 5 prefabs | various | clean when touched |
 | — | Info | ~45 `Instance?.` uses against the `!= null` convention | mostly `HintService` | clean when touched |
 
 ---
@@ -750,6 +765,10 @@ Only genuine defects live here. Behaviour that matches `DESIGN.md` is not a bug 
 
 | ID | Was | Fixed by |
 |---|---|---|
+| I5 | Meter Feed worked while the CardPanel froze game time (the Meter sits above most panels) | `Meter.HandleFeedClicked` returns when `Time.timeScale == 0` (2026-10); the Laptop, Phone, intro and end panels already cover it |
+| N4 | `CostModifierService` overwrite: two cost cards on one target, first expiry reset both | keyed multipliers, one per card, multiplied together (`SetMultiplier(target, card, value)` / `ClearMultiplier`) (2026-10) |
+| N14 | Blackjack forfeited a won hand closed during the reveal | `BlackjackApp.Resolve` pays before the animation (2026-10) |
+| N6 | Cat can block the Phone and the tax notice | Closed as not a bug (2026-10): the Cat blocking the Phone is intended, and the tax notice is part of the Phone now |
 | L2 | Lucky Nine always profitable (EV $203 on $55) | `luckyNineBaseReward` 110 → 26 (hotfix 2026-10-17). Note: still can't pay $0 (min $16) |
 | T1 | Lucky Nine paid by the symbol with the highest count, so stopping early paid more; ticket auto-paid on the last window; the label of a shared panel could show another ticket's reward | Reward is now the sum of every repeating symbol; payout only on Cash Out; only the open ticket updates the label (2026-10) |
 | L3 | Phone pawnable | `Phone` no longer implements `IPawnable` |
@@ -760,7 +779,14 @@ Only genuine defects live here. Behaviour that matches `DESIGN.md` is not a bug 
 | L12 (part) | `hitDropChance` stale key; Egg Timer bypassed `AddSeconds` | removed; `HoldTask` uses `AddSeconds` |
 | GS | Laptop apps had null service refs | apps use `.Instance` (2026-10-12) |
 | GS | `LaptopController._switching` soft-lock | `CancelSwitch` (2026-10-12) |
-| GS | Pawn-after-place exploit (Overtime, Butterfingers, InsiderTip, TaxExemption) | card owns its effect; `OnRemoved` withdraws (Billiards Phase 8) — **except Audit** |
+| GS | Pawn-after-place exploit (Overtime, Butterfingers, InsiderTip, TaxExemption) | card owns its effect; `OnRemoved` withdraws (Billiards Phase 8) |
+| N5 | Audit card: `OnRemoved` empty, so after pawning its handler ended a different pooled card | `AuditCardSO` keeps one handler per `CardItem` and `OnRemoved` detaches it (2026-10-22) |
+| — | `GameOver` had no re-entry guard | `GameManager.GameOver` returns if `IsGameOver` (2026-10-22) |
+| — | `CardItem` timed `Invoke` not cancelled on pawn or reuse | `CancelInvoke(EndEffect)` in `Setup` and `OnPawned` (2026-10-22) |
+| — | Cheat menu shipped in builds | `CheatMenuToggle` disables itself unless `Debug.isDebugBuild`; `CheatFlags` is gated the same way (2026-10-22) |
+| — | `HoverHighlighter` was a rectangle with serialized values, no `hoverGlow*` | shader glow + `GameConfig.hoverGlow*` (Han) |
+| — | Tutorial step 5 told the player to click a door that did not exist | the door exists since Batch 3 |
+| — | `Meter` subscribed in `OnEnable` and never unsubscribed; `InputManager` leaked its input actions | `Meter` subscribes in `Start`, unsubscribes in `OnDestroy`; `InputManager.OnDestroy` disposes the actions (2026-10-22) |
 | GS | Mining/Ticket statics survived restart | reset on `sceneLoaded` |
 | GS | Mining vein respawn soft-lock | `OnEnable` restarts a finished vein |
 | GS | ClickTask first click always completed | required clicks rolled in `Start` |
@@ -794,14 +820,15 @@ Only genuine defects live here. Behaviour that matches `DESIGN.md` is not a bug 
 | Ari, 2026-10-12 → 16 | laptop fixes; **Billiards Phases 1–9** with editor tools, 10 tables, 105 self-tests (the 3 Billiards card classes were removed on 10-19) |
 | 2026-10-17 | Balance hotfix (Batch 0) |
 | 2026-10-18 → 19 | Phone/Shop Batches 1–2 (Ari); three-viewpoint `CameraRig`, Highlight Hover, Money Popup, DESIGN v2.1 (Han) |
+| 2026-10-20 → 21 | Batch 3 Delivery (door, parcels, letters) and Batch 4 buyback (Ari) |
+| 2026-10-22 (`Han/RefactorSystem`) | four mechanic endings (Charlie, Jackpot, Curse, Mother Lode), ticket reward rework + payout table, Reward Popup, cheat menu rebuilt (5 tabs + `CheatFlags`), service tutorials replaced by hints, keyed cost modifiers, license-gated card pool and debuff dismiss fee, Meter timeScale gate, `CardRevealPanel` rework, scene clean-up (camera zones, prefabs for repeated pieces), DESIGN v2.2 |
 
 ### 17.2 In flight / waiting on a person
 
 - **Billiards sign-off (Ari):** 20 real rounds (> 1 player), measure seconds per shot, retune to 1.9/3.2/4.1 $/s, re-run the Balance Report, decide `straight_test` and per-table `winRates`, WebGL determinism check (postponed).
-- **Phone/Shop plan Batches 1–2: built and merged to `main`.** Still owed: Ari touches `GameConfig.asset` so every new field serializes (Phone, Shop, `eggTimerCooldown`, Camera, Money Popup); WebGL blur check (Ari); Han's art for the phone UI (final frame, icons, status bar, Shop icon). Cable Eater is already a debuff asset (verified 2026-10-20).
-- **Next: Batch 3 (Delivery)**, now shaped by the Door view (§17.3). Branch name to pick.
-- **Meter Feed gate (§9.2, A19):** Ari applies the code.
-- **N5 (Audit handler leak):** small card fix; Han's area.
+- **Phone/Shop plan Batches 1–4: built and merged to `main`.** Still owed: Ari touches `GameConfig.asset` so the 47 unserialized fields serialize (§10); WebGL blur check (Ari); Han's art for the phone UI (final frame, icons, status bar, Shop icon).
+- **`Han/RefactorSystem` branch:** uncommitted. Needs a Play-mode pass of every new mechanic (the four endings, Reward Popup, cheat menu tabs, debuff dismiss) and Ari's review of `Meter.cs`, `GameConfig.cs` and `Economy.cs`, then a commit and merge.
+- **Batch 5: playtest** (≥ 10 full runs); decide win target and balance numbers marked `[model]` (§17.5).
 
 ### 17.3 Planned: Phone, Shop, Delivery, Buyback
 
@@ -811,7 +838,7 @@ Full spec: `PHONE_SHOP_DELIVERY_IMPLEMENTATION.md` (phases, checkpoints, pure-C#
 |---|---|---|
 | 0 | `Ari/PawnHotfix` | balance hotfix — **applied** |
 | 1 | `Ari/PhoneShell` (**built on `ari/Phone-Revamp`**; layout changed per A3/A6/A8: docked phone, no side-by-side, DeviceLayer inside the main Canvas) | `PauseLock` (counted clock pause), `SpeedModifiers`, `ClockService.GameDelta/GameTime`; device layer (blurred desk, phone + laptop side by side, small device clocks, Meter only on desk, laptop locked during beneficial calls); smartphone: power button (5 s boot, clock running), caller ID calls (Telemarketer 40 / Client 25 / Unknown 25 / ITRS 10), call queue with 12 s gap, banners (max 3, 4 s), Inbox, Taxes app with 30 s deadline; delete `AnnoyanceManager`; Cable Eater becomes a debuff (phone forced off 30 s) |
-| 2 | `Ari/Shop` (**built and merged**) | item catalog ScriptableObject (replaces layer-based pawnability), Shop app with cart/checkout, licenses (Blackjack $60, Billiards $60, via Inbox "Activate", not pawnable), catalog prices (Power Bank $25, Card Box $40 as built (A13; DESIGN still says $60), Lucky Nine stack $30), pawn = floor(80% × price paid), `IconGate`, **Egg Timer 0.75 s cooldown** |
+| 2 | `Ari/Shop` (**built and merged**) | item catalog ScriptableObject (replaces layer-based pawnability), Shop app with cart/checkout, licenses (Blackjack $60, Billiards $60, via Inbox "Activate", not pawnable), catalog prices (Power Bank $25, Card Box $40, Lucky Nine stack $30), pawn = floor(80% × price paid), `IconGate`, **Egg Timer 0.75 s cooldown** |
 | 3 | `Ari/Delivery` | **Door object and Door view** (DESIGN §4.1; the plan's "mailbox higher up" scroll is superseded by the three viewpoints), doorbell, unboxing, shipping (Standard free 20 s / Express $8 5 s / "leave it opened & ready" +$3), tax letters, junk mail, tutorial panels (extend the existing `TutorialPanel`/`HintService`) |
 | 4 | `ari/buyback` | `IRestorable`, pawn ledger written before `OnPawned`, buyback ×1.05 → ×1.15 of full price over 90 s game time (A21; the Buyback card was dropped, A5) |
 | 5 | playtest | ≥ 10 full runs; decide win target / run length (I1 amendment if needed) |
@@ -824,21 +851,19 @@ Starting kit (decided): Laptop (+ Mining), wire puzzle, Egg Timer, Bear, Picture
 
 Branch names: Batch 1 used `ari/Phone-Revamp` (made by Ari). Pick the names for Batches 2–4 before starting them.
 
-### 17.3a Designed in `DESIGN.md` v2.1, not built yet (not bugs)
+### 17.3a Designed in `DESIGN.md`, status of each (v2.2)
 
 | Feature | DESIGN § | State in code | Owner |
 |---|---|---|---|
-| Four mechanic endings: `TicketJackpotWin`/`TicketCurseLoss` (Lucky Nine jackpot/curse tickets), `MotherLodeWin` (Mining streak) and `BlackjackCharlieWin` (7 cards) and their `GameConfig` keys (`luckyNineJackpotChance` 0.6%, `luckyNineCurseChance` 1%, `luckyNineCurseOmenWindows` 6, `curseBeatSeconds` 1.2, `miningStreakTarget` 3, `miningFullVeinStreakChance` 0.2, `blackjackCharlieCards` 7, `blackjackCharlieChance` 4%), ending texts, rating outcome values (0.95 wins / 0 losses). `EndReason` is append-only. **Built:** `BlackjackCharlieWin`, `TicketJackpotWin`, `TicketCurseLoss`, `MotherLodeWin` (`CaveInLoss` and `BlackjackRuinLoss` were cut). Still to do: remake the CheatMenu to force each ending | 5.3, 5.5, 5.14 D, 5.15 | `EndReason` has 10 values | Ari (apps) + Han (ticket, texts) |
-| Door object, Door view content, doorbell, parcels, unboxing, empty-box junk item, paper bills and junk mail at the door | 4.1, 5.7 | only `DoorAnchor` and `doorCameraSize` | Batch 3 |
+| Four mechanic endings: `TicketJackpotWin`/`TicketCurseLoss` (Lucky Nine jackpot/curse tickets), `MotherLodeWin` (Mining streak) and `BlackjackCharlieWin` (7 cards) and their `GameConfig` keys (`luckyNineJackpotChance` 0.6%, `luckyNineCurseChance` 1%, `luckyNineCurseOmenWindows` 6, `curseBeatSeconds` 1.2, `miningStreakTarget` 3, `miningFullVeinStreakChance` 0.2, `blackjackCharlieCards` 7, `blackjackCharlieChance` 4%), ending texts, rating outcome values (0.95 wins / 0 losses). `EndReason` is append-only. **Built:** `BlackjackCharlieWin`, `TicketJackpotWin`, `TicketCurseLoss`, `MotherLodeWin` (`CaveInLoss` and `BlackjackRuinLoss` were cut). The CheatMenu forces each one (§8.4). Moved to "built", kept here so the config keys are easy to find | 5.3, 5.5, 5.14 D, 5.15 | built; `EndReason` has 10 values; `[unverified]` in Play mode | Han |
+| Door object, Door view content, doorbell, parcels, unboxing, empty-box junk item, paper bills and junk mail at the door | 4.1, 5.7 | built (Batch 3) | Ari |
 | Buyback (`IRestorable`, pawn ledger) | 5.11 | none | built (Batch 4) |
-| "Leave it opened & ready" shipping option | 5.7 | `shopLeaveOpenFee` exists, unused | Batch 3 |
-| Highlight Hover as a sprite-edge glow with fade and `hoverGlow*` config | 4.2 | rectangle outline (§8.3a) | Han |
-| Reward Popup at the pointer, with the Egg Timer `+Ns` popup and `rewardPopup*` config | 5.17 | `MoneyPopup`, fixed anchor, money only | Han |
-| `MoneyService` income event (amount, reason) for the popup | 5.17, 6.1 | none: popup diffs `OnMoneyChanged` | Ari |
-| Tutorial panels for calls, Inbox, Taxes, shipping, Buyback | 5.16 | none | Batch 3 |
+| "Leave it opened & ready" shipping option | 5.7 | built (`ShopService.LeaveOpen`, `shopLeaveOpenFee`) | Ari |
+| Highlight Hover as a sprite-edge glow with fade and `hoverGlow*` config | 4.2 | built (§8.3a); the four `hoverGlow*` fields are C# defaults until the asset is touched | Han |
+| Tutorials for calls, Inbox, Taxes, shipping, pawn | 5.16 | built as one-line hints (§8.2); the intro panel is the only panel | Ari |
 | `billDeadline` as a `GameConfig` key | 5.8 | built as `taxPayWindow` | naming only |
 
-**Naming differences (DESIGN → code), not bugs:** `billDeadline` → `taxPayWindow`; `shopExpressCost` / `shopReadyCost` → `shopExpressFee` / `shopLeaveOpenFee`; `ClockService.CurrentSeconds` → `RemainingTime`; Cable Eater class `CableEaterCardSo`. **Value differences waiting on a decision:** Card Box shop price and pawn: code $40 / $32 (A13, Ari), DESIGN §5.7/§5.11 $60 / $48.
+**Naming differences (DESIGN → code), not bugs:** `billDeadline` → `taxPayWindow`; `shopExpressCost` / `shopReadyCost` → `shopExpressFee` / `shopLeaveOpenFee`; `ClockService.CurrentSeconds` → `RemainingTime`; Cable Eater class `CableEaterCardSo`. **Value differences: one open (phone call weights, N16); the Card Box price $40 and pawn $32 are the same in DESIGN and code.
 
 ### 17.4 Backlog / ideas (not scheduled)
 
@@ -849,10 +874,9 @@ Coffee Mug, Dish Rack, achievements, settings menu, daily challenge (fixed seed)
 | Question | Status |
 |---|---|
 | Win target 600 s vs shorter runs | after playtests (Batch 5) |
-| Card Box shop price/pawn: $40 / $32 (code, A13) or $60 / $48 (DESIGN)? | Ari and Han to align DESIGN or the catalog |
 | Approve first-pass shop prices for playtesting | open |
-| Who builds the six mechanic endings, and when (§17.3a) | open |
-| Hover glow: keep the rectangle or build the sprite-edge shader | Han |
+| Phone call weights: keep 25/25/40/10 in code or move to DESIGN's 40/25/25/10 (N16) | open, left as is on 2026-10-22 |
+| Balance of the new endings (4% Charlie, 1.6% ticket ending, Mother Lode 0.2 streak) is arithmetic only | after playtests |
 | `dragThreshold` feel | untuned |
 | Ari's sign-off on the DESIGN v2.1 invariant rewrites (I2 Time Scarab, I5, I9) | assumed from the merge, confirm |
 
@@ -898,7 +922,7 @@ Condensed; newest last. Full rationale lives in the plan docs.
 | P18 | 10-17 | Egg Timer 0.75 s cooldown | built (Phase 2.3): `eggTimerCooldown` 0.75 s in `GameConfig` (code default until the asset is touched), only in `EggTimerTask` via `HoldTask.CanStartHold` |
 | P19–P21 | 10-17 | Blackjack 100/25/130 + Hot Table; Lucky Nine 26 | applied |
 | P22 | 10-17 | Billiards: don't adopt 0.6/1.8/2.3; target 1.9/3.2/4.1 $/s after measuring | pending |
-| P24 | 10-17 | Guided tutorial, one panel per new mechanic | planned (reuse existing hint/tutorial code) |
+| P24 | 10-17 | Guided tutorial, one panel per new mechanic | **superseded 10-22 by one-line hints (A24)** |
 | P29 | 10-17 | Remove `AnnoyanceManager`; `CallScheduler` replaces it | built (Batch 1) |
 | P30 | 10-17 | Batch order 0 → 4, one branch each from `main` | final |
 | A1 | 10-18 | Phone plan Checkpoint 0 answers (Ari): Q1 remove tax Ignore; Q2 full catalog, no refresh; Q5 tutorials pause the clock; Q6 junk mail 60–120 s, none in first 60 s; Q9 Han draws art, placeholders meanwhile; Q10 Robocalls halve the call interval; Q13 `ClockService` execution order −1; Q14 Egg Timer stays pawnable ($150) until Batch 2 | decided |
@@ -910,8 +934,8 @@ Condensed; newest last. Full rationale lives in the plan docs.
 | A9 | 10-18 | Phase 1.3 choices: the desk phone only opens the phone UI (calls are answered/declined there); the incoming-call pill also shows over a Laptop app and opens the phone-only view; the phone can't be closed during a paused call; ITRS "payment plan" waits for Phase 1.4 (it needs `TaxDeadline`); `CallScheduler.IntervalScale` was added to the plan's class for Robocalls (Q10) | decided (the pill-over-app rule overrides A8's "can't reach the phone from an app" only for a ringing call; tell me if you disagree) |
 | A11 | 10-18 | Ari's answers on A10: unknown-caller share raised (weights 25/25/40/10 instead of 40/25/25/10); "money to the meter" = $22 to the money counter; a client who never answers says "Hello? Are you there?" and hangs up; the Taxes countdown stays; an ITRS call after the bill was paid adds its +15 s to the gap between bills (45 s becomes 60 s; Ari clarified: gap 45 s, pay window 30 s, the +15 goes into the gap) | built |
 | A21 | 10-21 | Batch 4 (Ari): **buyback** is priced from the item's **full price** (price paid, or `catalogValue` for the Laptop), not the pawn payout, with gentler steps **×1.05 / 1.08 / 1.12 / 1.15** at 0 / 30 / 60 / 90 s of game time (plan was 1.10-1.25; Ari lowered it twice, first to 1.12-1.18): **the Laptop's catalog value is now $135** (was $150; Ari, "we will see how the case goes"; `laptop.asset`), so it pays $108 and costs $142 / 146 / 152 / 156 to buy back, Power Bank 27-29, Card Box 42-46, Lucky Nine 32-35; the round trip always loses (self-tested for $1-$500). It **ships like a purchase** (Standard/Express and Leave it opened, fees paid on top; one parcel per buyback) and the item is `OnRestored()` and put back at its start-of-run position (`ShopItemBinding.HomePosition`; otherwise it would reappear on the printer and be pawned again) when the parcel is opened. The Shop app has two tabs, SHOP and PAWNED (live price, "Goes up in Xs", BUY BACK opens a receipt with the shipping tiles); a pawned item reads "PAWNED" in the SHOP tab. No Laptop guard (the player must know the risk) and no buyback tutorial. Guards: Card Box refuses pawn while its reveal panel is open, Lucky Nine stack while a ticket is out. `IRestorable` is on `ClickTask`, `HoldTask` (Egg Timer cooldown and Power Bank charge reset), `DeskLaptopOpener` (closes the panel; licenses and the solved wire puzzle untouched), `CardBox`, `TicketStack` | built (Phases 4.1-4.2) |
-| A18 | 10-20 | Phase 3.3: **first-time tutorial panels**. `TutorialService` (on `MANAGERS/Services`) shows a panel once per id (PlayerPrefs `Tutorial_Seen_<id>`), one at a time, **pausing the clock** while it is open (Q5); it reuses the intro `TutorialPanel` (`Present(steps, onClosed)`; the intro keeps its own flag and its hard freeze). Texts live in `Assets/Settings/Configs/Tutorials.asset` (**placeholders, Ari writes the final copy**). Ids and triggers: `phone_first_open` (Phone opened), `first_call` (first ring), `first_paused_call` (first client/ITRS call), `first_tax` (first bill), `shop_first_open` (Shop app opened), `first_license` (first license bought), `first_delivery` (first parcel at the door), `door_first_package` (Door view entered with a parcel; the plan called it `mailbox_first_package`, renamed because the mailbox became the door), `first_pawn` (first pawn). `first_buyback` waits for Batch 4. Cheat menu: "Reset tutorials". The Creepy Jester wipe re-enabling them is accepted (P18) | built (Phase 3.3) |
-| A17 | 10-20 | Phase 3.2: **tax letter** lands on the carpet `taxLetterDelay` (10) game seconds after a bill is issued (red stamp; click it to open the Tax paper panel; recalled in a puff when the bill is settled anywhere, and never shown if it is settled first); **junk mail** every 60-120 game seconds, none in the first 60 (blue stamp; click shows a placeholder joke flyer and bins the letter); both ring the doorbell; the pile holds `letterSlots` (8) and a new letter pushes the oldest junk off (a tax letter is never pushed off); letters scatter randomly (`RngService`) around `LetterCenter` on the right of the carpet. The desk clipboard (`TaxNotice`, object "Taxes") is saved **inactive** in the scene (skipped for now, not deleted). Junk flyer jokes are placeholders for Ari to rewrite (`DoorController.junkLines`) | built (Phase 3.2) |
+| A18 | 10-20 | Phase 3.3: **first-time tutorial panels**. `TutorialService` (on `MANAGERS/Services`) shows a panel once per id (PlayerPrefs `Tutorial_Seen_<id>`), one at a time, **pausing the clock** while it is open (Q5); it reuses the intro `TutorialPanel` (`Present(steps, onClosed)`; the intro keeps its own flag and its hard freeze). Texts live in `Assets/Settings/Configs/Tutorials.asset` (**placeholders, Ari writes the final copy**). Ids and triggers: `phone_first_open` (Phone opened), `first_call` (first ring), `first_paused_call` (first client/ITRS call), `first_tax` (first bill), `shop_first_open` (Shop app opened), `first_license` (first license bought), `first_delivery` (first parcel at the door), `door_first_package` (Door view entered with a parcel; the plan called it `mailbox_first_package`, renamed because the mailbox became the door), `first_pawn` (first pawn). `first_buyback` waits for Batch 4. Cheat menu: "Reset tutorials". The Creepy Jester wipe re-enabling them is accepted (P18) | built (Phase 3.3), **replaced on 10-22 by hints (A24)** |
+| A17 | 10-20 | Phase 3.2: **tax letter** lands on the carpet `taxLetterDelay` (10) game seconds after a bill is issued (red stamp; click it to open the Tax paper panel; recalled in a puff when the bill is settled anywhere, and never shown if it is settled first); **junk mail** every 60-120 game seconds, none in the first 60 (blue stamp; click shows a placeholder joke flyer and bins the letter); both ring the doorbell; the pile holds `letterSlots` (8) and a new letter pushes the oldest junk off (a tax letter is never pushed off); letters scatter randomly (`RngService`) around `LetterCenter` on the right of the carpet. The desk clipboard (`TaxNotice`, object "Taxes") was saved inactive at the time; on 10-22 its prefab was deleted (N15). Junk flyer jokes are placeholders for Ari to rewrite (`DoorController.junkLines`) | built (Phase 3.2) |
 | A16 | 10-20 | Phase 3.1 (Ari): taxes will reach the player two ways, the phone (Taxes app + Inbox) and a **tax letter delivered at the door** (replaces the desk clipboard / Mail Tray, which is skipped for now; built in Phase 3.2). The door is already in the background art: only a collider (`DoorZone`) was added. **Parcels** stand in a **tower** on the carpet, left of centre; **letters** (tax and junk, Phase 3.2) are scattered on the right. A parcel opens after `parcelClicksToOpen` (3) clicks (shake + sound hooks), the box returns to a pool of `doorParcelSlots` (4) and is recycled; a fifth parcel waits for a free spot. Pawning the empty box comes later with the art. Items appear on the desk in a smoke **poof** (placeholder circle until Ari finds the particle asset) when the player next looks at the Desk view. "Leave it opened & ready" (+$3) skips the door and tower. `DESIGN.md` updated: Card Box $40, config names follow the code (`shopStandardSeconds`, `shopExpressFee`, `shopLeaveOpenFee`, `taxPayWindow`), tax letter at the door | built (Phase 3.1) |
 | A15 | 10-19 | Phase 2.3: **catalog pawning** — `Pawn.cs` asks `ShopService.Ownership.MarkPawned` for any object with a `ShopItemBinding` (pays `floor(80% x price paid)`; Laptop $120; Power Bank $20 / Card Box $32 / Lucky Nine $24 when bought at full price; 0 and the "can't pawn" hint for Phone, Egg Timer, Bear, Picture, Triple stack, anything not owned); a pawned item stays "Sold" in the shop until Batch 4. **`WireTask.CanBePawned` is now false** (the wire puzzle is part of the wall; was $15). Cards and junk keep their own `PawnValue`. **Shop UI redesigned** (Ari): an inventory-style window from the Backpack pieces (yellow/orange rows, item card with picture box, cart receipt on a pink pane, STD/EXP shipping tiles) instead of the Inbox layout. **Exploit check:** pawn everything pawnable in a fresh run = Laptop $120 + Backpack $15 -> $175 money -> about 295 s of clock (win needs 600) | built (Phase 2.3) |
 | A14 | 10-19 | Phase 2.2 choices: no coupon in the Shop (A2); catalog display names shortened to fit a list row (Lucky Nine, Blackjack, Billiards); a license arrives as an Inbox message with an Activate button (status Ordered until activated, then Owned and the Laptop icon appears); a physical order ships Standard ($0, 20 s) or Express ($8, 5 s) and appears on the desk with a punch-scale and an Inbox "delivered" note (banners are gone); `IconGate` names compare case-insensitively; `DesktopIconView` statics are reset on scene load; the old `DesktopIconView.SetVisible` is now driven only by `ShopService` | built (Phase 2.2) |
@@ -920,8 +944,15 @@ Condensed; newest last. Full rationale lives in the plan docs.
 | A10 | 10-18 | **Calls tell the player nothing before pickup** (Ari): no timers, no money amounts, no "+15 s" on any button; ACCEPT / DECLINE only. After ACCEPT the call is a scripted conversation with a reply button per line, DECLINE greyed out, the payoff on the last line ("Hang up." button), a hidden 5 s stall hang-up, and the call history afterwards. The Taxes app still shows its 30 s countdown (kept: it is the bill's deadline, not a call estimate) | built; Ari to confirm the Taxes timer, the ITRS/telemarketer scripts and the hidden 8 s client timeout |
 | A8 | 10-18 | Docked phone **overlaps** the Laptop's right edge (no Laptop scaling). A Laptop app window (Mining/Blackjack/Billiards) is centred and covers the phone, so the phone cannot be reached from inside a laptop app. Phone apps (later) open as a centred window beside the small phone, like Ari's reference UI (phone left, big app window right) | decided; phone apps in Phase 1.3. **Open for 1.3:** may the incoming-call pill open the phone while a laptop app is open? |
 | A7 | 10-18 | **Q12:** Ari runs the WebGL build for the blur test; agents implement blur with tint fallback | decided |
-| A19 | 10-20 | **Meter Feed gate (option A, Han):** Feed does nothing while `InputGate.IsBlocked` or `Time.timeScale == 0`, closing the I5 gap left by `CardPanel` not covering the button. Written into §9.2 first; code later (Meter is Ari's file) | decided; code pending |
-| A20 | 10-20 | **PROJECT.md synced to DESIGN v2.1:** I1/I2/I5/I8/I9/I10 take the DESIGN wording (§2). Deliberate design, no longer listed as bugs: `ClockService.Spend` ignores the Final Countdown intercept (DESIGN §5.14 B; was P15); a card's `OnPlaced` never checks `handCap`, only buying does (§5.4; was N7); the Creepy Jester wipes all saved data (§5.14 C; was P18); the Laptop is pawnable until Buyback (§5.11; was L4a); modal panels may freeze `timeScale` (I5). Fixed and moved to §16: L1, L4b, P8, P9. Still bugs: N5 (Audit handler leak) and the Meter gap | applied |
+| A19 | 10-20 | **Meter Feed gate (option A, Han):** Feed does nothing while `InputGate.IsBlocked` or `Time.timeScale == 0`, closing the I5 gap left by `CardPanel` not covering the button. Written into §9.2 first; **built 10-22 as a `timeScale == 0` check only** (the `IsBlocked` half was dropped: ordinary panels do not pause time, so Feed stays legal there; see A27) | built (partly) |
+| A20 | 10-20 | **PROJECT.md synced to DESIGN v2.1:** I1/I2/I5/I8/I9/I10 take the DESIGN wording (§2). Deliberate design, no longer listed as bugs: `ClockService.Spend` ignores the Final Countdown intercept (DESIGN §5.14 B; was P15); a card's `OnPlaced` never checks `handCap`, only buying does (§5.4; was N7); the Creepy Jester wipes all saved data (§5.14 C; was P18); the Laptop is pawnable until Buyback (§5.11; was L4a); modal panels may freeze `timeScale` (I5). Fixed and moved to §16: L1, L4b, P8, P9. Still bugs at the time: N5 (Audit handler leak, fixed 10-22) and the Meter gap (fixed 10-22) | applied |
+| A22 | 10-22 | **Alternate endings, Han.** Ten `EndReason`s: the six old ones plus `TicketJackpotWin`, `TicketCurseLoss`, `MotherLodeWin`, `BlackjackCharlieWin`. **Cut:** `BlackjackRuinLoss` (pawn everything and still cannot pay) and `CaveInLoss` (the mining loss), replaced by nothing. Mechanic wins rate 0.95, the curse 0 (`ratingMechanicWin/Loss`) and play `EndingFlourish`. Lucky Nine: one banded roll at purchase (jackpot 0.6%, curse 1%), the ending fires when the last window is scratched, and cashing out early forfeits it; the curse gives a hint at 6 windows and a 1.2 s shake beat. Mining: streak of 3 full veins, boost 0.2 replaces the 1-in-5, a slip or a short vein or leaving the app breaks it, the hint shows at 2 of 3 and no progress label. Blackjack: 4% of hands are rigged with 2s and 3s toward a 7-card Charlie; the hint `CharlieTease` shows from the 4th card on every hit. Chances are `[model]`. `GameManager.GameOver` ignores a second call | built, `[unverified]` in Play mode |
+| A23 | 10-22 | **Ticket economy.** Reward = sum over repeating symbols of `baseReward × (count − 1) × multiplier`, paid only on Cash Out. Symbol sets: Triple Match weights 50/33/17, multipliers 0.25/0.5/1.2; Lucky Nine 30/25/20/15/10 with 0.15/0.25/0.5/0.8/1.2 (RTP 89.0% / 88.4%, P(profit) 46% / 32%, exact enumeration). A payout table beside each panel (`TicketPayoutTable`) is built from the symbol asset. Both ticket UIs read through `ScratchPanelView`. Hints `TicketCashOut` (on opening a panel) and `TicketCursed` | built |
+| A24 | 10-22 | **Tutorials become hints.** `TutorialService`, `TutorialTracker`, `TutorialCatalogSO` and `Tutorials.asset` deleted; the nine service tutorials are now `HintService.ShowOnce` calls (`PhoneFirstOpen`, `PhoneFirstRing`, `PausedCall`, `MailTrayFirstBill`, `ShopFirstOpen`, `LicenseBought`, `PackageArrived`, `ParcelOpen`, `FirstPawn`); `TutorialPanel` keeps only the intro. Hints no longer pause the clock (this replaces Q5/A18). `HintId` is append-only; `TicketOpen` and `EggTimerPlaced` were removed because nothing serializes a `HintId`. `HintService.ShowAlways` bypasses the repeat cooldown for teases | built |
+| A25 | 10-22 | **Cheat menu rebuilt and gated.** Five tabs built in code (Endings, Games, Economy, Annoyance, Dev) over the existing grid; `CheatFlags` holds the "force the next X" switches; the toggle and the flags work only when `Debug.isDebugBuild`. Reward Popup moved to `GameConfig.rewardPopup*` (replacing `moneyPopup*`), Highlight Hover to `GameConfig.hoverGlow*` | built |
+| A26 | 10-22 | **Cards and debuffs.** `CardSO.IsAvailable` keeps licensed-app cards out of packs until the license is owned. `CostModifierService` is keyed per card and multiplies (N4). Pawning a debuff whose effect still runs costs `debuffDismissFee` $6 and pays nothing; if the player cannot pay, the card is refused with a hint and moved elsewhere in the placement area. Card Box price/pawn $40/$32: docs follow the code | built |
+| A27 | 10-22 | **Safety fixes.** `Meter` ignores Feed while `timeScale == 0`; Blackjack pays before the reveal delay (N14); `CardItem` cancels its timed `Invoke`; Audit detaches its handler (N5); `InputManager` disposes its actions. Phone call weights stay 25/25/40/10 in code although DESIGN §5.9 says 40/25/25/10 (N16, open). N6 closed: the Cat may block the Phone | built |
+| A28 | 10-22 | **Scene clean-up (Han).** Repeated pieces became prefabs (`CameraZone`, `ClickFeedbackPool`, `NinePanel` / `TriplePanel` with their views); services moved under `MANAGERS` (Audio, CameraRig, HoverOutline); `Meter` sits on the Timer object; `CardRevealPanel` was rebuilt (Dim, Plate, PackView) and sits right after Timer in the Canvas so its Dim covers the Meter. Merging the cutscene roots (A4) and prefab variants for the ticket panels (A3 steps 2-4) were left undone | built (partly) |
 
 ---
 
@@ -939,7 +970,8 @@ Condensed; newest last. Full rationale lives in the plan docs.
 | Round log | `Tools/OverTimer/Billiards/Round Log Summary`, `Reveal Round Log File` | dev-only CSV telemetry |
 | Debug menu | `Tools/OverTimer/Billiards/Toggle Debug Overlay`, `Mirror/*` | same switches as the cheat menu |
 | Preset formatter | `Tools/OverTimer/Billiards/Reformat preset files` | rewrite JSON compactly |
-| Cheat menu | in game (§8.4) | money, time, cards, endings, Billiards switches |
+| Cheat menu | in game, debug builds only (§8.4); F1 | five tabs: endings, games, economy, annoyance, dev; card list; Billiards switches |
+| PhoneShop self-tests | `Tools/OverTimer/PhoneShop/Run Self-Tests` (`Editor/PhoneShop/PhoneShopSelfTests.cs`) | Phone, Shop, Delivery, Buyback pure logic. The tutorial checks were removed with `TutorialService`. **No self-tests exist for the four mechanic endings, the keyed cost modifiers or the ticket reward formula** (left out by decision, 2026-10-22) |
 | Unity MCP | `com.coplaydev.unity-mcp` v10 | agents inspect/edit the scene and run Play mode |
 
 Testing approach:
@@ -954,18 +986,18 @@ Testing approach:
 
 ## 20. Verification gaps (check in the Editor)
 
-This file was written from a partial snapshot (no Play mode, ~8 of ~45 prefabs, few card assets, 1 of 10 Billiards tables, `WinConditionCard/` not readable); the 2026-10-20 sync re-read the camera, hover, popup, pause and Audit code and the Cable Eater, Time Scarab and Clock Up assets. Whoever checks an item below: record the answer in the right section and delete the row.
+This file was written from a partial snapshot (no Play mode, ~8 of ~45 prefabs, few card assets, 1 of 10 Billiards tables, `WinConditionCard/` not re-read); the 2026-10-20 sync re-read the camera, hover, popup, pause and Audit code and the Cable Eater, Time Scarab and Clock Up assets; the 2026-10-22 sync re-read every file touched by the `Han/RefactorSystem` work. Whoever checks an item below: record the answer in the right section and delete the row.
 
 | Check | Why it matters |
 |---|---|
-| Does `CardPanel` cover the Meter Feed button while it is open (scene overrides of the 696×384 prefab)? Which objects carry a `ViewGate` for the Room view? | I5, Meter gate (A19), DESIGN §4.1 |
+| Which objects carry a `ViewGate` for the Room view? | DESIGN §4.1 |
+| **Play-mode pass of everything built on 2026-10-22:** the four endings (use the cheat tab Endings), Charlie rig, Mother Lode streak, Curse beat, Reward Popup positions, license-gated card pool, debuff dismiss (pay / refuse / relocate), CardRevealPanel Dim over the Meter, Restart after each | all new code was compiled and read, never played |
+| Does the scene still have more than one cutscene root, and are all cutscene Timelines mapped to their `EndReason`? | A4 / N18 |
 | Script execution order still as in §5.4 | Meter/ITRS/RunStats start-money order (N2) |
-| Cheat toggle key (scene value 10 = Backslash?) | team knowledge |
 | `PickaxeView.hitCooldown` override in the Laptop prefab | Mining throughput |
 | Which end reasons have a Timeline asset; does FC intro resume if its director is empty? | soft-lock risk |
 | `CutsceneRoot` saved active? | covers the game at start? |
 | All 29 card assets: weights, durations, `isDebuff`, Time Scarab = 0? Bet More Money target? | economy, I2/I5 |
-| Hover and popup in Play mode: does `HoverHighlighter` glow only usable objects, does `MoneyPopup` appear after Restart | Han's features, never run by an agent |
 | Tier/symbol config assigned on each ticket in the `Tickets` prefab | ticket EV |
 | `straight_test` shipping in the random pool | Billiards variety |
 | Billiards solutions in a WebGL dev build | determinism |
@@ -985,14 +1017,15 @@ This file **supersedes** these repo docs (safe to delete once this is merged):
 | `BILLIARDS_BALANCE.md` | 2026-10-16 (auto-generated) | summary in §13.4; the tool regenerates this file, so it may reappear |
 | `BILLIARDS_DECISIONS.md` | 2026-10-13 → 16 | rules, physics, tools and decisions → §13.4, §18, §19 |
 
-`DESIGN.md` **v2.1 now lives in the repo** (`DOCS/DESIGN.md`) and is the design source of truth. Other design and plan docs kept in the claude.ai project "Overtimer" (not in the repo): `OVERTIME_EXTENDED_HANDOFF.md` (D1–D10, Vietnamese), `OVERTIME_LANDMINE_PASS.md` (L1–L12 and fix briefs), `OVERTIME_UML.md`, `BILLIARDS_IMPLEMENTATION.md` (superseded by the code + §13.4), `PHONE_DELIVERY_DECISIONS.md`, `PHONE_SHOP_DELIVERY_IMPLEMENTATION.md` (**active plan**), `OVERTIME_UPDATE_SUMMARY.md` (EN/VI summary for Han).
+`DESIGN.md` **v2.2 now lives in the repo** (`DOCS/DESIGN.md`) and is the design source of truth. Other design and plan docs kept in the claude.ai project "Overtimer" (not in the repo): `OVERTIME_EXTENDED_HANDOFF.md` (D1–D10, Vietnamese), `OVERTIME_LANDMINE_PASS.md` (L1–L12 and fix briefs), `OVERTIME_UML.md`, `BILLIARDS_IMPLEMENTATION.md` (superseded by the code + §13.4), `PHONE_DELIVERY_DECISIONS.md`, `PHONE_SHOP_DELIVERY_IMPLEMENTATION.md` (**active plan**), `OVERTIME_UPDATE_SUMMARY.md` (EN/VI summary for Han).
 
-Known stale spots in the plan docs (fix when the batch starts): they say `GameManager.inputBlockers` (now `InputBlocker` + `InputGate`), propose a new `TutorialPanel` (one exists), list Blackjack 40/20/50 as "today" (hotfix applied), and `PHONE_DELIVERY_DECISIONS` §2.4 still shows the 1.0 s Egg Timer proposal (locked value is 0.75 s). The Phone plan's P11 "replace `Destroy()`" is already done.
+Known stale spots in the plan docs (fix when the batch starts): they say `GameManager.inputBlockers` (now `InputBlocker` + `InputGate`), propose a new `TutorialPanel` and `TutorialService` (the service was built then deleted; `TutorialPanel` is the intro only), list Blackjack 40/20/50 as "today" (hotfix applied), and `PHONE_DELIVERY_DECISIONS` §2.4 still shows the 1.0 s Egg Timer proposal (locked value is 0.75 s). The Phone plan's P11 "replace `Destroy()`" is already done.
 
 ### Changelog of this file
 
 | Date | Change |
 |---|---|
+| 2026-10-22 | Synced to `DESIGN.md` v2.2 and branch `Han/RefactorSystem` (on `main` @ `ac381ad`): header, §2 (I1, I5, I7, I9, I10), §3, §6 (folders and singletons), §7.1/§7.2 (ten endings), §8.2-§8.4 (hints, camera, hover and popup, cheat menu), §9 (Meter gate, tax letter), §10 (47 unserialized fields, new config rows), §11 (tickets, pawning debuffs, call weights), §12 (`IsAvailable`, keyed modifiers, Audit), §13.2-§13.4 (Mother Lode, Charlie, pay-before-reveal, licenses), §14, §15 (N5 and five more fixed; N15-N18 added), §16, §17, §18 A22-A28, §19, §20. |
 | 2026-10-20 | Synced to `DESIGN.md` v2.1 and `main` @ `4d940c0`: header, §2 (invariants reworded, proposed amendments adopted), §5, §6, §7.3, §8.1/§8.3/§8.3a (CameraRig, hover, popup), §9.2 (Meter Feed gate rule), §10, §11, §12 (Cable Eater, Billiards cards removed), §14, §15 (by-design items removed, I5/Meter and Jester guard reworded), §16, §17 (Batch 2 merged, new §17.3a), §18 A19–A20, §20; duplicate A13–A15 rows and changelog rows removed. |
 | 2026-10-17 | Created from a six-agent static audit of `ari/pool-table` @ `e724c68` plus all project docs. |
 | 2026-10-20 | §5, §18 A18: Phase 3.3 tutorial service, catalog, triggers, cheat reset. |
@@ -1063,3 +1096,9 @@ Run this before every commit. If a box applies, update that section **in the sam
 | Batch / Phase / Checkpoint | plan units: one branch / a task group / stop-and-report gate |
 | Landmine (L#) | item from the 2026-08-31 defect pass |
 | MASCH | the Set Completion win |
+| Mechanic ending | a win or loss caused by a mini-game, not by the clock or a card: Lucky Nine jackpot / curse, Mother Lode, Blackjack Charlie (§7.2) |
+| Mother Lode | three maximum-length Mining veins banked in a row |
+| Charlie | a Blackjack hand of 7 cards without busting |
+| Dismiss fee | `debuffDismissFee` ($6): the price of pawning a debuff whose effect still runs |
+| `CheatFlags` | dev-only static switches that force the next ticket / hand / vein; inactive in release builds |
+| License-gated card | a card with `IsAvailable == false` until the matching app license is owned; not rolled from packs |

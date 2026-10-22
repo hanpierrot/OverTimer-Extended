@@ -28,6 +28,7 @@ MonoBehaviour:
   luckyNineBaseReward: 26
   handCap: 5
   packCost: 35
+  debuffDismissFee: 6
   commonWeight: 60
   rareWeight: 25
   superRareWeight: 12
@@ -123,3 +124,10 @@ MonoBehaviour:
   ratingClockLoss: 0
   ratingFinalCountdownLoss: 0.1
   ratingCreepyJesterLoss: 0
+  rewardPopupSeconds: 0.9
+  rewardPopupRisePixels: 48
+  rewardPopupMaxActive: 8
+  rewardPopupMoneyColor: {r: 0.2980392, g: 0.6862745, b: 0.44705883, a: 1}
+  rewardPopupTimeColor: {r: 0.30980393, g: 0.7647059, b: 0.96862745, a: 1}
+  rewardPopupStackSeconds: 0.25
+  rewardPopupPopSeconds: 0.1

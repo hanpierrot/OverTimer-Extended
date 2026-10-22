@@ -19,6 +19,7 @@ public class MoneyService : MonoBehaviour
 
     /// <summary>Fired after every change. reason feeds the balance log (DESIGN.md §7.2).</summary>
     public event Action<int, string> OnMoneyChanged;
+    public event Action<int, string> OnIncome;
 
     private void Awake()
     {
@@ -37,6 +38,7 @@ public class MoneyService : MonoBehaviour
 
         Current += amount;
         OnMoneyChanged?.Invoke(Current, reason);
+        if (reason != StakeRefundReason) OnIncome?.Invoke(amount, reason);
     }
 
     /// <summary>Returns false if unaffordable. Never lets a caller go negative (DESIGN.md §7.2).</summary>

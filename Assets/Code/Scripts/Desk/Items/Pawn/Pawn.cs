@@ -86,6 +86,18 @@ public class Pawn : MonoBehaviour
                 return;
             }
 
+            // A debuff that is still running pays nothing and costs a fee. No money, no pawn: the card moves out of the way.
+            if (other.TryGetComponent(out CardItem card) && card.IsDebuffActive)
+            {
+                int fee = GameManager.Instance.GameConfig.debuffDismissFee;
+                if (fee > 0 && !MoneyService.Instance.TrySpend(fee, "debuff dismiss"))
+                {
+                    if (HintService.Instance != null) HintService.Instance.Show(HintId.DebuffDismissCost, fee);
+                    card.Relocate();
+                    return;
+                }
+            }
+
             MoneyService.Instance.Add(pawnable.PawnValue, "pawn");
             pawnable.OnPawned();
             ShowFirstPawnHint();

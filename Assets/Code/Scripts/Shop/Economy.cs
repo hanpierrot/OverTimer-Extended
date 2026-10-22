@@ -175,6 +175,9 @@ public sealed class IconGate
 
     public bool IsVisible(string app) => !_reasons.TryGetValue(app, out var r) || r == HideReason.None;
 
+    /// <summary>False only while the app's license is missing. A card hiding the icon does not count: the app is still owned.</summary>
+    public bool IsLicensed(string app) => !_reasons.TryGetValue(app, out var r) || (r & HideReason.Unlicensed) == 0;
+
     public void SetLicensed(string app, bool licensed) => Apply(app, HideReason.Unlicensed, !licensed);
 
     public void CardHide(string app)

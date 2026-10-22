@@ -5,5 +5,6 @@ public enum HintId
     LaptopIconDoubleClick, MiningOpen, MiningCloseLosesOre, BlackjackOpen, BlackjackLeaveMidHand,
     WireOpen, PhoneFirstRing, MailTrayFirstBill, CatFirstBlock, ShopPurchased, PackageArrived, ParcelOpen, JunkFlyer,
     CharlieTease, TicketCashOut, TicketCursed, MotherLodeTease,
-    PhoneFirstOpen, PausedCall, ShopFirstOpen, LicenseBought, FirstPawn
+    PhoneFirstOpen, PausedCall, ShopFirstOpen, LicenseBought, FirstPawn,
+    DebuffDismissCost
 }

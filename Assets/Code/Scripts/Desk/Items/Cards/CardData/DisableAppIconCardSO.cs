@@ -11,6 +11,10 @@ public class DisableAppIconCardSO : EffectCardSO
     [SerializeField] private float duration = 15f;
     [SerializeField] private string targetAppName = "Mining";
 
+    // "No More Gambling" is pointless before the Blackjack license exists, so the pack does not roll it yet.
+    public override bool IsAvailable =>
+        ShopService.Instance == null || ShopService.Instance.IconGate.IsLicensed(targetAppName);
+
     public override void OnPlaced(CardItem card)
     {
         if (ShopService.Instance != null) ShopService.Instance.IconGate.CardHide(targetAppName);

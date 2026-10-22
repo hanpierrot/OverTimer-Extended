@@ -58,7 +58,9 @@ public class CardBox : MonoBehaviour, IPawnable, IRestorable
         var rng = RngService.Instance.Random;
         CardSO.Rarity rarity = RollRarity(config, rng);
 
-        var candidates = System.Array.FindAll(_allCards, c => c.rarity == rarity);
+        // Cards that would do nothing yet (an app without its license) are not rolled.
+        var candidates = System.Array.FindAll(_allCards, c => c.rarity == rarity && c.IsAvailable);
+        if (candidates.Length == 0) candidates = System.Array.FindAll(_allCards, c => c.IsAvailable);
         if (candidates.Length == 0) candidates = _allCards;
 
         return PickWeightedCard(candidates, rng);
