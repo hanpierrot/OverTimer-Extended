@@ -25,20 +25,20 @@ public class HintTests : GameSceneTest
     [UnityTest]
     public IEnumerator TC_HNT_2_GoiYChiHienMotLan()
     {
-        string text = HintCatalog.Get(HintId.TicketOpen);
+        string text = HintCatalog.Get(HintId.TicketCashOut);
         ClearLabel();
 
-        HintService.Instance.ShowOnce(HintId.TicketOpen);
+        HintService.Instance.ShowOnce(HintId.TicketCashOut);
         Assert.AreEqual(text, Label.text, "Lần 1 phải hiện");
-        Assert.AreEqual(1, PlayerPrefs.GetInt("HintSeen_TicketOpen", 0));
+        Assert.AreEqual(1, PlayerPrefs.GetInt("HintSeen_TicketCashOut", 0));
 
         ClearLabel();
-        HintService.Instance.ShowOnce(HintId.TicketOpen);
+        HintService.Instance.ShowOnce(HintId.TicketCashOut);
         Assert.AreEqual("", Label.text, "Lần 2 không hiện");
 
         yield return ReloadScene();
         ClearLabel();
-        HintService.Instance.ShowOnce(HintId.TicketOpen);
+        HintService.Instance.ShowOnce(HintId.TicketCashOut);
         Assert.AreEqual("", Label.text, "Mở lại game cũng không hiện");
     }
 
@@ -59,6 +59,39 @@ public class HintTests : GameSceneTest
         lastShown[HintId.NotEnoughMoney] = Time.unscaledTime - 3.01f;
         HintService.Instance.Show(HintId.NotEnoughMoney);
         Assert.AreEqual(text, Label.text, "Đủ 3 s: hiện lại");
+    }
+
+    // ---------- ShowAlways, ResetSeen ----------
+
+    [Test]
+    public void ShowAlways_BoQuaThoiGianCho_NhungShowThiKhong()
+    {
+        string text = HintCatalog.Get(HintId.NotEnoughMoney);
+        HintService.Instance.Show(HintId.NotEnoughMoney);
+        Assert.AreEqual(text, Label.text);
+
+        ClearLabel();
+        HintService.Instance.Show(HintId.NotEnoughMoney);
+        Assert.AreEqual("", Label.text, "Show lặp lại trong thời gian chờ thì bị bỏ qua");
+
+        HintService.Instance.ShowAlways(HintId.NotEnoughMoney);
+        Assert.AreEqual(text, Label.text, "ShowAlways (dùng cho gợi ý lặp như CharlieTease) không bị chặn");
+    }
+
+    [Test]
+    public void ResetSeen_ChoGoiYShowOnceHienLaiTrongCungVan()
+    {
+        string text = HintCatalog.Get(HintId.TicketCashOut);
+        HintService.Instance.ShowOnce(HintId.TicketCashOut);
+        ClearLabel();
+        HintService.Instance.ShowOnce(HintId.TicketCashOut);
+        Assert.AreEqual("", Label.text, "Lần hai không hiện");
+
+        HintService.Instance.ResetSeen();
+        HintService.Instance.ShowOnce(HintId.TicketCashOut);
+
+        Assert.AreEqual(text, Label.text, "Sau ResetSeen hiện lại");
+        Assert.AreEqual(1, PlayerPrefs.GetInt("HintSeen_TicketCashOut", 0));
     }
 
     // ---------- TC-HNT-4 ----------
@@ -90,6 +123,7 @@ public class HintTests : GameSceneTest
     [Test]
     public void TC_HNT_5b_HandDay_GoiYHandFull()
     {
+        GiveItem("card_box");                       // Card Box bị ẩn đầu ván nên không nghe nhấp chuột
         Cards.FillHand(5);
         TestHooks.SetMoney(50);
         ClearLabel();

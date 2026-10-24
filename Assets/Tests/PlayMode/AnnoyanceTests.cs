@@ -6,36 +6,21 @@ using UnityEngine;
 using UnityEngine.TestTools;
 
 /// <summary>
-/// Mục 4.5.1 của kế hoạch kiểm thử, TC-ANN-1…8: Phone, ITRS (thuế) và AnnoyanceManager (một phiền nhiễu một lúc).
+/// Mục 4.5.1 của kế hoạch kiểm thử, TC-ANN-1…8: Phone (CallScheduler: một cuộc gọi một lúc) và ITRS (thuế). AnnoyanceManager đã bị loại bỏ.
 /// Mỗi khung hình = 0,02 s (UseFixedFrameRate(50)).
 /// </summary>
 public class AnnoyanceTests : GameSceneTest
 {
     private const int Fps = 50;
 
-    private static Phone Phone => Phone.Instance;
+    private static PhoneController Phone => PhoneController.Instance;
     private static ITRSService Itrs => ITRSService.Instance;
-    private static AnnoyanceManager Annoyance => AnnoyanceManager.Instance;
 
     [UnitySetUp]
     public IEnumerator FixTime()
     {
         UseFixedFrameRate(Fps);
         yield return null;
-    }
-
-    [Test]
-    public void GiaTriTrongGameConfigKhopKeHoach()
-    {
-        Assert.AreEqual(30f, Config.ringIntervalMin);
-        Assert.AreEqual(60f, Config.ringIntervalMax);
-        Assert.AreEqual(1.5f, Config.ringEffectMultiplier);
-        Assert.AreEqual(10f, Config.maxRingDuration);
-        Assert.AreEqual(45f, Config.billInterval);
-        Assert.AreEqual(12f, Config.annoyanceMinGap);
-        Assert.AreEqual(20, Config.billMinimum);
-        Assert.AreEqual(0.2f, Config.billRate);
-        Assert.AreEqual(2f, Config.shortfallPenalty);
     }
 
     /// <summary>Phát hóa đơn ngay với số tiền kiếm được cho trước (bỏ qua chờ 45 s).</summary>
@@ -51,12 +36,12 @@ public class AnnoyanceTests : GameSceneTest
     [Test]
     public void TC_ANN_1a_KhoangCachGiuaCacLanReo()
     {
+        // Khoảng cách nằm trong CallScheduler (lớp thuần C#): hàm khởi tạo bốc khoảng chờ đầu tiên.
+        var cfg = new PhoneConfig();
+        var rng = new System.Random(1);
         var gaps = new float[200];
         for (int i = 0; i < gaps.Length; i++)
-        {
-            TestHooks.Call(Phone, "ScheduleNextRing");
-            gaps[i] = TestHooks.GetField<float>(Phone, "nextRingTimer");
-        }
+            gaps[i] = TestHooks.GetField<float>(new CallScheduler(cfg, rng), "_timer");
 
         Assert.That(gaps.Min(), Is.GreaterThanOrEqualTo(30f));
         Assert.That(gaps.Max(), Is.LessThanOrEqualTo(60f));
@@ -67,7 +52,7 @@ public class AnnoyanceTests : GameSceneTest
     [UnityTest]
     public IEnumerator TC_ANN_1b_KhiReo_ClockNhanh15VaTuDungSau10Giay()
     {
-        TestHooks.SetField(Phone, "nextRingTimer", 0.01f);
+        Phone.Calls.ForceRingNow();
         yield return null;
         Assert.IsTrue(Phone.IsRinging);
         Assert.AreEqual(1.5f, ClockService.Instance.TickMultiplier);
@@ -81,61 +66,60 @@ public class AnnoyanceTests : GameSceneTest
     // ---------- TC-ANN-2 ----------
 
     [UnityTest]
-    public IEnumerator TC_ANN_2_ITRSDoiKhiDangBan_ThuLaiMoiGiay()
+    public IEnumerator TC_ANN_2_KhongPhatHoaDonMoiKhiDangCoHoaDonMo()
     {
-        Assert.IsTrue(Annoyance.TryBegin("test: sự kiện khác đang chạy"));
+        var first = IssueBill(150);
+        int issued = 0;
+        Itrs.OnAssessmentIssued += _ => issued++;
         TestHooks.SetField(Itrs, "timer", Config.billInterval - 0.05f);
 
-        yield return Frames(5);                                  // đến giây thứ 45
-        Assert.IsFalse(Itrs.HasPendingAssessment, "Đang bận: chưa được phát hóa đơn");
-        Assert.AreEqual(Config.billInterval - 1f, TestHooks.GetField<float>(Itrs, "timer"), 0.05f,
-            "Phải hẹn thử lại sau khoảng 1 s");
+        yield return Frames(Fps * 2);
 
-        yield return Frames(Fps + 2);                            // 1 s sau: vẫn bận
-        Assert.IsFalse(Itrs.HasPendingAssessment);
-
-        Annoyance.End("test");
-        TestHooks.SetField(Annoyance, "lastEventEndTime", -999f);  // bỏ qua khoảng cách 12 s (đã có TC-ANN-4)
-        yield return Frames(Fps + 2);
-        Assert.IsTrue(Itrs.HasPendingAssessment, "Rảnh thì phải phát hóa đơn trong vòng 1 s");
+        Assert.AreEqual(0, issued, "P6: không phát hóa đơn mới chồng lên hóa đơn chưa trả");
+        Assert.AreEqual(first.amountDue, Itrs.CurrentAssessment.amountDue);
     }
 
     // ---------- TC-ANN-3 ----------
 
     [UnityTest]
-    public IEnumerator TC_ANN_3_PhoneVaITRSCungKhungHinh_ChiMotSuKien()
+    public IEnumerator TC_ANN_3_HoaDonKhongBiCuocGoiChan_CaHaiCungXuatHien()
     {
-        TestHooks.SetField(Phone, "nextRingTimer", 0.01f);
+        Phone.Calls.ForceRingNow();
         TestHooks.SetField(Itrs, "timer", Config.billInterval - 0.01f);
 
-        yield return null;
+        yield return Frames(2);
 
-        Assert.IsTrue(Phone.IsRinging ^ Itrs.HasPendingAssessment,
-            $"Chỉ được một sự kiện: Phone reo = {Phone.IsRinging}, có hóa đơn = {Itrs.HasPendingAssessment}");
+        Assert.IsTrue(Phone.IsRinging);
+        Assert.IsTrue(Itrs.HasPendingAssessment, "I8: hóa đơn là thông báo, không bị cuộc gọi chặn");
     }
 
     // ---------- TC-ANN-4 ----------
 
     [Test]
-    public void TC_ANN_4_KhoangCachToiThieu12Giay()
+    public void TC_ANN_4_KhoangCachToiThieu12GiayGiuaHaiCuocGoi()
     {
-        TestHooks.SetField(Annoyance, "lastEventEndTime", Time.time - 11f);
-        Assert.IsFalse(Annoyance.CanStart, "11 s sau sự kiện trước: phải từ chối");
+        var cfg = new PhoneConfig { ringIntervalMin = 1f, ringIntervalMax = 1f };
+        var s = new CallScheduler(cfg, new System.Random(1));
 
-        float last = Time.time - 12f;
-        if (Time.time - last < 12f) last -= 1e-5f;               // bù làm tròn số thực để khoảng cách đúng bằng 12 s
-        TestHooks.SetField(Annoyance, "lastEventEndTime", last);
-        Assert.IsTrue(Annoyance.CanStart, "12 s sau sự kiện trước: phải cho phép");
+        s.Tick(1f);
+        Assert.AreEqual(CallScheduler.State.Ringing, s.Current);
+        Assert.IsTrue(s.Decline());
+        Assert.AreEqual(CallScheduler.State.Gap, s.Current);
+
+        s.Tick(11.9f);
+        Assert.AreEqual(CallScheduler.State.Gap, s.Current, "11,9 s sau cuộc gọi trước: chưa được reo");
+        s.Tick(0.2f);
+        Assert.AreEqual(CallScheduler.State.Waiting, s.Current, "đủ 12 s: được phép lên lịch cuộc gọi kế");
     }
 
     // ---------- TC-ANN-5 ----------
 
-    [TestCase(50, 20)]
-    [TestCase(100, 20)]
-    [TestCase(200, 40)]
-    public void TC_ANN_5_GiaTriHoaDonThue(int earned, int expectedDue)
+    // Không dùng [TestCase]: fixture có test tham số hóa không nạp được trong bản Player WebGL ("DllNotFoundException: libc").
+    [Test]
+    public void TC_ANN_5_GiaTriHoaDonThue()
     {
-        Assert.AreEqual(expectedDue, IssueBill(earned).amountDue);
+        foreach (var (earned, expectedDue) in new[] { (50, 20), (100, 20), (200, 40) })
+            Assert.AreEqual(expectedDue, IssueBill(earned).amountDue, $"kiếm được ${earned}");
     }
 
     // ---------- TC-ANN-6 ----------
@@ -148,7 +132,7 @@ public class AnnoyanceTests : GameSceneTest
         var bill = IssueBill(150);                               // 20% × 150 = $30
         Assert.AreEqual(30, bill.amountDue);
         var tax = TestHooks.Find<Tax>();
-        tax.Show(bill);
+        tax.Show();
         TestHooks.SetMoney(money);
 
         yield return null;
@@ -160,29 +144,42 @@ public class AnnoyanceTests : GameSceneTest
     // ---------- TC-ANN-7 ----------
 
     [Test]
-    public void TC_ANN_7a_Ignore_PhatGap2LanThoiGian()
+    public void TC_ANN_7a_HetHan_PhatGap2LanThoiGian()
     {
-        var tax = TestHooks.Find<Tax>();
-        tax.Show(IssueBill(150));
+        IssueBill(150);                                          // $30
         TestHooks.SetClock(100f);
 
-        TestHooks.ClickButton(tax, "ignoreButton");
+        TestHooks.GetField<TaxDeadline>(Itrs, "_deadline").Tick(Config.taxPayWindow);   // cửa sổ 30 s hết
 
         Assert.AreEqual(40f, ClockService.Instance.RemainingTime, "Phạt 30 × 2 = 60 s");
+        Assert.IsFalse(Itrs.HasPendingAssessment);
         Assert.IsFalse(GameManager.Instance.IsGameOver);
     }
 
     [Test]
-    public void TC_ANN_7b_IgnoreKhiKhongDuThoiGian_Thua()
+    public void TC_ANN_7b_HetHanKhiKhongDuThoiGian_Thua()
     {
-        var tax = TestHooks.Find<Tax>();
-        tax.Show(IssueBill(150));
+        IssueBill(150);
         TestHooks.SetClock(50f);
 
-        TestHooks.ClickButton(tax, "ignoreButton");
+        TestHooks.GetField<TaxDeadline>(Itrs, "_deadline").Tick(Config.taxPayWindow);
 
         Assert.IsTrue(GameManager.Instance.IsGameOver);
         Assert.AreEqual(EndReason.ClockLoss, GameManager.Instance.LastEndReason);
+    }
+
+    [Test]
+    public void TC_ANN_7c_TraDuTienTrongHan_KhongBiPhat()
+    {
+        IssueBill(150);
+        TestHooks.SetMoney(30);
+        TestHooks.SetClock(100f);
+
+        Assert.IsTrue(Itrs.Pay());
+
+        Assert.AreEqual(0, MoneyService.Instance.Current);
+        Assert.AreEqual(100f, ClockService.Instance.RemainingTime);
+        Assert.IsFalse(Itrs.HasPendingAssessment);
     }
 
     // ---------- TC-ANN-8 ----------

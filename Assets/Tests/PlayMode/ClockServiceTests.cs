@@ -10,6 +10,8 @@ public class ClockServiceTests : GameSceneTest
 {
     private const int Fps = 50;
     private const float Tolerance = 0.001f;
+    
+    private readonly object _key = new object();
 
     private static ClockService Clock => ClockService.Instance;
 
@@ -21,7 +23,7 @@ public class ClockServiceTests : GameSceneTest
         UseFixedFrameRate(Fps);
         yield return null;                 // khung hình đầu đã dùng deltaTime cố định
         TestHooks.SetClock(120f);
-        Clock.TickMultiplier = 1f;
+        Clock.ClearSpeed(_key);
 
         yield return Frames(Fps);
 
@@ -34,7 +36,7 @@ public class ClockServiceTests : GameSceneTest
         UseFixedFrameRate(Fps);
         yield return null;
         TestHooks.SetClock(120f);
-        Clock.TickMultiplier = 1.5f;       // giá trị Phone ghi khi đang reo
+        Clock.SetSpeed(_key, 1.5f);       // giá trị Phone ghi khi đang reo
 
         yield return Frames(Fps);
 

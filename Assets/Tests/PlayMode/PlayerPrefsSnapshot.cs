@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Sao lưu và khôi phục mọi khóa PlayerPrefs mà game dùng, để test Play Mode không ghi đè
 /// dữ liệu thật của máy chạy test (lịch sử ván, Collection, gợi ý đã xem, hướng dẫn đã xem).
-/// Danh sách khóa lấy từ các lời gọi PlayerPrefs trong Assets/Code/Scripts; thêm khóa mới vào AllKeys khi game có khóa mới.
+/// Danh sách khóa lấy từ các lời gọi PlayerPrefs trong Assets/Scripts; thêm khóa mới vào AllKeys khi game có khóa mới.
 /// </summary>
 public sealed class PlayerPrefsSnapshot
 {

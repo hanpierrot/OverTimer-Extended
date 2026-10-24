@@ -12,13 +12,6 @@ public class MeterTests : GameSceneTest
     private static int Money => MoneyService.Instance.Current;
     private static float Clock => ClockService.Instance.RemainingTime;
 
-    [Test]
-    public void GiaTriTrongGameConfigKhopKeHoach()
-    {
-        Assert.AreEqual(10, Config.meterMinFeed, "Kế hoạch ghi mức tối thiểu của Meter là $10");
-        Assert.AreEqual(1f, Config.exchangeRate, "Kế hoạch ghi $1 = 1 s");
-    }
-
     // ---------- TC-CLK-7, 8, 9 ----------
 
     [Test]

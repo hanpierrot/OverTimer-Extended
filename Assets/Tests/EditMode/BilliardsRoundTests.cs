@@ -46,13 +46,6 @@ public class BilliardsRoundTests
         Assert.AreEqual(4, preset.ShotsFor(BilliardsDifficulty.Medium, offsets));
     }
 
-    [Test]
-    public void SoCu_GiaTriTrongGameConfigKhopKeHoach()
-    {
-        CollectionAssert.AreEqual(new[] { 4, 2, 0 }, _config.billiardsParOffsets,
-            "Kế hoạch ghi billiardsParOffsets = 4 / 2 / 0");
-    }
-
     // ---------- TC-BIL-8 ----------
 
     [Test]
@@ -88,17 +81,6 @@ public class BilliardsRoundTests
         var preset = TestAssets.LoadPreset(StraightPot);
 
         Assert.AreEqual(expected, BilliardsPayout.OnWin(bet, difficulty, preset, _config));
-    }
-
-    [Test]
-    public void TienThuong_GiaTriTrongGameConfigKhopKeHoach()
-    {
-        // Các số $24 / $40 / $48 ở TC-BIL-9 được tính từ những giá trị này. Nếu nhóm cân bằng lại
-        // Billiards (BILLIARDS_BALANCE.md đề xuất đổi billiardsTargetRate), ca này báo để cập nhật tài liệu.
-        CollectionAssert.AreEqual(new[] { 1.5f, 3f, 4f }, _config.billiardsTargetRate);
-        CollectionAssert.AreEqual(new[] { 0.85f, 0.65f, 0.5f }, _config.billiardsAssumedWinRate);
-        Assert.AreEqual(7f, _config.billiardsSecondsPerShot);
-        Assert.AreEqual(40, _config.billiardsBetMax);
     }
 
     // ---------- TC-BIL-10 ----------

@@ -57,6 +57,11 @@ public abstract class GameSceneTest
     public IEnumerator RestoreState()
     {
         Time.captureFramerate = 0;
+        // GameOver đóng băng game (timeScale 0, AudioListener.pause). Trả về bình thường sau mỗi test: bộ gửi kết quả của
+        // Test Runner trên Player (RemoteTestResultSender) đợi bằng WaitForSeconds theo thời gian game, nên nếu test cuối
+        // để timeScale = 0 thì kết quả không bao giờ được gửi về Editor ("Queue size" đứng yên, Wait For Player Run).
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
         BilliardsDebug.PresetId = null;                        // công cụ debug Billiards là static, sống qua lần nạp scene
         BilliardsDebug.Mirror = BilliardsDebug.MirrorMode.Random;
         Application.runInBackground = _runInBackground;
@@ -96,6 +101,22 @@ public abstract class GameSceneTest
     }
 
     protected static LaptopController Laptop => TestHooks.Find<LaptopController>();
+
+    /// <summary>
+    /// Đưa một món của Shop lên bàn như thể đã mua và nhận hàng. Đầu mỗi ván Power Bank, Card Box và Lucky Nine stack
+    /// bị ẩn (startsOwned = 0, ShopItemBinding tắt chúng); vật bị tắt không nhận nhấp chuột nên test cần gọi hàm này trước.
+    /// Dùng id trong ItemCatalog: "power_bank", "card_box", "lucky_stack".
+    /// </summary>
+    protected static void GiveItem(string id)
+    {
+        var shop = ShopService.Instance;
+        Assert.IsNotNull(shop, "Thiếu ShopService trong scene");
+        Assert.IsTrue(shop.Ownership.Has(id), $"Không có món '{id}' trong ItemCatalog");
+        shop.Ownership.MarkDelivered(id);
+        var binding = shop.BindingFor(id);
+        Assert.IsNotNull(binding, $"Không có ShopItemBinding cho '{id}' trong scene");
+        binding.gameObject.SetActive(true);   // OnEnable của vật gắn lại sự kiện nhấp chuột
+    }
 
     /// <summary>
     /// Mở một ứng dụng trên Laptop qua đúng đường của game (LaptopController.RequestOpen, có thời gian chuyển ứng dụng).

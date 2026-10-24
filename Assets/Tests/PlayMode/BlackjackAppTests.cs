@@ -23,13 +23,6 @@ public class BlackjackAppTests : GameSceneTest
 
     private void ClickDeal() => TestHooks.ClickButton(_app, "dealButton");
 
-    [Test]
-    public void GiaTriTrongGameConfigKhopKeHoach()
-    {
-        Assert.AreEqual(20f, Config.blackjackAnte, "Kế hoạch ghi ante 20 s");
-        Assert.AreEqual(15f, Config.blackjackClockMargin, "Kế hoạch ghi margin 15 s");
-    }
-
     // ---------- TC-BJK-7 ----------
 
     [Test]

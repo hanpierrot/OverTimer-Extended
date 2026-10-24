@@ -8,8 +8,7 @@ using UnityEngine.TestTools;
 /// <summary>
 /// Mục 4.5.2 của kế hoạch kiểm thử, TC-CAT-1…5. Mèo “chạm vật” = CatController.OnTriggerEnter2D với collider
 /// của một vật có PointerReceiver (dùng Egg Timer). Kéo mèo đi qua PointerReceiver.OnDragStart/End.
-/// Ghi chú: kế hoạch ghi mèo ngồi 3–8 s và chặn 4–8 s; GameConfig.asset hiện là 6–14 s và 3–6 s.
-/// Các ca dưới đây kiểm thử theo kế hoạch (tài liệu), nên lệch config sẽ hiện thành ca Lỗi.
+/// Thời gian ngồi và chặn đọc từ GameConfig (DESIGN §5.12: 6–14 s và 3–6 s), không ghim số trong test.
 /// </summary>
 public class CatTests : GameSceneTest
 {
@@ -49,18 +48,10 @@ public class CatTests : GameSceneTest
         Assert.AreEqual(CatState.SittingBlocking, State);
     }
 
-    [Test]
-    public void GiaTriTrongGameConfig_SoVoiKeHoach()
-    {
-        Assert.AreEqual(0.4f, Config.catBlockChance, "Kế hoạch ghi cơ hội chặn 40%");
-        TestContext.Out.WriteLine($"Config hiện tại: ngồi {Config.catSitDurationMin}–{Config.catSitDurationMax} s (kế hoạch 3–8 s), " +
-                                  $"chặn {Config.catBlockDurationMin}–{Config.catBlockDurationMax} s (kế hoạch 4–8 s).");
-    }
-
     // ---------- TC-CAT-1 ----------
 
     [UnityTest]
-    public IEnumerator TC_CAT_1_DenDiem_NgoiRoiQuayLaiLangThang()
+    public IEnumerator TC_CAT_1_DenDiem_NgoiTheoConfigRoiQuayLaiLangThang()
     {
         ForceState(CatState.Wandering);
         TestHooks.SetField(_cat, "_targetPos", (Vector2)_cat.transform.position);   // coi như đã đến đích
@@ -73,7 +64,8 @@ public class CatTests : GameSceneTest
         float seconds = frames / (float)Fps;
 
         Assert.AreEqual(CatState.Wandering, State);
-        Assert.That(seconds, Is.InRange(3f, 8f + 1f / Fps), $"Mèo ngồi {seconds:0.0} s; kế hoạch ghi 3–8 s");
+        Assert.That(seconds, Is.InRange(Config.catSitDurationMin, Config.catSitDurationMax + 1f / Fps),
+            $"Mèo ngồi {seconds:0.0} s; GameConfig ghi {Config.catSitDurationMin}–{Config.catSitDurationMax} s");
     }
 
     // ---------- TC-CAT-2 ----------
@@ -99,7 +91,7 @@ public class CatTests : GameSceneTest
     // ---------- TC-CAT-3 ----------
 
     [UnityTest]
-    public IEnumerator TC_CAT_3_ThoiGianChan_4Den8GiayRoiTuMo()
+    public IEnumerator TC_CAT_3_ThoiGianChan_TheoConfigRoiTuMo()
     {
         var durations = new List<float>();
         for (int i = 0; i < 50 && durations.Count < 20; i++)
@@ -111,7 +103,8 @@ public class CatTests : GameSceneTest
         Assert.That(durations.Count, Is.GreaterThan(0));
 
         foreach (float d in durations)
-            Assert.That(d, Is.InRange(4f, 8f), $"Thời gian chặn {d:0.00} s; kế hoạch ghi 4–8 s");
+            Assert.That(d, Is.InRange(Config.catBlockDurationMin, Config.catBlockDurationMax),
+                $"Thời gian chặn {d:0.00} s; GameConfig ghi {Config.catBlockDurationMin}–{Config.catBlockDurationMax} s");
 
         // Tự mở sau khi hết thời gian chặn: chặn thêm một lần nữa rồi chờ.
         for (int i = 0; i < 50 && State != CatState.SittingBlocking; i++)
@@ -146,15 +139,15 @@ public class CatTests : GameSceneTest
 
     // ---------- TC-CAT-5 ----------
 
-    [Test]
-    public void TC_CAT_5_MeoKhongBiAnnoyanceManagerGioiHan()
+    [UnityTest]
+    public IEnumerator TC_CAT_5_MeoVanChanDuocKhiPhoneDangReo()
     {
-        Assert.IsTrue(AnnoyanceManager.Instance.TryBegin("test: Phone đang reo"));
-        Assert.IsFalse(AnnoyanceManager.Instance.CanStart);
+        PhoneController.Instance.Calls.ForceRingNow();
+        yield return null;
+        Assert.IsTrue(PhoneController.Instance.IsRinging);
 
         TouchAndAlwaysBlock();
 
-        Assert.AreEqual(CatState.SittingBlocking, State, "Mèo vẫn chặn được khi đang có phiền nhiễu khác");
-        AnnoyanceManager.Instance.End("test");
+        Assert.AreEqual(CatState.SittingBlocking, State, "Mèo vẫn chặn được khi đang có cuộc gọi");
     }
 }

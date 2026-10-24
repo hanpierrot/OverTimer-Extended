@@ -23,13 +23,9 @@ public class GameLifecycleTests : GameSceneTest
 
     // ---------- TC-GAM-1a ----------
 
-    [TestCase(EndReason.ClockWin)]
-    [TestCase(EndReason.SetCompletionWin)]
-    [TestCase(EndReason.FinalCountdownWin)]
-    [TestCase(EndReason.ClockLoss)]
-    [TestCase(EndReason.FinalCountdownLoss)]
-    [TestCase(EndReason.CreepyJesterLoss)]
-    public void TC_GAM_1a_MoiKetThucDiQuaGameOver(EndReason reason)
+    // Không dùng [TestCase]: fixture có test tham số hóa không nạp được trong bản Player WebGL
+    // ("DllNotFoundException: libc" lúc nạp test). Mỗi EndReason là một test riêng gọi chung hàm này.
+    private static void AssertEndRunsThroughGameOver(EndReason reason)
     {
         Game.GameOver(reason);
 
@@ -39,6 +35,17 @@ public class GameLifecycleTests : GameSceneTest
         Assert.IsFalse(ClockService.Instance.IsRunning, "Clock phải dừng");
         Assert.AreEqual(0f, Time.timeScale, "Time.timeScale = 0");
     }
+
+    [Test] public void TC_GAM_1a_ClockWin() => AssertEndRunsThroughGameOver(EndReason.ClockWin);
+    [Test] public void TC_GAM_1a_SetCompletionWin() => AssertEndRunsThroughGameOver(EndReason.SetCompletionWin);
+    [Test] public void TC_GAM_1a_FinalCountdownWin() => AssertEndRunsThroughGameOver(EndReason.FinalCountdownWin);
+    [Test] public void TC_GAM_1a_ClockLoss() => AssertEndRunsThroughGameOver(EndReason.ClockLoss);
+    [Test] public void TC_GAM_1a_FinalCountdownLoss() => AssertEndRunsThroughGameOver(EndReason.FinalCountdownLoss);
+    [Test] public void TC_GAM_1a_CreepyJesterLoss() => AssertEndRunsThroughGameOver(EndReason.CreepyJesterLoss);
+    [Test] public void TC_GAM_1a_TicketJackpotWin() => AssertEndRunsThroughGameOver(EndReason.TicketJackpotWin);
+    [Test] public void TC_GAM_1a_TicketCurseLoss() => AssertEndRunsThroughGameOver(EndReason.TicketCurseLoss);
+    [Test] public void TC_GAM_1a_MotherLodeWin() => AssertEndRunsThroughGameOver(EndReason.MotherLodeWin);
+    [Test] public void TC_GAM_1a_BlackjackCharlieWin() => AssertEndRunsThroughGameOver(EndReason.BlackjackCharlieWin);
 
     // ---------- TC-GAM-3 ----------
 
@@ -100,8 +107,8 @@ public class GameLifecycleTests : GameSceneTest
         yield return null;
 
         Assert.IsFalse(GameManager.Instance.IsGameOver);
-        Assert.That(ClockService.Instance.RemainingTime, Is.InRange(119.5f, 120f));
-        Assert.AreEqual(40, MoneyService.Instance.Current);
+        Assert.That(ClockService.Instance.RemainingTime, Is.InRange(Config.startClock - 0.5f, Config.startClock));
+        Assert.AreEqual(Config.startMoney, MoneyService.Instance.Current);
         Assert.AreEqual(0, Cards.HandCount);
         Assert.IsTrue(CardCollectionManager.Instance.IsCollected(deeKay), "Collection phải giữ nguyên");
         Assert.AreEqual(1, PlayerPrefs.GetInt("RunHistory_NextSlot", -1), "Lịch sử ván phải giữ nguyên");

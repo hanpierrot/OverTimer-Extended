@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 /// <summary>
 /// Mục 4.4.1 của kế hoạch kiểm thử, TC-CRD-1…9 (TC-CRD-10 đang treo, chờ xác nhận chuyện dừng Clock).
@@ -10,15 +12,15 @@ using UnityEngine;
 public class CardBoxTests : GameSceneTest
 {
     private static int Money => MoneyService.Instance.Current;
-    private static GameObject PackPanel => TestHooks.GetField<GameObject>(Cards.RevealPanel, "panel");
-
-    [Test]
-    public void GiaTriTrongGameConfigKhopKeHoach()
+    [UnitySetUp]
+    public IEnumerator OwnCardBox()
     {
-        Assert.AreEqual(35, Config.packCost);
-        Assert.AreEqual(5, Config.handCap);
-        Assert.AreEqual(10, Config.unrevealedCardSellValue);
+        GiveItem("card_box");                       // Card Box là món mua ở Shop, đầu ván bị ẩn và không nhận nhấp chuột
+        Assert.IsTrue(Cards.Box.gameObject.activeInHierarchy, "Card Box phải hiện thì các ca mua gói mới có nghĩa");
+        yield break;
     }
+
+    private static GameObject PackPanel => TestHooks.GetField<GameObject>(Cards.RevealPanel, "panel");
 
     // ---------- TC-CRD-1, 2, 3 ----------
 

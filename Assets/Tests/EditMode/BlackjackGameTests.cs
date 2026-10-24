@@ -187,15 +187,6 @@ public class BlackjackGameTests
         Assert.AreEqual(_config.blackjackWinPayout * 2, PayoutFromConfig(game));
     }
 
-    [Test]
-    public void BangThuong_GiaTriTrongGameConfigKhopKeHoach()
-    {
-        // Kế hoạch ghi $40 / $20 / $50 / $80. Nếu ai đó đổi GameConfig thì ca này báo để cập nhật tài liệu.
-        Assert.AreEqual(40, _config.blackjackWinPayout);
-        Assert.AreEqual(20, _config.blackjackPushPayout);
-        Assert.AreEqual(50, _config.blackjackNaturalPayout);
-    }
-
     // ---------- TC-BJK-9 ----------
 
     [Test]

@@ -116,4 +116,47 @@ public class MoneyServiceTests
         Assert.AreEqual(40, _money.Current);
         Assert.AreEqual(0, _eventCount);
     }
+
+    // ---------- OnIncome (Reward Popup, DESIGN §5.17) ----------
+
+    [Test]
+    public void OnIncome_Add_PhatDungMotLanVoiSoTienVaLyDo()
+    {
+        int count = 0, lastAmount = 0; string lastReason = null;
+        _money.OnIncome += (amount, reason) => { count++; lastAmount = amount; lastReason = reason; };
+
+        _money.Add(12, "mining vein");
+
+        Assert.AreEqual(1, count);
+        Assert.AreEqual(12, lastAmount);
+        Assert.AreEqual("mining vein", lastReason);
+    }
+
+    [Test]
+    public void OnIncome_HoanTienCuoc_KhongPhat_NhungSoDuVanTang()
+    {
+        int incomeCount = 0;
+        _money.OnIncome += (_, __) => incomeCount++;
+        ListenToChanges();
+
+        _money.Add(10, MoneyService.StakeRefundReason);
+
+        Assert.AreEqual(0, incomeCount, "Tiền cược trả lại không phải thu nhập: không hiện popup");
+        Assert.AreEqual(1, _eventCount, "OnMoneyChanged vẫn phát để UI cập nhật số dư");
+        Assert.AreEqual(10, _money.Current);
+    }
+
+    [Test]
+    public void OnIncome_TrySpendVaSoTienKhongDuong_KhongPhat()
+    {
+        GiveMoney(40);
+        int incomeCount = 0;
+        _money.OnIncome += (_, __) => incomeCount++;
+
+        _money.TrySpend(10, "test");
+        _money.Add(0, "test");
+        _money.Add(-5, "test");
+
+        Assert.AreEqual(0, incomeCount);
+    }
 }

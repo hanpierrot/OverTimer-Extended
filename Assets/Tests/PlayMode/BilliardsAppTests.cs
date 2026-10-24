@@ -223,9 +223,11 @@ public class BilliardsAppTests : GameSceneTest
 
         yield return Shoot(aimed);
 
-        string note = TestHooks.GetField<string>(_app, "_shotNote");
+        string note = TestHooks.GetField<string>(_app, "_notice");
         Assert.IsNotNull(note, "Phải có thông báo Cue slip");
-        float actual = float.Parse(note.Split(' ').Last(), CultureInfo.InvariantCulture);
+        var m = System.Text.RegularExpressions.Regex.Match(note, @"became\s+([0-9]+[.,][0-9]+)");
+        Assert.IsTrue(m.Success, note);
+        float actual = float.Parse(m.Groups[1].Value.Replace(',', '.'), CultureInfo.InvariantCulture);
         Assert.That(actual, Is.InRange(0.65f, 0.95f), note);
         Assert.AreEqual(expected, actual, 0.005f, "Cùng seed phải cho cùng lực");
         Assert.IsFalse(BilliardsPendingEffects.CueSlipPending, "Thẻ kết thúc sau cú đánh");
@@ -243,6 +245,8 @@ public class BilliardsAppTests : GameSceneTest
         var icon = Object.FindObjectsByType<DesktopIconView>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                          .First(i => TestHooks.GetField<string>(i, "appName") == "Billiards");
         var card = Cards.Asset("DisableBilliards");
+        ShopService.Instance.IconGate.SetLicensed("Billiards", true);
+        Assert.IsTrue(icon.gameObject.activeSelf, "Có license: icon hiện");
         float duration = TestHooks.GetField<float>(card, "duration");
 
         Cards.Place(card);

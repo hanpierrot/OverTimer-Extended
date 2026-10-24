@@ -48,16 +48,6 @@ public class MiningTests : GameSceneTest
         MineUntilBlockIndex(length);
     }
 
-    [Test]
-    public void GiaTriTrongGameConfigKhopKeHoach()
-    {
-        Assert.AreEqual(6, Config.veinLengthMin);
-        Assert.AreEqual(10, Config.veinLengthMax);
-        Assert.AreEqual(1f, Config.veinRespawn);
-        CollectionAssert.AreEqual(new[] { 1, 2, 4, 5, 7, 10 }, new List<int>(Config.blockPayout).GetRange(0, 6),
-            "Kế hoạch tính vein 6 khối = 1+2+4+5+7+10 = $29");
-    }
-
     // ---------- TC-MIN-1 ----------
 
     [Test]

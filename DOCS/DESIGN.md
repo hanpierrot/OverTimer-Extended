@@ -648,7 +648,7 @@ Besides the normal Clock check, three cards (A–C) and three mechanics (D) can 
 - **Trigger.** When the Clock counts down to 0 while `Armed`, the intercept is used up: the Clock is set to `resetSeconds` (180 s), the phase becomes `Triggered`, the **Meter is locked for the rest of the run**, and the Final Countdown intro cutscene plays while the Clock is paused.
 - **After the trigger** the Clock runs normally from 180 s. If it reaches 0 again the run is lost (`ClockLoss`). Without the Meter, time comes only from the Egg Timer and card effects.
 - **Only the Clock counting down to 0 by itself is intercepted.** Time removed directly (the ITRS deadline penalty, Blackjack ante) that takes the Clock to 0 ends the run as `ClockLoss` immediately, whatever the phase.
-- While `Armed`, the card can be Pawned (it disarms, and the intercept is removed). Once `Triggered` it **cannot be Pawned** — the one card with no I7 escape hatch.
+- While `Armed`, the card can be Pawned (it disarms, and the intercept is removed). `FinalCountdownCardSO.isDebuff` is true while the phase is `Armed` or `Triggered`, so an Armed card counts as a running debuff: pawning it pays nothing and costs `debuffDismissFee` (§5.4); without the money the pawn is refused and the card stays Armed. Once `Triggered` it **cannot be Pawned** — the one card with no I7 escape hatch.
 - A Final Countdown card behaves as a **debuff** once the phase is not `None`: it can only be Placed (no Sell, no Collection) and it ignores `handCap`.
 - A second copy "drawn" means **Placed**, like every other card effect.
 

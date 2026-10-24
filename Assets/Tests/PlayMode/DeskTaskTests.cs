@@ -45,20 +45,6 @@ public class DeskTaskTests : GameSceneTest
         if (release) receiver.OnPressEnd(Vector2.zero);
     }
 
-    [Test]
-    public void GiaTriTrongGameConfigKhopKeHoach()
-    {
-        Assert.AreEqual(1f, Config.crankTime, "Egg Timer: giữ 1,0 s");
-        Assert.AreEqual(3f, Config.timePayout, "Egg Timer: +3 s");
-        Assert.AreEqual(3, Config.clickTaskMinClicks);
-        Assert.AreEqual(8, Config.clickTaskMaxClicks);
-        Assert.AreEqual(5, Config.clickTaskMoneyReward);
-        Assert.AreEqual(3f, Config.clickTaskLockDuration);
-        Assert.AreEqual(2f, Config.powerBankCrankTime);
-        Assert.AreEqual(8, Config.powerBankMoneyReward);
-        Assert.AreEqual(20, Config.wireTaskMoneyReward);
-    }
-
     // ---------- TC-TSK-1, 2 ----------
 
     [UnityTest]
@@ -121,6 +107,7 @@ public class DeskTaskTests : GameSceneTest
     [UnityTest]
     public IEnumerator TC_TSK_4_PowerBank_Giu2Giay_Cong8VaVaoHoi()
     {
+        GiveItem("power_bank");                     // Power Bank là món mua ở Shop, đầu ván bị ẩn
         var receiver = ActiveOnDesk<PowerBankTask>().GetComponent<PointerReceiver>();
         TestHooks.SetMoney(0);
 

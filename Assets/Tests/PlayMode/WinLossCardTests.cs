@@ -115,16 +115,32 @@ public class WinLossCardTests : GameSceneTest
     // ---------- TC-WIN-7 ----------
 
     [Test]
-    public void TC_WIN_7a_PawnKhiArmed_ChoPhep()
+    public void TC_WIN_7a_PawnKhiArmed_ChoPhep_TonPhiDismiss()
     {
+        // Khi Armed, FinalCountdownCardSO.isDebuff là true: thẻ là debuff đang chạy nên cầm tốn debuffDismissFee và không nhận pawnValue.
         var card = Cards.Place(Cards.Asset("FinalCountdown"));
-        TestHooks.SetMoney(0);
+        Assert.IsTrue(card.IsDebuffActive, "Armed được tính là debuff đang chạy");
+        TestHooks.SetMoney(20);
 
         Pawning.PawnOnto(card);
 
         Assert.IsFalse(card.gameObject.activeSelf, "Thẻ phải được cầm đồ");
-        Assert.AreEqual(card.Data.pawnValue, MoneyService.Instance.Current);
+        Assert.AreEqual(20 - Config.debuffDismissFee, MoneyService.Instance.Current, "Trả phí dismiss, không nhận pawnValue");
         Assert.AreEqual(FinalCountdownTracker.Phase.None, Tracker.CurrentPhase, "Pawn khi Armed thì gỡ Final Countdown");
+    }
+
+    [Test]
+    public void TC_WIN_7a2_PawnKhiArmed_ThieuTienPhi_TuChoiVaVanArmed()
+    {
+        var card = Cards.Place(Cards.Asset("FinalCountdown"));
+        int broke = Config.debuffDismissFee - 1;
+        TestHooks.SetMoney(broke);
+
+        Pawning.PawnOnto(card);
+
+        Assert.IsTrue(card.gameObject.activeSelf, "Không đủ phí thì thẻ ở lại bàn");
+        Assert.AreEqual(broke, MoneyService.Instance.Current);
+        Assert.AreEqual(FinalCountdownTracker.Phase.Armed, Tracker.CurrentPhase, "Vẫn Armed");
     }
 
     [UnityTest]
@@ -176,6 +192,9 @@ public class WinLossCardTests : GameSceneTest
         UseFixedFrameRate(10);
         yield return null;
         var card = Cards.Place(jester);
+        // Test chạy khoảng 1,5 lần JesterSeconds (~90 s game). Hóa đơn thuế đầu tiên hết hạn ở giây 75 và phạt 40 s Clock,
+        // nên với Clock mặc định ván tự thua (ClockLoss). Nâng Clock lên (vẫn dưới mốc thắng 600) để chỉ kiểm thử Jester.
+        TestHooks.SetClock(500f);
 
         yield return Frames(Mathf.CeilToInt(JesterSeconds(jester) * 10 / 2));   // nửa chừng
         Pawning.PawnOnto(card);

@@ -9,14 +9,18 @@ public class PawnTests : GameSceneTest
     // ---------- TC-PWN-1 ----------
 
     [Test]
-    public void TC_PWN_1_CamDoLaptop_Nhan300()
+    public void TC_PWN_1_CamDoLaptop_NhanBang80PhanTramGiaCatalog()
     {
+        // Laptop là món khởi đầu duy nhất cầm được: trả 80% giá trị trong ItemCatalog (laptop.asset), không còn $300 cố định.
+        var def = ShopService.Instance.Ownership.Def("laptop");
+        int expected = PawnMath.PawnValue(def, 0, true);
+        Assert.Greater(expected, 0, "Laptop phải cầm được");
         var laptop = TestHooks.Find<DeskLaptopOpener>();
         TestHooks.SetMoney(0);
 
         Pawning.PawnOnto(laptop);
 
-        Assert.AreEqual(300, Money);
+        Assert.AreEqual(expected, Money);
         Assert.IsFalse(laptop.gameObject.activeSelf, "Laptop biến mất khỏi bàn");
     }
 
@@ -40,8 +44,7 @@ public class PawnTests : GameSceneTest
 
     [Test] public void TC_PWN_2a_Meter_KhongCamDoDuoc() => AssertCannotPawn(Meter.Instance);
     [Test] public void TC_PWN_2b_Clock_KhongCamDoDuoc() => AssertCannotPawn(ClockService.Instance);
-    [Test] public void TC_PWN_2c_Phone_KhongCamDoDuoc() => AssertCannotPawn(Phone.Instance);
-    [Test] public void TC_PWN_2d_MailTray_KhongCamDoDuoc() => AssertCannotPawn(TestHooks.Find<TaxNotice>());
+    [Test] public void TC_PWN_2c_Phone_KhongCamDoDuoc() => AssertCannotPawn(PhoneController.Instance);
     [Test] public void TC_PWN_2e_Cat_KhongCamDoDuoc() => AssertCannotPawn(TestHooks.Find<CatController>());
 
     // ---------- TC-PWN-3 ----------

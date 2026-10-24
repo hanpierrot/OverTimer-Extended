@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -10,6 +11,8 @@ using UnityEngine.TestTools;
 public class CardEffectTests : GameSceneTest
 {
     private const int Fps = 10;
+    
+    private readonly object _ringKey = new object();
 
     protected override void BeforeSceneLoad() => PlayerPrefs.DeleteKey("CardCollection_UnlockedIds");   // Collection trống
 
@@ -32,7 +35,12 @@ public class CardEffectTests : GameSceneTest
         var card = Cards.Place(snail);
         Assert.IsFalse(card.IsFaceDown);
 
-        yield return Seconds(15f);
+        yield return Frames(Mathf.CeilToInt(15f * Fps) + 2);    // đủ 15 s game
+        Assert.IsTrue(TestHooks.GetField<bool>(card, "_hasEnded"), "Hết 15 s: hiệu ứng đã kết thúc (Invoke EndEffect đã chạy)");
+
+        // Hoạt ảnh lật là tween unscaled 0,4 s: chờ tối đa 3 s thay vì một số khung hình cố định.
+        float waited = 0f;
+        while (!card.IsFaceDown && waited < 3f) { yield return null; waited += Time.unscaledDeltaTime; }
 
         Assert.IsTrue(card.IsFaceDown, "Hết hiệu ứng: thẻ lật úp");
         Assert.IsTrue(card.gameObject.activeSelf, "Thẻ vẫn nằm trên bàn");
@@ -96,17 +104,21 @@ public class CardEffectTests : GameSceneTest
     // ---------- TC-EFX-4 ----------
 
     [Test]
-    public void TC_EFX_4_HieuUngTocDo_KhongCongDon()
+    public void TC_EFX_4_HieuUngTocDo_NhanDonTheoKhoa()
     {
-        ClockService.Instance.TickMultiplier = Config.ringEffectMultiplier;   // Phone đang reo: 1,5
-        var snail = Cards.Asset("SnailSpeed");                                 // tickMultiplier 0,75 trong asset
+        ClockService.Instance.SetSpeed(_ringKey, Config.ringEffectMultiplier);   // Phone đang reo: 1,5
+        var snail = Cards.Asset("SnailSpeed");                                   // tickMultiplier 0,75 trong asset
 
         var card = Cards.Place(snail);
-        Assert.AreEqual(0.75f, ClockService.Instance.TickMultiplier, 1e-6f,
-            "Giá trị ghi sau cùng được dùng, không nhân dồn (1,5 × 0,75 = 1,125 là sai)");
+        Assert.AreEqual(1.125f, ClockService.Instance.TickMultiplier, 1e-6f,
+            "Mỗi nguồn có khóa riêng và nhân với nhau: 1,5 × 0,75");
 
         card.EndEffect();
-        Assert.AreEqual(1f, ClockService.Instance.TickMultiplier);
+        Assert.AreEqual(1.5f, ClockService.Instance.TickMultiplier, 1e-6f,
+            "Hết thẻ thì chỉ còn nguồn Phone");
+
+        ClockService.Instance.ClearSpeed(_ringKey);
+        Assert.AreEqual(1f, ClockService.Instance.TickMultiplier, 1e-6f);
     }
 
     // ---------- TC-EFX-5 ----------
@@ -115,11 +127,10 @@ public class CardEffectTests : GameSceneTest
     public void TC_EFX_5_ThePhuPhiVeSo_VeTangGia_GoiTheKhongDoi()
     {
         Cards.Place(Cards.Asset("TicketCostModifier"));         // ×1,5 cho vé số trong 20 s
-        var stack = Object.FindObjectsByType<TicketStack>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0];
-        var tier = TestHooks.GetField<ScratchTicket[]>(stack, "ticketPool")[0].TierKind;
-        int baseCost = tier == TicketTierKind.TripleMatch ? Config.tripleMatchCost : Config.luckyNineCost;
-        int expected = Mathf.RoundToInt(baseCost * 1.5f);       // vé $25 → 37,5 → $38 (Mathf.RoundToInt)
-
+        GiveItem("card_box");                                   // Card Box bị ẩn đầu ván
+        var stack = Object.FindObjectsByType<TicketStack>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+            .First(t => TestHooks.GetField<ScratchTicket[]>(t, "ticketPool")[0].TierKind == TicketTierKind.TripleMatch);   // chồng Triple có sẵn từ đầu ván
+        int expected = Mathf.RoundToInt(Config.tripleMatchCost * 1.5f);   // vé $25 → 37,5 → $38 (Mathf.RoundToInt)
         TestHooks.SetMoney(expected);
         stack.GetComponent<PointerReceiver>().OnClickDown(Vector2.zero);
         Assert.AreEqual(0, MoneyService.Instance.Current, $"Vé phải có giá {expected}");
@@ -127,5 +138,37 @@ public class CardEffectTests : GameSceneTest
         TestHooks.SetMoney(Config.packCost);
         Cards.ClickBox();
         Assert.AreEqual(0, MoneyService.Instance.Current, "Gói thẻ không bị ảnh hưởng: vẫn $35");
+    }
+
+    // ---------- TC-EFX-6 ----------
+
+    [Test]
+    public void TC_EFX_6_HaiTheGiaVe_NhanVoiNhau_HetMotTheConLaiTheKia()
+    {
+        // Lỗi N4: hai thẻ cùng đích từng ghi đè nhau, thẻ hết hạn trước đặt lại cả hai về 1.
+        var asset = Cards.Asset("TicketCostModifier");
+        float each = TestHooks.GetField<float>(asset, "costMultiplier");
+        var cost = CostModifierService.Instance;
+
+        var first = Cards.Place(asset);
+        var second = Cards.Place(asset);
+        Assert.AreEqual(each * each, cost.GetMultiplier(CostModifierService.Target.Ticket), 1e-5f, "Hai thẻ nhân với nhau");
+
+        first.EndEffect();
+        Assert.AreEqual(each, cost.GetMultiplier(CostModifierService.Target.Ticket), 1e-5f, "Chỉ còn thẻ thứ hai");
+
+        second.EndEffect();
+        Assert.AreEqual(1f, cost.GetMultiplier(CostModifierService.Target.Ticket), 1e-5f);
+    }
+
+    [Test]
+    public void TC_EFX_6b_PawnTheGiaVe_GoHeSoCuaThe()
+    {
+        var asset = Cards.Asset("TicketCostModifier");
+        var card = Cards.Place(asset);
+
+        card.OnPawned();
+
+        Assert.AreEqual(1f, CostModifierService.Instance.GetMultiplier(CostModifierService.Target.Ticket), 1e-5f);
     }
 }

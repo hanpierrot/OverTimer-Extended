@@ -5,12 +5,15 @@ using UnityEditor;
 /// <summary>Nạp asset thật của dự án cho test Edit Mode (giá trị cân bằng không viết cứng trong test).</summary>
 public static class TestAssets
 {
-    public const string GameConfigPath = "Assets/Settings/Configs/GameConfig.asset";
-
+    /// <summary>Tìm GameConfig theo kiểu, không theo đường dẫn: chuyển asset sang thư mục khác không làm hỏng test.</summary>
     public static GameConfig LoadGameConfig()
     {
-        var config = AssetDatabase.LoadAssetAtPath<GameConfig>(GameConfigPath);
-        Assert.IsNotNull(config, $"Không tìm thấy GameConfig ở {GameConfigPath}");
+        var guids = AssetDatabase.FindAssets("t:GameConfig");
+        Assert.IsNotEmpty(guids, "Không tìm thấy asset GameConfig nào trong project");
+        Assert.AreEqual(1, guids.Length, "Có hơn một GameConfig: test không biết dùng cái nào");
+
+        var config = AssetDatabase.LoadAssetAtPath<GameConfig>(AssetDatabase.GUIDToAssetPath(guids[0]));
+        Assert.IsNotNull(config, "Không nạp được GameConfig");
         return config;
     }
 
