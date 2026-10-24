@@ -1,16 +1,18 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
-/// One letter on the pile at the door (a pooled object, like ParcelView). Placeholder art: a paper rectangle with a
-/// coloured stamp (red = tax, blue = junk). Clicking it (Door view only: it carries a ViewGate) reports to the controller.
+/// One letter on the pile at the door (a pooled object, like ParcelView). The sprite shown depends on the letter kind
+/// (tax or junk). Clicking it (Door view only: it carries a ViewGate) reports to the controller.
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class LetterView : DeskObject
 {
-    [SerializeField] private SpriteRenderer stamp;
-    [SerializeField] private Color taxColor = new Color(0.85f, 0.2f, 0.25f, 1f);
-    [SerializeField] private Color junkColor = new Color(0.3f, 0.5f, 0.9f, 1f);
+    [FormerlySerializedAs("stamp")]
+    [SerializeField] private SpriteRenderer letterRenderer;
+    [SerializeField] private Sprite taxSprite;
+    [SerializeField] private Sprite junkSprite;
 
     public Letter Data { get; private set; }
     public event Action<LetterView> Clicked;
@@ -18,7 +20,7 @@ public class LetterView : DeskObject
     public void Bind(Letter letter)
     {
         Data = letter;
-        if (stamp != null) stamp.color = letter.kind == LetterKind.Tax ? taxColor : junkColor;
+        if (letterRenderer != null) letterRenderer.sprite = letter.kind == LetterKind.Tax ? taxSprite : junkSprite;
     }
 
     public void Unbind()

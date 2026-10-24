@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
 
         InputGate.BlockedChanged += HandleInputBlockedChanged;
         HandleInputBlockedChanged(InputGate.IsBlocked);
+        
+        Cursor.visible = true;
     }
 
     private void OnDestroy()

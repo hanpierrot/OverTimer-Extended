@@ -24,13 +24,19 @@ public class CardPanel : MonoBehaviour
         if (panel != null) panel.SetActive(false);
     }
 
+    private bool _paused;   // ResumeGame is a plain counter: only release a pause this panel really took, never another panel's
+
     private void OnEnable()
     {
-        if (GameManager.Instance != null) GameManager.Instance.PauseGame();
+        if (_paused || GameManager.Instance == null) return;
+        _paused = true;
+        GameManager.Instance.PauseGame();
     }
 
     private void OnDisable()
     {
+        if (!_paused) return;
+        _paused = false;
         if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
     }
 

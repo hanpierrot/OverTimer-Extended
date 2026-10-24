@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// The click-through tutorial shown once at the start of the first run (stored in PlayerPrefs). It freezes the whole game
-/// (GameManager.PauseGame) until it is closed. Everything the Phone, Shop and Delivery add is explained with hints instead.
+/// (GameManager.PauseGame) and holds a ClockService pause until it is closed. Everything the Phone, Shop and Delivery add is explained with hints instead.
 /// </summary>
 public class TutorialPanel : MonoBehaviour, IPointerClickHandler
 {
@@ -64,7 +64,7 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
         // Never leave the game paused if the panel is switched off while it is open.
         if (!_open) return;
         _open = false;
-        if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
+        Release();
     }
 
     private void Open()
@@ -72,6 +72,7 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
         _open = true;
         _index = 0;
         if (GameManager.Instance != null) GameManager.Instance.PauseGame();
+        if (ClockService.Instance != null) ClockService.Instance.Pause(this);   // the clock stops even if something else resets timeScale
         ShowStep();
     }
 
@@ -107,7 +108,13 @@ public class TutorialPanel : MonoBehaviour, IPointerClickHandler
         _open = false;
         PlayerPrefs.SetInt(SeenKey, 1);
         PlayerPrefs.Save();
-        if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
+        Release();
         gameObject.SetActive(false);
+    }
+
+    private void Release()
+    {
+        if (GameManager.Instance != null) GameManager.Instance.ResumeGame();
+        if (ClockService.Instance != null) ClockService.Instance.Resume(this);
     }
 }
