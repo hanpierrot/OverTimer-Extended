@@ -41,6 +41,7 @@ public abstract class GameSceneTest
 
         _prefs = PlayerPrefsSnapshot.Take();
         PlayerPrefs.SetInt("TutorialSeen", 1);
+        BeforeSceneLoad();
 
         // Unity mặc định dừng Play Mode khi cửa sổ Editor mất focus; test phải chạy cả khi bạn chuyển cửa sổ.
         _runInBackground = Application.runInBackground;
@@ -56,6 +57,8 @@ public abstract class GameSceneTest
     public IEnumerator RestoreState()
     {
         Time.captureFramerate = 0;
+        BilliardsDebug.PresetId = null;                        // công cụ debug Billiards là static, sống qua lần nạp scene
+        BilliardsDebug.Mirror = BilliardsDebug.MirrorMode.Random;
         Application.runInBackground = _runInBackground;
         _prefs?.Restore();
         yield return null;
@@ -72,6 +75,16 @@ public abstract class GameSceneTest
             if (stackTrace != null && stackTrace.Contains(source)) return;
 
         lock (_unexpectedErrors) _unexpectedErrors.Add($"[{type}] {message}\n{stackTrace}");
+    }
+
+    /// <summary>Chạy sau khi sao lưu PlayerPrefs, trước khi nạp scene: chỗ để ca kiểm thử đặt dữ liệu lưu ban đầu.</summary>
+    protected virtual void BeforeSceneLoad() { }
+
+    /// <summary>Nạp lại scene như khi người chơi mở lại game (PlayerPrefs giữ nguyên).</summary>
+    protected static IEnumerator ReloadScene()
+    {
+        yield return SceneManager.LoadSceneAsync(GameScene, LoadSceneMode.Single);
+        yield return null;
     }
 
     /// <summary>Mỗi khung hình trôi đúng 1 / fps giây (game time).</summary>
