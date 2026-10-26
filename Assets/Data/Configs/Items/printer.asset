@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: printer
   displayName: Printer
-  icon: {fileID: 0}
+  icon: {fileID: 6556731982171357238, guid: 0c92dc4bb02dd7746a365ee875c31e8b, type: 3}
   description: The pawn machine.
   kind: 0
   price: 0

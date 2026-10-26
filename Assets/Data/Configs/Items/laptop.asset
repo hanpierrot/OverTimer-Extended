@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: laptop
   displayName: Laptop
-  icon: {fileID: 0}
+  icon: {fileID: -7773165393155189300, guid: c77391afbeedf4945a4adbee08004af9, type: 3}
   description: Your Laptop. Pawn it only if you must.
   kind: 0
   price: 0

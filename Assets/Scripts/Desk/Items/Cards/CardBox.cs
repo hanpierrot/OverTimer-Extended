@@ -46,6 +46,7 @@ public class CardBox : MonoBehaviour, IPawnable, IRestorable
             return;
         }
         
+        AudioService.Play(SfxId.CardPackBuy);
         var rolled = new CardSO[packSize];
         for (int i = 0; i < packSize; i++)
             rolled[i] = RollCard(config);

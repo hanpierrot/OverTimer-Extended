@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// One row of the item catalog (Assets/Settings/Configs/Items/*.asset). The catalog decides what the shop sells, what an
+/// One row of the item catalog (Assets/Data/Configs/Items/*.asset). The catalog decides what the shop sells, what an
 /// item pawns for and whether it starts on the desk. The id is permanent (saves and the pawn ledger key on it).
 /// </summary>
 [CreateAssetMenu(fileName = "Item", menuName = "OverTimer/Shop/Item")]

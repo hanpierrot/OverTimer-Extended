@@ -2477,9 +2477,9 @@ MonoBehaviour:
   shakeStrength: 0.18
   poofPrefab: {fileID: 6895010090408375707, guid: 898fbb0e68f035b43bfc03c9ae95ddc5, type: 3}
   audioSource: {fileID: 2147219721}
-  doorbellSound: {fileID: 0}
-  boxHitSound: {fileID: 0}
-  boxOpenSound: {fileID: 0}
+  doorbellSound: {fileID: 8300000, guid: e9f00fd3e8f991246921db06b0e4f157, type: 3}
+  boxHitSound: {fileID: 8300000, guid: 3854185d1c9f81341b1e8941ff8ea8d8, type: 3}
+  boxOpenSound: {fileID: 8300000, guid: be41ff1229726d5439cbe131d1a7d20e, type: 3}
   letterPrefab: {fileID: 4855176100463036199, guid: dc48c757bb9d91f47ae1fc9483f5cf39, type: 3}
   letterCenter: {fileID: 2029959665}
   letterSpread: {x: 2.2, y: 1.1}
@@ -2524,6 +2524,7 @@ GameObject:
   - component: {fileID: 800245315}
   - component: {fileID: 800245314}
   - component: {fileID: 800245319}
+  - component: {fileID: 800245330}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -2637,6 +2638,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopService
   catalog: {fileID: 11400000, guid: 4f4e2611d4532f1498c07280718e7037, type: 2}
+--- !u!114 &800245330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800245310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad64f58314384bf081934dede946f939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: OverTimer::AudioService
+  catalog: {fileID: 11400000, guid: 722dbe272e5c448b9bf2964786a6a8e4, type: 2}
+  voices: 8
 --- !u!1 &827570812
 GameObject:
   m_ObjectHideFlags: 0

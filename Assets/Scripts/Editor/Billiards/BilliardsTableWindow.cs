@@ -46,7 +46,7 @@ public class BilliardsTableWindow : EditorWindow
 
     void OnEnable()
     {
-        _cfg = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Settings/Configs/GameConfig.asset");
+        _cfg = EditorAssetFinder.FindSingle<GameConfig>();
         if (_cfg != null) _prm = BilliardsSimParams.FromConfig(_cfg);
         RefreshFiles();
         if (_p == null) NewTable();

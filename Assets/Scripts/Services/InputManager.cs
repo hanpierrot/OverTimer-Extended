@@ -125,6 +125,7 @@ public class InputManager : MonoBehaviour
             isDragging = false;
             
             currentTarget.OnPressStart(worldPos);
+            AudioService.Play(SfxId.Click);
         }
     }
     
@@ -158,6 +159,7 @@ public class InputManager : MonoBehaviour
     
     private void EndPress(Vector2 worldPos)
     {
+        AudioService.Play(SfxId.ClickRelease);
         currentTarget.OnPressEnd(worldPos);
         
         if (isDragging)

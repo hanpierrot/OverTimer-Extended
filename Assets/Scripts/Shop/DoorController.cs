@@ -158,6 +158,7 @@ public class DoorController : MonoBehaviour
         Vector3 target = SpotOf(Depot.IndexOf(parcel));
         view.transform.position = target + Vector3.up * 5f;  // drops in from above
         view.transform.DOMove(target, 0.35f).SetEase(Ease.OutBounce);
+        AudioService.Play(SfxId.ParcelSlide);
     }
 
     private void HandleParcelClicked(ParcelView view)

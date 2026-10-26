@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: license_blackjack
   displayName: Blackjack
-  icon: {fileID: 0}
+  icon: {fileID: 2434005243966738130, guid: 452dcfe9694cf684c8b560d743477492, type: 3}
   description: Unlocks Blackjack on the Laptop.
   kind: 1
   price: 60

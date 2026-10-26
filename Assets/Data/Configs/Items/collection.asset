@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: collection
   displayName: Collection
-  icon: {fileID: 0}
+  icon: {fileID: 2353571312451627304, guid: 5653b12445a2e2a49b990cfe17dff4cc, type: 3}
   description: Your card collection.
   kind: 0
   price: 0

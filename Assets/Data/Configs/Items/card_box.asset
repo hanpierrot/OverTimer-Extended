@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: card_box
   displayName: Card Box
-  icon: {fileID: 0}
+  icon: {fileID: 18330866201870305, guid: 5989c7ff795bb1742bc7858d95428156, type: 3}
   description: Buy card packs.
   kind: 0
   price: 40

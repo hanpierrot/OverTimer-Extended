@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// The paper copy of the current ITRS bill (Assets/Prefab/Panels/Tax.prefab), opened from the desk notice (TaxNotice).
+/// The paper copy of the current ITRS bill (Assets/Prefab/Panels/Tax.prefab), opened from the tax letter at the door (DoorController).
 /// It is the SAME bill the Taxes phone app shows: paying here or there resolves both. Close only closes - there is no
 /// Ignore (Q1): leaving the bill unpaid costs the shortfall penalty when the 30 s window runs out.
 /// The panel starts inactive, so it never subscribes to events; it just reads ITRSService each frame while open.

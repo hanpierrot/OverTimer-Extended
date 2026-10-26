@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.TextCore.LowLevel;
 
 /// <summary>
-/// Turns the "Phone UI" bitmap font sheets (Assets/Art/Phone UI/Font Big.png and Font Small.png) into real fonts:
+/// Turns the "Phone UI" bitmap font sheets (Assets/Art/Sprites/Phone UI/Font Big.png and Font Small.png) into real fonts:
 /// a .ttf whose glyphs are the sheet's pixels as square outlines, plus a static TextMeshPro font asset (raster, point
 /// filtered, like the existing "supersoft" pixel font).
 ///
@@ -23,8 +23,8 @@ using UnityEngine.TextCore.LowLevel;
 /// </summary>
 public static class BitmapFontBuilder
 {
-    const string SheetFolder = "Assets/Art/Phone UI/";
-    const string OutputFolder = "Assets/Design/Fonts/";
+    const string SheetFolder = "Assets/Art/Sprites/Phone UI/";
+    const string OutputFolder = "Assets/Art/Fonts/";
     const int Cell = 16;
     const int UnitsPerPixel = 100;
     const int UnitsPerEm = 1000;

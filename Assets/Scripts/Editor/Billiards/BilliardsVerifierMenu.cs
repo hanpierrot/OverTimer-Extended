@@ -7,8 +7,8 @@ public static class BilliardsVerifierMenu
     [MenuItem("Tools/OverTimer/Billiards/Verify Presets")]
     static void Verify()
     {
-        var cfg = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Settings/Configs/GameConfig.asset");
-        if (cfg == null) { Debug.LogError("[Billiards] GameConfig.asset not found"); return; }
+        var cfg = EditorAssetFinder.FindSingle<GameConfig>();
+        if (cfg == null) { Debug.LogError("[Billiards] GameConfig asset not found"); return; }
         if (!cfg.ValidateBilliards(out string problem)) { Debug.LogError("[Billiards] GameConfig invalid: " + problem); return; }
 
         var rows = BilliardsPresetVerifier.VerifyAll(cfg);

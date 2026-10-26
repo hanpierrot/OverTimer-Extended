@@ -115,6 +115,7 @@ public class WireTask : TaskBase, IPawnable
         int pairIndex = _activePlug.PairIndex;
         _connected[pairIndex] = true;
         _connectedCount++;
+        AudioService.Play(SfxId.WirePlug);
 
         connectedLines[pairIndex].gameObject.SetActive(true);
         connectedLines[pairIndex].SetLine(_activePlug.AnchoredPosition, socket.AnchoredPosition, _activePlug.WireColor);
