@@ -264,7 +264,11 @@ public class BilliardsApp : LaptopApp
             bool potted = sim.IsPotted(i);
             if (potted)
             {
-                if (animate && _pocketed.Add(sim.IdOf(i))) OnPocket?.Invoke(sim.IdOf(i));
+                if (animate && _pocketed.Add(sim.IdOf(i)))
+                {
+                    OnPocket?.Invoke(sim.IdOf(i));
+                    AudioService.Play(SfxId.BilliardsPocket);
+                }
                 view.Sync(true, Vector2.zero, NearestPocketFelt(view.FeltPosition), animate);
                 continue;
             }
@@ -403,6 +407,7 @@ public class BilliardsApp : LaptopApp
         _state = State.Aiming;
         BindTable();
         ShowState();
+        AudioService.Play(SfxId.BilliardsStart);
     }
 
     private bool IsGameOver() => GameManager.Instance != null && GameManager.Instance.IsGameOver;
@@ -436,6 +441,7 @@ public class BilliardsApp : LaptopApp
 
         _headBeforeShot = _round.Referee.Head;
         _round.Fire(shot);
+        AudioService.Play(SfxId.BilliardsShot);
         BilliardsRoundLog.ShotFired();
         _pocketed.Clear();
         _acc = 0f;

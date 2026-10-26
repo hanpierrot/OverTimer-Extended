@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: triple_stack
   displayName: Triple Match stack
-  icon: {fileID: 0}
+  icon: {fileID: -6467537029916428044, guid: 57d21df582628d74288a10e18dbfc84b, type: 3}
   description: Scratch tickets.
   kind: 0
   price: 0

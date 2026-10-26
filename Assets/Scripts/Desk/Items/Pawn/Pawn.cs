@@ -82,6 +82,7 @@ public class Pawn : MonoBehaviour
                 MoneyService.Instance.Add(value, "pawn");
                 if (pawnable is IRestorable) shop.RecordPawn(binding.ItemId, basis);     // before OnPawned(): the buyback clock starts now
                 pawnable.OnPawned();
+                AudioService.Play(SfxId.PawnSell);
                 ShowFirstPawnHint();
                 return;
             }
@@ -100,6 +101,7 @@ public class Pawn : MonoBehaviour
 
             MoneyService.Instance.Add(pawnable.PawnValue, "pawn");
             pawnable.OnPawned();
+            AudioService.Play(SfxId.PawnSell);
             ShowFirstPawnHint();
         }
     }

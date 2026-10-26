@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
@@ -6,6 +7,9 @@ using UnityEngine;
 public class HintService : MonoBehaviour
 {
     public static HintService Instance { get; private set; }
+
+    /// <summary>Raised each time a hint is actually shown (not for one swallowed by the cooldown or game over).</summary>
+    public static event Action<HintId> HintShown;
 
     [SerializeField] private CanvasGroup group;
     [SerializeField] private TMP_Text label;
@@ -53,6 +57,7 @@ public class HintService : MonoBehaviour
         _sequence = DOTween.Sequence().SetUpdate(true);
         _sequence.AppendInterval(config != null ? config.hintHoldSeconds : 2.5f);
         _sequence.Append(group.DOFade(0f, config != null ? config.hintFadeSeconds : 0.5f));
+        HintShown?.Invoke(id);
     }
     
     /// <summary>Dev: forget which hints were already shown, in this session and in PlayerPrefs.</summary>

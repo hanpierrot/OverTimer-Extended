@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: power_bank
   displayName: Power Bank
-  icon: {fileID: 0}
+  icon: {fileID: 2101069426, guid: e7807c1fa12fd654188d783f475daa36, type: 3}
   description: Crank it for money.
   kind: 0
   price: 25

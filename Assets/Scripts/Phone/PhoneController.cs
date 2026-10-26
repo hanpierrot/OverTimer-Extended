@@ -41,7 +41,7 @@ public class PhoneController : DeskObject
     public bool ReplyEnabled => ActiveCall != null && Dialogue != null && !_goodbye && !(ActiveCall.truth == CallTruth.Telemarketer && Dialogue.Index == 0 && _pitchLeft > 0f);
 
     [Header("Callers")]
-    [Tooltip("Caller names, pictures and conversations. Assets/Settings/Configs/CallerProfiles.asset")]
+    [Tooltip("Caller names, pictures and conversations. Assets/Data/Configs/CallerProfiles.asset")]
     [SerializeField] private CallerProfileCatalog catalog;
     private CallerProfileCatalog _fallbackCatalog;
     public CallerProfileCatalog Catalog

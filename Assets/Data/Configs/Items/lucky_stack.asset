@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: lucky_stack
   displayName: Lucky Nine
-  icon: {fileID: 0}
+  icon: {fileID: 1106212623, guid: 57d21df582628d74288a10e18dbfc84b, type: 3}
   description: Lucky Nine scratch tickets.
   kind: 0
   price: 30

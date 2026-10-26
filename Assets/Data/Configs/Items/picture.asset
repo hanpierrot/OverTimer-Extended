@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: picture
   displayName: Picture
-  icon: {fileID: 0}
+  icon: {fileID: 7082200727899390915, guid: 3dbc8f1d93260cc4094275347bc49012, type: 3}
   description: A click task.
   kind: 0
   price: 0

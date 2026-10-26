@@ -104,7 +104,7 @@ Assets/Code/Scripts/
   Services/            singletons: GameManager, ClockService, MoneyService, Meter, RngService, ...
   Input/               InputManager glue: PointerReceiver, DeskObject, InputGate, InputBlocker
   Hint/                HintId, HintCatalog, TutorialPanel
-  Annoyance/           Phone, ITRSService, Tax, TaxNotice, AnnoyanceManager, Cat/
+  Annoyance/           ITRSService, Tax, Cat/   (calls and the phone live in Phone/)
   Desk/Items/          Cards/ (+CardData/, WinConditionCard/), Pawn/, Tasks/, Tickets/
   Desk/Laptop/         LaptopController + Mining/, Blackjack/, Billiards/ (+View/)
   Cutscene/, CheatMenu/, UI&Camera/ (+Summary/)
@@ -173,7 +173,7 @@ Do it in the Unity Project window (keeps the `.meta`/GUID). For a serialized fie
 
 ### Run tests
 
-- Billiards: **Tools/OverTimer/Billiards/Run Self-Tests** (105 checks) and **Verify Presets** (every table, 30 jittered trials per shot). Run them through the MCP menu-item tool and read the Console summary.
+- Billiards: **Tools/OverTimer/Billiards/Run Self-Tests** (105 checks; the code is `Assets/Tests/EditMode/SelfTests/BilliardsSelfTests.cs`, and `SelfTestRunnerTests` runs it in the Test Runner) and **Verify Presets** (every table, 30 jittered trials per shot). Run them through the MCP menu-item tool and read the Console summary.
 - New features: add pure-C# checks as an Editor menu item `Tools/OverTimer/<Feature>/Run Self-Tests` (the Phone plan adds `PhoneShop`). Build test configs with `ScriptableObject.CreateInstance<GameConfig>()` and set every field you depend on.
 - Unity Test Framework tests live in `Assets/Tests/EditMode` and `Assets/Tests/PlayMode` (asmdefs `OverTimer.Tests.*`, runtime code is the `OverTimer` assembly). Run them from Window > General > Test Runner or with `unity test --mode EditMode` / `PlayMode`. The menu self-tests above are separate and are not run by `unity test`. Tests must not pin balance numbers; read them from the assets or assert invariants.
 

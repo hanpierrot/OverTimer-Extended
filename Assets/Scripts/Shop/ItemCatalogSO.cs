@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>The list of every catalog item (Assets/Settings/Configs/ItemCatalog.asset).</summary>
+/// <summary>The list of every catalog item (Assets/Data/Configs/ItemCatalog.asset).</summary>
 [CreateAssetMenu(fileName = "ItemCatalog", menuName = "OverTimer/Shop/Catalog")]
 public class ItemCatalogSO : ScriptableObject
 {

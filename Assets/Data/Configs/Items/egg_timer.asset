@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: egg_timer
   displayName: Egg Timer
-  icon: {fileID: 0}
+  icon: {fileID: -105724935, guid: d386967dad74a9f4492dac04659e991a, type: 3}
   description: Crank it for time.
   kind: 0
   price: 0

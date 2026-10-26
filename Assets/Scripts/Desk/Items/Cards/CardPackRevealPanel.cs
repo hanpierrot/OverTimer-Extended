@@ -35,6 +35,7 @@ public class CardPackRevealPanel : MonoBehaviour
     
     private void OnPackClicked()
     {
+        AudioService.Play(SfxId.CardPackOpen);
         packView.SetActive(false);
         cardsGridView.SetActive(true);
     }

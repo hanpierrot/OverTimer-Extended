@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: bear
   displayName: Bear
-  icon: {fileID: 0}
+  icon: {fileID: 4693792977596894205, guid: 3ae19483bd6e3f34991b933df31ef7f5, type: 3}
   description: A click task.
   kind: 0
   price: 0

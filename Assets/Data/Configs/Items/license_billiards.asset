@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefSO
   id: license_billiards
   displayName: Billiards
-  icon: {fileID: 0}
+  icon: {fileID: -5331698205089488213, guid: 457a37705adefcf48ba2053bd95e6cab, type: 3}
   description: Unlocks Billiards on the Laptop.
   kind: 1
   price: 60

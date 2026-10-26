@@ -10,7 +10,7 @@ using UnityEngine;
 ///  - Scripts: the conversation for each real caller (Telemarketer, Client, ITRS). Each line is what the caller says plus
 ///    the label of the button the player presses to answer it. The LAST line is where the caller's payoff happens (the
 ///    client pays, ITRS grants more time) and its button should say "Hang up.".
-/// Asset: Assets/Settings/Configs/CallerProfiles.asset
+/// Asset: Assets/Data/Configs/CallerProfiles.asset
 /// </summary>
 [CreateAssetMenu(fileName = "CallerProfiles", menuName = "Overtime/Phone/Caller Profiles")]
 public class CallerProfileCatalog : ScriptableObject

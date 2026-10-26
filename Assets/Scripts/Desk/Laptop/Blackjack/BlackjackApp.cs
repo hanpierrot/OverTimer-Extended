@@ -154,6 +154,7 @@ public class BlackjackApp : LaptopApp
                            || RngService.Instance.Random.NextDouble() < Config.blackjackCharlieChance;
         if (charlieHand && Debug.isDebugBuild) Debug.Log("[Ending] Blackjack: this hand is rigged for a Charlie");
         _game.Deal(charlieHand ? Config.blackjackCharlieCards : 0);
+        AudioService.Play(SfxId.BlackjackDeal);
 
         if (_game.State == HandState.Resolved)
             StartCoroutine(Resolve());   // natural on the deal
@@ -165,7 +166,9 @@ public class BlackjackApp : LaptopApp
     {
         if (!Available) return;
 
+        int cardsBefore = _game.PlayerHand.Count;
         _game.Hit();
+        if (_game.PlayerHand.Count > cardsBefore) AudioService.Play(SfxId.BlackjackHit);
         
         if (_game.PlayerHand.Count >= 4 && _game.State == HandState.PlayerTurn && HintService.Instance != null)
             HintService.Instance.ShowAlways(HintId.CharlieTease);

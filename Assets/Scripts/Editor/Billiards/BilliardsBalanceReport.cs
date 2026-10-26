@@ -29,8 +29,8 @@ public static class BilliardsBalanceReport
     [MenuItem("Tools/OverTimer/Billiards/Balance Report")]
     static void Run()
     {
-        var cfg = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Settings/Configs/GameConfig.asset");
-        string problem = "GameConfig.asset not found";
+        var cfg = EditorAssetFinder.FindSingle<GameConfig>();
+        string problem = "GameConfig asset not found";
         if (cfg == null || !cfg.ValidateBilliards(out problem)) { Debug.LogError("[Billiards] GameConfig missing or invalid: " + problem); return; }
         try
         {

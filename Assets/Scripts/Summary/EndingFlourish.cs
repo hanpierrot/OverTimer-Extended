@@ -10,18 +10,11 @@ public class EndingFlourish : MonoBehaviour
     [SerializeField] private RectTransform area;
     [SerializeField] private Image[] coins;
     [SerializeField] private TMP_Text reasonText;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip coinClip;
     [SerializeField] private float duration = 3f;
     [SerializeField] private float fallSeconds = 1.4f;
     [SerializeField] private float spawnSpread = 1.6f;
     [SerializeField] private float spinSeconds = 0.8f;
     
-    private void Awake()
-    {
-        if (audioSource != null) audioSource.ignoreListenerPause = true;
-    }
-
     private void OnDisable() => DOTween.Kill(this);
 
     public void Play(string reason, Action onFinished)
@@ -40,7 +33,7 @@ public class EndingFlourish : MonoBehaviour
     private IEnumerator Run(string reason, Action onFinished)
     {
         ShowText(reason);
-        if (audioSource != null && coinClip != null) audioSource.PlayOneShot(coinClip);
+        AudioService.Play(SfxId.CoinRain);
 
         int loops = Mathf.Max(1, Mathf.CeilToInt(duration / fallSeconds));
         float top = area.rect.height * 0.5f + 40f;
