@@ -101,7 +101,7 @@ MonoBehaviour:
     ignoreListenerPause: 0
   - id: 12
     clips:
-    - {fileID: 8300000, guid: 74ea19ec252eaeb419666ae29f8a2ab9, type: 3}
+    - {fileID: 8300000, guid: b3736e663148a7b47a1676c9ed39e977, type: 3}
     volume: 0.8
     pitchJitter: 0.03
     minInterval: 0.1
@@ -131,7 +131,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 9a5d1bb3f64d2c544901c861fde59047, type: 3}
     volume: 0.7
     pitchJitter: 0
-    minInterval: 1.0
+    minInterval: 1
     ignoreListenerPause: 0
   - id: 17
     clips:

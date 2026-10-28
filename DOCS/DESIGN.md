@@ -4,7 +4,7 @@
 **Team:** Ari · Han (+ Extended team)
 **Engine:** Unity (2D, URP) · mouse only · single scene
 **Platform:** WebGL, published on itch.io (custom template `Custom1080`). Windows `.exe` and mobile builds are possible targets; nothing in the design depends on them.
-**Version:** 2.2 (2026-10-22) — v2.1 added Highlight Hover (§4.2) and Reward Popup (§5.17). v2.2 syncs the spec with what was built: the four mechanic endings and their cuts (§5.14 D), the ticket reward formula and symbol sets (§5.3), the licensed-card pool and the debuff dismiss fee (§5.4), pay-before-reveal in Blackjack (§5.5), keyed cost modifiers, hints instead of tutorial panels (§5.16), the Reward Popup config (§5.17) and the debug-only cheat menu (§7). Open question: phone call weights (§5.9)
+**Version:** 2.4 (2026-10-29) — v2.4 adds the empty boxes left by unboxed parcels (§4.1, §5.7, §5.11, §5.16). v2.3 (2026-10-28) aligns §5.9 and §5.4 with the build (call weights 25/25/40/10, a call due while the Phone is off is a missed call and is not queued, the banner view is gone, the Phone is docked on the Laptop, the Phone stays off after Cable Eater) and fixes the first-bill hint (§5.16). v2.2 (2026-10-22) — v2.1 added Highlight Hover (§4.2) and Reward Popup (§5.17). v2.2 syncs the spec with what was built: the four mechanic endings and their cuts (§5.14 D), the ticket reward formula and symbol sets (§5.3), the licensed-card pool and the debuff dismiss fee (§5.4), pay-before-reveal in Blackjack (§5.5), keyed cost modifiers, hints instead of tutorial panels (§5.16), the Reward Popup config (§5.17) and the debug-only cheat menu (§7).
 
 ---
 
@@ -124,7 +124,7 @@ The camera has three fixed viewpoints:
 
 - Moves between views are short tweens (`cameraFocusSeconds`). The Clock keeps running during them (I5), and desk input is blocked until the move ends.
 - There are no scroll buttons. A view always returns to the Room view first: the delivery flow is Room → Door (receive the parcel) → Room → Desk.
-- **In the Room view only the desk, the door, the Picture and the Egg Timer respond to clicks.** Every other object needs the Desk view.
+- **In the Room view only the desk, the door, the Picture, the Egg Timer and the empty boxes (§5.7) respond to clicks.** Every other object needs the Desk view.
 - **Back:** click the area outside the desk on its left side. There is no on-screen Back control.
 
 ### 4.2 Highlight Hover
@@ -285,7 +285,7 @@ The two tiers share one picture set and one rank order, from the commonest symbo
 | Ticket Hunter | `InsiderTipCardSO` | C · 10 · $4 | One window of the next ticket pre-revealed |
 | Snail Speed | `ClockSpeedCardSO` | C · 11 · $2 | Tick ×0.75 for 15 s |
 | Time Scarab | `ClockSpeedCardSO` | SR · 18 · $14 | Tick ×0 (clock frozen) for 20 s |
-| Cable Eater | `CableEaterCardSo` | SR · 20 · $10 · debuff | Phone and Laptop both turned off for 20 s (calls stop; the Laptop is locked through `LaptopLock`) |
+| Cable Eater | `CableEaterCardSo` | SR · 20 · $10 · debuff | For 20 s the Phone is forced off (calls stop, its power button is dead) and the Laptop is locked through `LaptopLock`. When the card ends the Laptop works again, but the Phone **stays off** until the player presses its power button (5 s boot) |
 | Tax Increase | `AuditCardSO` | SR · 10 · $28 · debuff | A bill lands immediately; if one is pending its amount doubles |
 | Butter Finger | `ButterfingersCardSO` | C · 7 · $4 · debuff | Next vein pays $0 |
 | Spam Robocall | `RobocallsCardSO` | R · 10 · $6 · debuff | Phone rings 2× as often for 30 s |
@@ -507,7 +507,9 @@ Blackjack and Billiards cannot be opened until their license is activated.
 | Express | `shopExpressFee` $8 | `shopExpressSeconds` 5 s |
 | Leave it opened & ready | `shopLeaveOpenFee` +$3 | skips the unboxing |
 
-A parcel is announced by a doorbell. The **door** is part of the room. When the doorbell rings, the player clicks the door to focus the camera on it (Door view, §4.1), receives and unboxes the parcel (the boxes stand in a tower on the carpet; click one a few times and it springs open in a puff of smoke, `parcelClicksToOpen` = 3, and the box goes back to a small pool for the next delivery; at most `doorParcelSlots` = 4 stand at once, later ones wait), goes back to the Room view, and clicks the desk to return to the Desk view; the item appears in its place on the desk. An unboxed parcel leaves an **empty cardboard box**, which is a Junk item (a `JunkItem` component, pawnable like any other, small tier by default): the player can drag it onto the Printer to Pawn it for a little money. A parcel shipped with *Leave it opened & ready* leaves no box. Paper tax bills (§5.8) and junk mail arrive at the door as well.
+A parcel is announced by a doorbell. The **door** is part of the room. When the doorbell rings, the player clicks the door to focus the camera on it (Door view, §4.1), receives and unboxes the parcel (the boxes stand in a tower on the carpet; click one a few times and it springs open in a puff of smoke, `parcelClicksToOpen` = 3, and the box goes back to a small pool for the next delivery; at most `doorParcelSlots` = 4 stand at once, later ones wait), goes back to the Room view, and clicks the desk to return to the Desk view; the item appears in its place on the desk. An unboxed parcel leaves an **empty cardboard box**, which is a Junk item (a `JunkItem` component, pawnable like any other, small tier by default): the player can drag it onto the Printer to Pawn it for a little money. A parcel shipped with *Leave it opened & ready* leaves no box.
+
+**Empty boxes.** The empty box appears in the **Room view**, somewhere in a rectangle of floor between the Door zone and the Desk zone. The rectangle is given by two opposite corners set on the `DoorController` (`emptyBoxCornerA` / `emptyBoxCornerB`; they start 1.5 world units inside the zones), so the designer can move it freely. It is a pooled object: at most `doorEmptyBoxSlots` (5) lie in the room, and when all are in use the **oldest one is recycled** (it jumps to a new spot) instead of a new one being made. Because boxes only respond in the Room view, the player has to leave the Desk or Door view to handle them. Drag a box with the pointer like a card; drop it on the Printer to pawn it (the Printer is part of the Desk zone, so the box is dragged across to it). A box let go **outside** the strip, and not on the Printer, drops straight down onto the **bottom edge** of the rectangle (same x, or the nearest x inside the rectangle if it was outside; `y` = the lower corner's y); one let go inside the strip stays where it is. The first box shows the hint `EmptyBoxFirst` (§5.16), only once per player. Paper tax bills (§5.8) and junk mail arrive at the door as well.
 
 Neither shipping nor buying converts money to time (I3/I4 untouched). The Close The Shop card (§5.4) hides the Shop icon for 30 s.
 
@@ -533,10 +535,10 @@ Bills, mail and the doorbell are non-blocking notifications; only phone calls in
 
 The Phone is a smartphone with a **power button**: it boots in 5 s (the clock keeps running) and nothing on it works while it is off. Its apps are **Shop** (§5.7), **Call**, **Inbox** and **Taxes** (§5.8). The Phone can never be Pawned.
 
-**Calls.** A call arrives with a caller ID: Telemarketer 40%, Client 25%, Unknown 25%, ITRS 10%. Only one call is active at a time, with a minimum gap of `annoyanceMinGap` between any two (a refused call is retried shortly, never dropped); a queue holds the next one. Declining a call is free. A call that is not answered stops by itself after `maxRingDuration`.
+**Calls.** A call arrives with a caller ID: Telemarketer 25%, Client 25%, Unknown 40%, ITRS 10% (`callWeight*`; ITRS only while a bill is pending, and an Unknown caller is really a Telemarketer 60% of the time and a Client otherwise). Only one call is active at a time, with a minimum gap of `annoyanceMinGap` between any two. A call that comes due while the Phone is off or still booting is logged as a **missed call** (Inbox and call history) and the schedule moves on: it is not queued and does not ring when the Phone boots. Declining a call is free. A call that is not answered stops by itself after `maxRingDuration`.
 - While a call rings, the Clock ticks at `ringEffectMultiplier`.
 - **Beneficial calls** (a Client's gig) stop the Clock and lock the Laptop while they last.
-- Notifications appear as banners (at most 3, 4 s each) and are kept in the Inbox.
+- Notifications are kept in the Inbox. A banner queue exists in the code (`BannerQueue`: at most 3 at once, `bannerLifetime` = 4 s of real time) but its view was removed from the Phone, so the player does not see banners yet.
 
 | Key | Value | Where |
 |---|---|---|
@@ -545,13 +547,13 @@ The Phone is a smartphone with a **power button**: it boots in 5 s (the clock ke
 | `maxRingDuration` | 10 s, then auto-stops | `GameConfig` |
 | `annoyanceMinGap` | 12 s between calls | `GameConfig` |
 
-**Device layer.** Opening the Phone or the Laptop blurs the desk; the two devices sit side by side, each with a small clock. The Meter works only from the desk.
+**Device layer.** Opening the Phone or the Laptop blurs the desk, and each device has a small clock. In the Laptop view the Laptop is on screen with the Phone **docked over its right edge**; tapping the Phone slides the Laptop out to the left and leaves the Phone alone (its app windows open beside it). While a Laptop app is open the Laptop centres and the docked Phone slides off the right edge, so the Phone cannot be reached from inside an app (only the incoming-call pill opens it). The Meter works only from the desk.
 
-**Call scheduler [LOCKED]** — one scheduler (`CallScheduler`) owns the calls: one active call, minimum 12 s gap, never dropped.
+**Call scheduler [LOCKED]** — one scheduler (`CallScheduler`) owns the calls: one active call, minimum 12 s gap. A call that comes due while the Phone cannot ring is recorded as missed, not queued.
 
 > **Cat is exempt.** Its block is resolved by a single drag (pick the cat up, drop it elsewhere), so it carries no "two nags stacking" risk. If the Cat's interaction ever becomes a timed nag, it joins the call scheduler.
 
-Cards interact with the Phone: Cable Eater turns the Phone and the Laptop off (§5.4); Spam Robocall halves the call interval (`PhoneController.AddRobocalls(holder)` / `RemoveRobocalls(holder)`, one holder per card).
+Cards interact with the Phone: Cable Eater forces the Phone off with a dead power button and locks the Laptop (§5.4); Spam Robocall halves the call interval (`PhoneController.AddRobocalls(holder)` / `RemoveRobocalls(holder)`, one holder per card).
 
 The Phone's real job is making Mining scary. Without it, the laptop has no tension.
 
@@ -788,7 +790,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `TicketCursed` | A cursed Lucky Nine ticket has `luckyNineCurseOmenWindows` windows open | Something is wrong with this ticket. Cash Out now. |
 | `WireOpen` | First time the Wire Task opens | Drag each plug to the socket of the same colour. |
 | `PhoneFirstRing` | First ring | The phone is ringing! Click it. The clock runs faster until it stops. |
-| `MailTrayFirstBill` | First bill (also when its letter lands at the door) | A tax bill arrived. Pay it in the Taxes app or click the mail tray. |
+| `MailTrayFirstBill` | First bill (also when its letter lands at the door); the id keeps its old name | A tax bill arrived. Pay it in the Taxes app or open the letter at the door. |
 | `CatFirstBlock` | First time the Cat blocks an object | Drag the cat to move it. |
 | `ShopPurchased` | After a purchase | Your item is on the desk. |
 | `DebuffDismissCost` | Pawning an active debuff without enough money | Not enough money to dismiss it. Pawning an active debuff costs ${0}. |
@@ -800,6 +802,7 @@ Players learn the basics from a short intro panel, and everything else from **hi
 | `ParcelOpen` | First time the Door view opens with a parcel waiting | Click the box to open it. |
 | `JunkFlyer` | Every time a junk letter is read | The flyer's own joke (one of the `junkLines` of `DoorController`) |
 | `FirstPawn` | First time something is pawned | The Printer pays for what you drop on it. A pawned item is gone. |
+| `EmptyBoxFirst` | The first empty box appears (once per player) | An empty box is left in the room. In the Room view, drag it onto the Printer to sell it. |
 | `CharlieTease` | Each Blackjack hit while the hand holds 4 or more cards and is still playing | 99% of gamblers quit right before the big win. |
 
 **Shop catalogue.** The Shop (§5.7) sells everything outside the starting kit. Each entry has a one-line description of what the item does and how to use it; it never states a cost the player is meant to discover. Prices are separate fields.

@@ -6,5 +6,5 @@ public enum HintId
     WireOpen, PhoneFirstRing, MailTrayFirstBill, CatFirstBlock, ShopPurchased, PackageArrived, ParcelOpen, JunkFlyer,
     CharlieTease, TicketCashOut, TicketCursed, MotherLodeTease,
     PhoneFirstOpen, PausedCall, ShopFirstOpen, LicenseBought, FirstPawn,
-    DebuffDismissCost
+    DebuffDismissCost, EmptyBoxFirst
 }
