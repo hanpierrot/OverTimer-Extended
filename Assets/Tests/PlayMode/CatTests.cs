@@ -58,14 +58,18 @@ public class CatTests : GameSceneTest
 
         yield return null;
         Assert.AreEqual(CatState.SittingIdle, State);
+        
+        float sleepMax = TestHooks.GetField<float>(_cat, "sleepDurationMax");
+        float maxSit = Config.catSitDurationMax + sleepMax + 1f / Fps;
 
         int frames = 0;
         while (State == CatState.SittingIdle && frames < 30 * Fps) { yield return null; frames++; }
         float seconds = frames / (float)Fps;
 
         Assert.AreEqual(CatState.Wandering, State);
-        Assert.That(seconds, Is.InRange(Config.catSitDurationMin, Config.catSitDurationMax + 1f / Fps),
-            $"Mèo ngồi {seconds:0.0} s; GameConfig ghi {Config.catSitDurationMin}–{Config.catSitDurationMax} s");
+        Assert.That(seconds, Is.InRange(Config.catSitDurationMin, maxSit),
+            $"Mèo ngồi {seconds:0.0} s; GameConfig ghi {Config.catSitDurationMin}–{Config.catSitDurationMax} s " +
+            $"(+ tối đa {sleepMax} s ngủ nếu chuyển sang Sleep gần cuối) → giới hạn {maxSit:0.0} s");
     }
 
     // ---------- TC-CAT-2 ----------
