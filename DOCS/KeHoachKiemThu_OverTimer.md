@@ -1183,6 +1183,32 @@ Phí bỏ debuff, hệ số giá, thời lượng thẻ, khoảng gọi và th�
 **Kết quả chạy:** Unity Test Runner (Play Mode, 30/10/2026): **9/9 Đạt**; Console không có lỗi mới.
 - Kiểm tra độ nhạy: bỏ “× IntervalScale” trong CallScheduler.NextInterval thì TC-CRD-21 báo Lỗi (khoảng chờ 57,6 s, ngoài [15; 30]). Đã hoàn tác.
 
+**Play Mode – đợt 7 (xác suất, chơi lại, âm thanh): 8 ca, 8 hàm test** (PlayMode/SystemMiscTests.cs):
+
+| Ca | Hàm test |
+|---|---|
+| TC-ALT-5 | TC_ALT_5_TyLeJackpotCurse |
+| TC-ALT-9 | TC_ALT_9_XacSuatVeinToiDaKhiCoChuoi |
+| TC-ALT-12 | TC_ALT_12_TyLeTayCharlie |
+| TC-ALT-13 | TC_ALT_13_DiemRunRatingKetThucCoChe |
+| TC-GAM-11 | TC_GAM_11_CoGianLanBiXoaKhiChoiLai |
+| TC-GAM-12 | TC_GAM_12_TrangThaiTinhDatLaiKhiChoiLai |
+| TC-FBK-1 | TC_FBK_1_PhatAmThanhKhiKhongCoAudioService |
+| TC-FBK-6 | TC_FBK_6_AmThanhKhongLamLechDayNgauNhien |
+
+Mọi tỷ lệ đọc từ GameConfig và so theo ngưỡng 3σ của 4.1.4. TC-ALT-5: 100.000 lần bốc biểu tượng vé Lucky Nine cho mỗi seed 1, 2, 3; không vé nào vừa Jackpot vừa Curse; Triple Match không bao giờ ra Jackpot/Curse. TC-ALT-9: 10.000 vein với chuỗi = 1 (tỷ lệ vein tối đa = miningFullVeinStreakChance, các vein còn lại ngắn hơn) và 10.000 vein với chuỗi = 0 (độ dài đều). TC-ALT-12: 10.000 lần chia qua BlackjackApp.OnDeal. Ván ra Natural mở coroutine Resolve, nên test dừng coroutine sau mỗi lần chia để chia ván kế ngay; Clock được giữ dưới winClock vì Spend báo OnTimeChanged và GameManager sẽ xét thắng. Tay thường: lá đầu theo bộ bài chuẩn. TC-ALT-13: điểm mong đợi tính từ các trọng số rating trong GameConfig. TC-FBK-6: chạy cùng một kịch bản 60 s hai lần, không có AudioService và phát mọi SFX mỗi khung, rồi so dãy kết quả vé, vein và lần rút RngService cuối.
+
+**Điều chỉnh so với kế hoạch:**
+- **TC-GAM-12:** điều kiện ban đầu “Laptop bị Cable Eater khóa” cùng lúc với “Phone đang reo” không xảy ra được, vì Cable Eater tắt Phone. Test dùng một khóa `LaptopLock` (đúng static mà Cable Eater dùng) để Phone vẫn reo được. Đề nghị sửa điều kiện của ca thành “Laptop bị khóa (LaptopLock) và Phone đang reo”, hoặc tách thành hai ca.
+- **TC-FBK-6:** lịch gọi của Phone chạy theo thời gian thực (`unscaledDeltaTime`), nên khung reo phụ thuộc tốc độ máy chứ không phụ thuộc RNG. Lượt phát mọi SFX chậm hơn, nên cuộc gọi reo ở khung khác và thứ tự rút RNG khác đi. Test tắt Phone và chỉ so các nguồn RNG chạy theo khung (vé, vein). Đề nghị ghi giới hạn này vào ca.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 30/10/2026): **8/8 Đạt**; Console không có lỗi mới.
+- Kiểm tra độ nhạy: bỏ `ForceCharlie = false` trong CheatFlags.Reset thì TC-GAM-11 báo Lỗi. Đã hoàn tác.
+- Đã sửa trong test (không phải lỗi game):
+  - TC-ALT-12 đặt Clock 1e6 nên vượt winClock, game thắng ngay sau ván đầu.
+  - TC-FBK-6 gọi Cash Out trên vé chưa mở. Ô cào chỉ khởi tạo khi xem vé, và trong game Cash Out chỉ bấm được trên panel của vé đang mở.
+  - TC-FBK-6 ban đầu tắt cả GameObject chứa AudioService; nay chỉ đặt AudioService.Instance = null, như TC-FBK-1.
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |
