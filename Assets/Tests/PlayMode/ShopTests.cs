@@ -240,20 +240,32 @@ public class ShopTests : GameSceneTest
             Assert.IsFalse(Shop.BindingFor(id).gameObject.activeSelf, $"{id} biến khỏi bàn");
         }
 
-        foreach (var id in new[] { "egg_timer", "bear", "picture", "triple_stack", "phone" })
-        {
-            var item = Shop.BindingFor(id);
-            Assert.IsNotNull(item, $"Không có ShopItemBinding cho '{id}'");
-            TestHooks.SetMoney(0);
-            ForgetHintCooldown();
-            _hints.Clear();
+        foreach (var id in new[] { "egg_timer", "bear", "picture", "triple_stack" })
+            AssertRefused(id);
+    }
 
-            Pawning.PawnOnto(item);
+    // Tách riêng: DESIGN §5.11 ghi Phone không cầm được và phải hiện gợi ý, nhưng PhoneController không có IPawnable
+    // nên Pawn bỏ qua mà không báo gì (PROJECT.md §15).
+    [UnityTest]
+    public IEnumerator TC_SHP_12b_CamDoPhone_BiTuChoiCoGoiY()
+    {
+        yield return null;
+        AssertRefused("phone");
+    }
 
-            Assert.AreEqual(0, Money, $"{id}: không nhận tiền");
-            Assert.Contains(HintId.CannotPawn, _hints, $"{id}: phải hiện gợi ý CannotPawn");
-            Assert.IsTrue(item.gameObject.activeSelf, $"{id} vẫn trên bàn");
-        }
+    private void AssertRefused(string id)
+    {
+        var item = Shop.BindingFor(id);
+        Assert.IsNotNull(item, $"Không có ShopItemBinding cho '{id}'");
+        TestHooks.SetMoney(0);
+        ForgetHintCooldown();
+        _hints.Clear();
+
+        Pawning.PawnOnto(item);
+
+        Assert.AreEqual(0, Money, $"{id}: không nhận tiền");
+        Assert.Contains(HintId.CannotPawn, _hints, $"{id}: phải hiện gợi ý CannotPawn");
+        Assert.IsTrue(item.gameObject.activeSelf, $"{id} vẫn trên bàn");
     }
 
     // ---------- TC-SHP-13 ----------

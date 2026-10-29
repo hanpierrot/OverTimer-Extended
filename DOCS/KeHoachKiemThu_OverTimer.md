@@ -1070,6 +1070,27 @@ Ngoài ra, PhoneShopSelfTests (chạy trong Test Runner qua SelfTestRunnerTests)
 
 **Kết quả chạy:** trong **Unity Test Runner** (Unity 6000.3.14f1, Edit Mode, 29/10/2026): 121/121 Đạt, 0 Lỗi, 0 Bỏ qua, 17,5 s; gồm 36 hàm mới ở trên và 85 hàm có sẵn. Console không có lỗi biên dịch mới. Trước đó cũng đã chạy 36/36 Đạt ngoài Unity bằng .NET 9 + NUnit 3.14. Kiểm tra độ nhạy: trên bản sao mã có cài lỗi cố ý (đổi bậc giá mua lại từ 30 s thành 31 s; cho máy reo quá 10 s), 3 test báo Lỗi đúng chỗ (TC-BUY-1, TC-BUY-3, TC-PHN-4).
 
+**Play Mode – đợt 1 (Shop, mua lại): 13 ca, 14 hàm test** (PlayMode/ShopTests.cs, chạy trong cảnh SampleScene thật):
+
+| Ca | Hàm test |
+|---|---|
+| TC-SHP-1 | TC_SHP_1_TrangThaiDauVan |
+| TC-SHP-7 | TC_SHP_7_MuaKhiThieuVaDuTien |
+| TC-SHP-8 | TC_SHP_8_MuaVaKichHoatLicense |
+| TC-SHP-9 | TC_SHP_9_ThoiGianGiaoChiChayKhiClockChay |
+| TC-SHP-10 | TC_SHP_10_ShopSauKhiHetVan |
+| TC-SHP-12 | TC_SHP_12_GiaCamDoTheoCatalog (8 vật), TC_SHP_12b_CamDoPhone_BiTuChoiCoGoiY (Phone) |
+| TC-SHP-13 | TC_SHP_13a_PanelMoGoiDangMo_KhongCamDoCardBox, TC_SHP_13b_VeLuckyNineTrenBan_KhongCamDoChongVe |
+| TC-SHP-15 | TC_SHP_15_GoiYLanDauCamDo |
+| TC-BUY-4 – 7 | TC_BUY_4_MuaLaiPowerBank, TC_BUY_5_MuaLaiLaptop, TC_BUY_6_MuaLaiKhiThieuTien, TC_BUY_7_GiaMuaLaiKhongTangKhiClockDung |
+
+Mỗi test đưa camera về góc nhìn Desk trước khi chạy (ván bắt đầu ở góc nhìn Room, hàng giao chỉ hiện lên bàn khi đang nhìn Desk) và đặt Clock = 500 s để không hết giờ giữa chừng. Số tiền tính bằng số nguyên (80% làm tròn xuống, giá mua lại làm tròn lên), giá đọc từ ItemCatalog, không ghi cứng.
+
+**Kết quả chạy:** trong **Unity Test Runner** (Unity 6000.3.14f1, Play Mode, 29/10/2026): **13/14 Đạt, 1 Lỗi**. Console không có lỗi hay cảnh báo mới.
+- **Lỗi – TC_SHP_12b (TC-SHP-12, phần Phone): Không đạt.** Kéo Printer lên Phone: tiền không đổi, Phone vẫn trên bàn (đúng), nhưng **không hiện gợi ý CannotPawn**. DESIGN.md §5.11 yêu cầu “Trying to Pawn a protected object shows a hint”. Nguyên nhân: PhoneController không có IPawnable nên Pawn.OnTriggerEnter2D bỏ qua mà không báo. Đã ghi lỗi N19 trong PROJECT.md §15 (Meter, Clock, Cat có thể bị cùng lỗi; TC-PWN-2 chưa kiểm gợi ý). Test để nguyên trạng thái Lỗi cho tới khi game được sửa.
+- Kiểm tra độ nhạy: tạm đổi làm tròn giá mua lại từ lên thành xuống (PawnMath.BuybackPrice), TC-BUY-4 (27 → 26) và TC-BUY-7 (142 → 141) báo Lỗi đúng chỗ; đã hoàn tác.
+- Ghi chú khi chạy qua Unity MCP: công cụ run_tests tạm bật “Enter Play Mode Options: tắt domain reload” trong lúc chạy và trả lại sau; nếu phiên MCP rớt giữa chừng, ProjectSettings/EditorSettings.asset bị để lại m_EnterPlayModeOptions: 1, cần hoàn tác, không commit.
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |
