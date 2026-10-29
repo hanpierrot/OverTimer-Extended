@@ -138,6 +138,8 @@ Phát hiện lỗi sớm, hỗ trợ refactor (dự án có nhiệm vụ tái c�
 
 Phủ câu lệnh/nhánh/điều kiện. Ví dụ: ClockService – nhánh thắng (≥ 600 s), nhánh thua (≤ 0 s), nhánh bị Final Countdown chặn.
 
+Áp dụng đầy đủ cho chức năng Blackjack (đồ thị luồng điều khiển, độ phức tạp C(Vg), đường thi hành tuyến tính độc lập, phủ cấp 3, kiểm thử vòng lặp): mục 4.3.8.
+
 ### 2.4.2 Kiểm thử hộp đen
 
 Thiết kế theo đặc tả SRS. Ví dụ: Meter từ chối khi số dư dưới \$10.
@@ -282,6 +284,7 @@ OverTimer: game casual 2D trên Unity (URP), một Scene, điều khiển bằng
 | 15, 16 | Kết thúc ván (12 EndReason), lưu ván, chơi lại | 4.6 |
 | 03, 19 + phi chức năng | Nhập liệu/camera, Hints & Tutorial, hiệu năng, nền tảng WebGL | 4.7 |
 | Bổ sung 28/10 | Lõi Clock; vé số mới, Egg Timer; 4 kết thúc theo cơ chế; phí bỏ debuff; Shop, Buyback, Phone, thuế, cửa/bưu kiện/thư; camera 3 góc nhìn, DeviceLayer; âm thanh, Reward Popup, Highlight Hover | 4.2.4, 4.3.6, 4.3.7, 4.4.4, 4.5.4 – 4.5.8, 4.6.2, 4.7.8, 4.7.9 |
+| Bổ sung 29/10 | Kiểm thử luồng điều khiển (hộp trắng) chức năng Blackjack | 4.3.8 |
 
 *Ghi chú: mỗi mục 4.2 – 4.7 bên dưới có bảng ca kiểm thử. Cột “Mức”: EM/PM/TC/RS (xem 4.1.3); cột “ƯT”: độ ưu tiên. Nhóm điền kết quả thực tế và trạng thái sau khi chạy.*
 
@@ -465,6 +468,81 @@ Bốn kết thúc mới đã cài đặt (A22), thay thế các ca \[Dự kiến
 | TC-ALT-12 | Tỷ lệ tay Charlie | Thống kê | PM | Thấp | Seed cố định | 10.000 lần Deal | Tay được gian lận 4% ± 0,6%; các tay còn lại phân phối bài như cũ | | |
 | TC-ALT-13 | Điểm RunRating cho kết thúc cơ chế | Bảng quyết định | PM | TB | Trọng số 0,5/0,3/0,2; ratingMechanicWin 0,95; ratingMechanicLoss 0; mốc tiền \$300 | (a) TicketJackpotWin, kiếm \$300; (b) TicketCurseLoss, Clock cao nhất 300 s, kiếm \$0 | (a) 87,5 (100 × (0,5 × 0,95 + 0,3 × 1 + 0,2 × 0,5)); (b) 15 | | |
 | TC-ALT-14 | Lịch sử ván với kết thúc mới | Phân vùng tương đương | TC | TB | Đã chơi 4 ván kết thúc lần lượt bằng 4 EndReason mới (cheat tab Endings) | Mở bảng lịch sử ván | 4 dòng; 3 ván thắng (Jackpot, Mother Lode, Charlie) hiện “WIN”, ván Curse hiện “LOSE”; tên kết thúc hiển thị đúng; tải lại trang vẫn còn | | |
+
+### 4.3.8 Kiểm thử luồng điều khiển chức năng Blackjack (hộp trắng, bổ sung 29/10)
+
+Mục tiêu: áp dụng kiểm thử hộp trắng dựa trên luồng điều khiển cho một chức năng tiêu biểu là Blackjack (một ván chơi). Với mỗi hàm: đánh số câu lệnh, dựng đồ thị luồng điều khiển nhị phân (điều kiện ghép `&&`, `||` tách thành nút a, b; `switch` và `?:` chuyển thành chuỗi nút quyết định nhị phân), tính độ phức tạp C(Vg) = P + 1 (kiểm tra lại bằng E − N + 2), xác định C đường thi hành tuyến tính độc lập và xây dựng một ca kiểm thử cho mỗi đường để đạt phủ cấp 3. Vòng lặp được kiểm theo nguyên tắc lặp 0, 1, 2, k, n − 1, n, n + 1 lần.
+
+Chọn hàm theo ba tiêu chí: C(Vg) ≥ 3; chứa luật chơi hoặc tính tiền; kiểm thử độc lập được. Các hàm xử lý nút bấm của BlackjackApp (OnDeal, OnHit…) cần scene và đồng hồ đang chạy nên đã được kiểm ở mức PM (TC-BJK-7, 8). Mã nguồn đánh số, đồ thị và bảng đường thi hành chi tiết: thư mục DOCS/KiemThuLuongDieuKhien_Blackjack (Hình CFG_*.svg, sơ đồ tổng SoDoTong_VanBlackjack.svg).
+
+| Hàm | Vai trò trong ván | P | C(Vg) | Số ca |
+|---|---|---|---|---|
+| BlackjackGame.Value | Tính điểm tay bài | 4 | 5 | 5 + 5 vòng lặp |
+| BlackjackGame.Deal | Chia bài | 3 | 4 | 4 |
+| BlackjackGame.Hit | Rút thêm | 3 | 4 | 4 |
+| BlackjackGame.DoubleDown | Gấp đôi | 3 | 4 | 4 |
+| BlackjackGame.Stand | Nhà cái chơi, phân thắng thua | 5 | 6 | 6 |
+| BlackjackApp.SettleHand | Trả thưởng, Hot Table | 6 | 7 | 7 |
+| BlackjackGame.RigPlayerCards | Xếp bài cho kết thúc Charlie | 6 | 7 | 7 + 6 vòng lặp |
+
+Cột “Mô tả” ghi đường thi hành theo số nút trên đồ thị của hàm đó. Bộ bài xếp sẵn rút theo thứ tự: người chơi, nhà cái, người chơi, nhà cái, rồi các lá rút sau. Giá trị thưởng lấy từ GameConfig: thắng \$100, hòa \$25, Natural \$130, bước Hot Table 0,1, trần 0,5.
+
+| Mã | Mô tả ca kiểm thử | Kỹ thuật | Mức | ƯT | Điều kiện tiên quyết | Đầu vào / Thao tác | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
+|---|---|---|---|---|---|---|---|---|---|
+| TC-BJK-VAL-1 | Value – đường 1; 2; 7a; 9 | Luồng điều khiển | EM | Cao | – | Tay bài rỗng | 0 | | |
+| TC-BJK-VAL-2 | Value – đường 1; 2; 3; 5; 6; 2; 7a; 9 | Luồng điều khiển | EM | Cao | – | Tay [10] | 10 | | |
+| TC-BJK-VAL-3 | Value – đường 1; 2; 3; 4; 6; 2; 7a; 9 | Luồng điều khiển | EM | Cao | – | Tay [A] | 11 | | |
+| TC-BJK-VAL-4 | Value – đường 1; (2; 3; 5; 6)×3; 2; 7a; 7b; 9 | Luồng điều khiển | EM | Cao | – | Tay [K, Q, 5] | 25 (quá 21, không có Át để hạ) | | |
+| TC-BJK-VAL-5 | Value – đường 1; (2; 3; 4; 6)×2; 2; 7a; 7b; 8; 7a; 9 | Luồng điều khiển | EM | Cao | – | Tay [A, A] | 12 (22 → 12) | | |
+| TC-BJK-VAL-LP0 | Value – vòng while lặp 0 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, 6] | 17 | | |
+| TC-BJK-VAL-LP1 | Value – vòng while lặp 1 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, 6, 9] | 16 | | |
+| TC-BJK-VAL-LP2 | Value – vòng while lặp 2 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, A, K] | 12 | | |
+| TC-BJK-VAL-LP3 | Value – vòng while lặp n − 1 = 3 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, A, A, K] | 13 | | |
+| TC-BJK-VAL-LP4 | Value – vòng while lặp n = 4 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, A, A, A, K] | 14 | | |
+| TC-BJK-DEAL-1 | Deal – đường 1; 2; 4; 5; 10 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Deal(0); người chơi 10 + 7, nhà cái 9 + 8 | PlayerTurn; Result = None; mỗi bên 2 lá | | |
+| TC-BJK-DEAL-2 | Deal – đường 1; 2; 3; 4; 5; 10 | Luồng điều khiển | EM | Cao | Seed cố định | Deal(7) (ván Charlie) | Hai lá của người chơi đều là 2 hoặc 3; còn 5 lá chờ; PlayerTurn | | |
+| TC-BJK-DEAL-3 | Deal – đường 1; 2; 4; 5; 6; 8; 9; 10 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi A + K, nhà cái 5 + 9 | Resolved; PlayerNatural | | |
+| TC-BJK-DEAL-4 | Deal – đường 1; 2; 4; 5; 6; 7; 9; 10 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi A + K, nhà cái A + Q | Resolved; Push | | |
+| TC-BJK-HIT-1 | Hit – đường 1a; 2; 6 | Luồng điều khiển | EM | Cao | Ván chưa chia (Idle) | Hit | Không rút; tay rỗng; Idle | | |
+| TC-BJK-HIT-2 | Hit – đường 1a; 1b; 2; 6 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 5 + 6, Hit được 10 (= 21); Hit lần nữa | Vẫn 3 lá; PlayerTurn | | |
+| TC-BJK-HIT-3 | Hit – đường 1a; 1b; 3; 4; 6 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 10 + 2, Hit được 5 | 17; PlayerTurn; Result = None | | |
+| TC-BJK-HIT-4 | Hit – đường 1a; 1b; 3; 4; 5; 6 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 10 + 2, Hit được 10 | 22; PlayerBust; Resolved | | |
+| TC-BJK-DBL-1 | DoubleDown – đường 1a; 2; 7 | Luồng điều khiển | EM | TB | Ván chưa chia (Idle) | DoubleDown | DoubledDown = false; tay rỗng | | |
+| TC-BJK-DBL-2 | DoubleDown – đường 1a; 1b; 2; 7 | Luồng điều khiển | EM | TB | Bộ bài xếp sẵn | Người chơi 2 + 3, Hit được 4 (3 lá); DoubleDown | Từ chối; vẫn 3 lá; PlayerTurn | | |
+| TC-BJK-DBL-3 | DoubleDown – đường 1a; 1b; 3; 4; 6; 7 | Luồng điều khiển | EM | TB | Bộ bài xếp sẵn; nhà cái 10 + 7 | Người chơi 5 + 6, Double được 10 | 21; tự Stand; PlayerWin; DoubledDown = true | | |
+| TC-BJK-DBL-4 | DoubleDown – đường 1a; 1b; 3; 4; 5; 7 | Luồng điều khiển | EM | TB | Bộ bài xếp sẵn; nhà cái 10 + 7 | Người chơi 10 + 6, Double được 10 | 26; PlayerBust; nhà cái không rút thêm | | |
+| TC-BJK-STD-1 | Stand – đường 1; 3; 4; 6; 8; 9; 13; 14 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 10 + 7, nhà cái 10 + 8; Stand | Nhà cái không rút; DealerWin | | |
+| TC-BJK-STD-2 | Stand – đường 1; 2; 14 | Luồng điều khiển | EM | Cao | Ván chưa chia (Idle) | Stand | Không đổi: Idle; Result = None | | |
+| TC-BJK-STD-3 | Stand – đường 1; 3; 4; 5; 4; 6; 8; 9; 13; 14 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 10 + 7, nhà cái 10 + 6, lá kế 2; Stand | Nhà cái 18 (3 lá); DealerWin | | |
+| TC-BJK-STD-4 | Stand – đường 1; 3; 4; 5; 4; 6; 7; 13; 14 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 10 + 7, nhà cái 10 + 6, lá kế 10; Stand | Nhà cái 26; DealerBust | | |
+| TC-BJK-STD-5 | Stand – đường 1; 3; 4; 6; 8; 10; 11; 13; 14 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 10 + 9, nhà cái 10 + 8; Stand | PlayerWin | | |
+| TC-BJK-STD-6 | Stand – đường 1; 3; 4; 6; 8; 10; 12; 13; 14 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi 10 + 8, nhà cái 10 + 8; Stand | Push | | |
+| TC-BJK-SET-1 | SettleHand – đường 1; 3; 4a; 4b; 5; 7; 8; 11 | Luồng điều khiển | EM | Cao | GameConfig.asset | PlayerWin, không Double, chuỗi thắng 0 | \$100; chuỗi 1 | | |
+| TC-BJK-SET-2 | SettleHand – đường 1; 2; 4a; 4b; 5; 7; 8; 11 | Luồng điều khiển | EM | Cao | GameConfig.asset | PlayerWin, Double, chuỗi 0 | \$200; chuỗi 1 | | |
+| TC-BJK-SET-3 | SettleHand – đường 1; 3; 4a; 5; 6; 8; 11 | Luồng điều khiển | EM | Cao | GameConfig.asset | PlayerNatural, không Double, chuỗi 0 | \$130; chuỗi 1 | | |
+| TC-BJK-SET-4 | SettleHand – đường 1; 3; 4a; 4b; 4c; 5; 7; 8; 11 | Luồng điều khiển | EM | Cao | GameConfig.asset | DealerBust, không Double, chuỗi 2 | \$120 (100 × 1,2); chuỗi 3 | | |
+| TC-BJK-SET-5 | SettleHand – đường 1; 3; 4a; 4b; 4c; 4d; 9; 11 | Luồng điều khiển | EM | Cao | GameConfig.asset | Push, không Double, chuỗi 2 | \$25; chuỗi giữ nguyên 2 | | |
+| TC-BJK-SET-6 | SettleHand – đường 1; 3; 4a; 4b; 4c; 4d; 10; 11 | Luồng điều khiển | EM | Cao | GameConfig.asset | DealerWin, không Double, chuỗi 3 | \$0; chuỗi về 0 | | |
+| TC-BJK-SET-7 | SettleHand – đường 1; 2; 4a; 4b; 4c; 4d; 9; 11 | Luồng điều khiển | EM | Cao | GameConfig.asset | Push, Double, chuỗi 0 | \$50; chuỗi 0 | | |
+| TC-BJK-RIG-1 | RigPlayerCards – đường 1; 2; 6; 7; 9; 10; 15 | Luồng điều khiển | EM | TB | Gọi trực tiếp hàm (private) với bộ bài đặt sẵn | Bộ bài rỗng, count = 1 | Không xếp lá nào; bộ bài rỗng | | |
+| TC-BJK-RIG-2 | RigPlayerCards – đường 1; 2; 3a; 3b; 5; 2; 6; 7; 9; 10; 15 | Luồng điều khiển | EM | TB | Như trên | Bộ bài [K], count = 1 | Không xếp lá nào; bộ bài [K] | | |
+| TC-BJK-RIG-3 | RigPlayerCards – đường 1; 2; 3a; 4; 5; 2; 6; 7; 9; 10; 11; 12; 14; 10; 15 | Luồng điều khiển | EM | TB | Như trên | Bộ bài [2], count = 1 | Xếp [2]; bộ bài rỗng | | |
+| TC-BJK-RIG-4 | RigPlayerCards – đường 1; 2; 3a; 3b; 4; 5; 2; 6; 7; 9; 10; 11; 12; 14; 10; 15 | Luồng điều khiển | EM | TB | Như trên | Bộ bài [3], count = 1 | Xếp [3]; bộ bài rỗng | | |
+| TC-BJK-RIG-5 | RigPlayerCards – đường …; 6; 7; 8; 7; 9; (10; 11; 12; 14)×2; 10; 15 | Luồng điều khiển | EM | TB | Như trên | Bộ bài [2, 3], count = 2 | Xếp cả 2 lá; bộ bài rỗng | | |
+| TC-BJK-RIG-6 | RigPlayerCards – đường …; 9; 10; 11; 13; 14; 10; 15 | Luồng điều khiển | EM | TB | Như trên | Bộ bài [2], count = 0 | Không xếp; lá 2 trả lại bộ bài | | |
+| TC-BJK-RIG-7 | RigPlayerCards – đường dài (cả 3 vòng lặp; nút 11 đi cả T và F) | Luồng điều khiển | EM | TB | Như trên | Bộ 52 lá, count = 7 (như khi chơi) | Xếp 7 lá 2/3; bộ bài còn 45 lá, trong đó 1 lá thấp được trả lại | | |
+| TC-BJK-RIG-LP0 | RigPlayerCards – vòng lặp 10 lặp 0 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 8 lá 2 và 3; count = 7 | Bộ bài [K] | Xếp 0; bộ bài 1 lá | | |
+| TC-BJK-RIG-LP1 | RigPlayerCards – vòng lặp 10 lặp 1 lần | Luồng điều khiển (vòng lặp) | EM | TB | Như trên | [K] + 1 lá thấp | Xếp 1; bộ bài 1 lá | | |
+| TC-BJK-RIG-LP2 | RigPlayerCards – vòng lặp 10 lặp 2 lần | Luồng điều khiển (vòng lặp) | EM | TB | Như trên | [K] + 2 lá thấp | Xếp 2; bộ bài 1 lá | | |
+| TC-BJK-RIG-LPk | RigPlayerCards – vòng lặp 10 lặp k = 4 lần | Luồng điều khiển (vòng lặp) | EM | TB | Như trên | [K] + 4 lá thấp | Xếp 4; bộ bài 1 lá | | |
+| TC-BJK-RIG-LP7 | RigPlayerCards – vòng lặp 10 lặp n − 1 = 7 lần | Luồng điều khiển (vòng lặp) | EM | TB | Như trên | [K] + 7 lá thấp | Xếp 7; bộ bài 1 lá | | |
+| TC-BJK-RIG-LP8 | RigPlayerCards – vòng lặp 10 lặp n = 8 lần | Luồng điều khiển (vòng lặp) | EM | TB | Như trên | [K] + 8 lá thấp | Xếp 7; bộ bài 2 lá (lá thấp thứ 8 trả lại) | | |
+
+Ghi chú:
+
+- **Đường không khả thi:** Deal 2(T) → 5(T) (ván Charlie chỉ chia lá 2, 3 nên không thể Natural); Stand 4(F) → 6(T) (nhà cái không rút thì 2 lá không thể quá 21); SettleHand 4a(T) → 5(F) (kết quả Natural thì nút 5 luôn đúng). RigPlayerCards chỉ được Deal gọi với bộ bài đủ 52 lá, nên muốn đi được từng đường phải gọi trực tiếp hàm với bộ bài đặt sẵn.
+- **Ca lặp k và n + 1:** Value có n = 4 nên không có k nguyên nào thỏa 2 < k < n − 1; ca n + 1 của cả hai vòng lặp không sinh được (bộ bài chỉ có 4 Át, 8 lá 2 và 3).
+- **Tiền thưởng thật** do BlackjackApp.SettleHand tính (có Hot Table); BlackjackGame.Payout mà TC-BJK-6 đang dùng không được game gọi (xem Phụ lục A).
 
 ## 4.4 Kiểm thử hệ thống thẻ bài
 
@@ -914,7 +992,8 @@ Camera cuộn dọc cũ **đã bị xóa** (Invariant I9 mới): chỉ có ba g�
 | Chức năng thủ công (4.7.7) | 60 | | | 1 (TC-FCD-5) | HUD 9, Laptop 8, kết thúc 8, lịch sử/Collection 7, thẻ 6, vật dụng/thao tác 13, âm thanh 2, end-to-end 7; không tính các phiên thăm dò. TC-FCD-5 bị bỏ (thẻ Trick Shot đã xóa) |
 | Camera, DeviceLayer (4.7.8) | 9 | | | | mới |
 | Âm thanh, Popup, Hover (4.7.9) | 8 | | | | mới |
-| Tổng | 323 | | | | 195 ca cũ + 128 ca bổ sung ngày 28/10/2026 |
+| Luồng điều khiển Blackjack (4.3.8) | 48 | | | | mới 29/10: 7 hàm, 35 ca đường thi hành + 13 ca vòng lặp |
+| Tổng | 371 | | | | 195 ca cũ + 128 ca bổ sung ngày 28/10/2026 + 48 ca ngày 29/10/2026 |
 
 ### Nhận xét và đề xuất
 
@@ -927,6 +1006,7 @@ Các ca dưới đây được viết theo mã ngày 18/10. Mã đã thay đổi
 | Mã cũ | Điều đã thay đổi trong mã | Đề xuất | Ca thay thế |
 |---|---|---|---|
 | TC-BJK-2, TC-BJK-6 | Thưởng Blackjack nay \$100 thắng / \$25 hòa / \$130 Natural (×2 khi Double), cộng thêm Hot Table (+10% mỗi ván thắng liên tiếp, tối đa +50%) | Sửa số: \$130; \$100 / \$25 / \$130 / \$200 với chuỗi thắng = 0 | – |
+| TC-BJK-6 (bổ sung 29/10) | Tiền thưởng thật do BlackjackApp.SettleHand tính (có Hot Table); BlackjackGame.Payout chỉ còn công cụ Editor gọi | Chuyển ca sang kiểm SettleHand | TC-BJK-SET-1 – 7 |
 | TC-BJK-10 | Charlie đã cài đặt; BlackjackRuinLoss bị bỏ | Bỏ ca | TC-ALT-10 – 12 |
 | TC-MIN-4 | MotherLodeWin đã cài đặt | Bỏ \[Dự kiến\] | TC-ALT-6 – 9 |
 | TC-MIN-8 | CaveInLoss bị bỏ khỏi thiết kế | Bỏ ca | – |
@@ -989,6 +1069,14 @@ Ngoài ra, PhoneShopSelfTests (chạy trong Test Runner qua SelfTestRunnerTests)
 **Không viết:** TC-PHN-18 (logic banner sẽ bị bỏ, B4). TC-ALT-13 chuyển sang Play Mode vì RunRating.Score đọc GameManager.Instance.
 
 **Kết quả chạy:** trong **Unity Test Runner** (Unity 6000.3.14f1, Edit Mode, 29/10/2026): 121/121 Đạt, 0 Lỗi, 0 Bỏ qua, 17,5 s; gồm 36 hàm mới ở trên và 85 hàm có sẵn. Console không có lỗi biên dịch mới. Trước đó cũng đã chạy 36/36 Đạt ngoài Unity bằng .NET 9 + NUnit 3.14. Kiểm tra độ nhạy: trên bản sao mã có cài lỗi cố ý (đổi bậc giá mua lại từ 30 s thành 31 s; cho máy reo quá 10 s), 3 test báo Lỗi đúng chỗ (TC-BUY-1, TC-BUY-3, TC-PHN-4).
+
+**Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
+
+| File | Ca |
+|---|---|
+| EditMode/BlackjackControlFlowTests.cs | TC-BJK-VAL-1 – 5, LP0 – LP4; TC-BJK-DEAL-1 – 4; TC-BJK-HIT-1 – 4; TC-BJK-DBL-1 – 4; TC-BJK-STD-1 – 6; TC-BJK-SET-1 – 7; TC-BJK-RIG-1 – 7, LP0 – LP8 |
+
+Các ca RigPlayerCards gọi hàm private bằng reflection để đặt bộ bài tùy ý (cùng cách với TestHooks). Kết quả chạy ngày 29/10/2026 ngoài Unity (.NET 9, bản build OverTimer.dll, NUnit của Unity, GameConfig đọc từ asset): 48/48 Đạt; kiểm tra độ nhạy bằng một kỳ vọng cố ý sai cho kết quả Lỗi đúng.
 
 **LỜI CẢM ƠN**
 
