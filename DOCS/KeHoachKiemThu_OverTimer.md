@@ -1148,6 +1148,24 @@ Nhấp vùng chuyển góc nhìn = CameraViewButton.HandleClick (hàm PointerRec
 **Kết quả chạy:** Unity Test Runner (Play Mode, 29/10/2026): **9/9 Đạt**; Console không có lỗi mới.
 - Kiểm tra độ nhạy: bỏ chốt khóa Laptop trong BilliardsApp thì TC-CAM-8b báo Lỗi (bi chạy hết khi đang khóa); cho CameraRig đổi CurrentView ngay khi bắt đầu tween thì TC-CAM-1 báo Lỗi. Đã hoàn tác.
 
+**Play Mode – đợt 5 (vé số, Egg Timer): 7 ca, 7 hàm test** (PlayMode/TicketEggTests.cs), cộng TC-TSK-8 đối chiếu với test có sẵn:
+
+| Ca | Hàm test |
+|---|---|
+| TC-TKT-11 | TC_TKT_11_ThuongTripleMatch_CongThucMoi |
+| TC-TKT-12 | TC_TKT_12_ThuongLuckyNine_CongMoiBieuTuongLap |
+| TC-TKT-13 | TC_TKT_13_ChiTraKhiCashOut_ChiTinhODaLo |
+| TC-TKT-14 | TC_TKT_14_Pool2VeMoiLoai |
+| TC-TKT-17 | TC_TKT_17a_RTP_TripleMatch, TC_TKT_17b_RTP_LuckyNine |
+| TC-TSK-7 | TC_TSK_7_ThoiGianHoiEggTimer |
+| TC-TSK-8 | (có sẵn) ShopTests.TC_SHP_12_GiaCamDoTheoCatalog: Egg Timer cầm đồ được \$0, hiện CannotPawn, vẫn trên bàn |
+
+Biểu tượng được chọn theo hệ số trong asset (thấp nhất, giữa, cao nhất), số tiền mong đợi tính từ asset theo công thức DESIGN §5.3 với làm tròn .5 lên như ví dụ của kế hoạch; với asset hiện tại các số trùng kế hoạch (\$0 / \$28 / \$132 / \$28; \$27; \$66). TC-TKT-17 cho vé thật bốc biểu tượng (RollSymbols, seed 1, 2, 3; mỗi seed 10.000 vé) và tính thưởng bằng mã game, rồi so với kỳ vọng chính xác tính độc lập từ asset (liệt kê mọi tổ hợp số ô, phân phối đa thức) theo ngưỡng 3σ của 4.1.4; vé Jackpot/Curse bị loại (thay cho “cheat tắt Jackpot/Curse”, vì cheat menu không có công tắc này). Kỳ vọng chính xác: Triple Match \$22,25 (RTP 89,0%), \$0 chiếm 16,8%, tối đa \$132; Lucky Nine \$48,62 (RTP 88,4%), tối thiểu \$16, tối đa \$250, không bao giờ \$0: khớp kế hoạch. TC-TSK-7 kiểm biên 0,75 s bằng cách đặt mốc hết hồi đúng bằng GameTime hiện tại (0,75 s = 37,5 khung, không nguyên); 0,70 s và 0,80 s chạy theo khung thật.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 29/10/2026): **7/7 Đạt**; Console không có lỗi mới.
+- Kiểm tra độ nhạy: bỏ “− 1” trong công thức thưởng thì TC-TKT-11, 12, 13, 17a, 17b báo Lỗi; đổi “>=” thành “>” ở thời gian hồi Egg Timer thì TC-TSK-7 (b) báo Lỗi. Đã hoàn tác.
+- Đã sửa trong test: Cat có thể ngồi chặn đúng vé đang dùng (PointerReceiver bị tắt), làm lần nhấp mở vé không có tác dụng; test nay tắt Cat và kiểm vé thật sự mở ra. Không phải lỗi game: ngoài game, Cash Out chỉ bấm được trên panel của vé đã mở.
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |
