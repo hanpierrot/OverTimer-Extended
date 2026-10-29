@@ -327,4 +327,66 @@ public class TicketEggTests : GameSceneTest
         yield return Hold(receiver, holdFrames);
         Assert.That(ClockService.Instance.RemainingTime - before, Is.EqualTo(Config.timePayout - holdFrames / (float)Fps).Within(0.01f), "(c) Hết hồi: được cộng giờ");
     }
+
+    // ---------- TC-ALT-2, TC-ALT-4 (bổ sung số tiền cho ScratchTicketTests.Jackpot/Curse_CashOutKhiChuaCaoHet) ----------
+
+    private IEnumerator CashOutEndingTicket(CheatFlags.NextTicket kind, int reveal, string label)
+    {
+        GiveItem("lucky_stack");
+        CheatFlags.NextLuckyNine = kind;
+        TestHooks.SetMoney(Config.luckyNineCost);
+        var ticket = BuyAndOpen(Stack(TicketTierKind.LuckyNine));
+        var s = Symbols(ticket);
+        int symbol = kind == CheatFlags.NextTicket.Jackpot ? ScratchTicket.IndexOfHighestMultiplier(s) : ScratchTicket.IndexOfLowestMultiplier(s);
+        Assert.That(TestHooks.GetField<int[]>(ticket, "_activeSymbolIndex"), Has.All.EqualTo(symbol));
+        int money = Money;
+        RevealFirst(ticket, reveal);
+        yield return null;
+        ticket.CashOut();
+        Assert.AreEqual(Expected(s, Config.luckyNineBaseReward, Enumerable.Repeat(symbol, reveal).ToArray()), Money - money, label);
+        yield return new WaitForSecondsRealtime(Config.curseBeatSeconds + 0.5f);
+        Assert.IsFalse(GameManager.Instance.IsGameOver, "Cash Out trước khi lộ đủ 9 ô: không kết thúc ván");
+    }
+
+    [UnityTest]
+    public IEnumerator TC_ALT_2_CashOutSomVeJackpot_TraThuong8O() =>
+        CashOutEndingTicket(CheatFlags.NextTicket.Jackpot, 8, "Jackpot, 8 ô: base × 7 × hệ số cao nhất");
+
+    [UnityTest]
+    public IEnumerator TC_ALT_4_CashOutVeBiNguyen_TraThuong7O() =>
+        CashOutEndingTicket(CheatFlags.NextTicket.Cursed, 7, "Curse, 7 ô: base × 6 × hệ số thấp nhất");
+
+    // ---------- TC-TKT-15 ----------
+
+    private static int Cost(ScratchTicket t) =>
+        (int)typeof(ScratchTicket).GetProperty("Cost", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(t);
+
+    /// <summary>Làm tròn .5 lên như kết quả mong đợi của kế hoạch (37,5 → 38; 82,5 → 83).</summary>
+    private static int HalfUp(double x) => (int)Math.Floor(x + 0.5 + 1e-9);
+
+    [Test]
+    public void TC_TKT_15_GiaVeVoiHaiTheTicketUpSale()
+    {
+        GiveItem("lucky_stack");
+        var triple = Pool(Stack(TicketTierKind.TripleMatch))[0];
+        var nine = Pool(Stack(TicketTierKind.LuckyNine))[0];
+        var asset = Cards.Asset("TicketCostModifier");
+        double m = TestHooks.GetField<float>(asset, "costMultiplier");
+        int t = Config.tripleMatchCost, n = Config.luckyNineCost;
+
+        void Check(double mult, string step)
+        {
+            Assert.AreEqual(HalfUp(t * mult), Cost(triple), $"{step}: Triple Match");
+            Assert.AreEqual(HalfUp(n * mult), Cost(nine), $"{step}: Lucky Nine");
+        }
+
+        var first = Cards.Place(asset);
+        Check(m, "Một thẻ");
+        var second = Cards.Place(asset);
+        Check(m * m, "Hai thẻ");
+        Pawning.PawnOnto(first);
+        Check(m, "Pawn thẻ 1");
+        Pawning.PawnOnto(second);
+        Check(1, "Pawn thẻ 2");
+    }
 }

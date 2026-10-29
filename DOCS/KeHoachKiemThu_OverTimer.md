@@ -1209,6 +1209,47 @@ Mọi tỷ lệ đọc từ GameConfig và so theo ngưỡng 3σ của 4.1.4. TC
   - TC-FBK-6 gọi Cash Out trên vé chưa mở. Ô cào chỉ khởi tạo khi xem vé, và trong game Cash Out chỉ bấm được trên panel của vé đang mở.
   - TC-FBK-6 ban đầu tắt cả GameObject chứa AudioService; nay chỉ đặt AudioService.Instance = null, như TC-FBK-1.
 
+**Play Mode – đợt 8 (bù phần còn thiếu): 7 hàm test** (thêm vào PlayMode/TicketEggTests.cs và PlayMode/DoorTaxTests.cs):
+
+| Ca | Hàm test |
+|---|---|
+| TC-ALT-2 | TicketEggTests.TC_ALT_2_CashOutSomVeJackpot_TraThuong8O |
+| TC-ALT-4 | TicketEggTests.TC_ALT_4_CashOutVeBiNguyen_TraThuong7O |
+| TC-TKT-15 | TicketEggTests.TC_TKT_15_GiaVeVoiHaiTheTicketUpSale |
+| TC-TAX-8 | DoorTaxTests.TC_TAX_8a_TraOUngDungTaxes_CaHaiNoiDeuXong, TC_TAX_8b_TraOPanelTaxGiay_CaHaiNoiDeuXong |
+| TC-TAX-9 | DoorTaxTests.TC_TAX_9_NutPayTheoSoDu_UngDungTaxes (phần ứng dụng Taxes; panel giấy: AnnoyanceTests.TC_ANN_6a/6b) |
+| TC-TAX-11 | DoorTaxTests.TC_TAX_11_PawnFvckTheTaxTruocHoaDon_HoaDonTinhBinhThuong (phần Pawn trước; phần còn lại: AnnoyanceTests.TC_ANN_8a/8b/8c) |
+
+Số tiền mong đợi tính từ asset theo công thức thưởng (làm tròn .5 lên); với asset hiện tại: TC-ALT-2 \$218, TC-ALT-4 \$23, khớp kế hoạch. TC-TAX-8 đặt thư thuế ở cửa (DropTaxLetter), mở panel Tax giấy và ứng dụng Taxes, trả ở một nơi rồi kiểm: Money giảm đúng số tiền, thư thuế biến mất, badge Taxes tắt, panel Tax tự đóng.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 30/10/2026): **6/7 Đạt, 1 Lỗi**; Console không có lỗi mới. Đợt này không làm kiểm tra độ nhạy riêng.
+- **Lỗi – TC_TKT_15 (TC-TKT-15): Không đạt.** Một thẻ Ticket Up Sale: Lucky Nine mong đợi \$83 (55 × 1,5 = 82,5, làm tròn lên), thực tế **\$82**. Nguyên nhân: giá tính bằng Mathf.RoundToInt, hàm này đưa .5 về số chẵn gần nhất (Triple Match 37,5 → \$38 chỉ khớp vì 38 là số chẵn). Đã ghi lỗi N20 trong PROJECT.md §15; giá gói thẻ, tiền cược Blackjack và Billiards dùng cùng cách làm tròn nên có thể lệch tương tự. Test để nguyên trạng thái Lỗi cho tới khi game được sửa.
+
+**Đối chiếu các ca mới còn lại với test có sẵn** (đã đọc thân từng test):
+
+| Ca | Test có sẵn | Phần chưa kiểm tự động |
+|---|---|---|
+| TC-ALT-1 | ScratchTicketTests.Jackpot_ChinOGiongNhau_LaBieuTuongHeSoCaoNhat, Jackpot_ThangKhiCaoHetCaChinO | mưa xu (EndingFlourish); RunRecord: GameLifecycleTests.TC_GAM_1a_TicketJackpotWin |
+| TC-ALT-3 | ScratchTicketTests.Curse_DenONguongDiemBao_HienGoiYTicketCursed, Curse_CaoHetCaChinO_KhoaCashOutRoiThuaSauNhipRung | vé rung, nhãn đỏ (hình ảnh) |
+| TC-ALT-6 | MotherLodeTests.DuSoVeinDayLienTiep_Thang | số tiền \$94 của vein thắng; mưa xu |
+| TC-ALT-7 | MotherLodeTests.VeinNganHonChenGiua_PhaChuoi (a), VeinTruot_PhaChuoi_DuLaVeinDay (b), RoiApp_MatChuoi (c) | – |
+| TC-ALT-8 | MotherLodeTests.SapDuChuoi_CoGoiYMotLodeTease | “không có nhãn tiến trình” |
+| TC-ALT-10 | CharlieEndingTests (EndingTests.cs).VanRigBangCheat_RutDuLaThiThangBangCharlie | từng lá là 2 hoặc 3 (EditMode BlackjackCharlieTests kiểm phần rig) |
+| TC-CLC-9 | DebuffAndPoolTests.Meter_KhongHoatDongKhiGameDangDungHinh | “không hiện gợi ý”; dùng PauseGame thay cho mở CardPanel |
+| TC-CRD-11 | DebuffAndPoolTests.DebuffDangChay_CamDo_TonPhiVaKhongNhanTien | dùng thẻ Butterfingers thay Clock Up!; chưa kiểm Clock về tốc độ thường và Collection |
+| TC-CRD-12 | DebuffAndPoolTests.DebuffDangChay_ThieuTienPhi_TuChoiGoiYVaDoiViTri | dùng thẻ Butterfingers thay Clock Up! |
+| TC-CRD-13 | DebuffAndPoolTests.DebuffDaHetHieuLuc_CamDo_NhanGiaThuong_KhongTonPhi | dùng thẻ Butterfingers thay Clock Up! |
+| TC-CRD-16 | DebuffAndPoolTests.TheAnIconApp_ChiKhaDungKhiCoLicense, TheDoiGia_ChiKhaDungKhiCoLicenseCuaApp, MuaGoi_KhongBaoGioRaTheKhongKhaDung | 500 lần mở gói thay cho 10.000; lượt 2 (sau license) chỉ kiểm IsAvailable |
+| TC-FBK-3 | AudioTests.NhanTien_PhatTiengTheoMucSoTien, HoanTienCuoc_KhongPhatTiengNhanTien | chỉ kiểm 3 mốc (moneySmallMax, moneyMediumMax, +1), chưa kiểm \$11 |
+| TC-FBK-4 | AudioTests.ThuTheNhieuLanTrongKhungHinh_BoQuaTheoMinInterval | biên T − 0,01 s / T; id có minInterval = 0 |
+| TC-FBK-5 | AudioTests.KetThucThang_PhatWinStingerVoiIgnoreListenerPause; EditMode AudioCatalogTests.StingerVaAmThanhCuoiVanBoQuaListenerPause | (b) LoseStinger không có clip: chỉ kiểm gián tiếp (FBK-1, PhatMoiSfxId_KhongNemLoi) |
+| TC-GAM-9 | GameLifecycleTests.TC_GAM_1a_* (10 hàm, mỗi EndReason một hàm) | EndingFlourish, cutscene Timeline |
+| TC-TAX-7 | AnnoyanceTests.TC_ANN_2_KhongPhatHoaDonMoiKhiDangCoHoaDonMo | hóa đơn kế đến đúng 45 s sau khi xử lý |
+
+**Kiểm thử thủ công (cột Mức = TC), không tự động hóa:** TC-ALT-14, TC-CAM-5, TC-CAM-6, TC-CAM-9, TC-FBK-7, TC-FBK-8, TC-PHN-19, TC-SHP-14, TC-TKT-16. Các phần “chưa kiểm tự động” ở bảng trên cũng kiểm thủ công.
+
+**Chờ:** TC-DOR-10 (B5), TC-TAX-10 (B7); TC-PHN-18 sẽ bỏ (B4).
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |

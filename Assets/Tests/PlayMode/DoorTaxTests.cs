@@ -351,4 +351,75 @@ public class DoorTaxTests : GameSceneTest
         Assert.AreEqual(clockBefore, Clock, "Clock tạm dừng");
         Assert.IsTrue(Itrs.HasPendingAssessment);
     }
+
+    // ---------- TC-TAX-8, TC-TAX-9 (ứng dụng Taxes), TC-TAX-11 (Pawn trước) ----------
+
+    private static PhoneHome Home => TestHooks.Find<PhoneHome>();
+    private static GameObject TaxesBadge =>
+        TestHooks.GetField<GameObject>(TestHooks.GetField<PhoneIconView[]>(Home, "icons").First(i => i != null && i.AppId == "taxes"), "badge");
+
+    /// <summary>Mở màn chỉ có Phone và ứng dụng Taxes (Phone phải đang bật, không có cuộc gọi).</summary>
+    private static IEnumerator OpenTaxesApp()
+    {
+        DeviceLayer.Instance.OpenPhone();
+        yield return Seconds(0.5f);
+        Assert.IsFalse(Phone.IsRinging, "Không có cuộc gọi chen vào");
+        Home.OpenApp("taxes");
+        yield return Frames(2);
+        Assert.IsTrue(TestHooks.GetField<GameObject>(Home, "taxesWindow").activeInHierarchy, "Cửa sổ Taxes đang mở");
+    }
+
+    private IEnumerator PayOnce(bool inApp)
+    {
+        int due = IssueBill();
+        TestHooks.Call(Door, "DropTaxLetter");                       // thư thuế đã nằm ở cửa (bỏ qua chờ taxLetterDelay)
+        Assert.IsNotNull(Door.Letters.FirstOf(LetterKind.Tax), "Thư thuế ở cửa");
+        TaxPanel.Show();
+        yield return OpenTaxesApp();
+        Assert.IsTrue(TaxesBadge.activeSelf, "Badge Taxes bật khi có hóa đơn");
+        TestHooks.SetMoney(due + 7);
+        yield return null;
+
+        if (inApp) TestHooks.ClickButton(TestHooks.Find<TaxesScreen>(), "payButton");
+        else TestHooks.ClickButton(TaxPanel, "payButton");
+        yield return Frames(2);
+
+        Assert.AreEqual(7, MoneyService.Instance.Current, $"Money − {due}");
+        Assert.IsFalse(Itrs.HasPendingAssessment, "Hóa đơn đã xong");
+        Assert.IsNull(Door.Letters.FirstOf(LetterKind.Tax), "Thư thuế biến mất");
+        Assert.IsFalse(TaxesBadge.activeSelf, "Badge Taxes tắt");
+        Assert.IsFalse(TaxPanel.gameObject.activeSelf, "Panel Tax tự đóng");
+    }
+
+    [UnityTest] public IEnumerator TC_TAX_8a_TraOUngDungTaxes_CaHaiNoiDeuXong() => PayOnce(inApp: true);
+    [UnityTest] public IEnumerator TC_TAX_8b_TraOPanelTaxGiay_CaHaiNoiDeuXong() => PayOnce(inApp: false);
+
+    [UnityTest]
+    public IEnumerator TC_TAX_9_NutPayTheoSoDu_UngDungTaxes()
+    {
+        int due = IssueBill();
+        yield return OpenTaxesApp();
+        var pay = TestHooks.GetField<UnityEngine.UI.Button>(TestHooks.Find<TaxesScreen>(), "payButton");
+
+        TestHooks.SetMoney(due - 1);
+        yield return null;
+        Assert.IsFalse(pay.interactable, $"Money = {due - 1}: Pay bị vô hiệu");
+
+        TestHooks.SetMoney(due);
+        yield return null;
+        Assert.IsTrue(pay.interactable, $"Money = {due}: Pay được bật");
+    }
+
+    [Test]
+    public void TC_TAX_11_PawnFvckTheTaxTruocHoaDon_HoaDonTinhBinhThuong()
+    {
+        var card = Cards.Place(Cards.Asset("TaxExemption"));
+        Pawning.PawnOnto(card);
+        Assert.IsFalse(card.gameObject.activeSelf, "Thẻ đã bị cầm");
+
+        int due = IssueBill(150);
+        Assert.AreEqual(Mathf.Max(Itrs.CurrentAssessment.minimum, Mathf.RoundToInt(Itrs.CurrentAssessment.earnedSinceNotice * Itrs.CurrentAssessment.rate)), due,
+            "Hóa đơn kế tính bình thường");
+        Assert.Greater(due, 0);
+    }
 }
