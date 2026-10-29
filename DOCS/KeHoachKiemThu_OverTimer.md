@@ -1110,6 +1110,24 @@ Các ca tắt Phone (PhoneController.ForceOff) để không có cuộc gọi nà
 - Kiểm tra độ nhạy: cho hạn trả trôi cả khi Clock tạm dừng (ITRSService tick bằng Time.deltaTime) thì TC-TAX-6 báo Lỗi (20 s → 5 s). Bỏ dòng hủy thư thuế khi đã trả (DoorController.HandleBillResolved) thì TC-DOR-7b vẫn Đạt, vì DropTaxLetter còn kiểm HasPendingAssessment: lỗi cài vào không đổi hành vi, không phải test yếu. Đã hoàn tác cả hai.
 - Đã sửa trong test: vật giao hiện lên bàn qua DOVirtual.DelayedCall, mà DOTween đếm theo giờ thực; với captureFramerate các khung hình chạy nhanh hơn giờ thực nên test phải chờ theo giờ thực (lần đầu TC-DOR-5 Đạt chỉ vì Editor chạy chậm, các lần sau báo Lỗi). Đây là lỗi của test, không phải của game.
 
+**Play Mode – đợt 3 (cuộc gọi Phone): 8 ca, 9 hàm test** (PlayMode/PhoneCallTests.cs):
+
+| Ca | Hàm test |
+|---|---|
+| TC-PHN-10 | TC_PHN_10_CuocGoiClient_DungClockKhoaLaptop_TraTien |
+| TC-PHN-11 | TC_PHN_11_ClientChoQuaLau_TuCupMay |
+| TC-PHN-12 | TC_PHN_12_CuocGoiTelemarketer_ClockVanChay_KhongThuong |
+| TC-PHN-13 | TC_PHN_13a_CuocGoiITRS_CoHoaDon_GiaHan, TC_PHN_13b_CuocGoiITRS_KhongCoHoaDon_HoaDonKeDenMuonHon |
+| TC-PHN-14 | TC_PHN_14_TuChoiCuocGoi |
+| TC-PHN-15 | TC_PHN_15_ImLangOCauCuoi_TienTraNgay_TuCup |
+| TC-PHN-16 | TC_PHN_16_LichSuCuocGoi_Giu30DongMoiNhat |
+| TC-PHN-20 | TC_PHN_20_GameOverRestartGiuaCuocGoi |
+
+“Cheat ép cuộc gọi” = để trọng số người gọi chỉ còn một loại, cho reo (CallScheduler.ForceRingNow), rồi trả trọng số thật lại ngay. Các hạn chờ giờ thực (khách chờ 8 s, tự cúp 5 s, chào tạm biệt 2 s) đếm bằng Time.unscaledDeltaTime nên test chờ theo Time.unscaledTime. Riêng “nút DECLINE xám” chỉ kiểm được ở mức logic (CallScheduler.Decline trả về false khi đang nói chuyện); hình nút xám kiểm thủ công.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 29/10/2026): **9/9 Đạt**. Chạy chung ba đợt Play Mode (ShopTests, DoorTaxTests, PhoneCallTests, 32 hàm): 31 Đạt + TC_SHP_12b Lỗi (lỗi N19 đã biết). Có một lần TC_BUY_5 bị tính Lỗi vì gói Unity AI Assistant của Editor ghi lỗi mất kết nối mạng giữa chừng; chạy lại thì Đạt (không phải lỗi game).
+- Kiểm tra độ nhạy: bỏ khóa Laptop khi cuộc gọi tạm dừng Clock thì TC-PHN-10 và TC-PHN-20 báo Lỗi; bỏ trả tốc độ Clock khi hết reo thì TC-PHN-14 báo Lỗi (×1,5 thay vì ×1). Đã hoàn tác.
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |
