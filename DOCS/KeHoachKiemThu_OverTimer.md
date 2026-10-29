@@ -1128,6 +1128,26 @@ Các ca tắt Phone (PhoneController.ForceOff) để không có cuộc gọi nà
 **Kết quả chạy:** Unity Test Runner (Play Mode, 29/10/2026): **9/9 Đạt**. Chạy chung ba đợt Play Mode (ShopTests, DoorTaxTests, PhoneCallTests, 32 hàm): 31 Đạt + TC_SHP_12b Lỗi (lỗi N19 đã biết). Có một lần TC_BUY_5 bị tính Lỗi vì gói Unity AI Assistant của Editor ghi lỗi mất kết nối mạng giữa chừng; chạy lại thì Đạt (không phải lỗi game).
 - Kiểm tra độ nhạy: bỏ khóa Laptop khi cuộc gọi tạm dừng Clock thì TC-PHN-10 và TC-PHN-20 báo Lỗi; bỏ trả tốc độ Clock khi hết reo thì TC-PHN-14 báo Lỗi (×1,5 thay vì ×1). Đã hoàn tác.
 
+**Play Mode – đợt 4 (Clock, camera, khóa Laptop): 8 ca, 9 hàm test** (PlayMode/CameraClockTests.cs):
+
+| Ca | Hàm test |
+|---|---|
+| TC-CLC-7 | TC_CLC_7_GameDeltaBang0KhiTamDung |
+| TC-CLC-8 | TC_CLC_8_PhoneReoChongSnailSpeed_NhanTocDo |
+| TC-CAM-1 | TC_CAM_1_ChuyenBaGocNhin_LuonQuaRoom |
+| TC-CAM-2 | TC_CAM_2_GoiChuyenKhiDangChuyenHoacTrungGoc |
+| TC-CAM-3 | TC_CAM_3_ChanInputKhiDangChuyen_ClockVanChay |
+| TC-CAM-4 | TC_CAM_4_VatChiPhanHoiOGocNhinChoPhep |
+| TC-CAM-7 | TC_CAM_7_KhoaLaptopTheoTungKhoa |
+| TC-CAM-8 | TC_CAM_8a_KhoaLaptop_CuocKhongDao, TC_CAM_8b_KhoaLaptop_BiDungRoiChayTiep_KetQuaNhuKhongNgat |
+
+Nhấp vùng chuyển góc nhìn = CameraViewButton.HandleClick (hàm PointerReceiver.ClickDown gọi). Khóa Laptop của cuộc gọi = DeviceLayer.LockLaptop(holder), đúng lời gọi trong PhoneController.BeginCall. TC-CAM-3 kiểm cổng chặn (InputGate, InputManager.IsInputEnabled = false) thay cho nhấp chuột thật. TC-CAM-4 đọc ViewGate của từng vật trong scene: kết quả khớp DESIGN §4.1, nên dòng “danh sách ViewGate chưa xác minh” của PROJECT.md §20 nay đã được kiểm (Play Mode). TC-CAM-8b so cú đánh bị ngắt với cùng cú đánh mô phỏng một mạch trên bản sao của ván (BilliardsRound.Clone): vị trí từng bi trùng khớp tuyệt đối.
+
+**Điều kiện của TC-CAM-7 không xảy ra được trong game:** Cable Eater tắt Phone suốt thời gian hiệu lực (TC-CRD-20), nên không thể nhận cuộc gọi Client khi thẻ đang chạy. Test kiểm quy tắc mà ca này nhắm tới: khóa của cuộc gọi (DeviceLayer) và khóa của Cable Eater (LaptopLock) độc lập; bỏ khóa cuộc gọi thì Laptop vẫn khóa đến khi Cable Eater hết hạn. Đề nghị sửa cột điều kiện của ca cho khớp.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 29/10/2026): **9/9 Đạt**; Console không có lỗi mới.
+- Kiểm tra độ nhạy: bỏ chốt khóa Laptop trong BilliardsApp thì TC-CAM-8b báo Lỗi (bi chạy hết khi đang khóa); cho CameraRig đổi CurrentView ngay khi bắt đầu tween thì TC-CAM-1 báo Lỗi. Đã hoàn tác.
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |
