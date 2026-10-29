@@ -1091,6 +1091,25 @@ Mỗi test đưa camera về góc nhìn Desk trước khi chạy (ván bắt đ�
 - Kiểm tra độ nhạy: tạm đổi làm tròn giá mua lại từ lên thành xuống (PawnMath.BuybackPrice), TC-BUY-4 (27 → 26) và TC-BUY-7 (142 → 141) báo Lỗi đúng chỗ; đã hoàn tác.
 - Ghi chú khi chạy qua Unity MCP: công cụ run_tests tạm bật “Enter Play Mode Options: tắt domain reload” trong lúc chạy và trả lại sau; nếu phiên MCP rớt giữa chừng, ProjectSettings/EditorSettings.asset bị để lại m_EnterPlayModeOptions: 1, cần hoàn tác, không commit.
 
+**Play Mode – đợt 2 (cửa, thư, thuế): 8 ca, 9 hàm test** (PlayMode/DoorTaxTests.cs):
+
+| Ca | Hàm test |
+|---|---|
+| TC-DOR-5 | TC_DOR_5_HangDenCua_MoBuuKien_HienTrenBan |
+| TC-DOR-6 | TC_DOR_6_DeMoSan_LenThangBan |
+| TC-DOR-7 | TC_DOR_7a_ThuThue_DenSau10Giay_NhapMoPanelTax, TC_DOR_7b_TraTruocKhiThuDen_ThuKhongXuatHien |
+| TC-DOR-8 | TC_DOR_8_ThuRac_NhapHienToRoiVaBoDi |
+| TC-DOR-9 | TC_DOR_9_Restart_XoaThuBuuKienDonHang |
+| TC-TAX-4 | TC_TAX_4_KhongTra_PhatMotLan_RoiDemHoaDonKe |
+| TC-TAX-5 | TC_TAX_5_PhatThueBoQuaFinalCountdown |
+| TC-TAX-6 | TC_TAX_6_HanTraDungKhiCuocGoiTamDungClock |
+
+Các ca tắt Phone (PhoneController.ForceOff) để không có cuộc gọi nào tạm dừng Clock giữa chừng, trừ TC-TAX-6 (ép cuộc gọi kế là Client và giữ máy đủ 15 s). Mức phạt, hạn trả, thời gian thư đến đọc từ GameConfig. TC-DOR-8 cho thư rác đến sau 1 s (khoảng chờ 60 – 120 s đã kiểm ở EditMode). **Không tự động hóa được:** tiếng chuông cửa ở TC-DOR-5, 7, 8 (AudioSource.PlayOneShot không đọc lại được); phần này kiểm thủ công.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 29/10/2026): **9/9 Đạt**, chạy hai lần liền đều Đạt; Console không có lỗi mới.
+- Kiểm tra độ nhạy: cho hạn trả trôi cả khi Clock tạm dừng (ITRSService tick bằng Time.deltaTime) thì TC-TAX-6 báo Lỗi (20 s → 5 s). Bỏ dòng hủy thư thuế khi đã trả (DoorController.HandleBillResolved) thì TC-DOR-7b vẫn Đạt, vì DropTaxLetter còn kiểm HasPendingAssessment: lỗi cài vào không đổi hành vi, không phải test yếu. Đã hoàn tác cả hai.
+- Đã sửa trong test: vật giao hiện lên bàn qua DOVirtual.DelayedCall, mà DOTween đếm theo giờ thực; với captureFramerate các khung hình chạy nhanh hơn giờ thực nên test phải chờ theo giờ thực (lần đầu TC-DOR-5 Đạt chỉ vì Editor chạy chậm, các lần sau báo Lỗi). Đây là lỗi của test, không phải của game.
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |
