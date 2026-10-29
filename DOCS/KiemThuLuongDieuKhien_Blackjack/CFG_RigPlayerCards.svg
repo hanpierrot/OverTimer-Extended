@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 815" width="700" height="815" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect width="700" height="815" fill="#fff"/>
+<g fill="none" stroke="#000" stroke-width="1.6" marker-end="url(#arr)">
+<polyline points="180.0,38.0 180.0,71.0"/>
+<polyline points="180.0,108.0 180.0,151.0"/>
+<polyline points="180.0,188.0 180.0,231.0"/>
+<polyline points="198.0,170.0 451.0,170.0"/>
+<polyline points="180.0,268.0 180.0,331.0"/>
+<polyline points="196.4,257.4 272.7,292.1"/>
+<polyline points="273.6,307.4 197.3,342.1"/>
+<polyline points="290.0,318.0 290.0,440.0 199.0,440.0"/>
+<polyline points="180.0,368.0 180.0,421.0"/>
+<polyline points="162.0,440.0 70.0,440.0 70.0,170.0 161.0,170.0"/>
+<polyline points="470.0,188.0 470.0,231.0"/>
+<path d="M484.4,239.2 Q530,205 574.8,238.6"/>
+<path d="M575.6,260.8 Q530,295 485.2,261.4"/>
+<polyline points="470.0,268.0 470.0,311.0"/>
+<polyline points="470.0,348.0 470.0,391.0"/>
+<polyline points="470.0,428.0 470.0,471.0"/>
+<polyline points="452.0,410.0 350.0,410.0 350.0,720.0 451.0,720.0"/>
+<polyline points="458.1,503.5 412.5,555.7"/>
+<polyline points="481.9,503.5 527.5,555.7"/>
+<polyline points="411.9,583.5 457.5,635.7"/>
+<polyline points="528.1,583.5 482.5,635.7"/>
+<polyline points="488.0,650.0 640.0,650.0 640.0,410.0 489.0,410.0"/>
+<polyline points="470.0,738.0 470.0,753.0"/>
+</g>
+<g stroke="#000" stroke-width="1.6" fill="#fff">
+<circle cx="180" cy="30" r="8" fill="#000"/>
+<circle cx="180" cy="90" r="18"/>
+<circle cx="180" cy="170" r="18"/>
+<circle cx="180" cy="250" r="18"/>
+<circle cx="290" cy="300" r="18"/>
+<circle cx="180" cy="350" r="18"/>
+<circle cx="180" cy="440" r="18"/>
+<circle cx="470" cy="170" r="18"/>
+<circle cx="470" cy="250" r="18"/>
+<circle cx="590" cy="250" r="18"/>
+<circle cx="470" cy="330" r="18"/>
+<circle cx="470" cy="410" r="18"/>
+<circle cx="470" cy="490" r="18"/>
+<circle cx="400" cy="570" r="18"/>
+<circle cx="540" cy="570" r="18"/>
+<circle cx="470" cy="650" r="18"/>
+<circle cx="470" cy="720" r="18"/>
+<circle cx="470" cy="765" r="11"/><circle cx="470" cy="765" r="6" fill="#000"/>
+</g><g font-size="14" text-anchor="middle" dominant-baseline="central" fill="#000">
+<text x="180" y="90">1</text>
+<text x="180" y="170">2</text>
+<text x="180" y="250">3a</text>
+<text x="290" y="300">3b</text>
+<text x="180" y="350">4</text>
+<text x="180" y="440">5</text>
+<text x="470" y="170">6</text>
+<text x="470" y="250">7</text>
+<text x="590" y="250">8</text>
+<text x="470" y="330">9</text>
+<text x="470" y="410">10</text>
+<text x="470" y="490">11</text>
+<text x="400" y="570">12</text>
+<text x="540" y="570">13</text>
+<text x="470" y="650">14</text>
+<text x="470" y="720">15</text>
+</g><g font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central" fill="#c00">
+<text x="192.0" y="209.5">T</text>
+<text x="324.5" y="158.0">F</text>
+<text x="192.0" y="299.5">T</text>
+<text x="239.5" y="263.9">F</text>
+<text x="240.4" y="335.7">T</text>
+<text x="302.0" y="379.0">F</text>
+<text x="529.9" y="233.9">T</text>
+<text x="482.0" y="289.5">F</text>
+<text x="482.0" y="449.5">T</text>
+<text x="401.0" y="422.0">F</text>
+<text x="426.3" y="521.7">T</text>
+<text x="513.7" y="521.7">F</text>
+</g>
+<text x="350.0" y="805" font-size="12" text-anchor="middle" fill="#555">RigPlayerCards(count): P = 6, C(Vg) = 7</text>
+</svg>
