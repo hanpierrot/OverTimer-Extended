@@ -1166,6 +1166,23 @@ Biểu tượng được chọn theo hệ số trong asset (thấp nhất, giữ
 - Kiểm tra độ nhạy: bỏ “− 1” trong công thức thưởng thì TC-TKT-11, 12, 13, 17a, 17b báo Lỗi; đổi “>=” thành “>” ở thời gian hồi Egg Timer thì TC-TSK-7 (b) báo Lỗi. Đã hoàn tác.
 - Đã sửa trong test: Cat có thể ngồi chặn đúng vé đang dùng (PointerReceiver bị tắt), làm lần nhấp mở vé không có tác dụng; test nay tắt Cat và kiểm vé thật sự mở ra. Không phải lỗi game: ngoài game, Cash Out chỉ bấm được trên panel của vé đã mở.
 
+**Play Mode – đợt 6 (luật thẻ): 7 ca, 9 hàm test** (PlayMode/CardRuleTests.cs):
+
+| Ca | Hàm test |
+|---|---|
+| TC-CRD-14 | TC_CRD_14a_PawnFinalCountdownArmed_TraPhi_Disarm, TC_CRD_14b_PawnFinalCountdownArmed_ThieuPhi_TuChoiVaDoiCho, TC_CRD_14c_PawnFinalCountdownTriggered_TuChoi |
+| TC-CRD-15 | TC_CRD_15_HaiTheTangGiaGoi_NhanTheoKhoa |
+| TC-CRD-17 | TC_CRD_17_HaiTheNoMoreMiningChongNhau |
+| TC-CRD-19 | TC_CRD_19_TheCloseTheShop |
+| TC-CRD-20 | TC_CRD_20_TheCableEater |
+| TC-CRD-21 | TC_CRD_21_TheSpamRobocall_KhoangChoX05 |
+| TC-CRD-22 | TC_CRD_22_LopMoPanelMoGoiCheMeter |
+
+Phí bỏ debuff, hệ số giá, thời lượng thẻ, khoảng gọi và thời gian khởi động Phone đều đọc từ GameConfig/asset thẻ, không ghi cứng. TC-CRD-15 kiểm giá gói = làm tròn(giá gốc × tích các hệ số) và một lần mua thật qua Card Box. TC-CRD-21 lấy 200 mẫu khoảng chờ khi có Robocalls, tất cả phải nằm trong [min × 0,5; max × 0,5]. TC-CRD-22 kiểm lớp mờ của panel mở gói chặn nút nạp tiền của Meter bằng EventSystem.RaycastAll tại đúng điểm của nút. Cat được tắt trong SetUp vì có thể chặn vật đang nhấp.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 30/10/2026): **9/9 Đạt**; Console không có lỗi mới.
+- Kiểm tra độ nhạy: bỏ “× IntervalScale” trong CallScheduler.NextInterval thì TC-CRD-21 báo Lỗi (khoảng chờ 57,6 s, ngoài [15; 30]). Đã hoàn tác.
+
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
 | File | Ca |
