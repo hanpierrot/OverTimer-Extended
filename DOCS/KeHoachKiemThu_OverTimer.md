@@ -1282,6 +1282,10 @@ Nút hành động của thư thuế trong Inbox ghi “Open” (không phải �
 
 **Kết quả chạy:** Unity Test Runner (Play Mode, 30/10/2026): **3/3 Đạt**; EmptyBoxTests của Han 8/8 Đạt, Edit Mode 173/173 Đạt (gồm EmptyBoxAreaTests); Console không có lỗi mới. Đây là lần đầu code hộp rỗng được biên dịch và chạy trong Editor. Đợt này không làm kiểm tra độ nhạy riêng.
 
+**Hồi quy sau merge main 88e77ae** (Play Mode, 30/10/2026, 262 hàm): 257 Đạt, 5 Lỗi.
+- TC_SHP_12b (N19) và TC_TKT_15 (N20): lỗi game đã biết.
+- TC_FBK_8a/8b/8c: không vật nào phát sáng. Lượt này chạy khi cửa sổ Unity không có focus. Giả thuyết (chưa kiểm chứng): khi Game view không có focus, Input System bỏ qua input của chuột, kể cả chuột ảo của test. Các lượt chạy trước, khi Unity có focus, cả ba Đạt. Tạm thời: chạy HoverInputTests với cửa sổ Unity ở phía trước; sẽ sửa test để không phụ thuộc focus.
+
 **Kiểm thử thủ công (cột Mức = TC), không tự động hóa:** TC-CAM-9 (làm mờ trên bản WebGL). Các phần “chưa kiểm tự động” / “vẫn kiểm thủ công” ở hai bảng trên cũng kiểm thủ công.
 
 **Chờ:** TC-PHN-18 sẽ bỏ (B4).
