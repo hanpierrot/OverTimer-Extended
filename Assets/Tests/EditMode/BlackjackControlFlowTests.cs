@@ -153,6 +153,21 @@ public class BlackjackControlFlowTests
         Assert.AreEqual(14, Value(C(1), C(1, Suit.Hearts), C(1, Suit.Clubs), C(1, Suit.Diamonds), C(13)));
     }
 
+    // Kiểm thử vòng lặp for (số lá trên tay), liền kề với vòng while: vòng while giữ mặc định (lặp 0 lần, không có Át).
+    // Hàm không giới hạn số lá nên không xác định được n: chỉ cần 4 ca 0, 1, 2, k. Lặp 0 = VAL-1, lặp 1 = VAL-2.
+
+    [Test]
+    public void TC_BJK_VAL_FOR_L2_Lap2Lan_107La17()
+    {
+        Assert.AreEqual(17, Value(C(10), C(7)));
+    }
+
+    [Test]
+    public void TC_BJK_VAL_FOR_Lk_Lap5Lan_23456La20()
+    {
+        Assert.AreEqual(20, Value(C(2), C(3), C(4), C(5), C(6)));
+    }
+
     // =====================================================================
     // 2. Deal(charlieCards): P = 3, C = 4
     // =====================================================================

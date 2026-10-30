@@ -51,3 +51,21 @@ PASS  TC_BJK_RIG_LPk_Lap4Lan
 PASS  TC_BJK_RIG_LP7_LapNTru1Lan
 PASS  TC_BJK_RIG_LP8_LapNLan
 Total 48: 48 passed, 0 failed
+
+Bổ sung ngày 30/10/2026: chạy lại các ca Value sau khi thêm 2 ca vòng for (cùng cách chạy)
+
+SANITY: wrong expectation detected -> Expected: 17
+   But was:  16
+PASS  TC_BJK_VAL_1_TayRong_Tra0
+PASS  TC_BJK_VAL_2_MotLaThuong_TraGiaTriLa
+PASS  TC_BJK_VAL_3_MotLaAt_TinhLa11
+PASS  TC_BJK_VAL_4_QuaKhongCoAt_GiuNguyenTong
+PASS  TC_BJK_VAL_5_HaiLaAt_HaMotAtXuong1
+PASS  TC_BJK_VAL_LP0_Lap0Lan_A6La17
+PASS  TC_BJK_VAL_LP1_Lap1Lan_A69La16
+PASS  TC_BJK_VAL_LP2_Lap2Lan_AAKLa12
+PASS  TC_BJK_VAL_LP3_LapNTru1Lan_AAAKLa13
+PASS  TC_BJK_VAL_LP4_LapNLan_AAAAKLa14
+PASS  TC_BJK_VAL_FOR_L2_Lap2Lan_107La17
+PASS  TC_BJK_VAL_FOR_Lk_Lap5Lan_23456La20
+Total 12: 12 passed, 0 failed

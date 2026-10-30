@@ -477,7 +477,7 @@ Chọn hàm theo ba tiêu chí: C(Vg) ≥ 3; chứa luật chơi hoặc tính ti
 
 | Hàm | Vai trò trong ván | P | C(Vg) | Số ca |
 |---|---|---|---|---|
-| BlackjackGame.Value | Tính điểm tay bài | 4 | 5 | 5 + 5 vòng lặp |
+| BlackjackGame.Value | Tính điểm tay bài | 4 | 5 | 5 + 7 vòng lặp |
 | BlackjackGame.Deal | Chia bài | 3 | 4 | 4 |
 | BlackjackGame.Hit | Rút thêm | 3 | 4 | 4 |
 | BlackjackGame.DoubleDown | Gấp đôi | 3 | 4 | 4 |
@@ -499,6 +499,8 @@ Cột “Mô tả” ghi đường thi hành theo số nút trên đồ thị c�
 | TC-BJK-VAL-LP2 | Value – vòng while lặp 2 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, A, K] | 12 | | |
 | TC-BJK-VAL-LP3 | Value – vòng while lặp n − 1 = 3 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, A, A, K] | 13 | | |
 | TC-BJK-VAL-LP4 | Value – vòng while lặp n = 4 lần | Luồng điều khiển (vòng lặp) | EM | TB | n = 4 Át | Tay [A, A, A, A, K] | 14 | | |
+| TC-BJK-VAL-FOR-L2 | Value – vòng for lặp 2 lần (vòng while giữ 0 lần) | Luồng điều khiển (vòng lặp) | EM | TB | Không giới hạn số lá: không xác định n | Tay [10, 7] | 17 | | |
+| TC-BJK-VAL-FOR-Lk | Value – vòng for lặp k = 5 lần (vòng while giữ 0 lần) | Luồng điều khiển (vòng lặp) | EM | TB | Như trên | Tay [2, 3, 4, 5, 6] | 20 | | |
 | TC-BJK-DEAL-1 | Deal – đường 1; 2; 4; 5; 10 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Deal(0); người chơi 10 + 7, nhà cái 9 + 8 | PlayerTurn; Result = None; mỗi bên 2 lá | | |
 | TC-BJK-DEAL-2 | Deal – đường 1; 2; 3; 4; 5; 10 | Luồng điều khiển | EM | Cao | Seed cố định | Deal(7) (ván Charlie) | Hai lá của người chơi đều là 2 hoặc 3; còn 5 lá chờ; PlayerTurn | | |
 | TC-BJK-DEAL-3 | Deal – đường 1; 2; 4; 5; 6; 8; 9; 10 | Luồng điều khiển | EM | Cao | Bộ bài xếp sẵn | Người chơi A + K, nhà cái 5 + 9 | Resolved; PlayerNatural | | |
@@ -541,7 +543,8 @@ Cột “Mô tả” ghi đường thi hành theo số nút trên đồ thị c�
 Ghi chú:
 
 - **Đường không khả thi:** Deal 2(T) → 5(T) (ván Charlie chỉ chia lá 2, 3 nên không thể Natural); Stand 4(F) → 6(T) (nhà cái không rút thì 2 lá không thể quá 21); SettleHand 4a(T) → 5(F) (kết quả Natural thì nút 5 luôn đúng). RigPlayerCards chỉ được Deal gọi với bộ bài đủ 52 lá, nên muốn đi được từng đường phải gọi trực tiếp hàm với bộ bài đặt sẵn.
-- **Ca lặp k và n + 1:** Value có n = 4 nên không có k nguyên nào thỏa 2 < k < n − 1; ca n + 1 của cả hai vòng lặp không sinh được (bộ bài chỉ có 4 Át, 8 lá 2 và 3).
+- **Ca lặp k và n + 1:** vòng while của Value có n = 4 nên không có k nguyên nào thỏa 2 < k < n − 1; ca n + 1 của vòng while (Value) và vòng chính của RigPlayerCards không sinh được (bộ bài chỉ có 4 Át, 8 lá 2 và 3).
+- **Lặp đơn liền kề trong Value:** vòng for (nút 2–6) đứng ngay trước vòng while (nút 7–8), nên mỗi vòng có bộ ca riêng. Vòng for không có giới hạn số lá nên không xác định được n: chỉ cần 4 ca 0, 1, 2, k (lặp 0 = VAL-1, lặp 1 = VAL-2, thêm FOR-L2 và FOR-Lk).
 - **Tiền thưởng thật** do BlackjackApp.SettleHand tính (có Hot Table); BlackjackGame.Payout mà TC-BJK-6 đang dùng không được game gọi (xem Phụ lục A).
 
 ## 4.4 Kiểm thử hệ thống thẻ bài
@@ -992,8 +995,8 @@ Camera cuộn dọc cũ **đã bị xóa** (Invariant I9 mới): chỉ có ba g�
 | Chức năng thủ công (4.7.7) | 60 | | | 1 (TC-FCD-5) | HUD 9, Laptop 8, kết thúc 8, lịch sử/Collection 7, thẻ 6, vật dụng/thao tác 13, âm thanh 2, end-to-end 7; không tính các phiên thăm dò. TC-FCD-5 bị bỏ (thẻ Trick Shot đã xóa) |
 | Camera, DeviceLayer (4.7.8) | 9 | | | | mới |
 | Âm thanh, Popup, Hover (4.7.9) | 8 | | | | mới |
-| Luồng điều khiển Blackjack (4.3.8) | 48 | | | | mới 29/10: 7 hàm, 35 ca đường thi hành + 13 ca vòng lặp |
-| Tổng | 371 | | | | 195 ca cũ + 128 ca bổ sung ngày 28/10/2026 + 48 ca ngày 29/10/2026 |
+| Luồng điều khiển Blackjack (4.3.8) | 50 | | | | mới 29/10: 7 hàm, 35 ca đường thi hành + 13 ca vòng lặp; 30/10 thêm 2 ca vòng for của Value |
+| Tổng | 373 | | | | 195 ca cũ + 128 ca bổ sung ngày 28/10/2026 + 48 ca ngày 29/10/2026 + 2 ca ngày 30/10/2026 |
 
 ### Nhận xét và đề xuất
 
@@ -1283,13 +1286,13 @@ Nút hành động của thư thuế trong Inbox ghi “Open” (không phải �
 
 **Chờ:** TC-PHN-18 sẽ bỏ (B4).
 
-**Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
+**Kiểm thử luồng điều khiển Blackjack (4.3.8) – 50 ca, 50 hàm test:**
 
 | File | Ca |
 |---|---|
-| EditMode/BlackjackControlFlowTests.cs | TC-BJK-VAL-1 – 5, LP0 – LP4; TC-BJK-DEAL-1 – 4; TC-BJK-HIT-1 – 4; TC-BJK-DBL-1 – 4; TC-BJK-STD-1 – 6; TC-BJK-SET-1 – 7; TC-BJK-RIG-1 – 7, LP0 – LP8 |
+| EditMode/BlackjackControlFlowTests.cs | TC-BJK-VAL-1 – 5, LP0 – LP4, FOR-L2, FOR-Lk; TC-BJK-DEAL-1 – 4; TC-BJK-HIT-1 – 4; TC-BJK-DBL-1 – 4; TC-BJK-STD-1 – 6; TC-BJK-SET-1 – 7; TC-BJK-RIG-1 – 7, LP0 – LP8 |
 
-Các ca RigPlayerCards gọi hàm private bằng reflection để đặt bộ bài tùy ý (cùng cách với TestHooks). Kết quả chạy ngày 29/10/2026 ngoài Unity (.NET 9, bản build OverTimer.dll, NUnit của Unity, GameConfig đọc từ asset): 48/48 Đạt; kiểm tra độ nhạy bằng một kỳ vọng cố ý sai cho kết quả Lỗi đúng.
+Các ca RigPlayerCards gọi hàm private bằng reflection để đặt bộ bài tùy ý (cùng cách với TestHooks). Kết quả chạy ngày 29/10/2026 ngoài Unity (.NET 9, bản build OverTimer.dll, NUnit của Unity, GameConfig đọc từ asset): 48/48 Đạt; kiểm tra độ nhạy bằng một kỳ vọng cố ý sai cho kết quả Lỗi đúng. Ngày 30/10/2026 thêm 2 ca vòng for của Value; chạy lại 12 ca Value cùng cách: 12/12 Đạt.
 
 **LỜI CẢM ƠN**
 
