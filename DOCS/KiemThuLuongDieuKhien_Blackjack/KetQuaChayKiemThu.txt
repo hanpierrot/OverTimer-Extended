@@ -1,0 +1,53 @@
+Kết quả chạy BlackjackControlFlowTests ngày 29/10/2026 (.NET 9 + OverTimer.dll + NUnit của Unity, ngoài Editor)
+
+SANITY: wrong expectation detected -> AssertionException: Expected: 17   But was:  16
+GameConfig.asset: win=100 push=25 natural=130 step=0.1 cap=0.5
+PASS  TC_BJK_VAL_1_TayRong_Tra0
+PASS  TC_BJK_VAL_2_MotLaThuong_TraGiaTriLa
+PASS  TC_BJK_VAL_3_MotLaAt_TinhLa11
+PASS  TC_BJK_VAL_4_QuaKhongCoAt_GiuNguyenTong
+PASS  TC_BJK_VAL_5_HaiLaAt_HaMotAtXuong1
+PASS  TC_BJK_VAL_LP0_Lap0Lan_A6La17
+PASS  TC_BJK_VAL_LP1_Lap1Lan_A69La16
+PASS  TC_BJK_VAL_LP2_Lap2Lan_AAKLa12
+PASS  TC_BJK_VAL_LP3_LapNTru1Lan_AAAKLa13
+PASS  TC_BJK_VAL_LP4_LapNLan_AAAAKLa14
+PASS  TC_BJK_DEAL_1_VanThuong_SangLuotNguoiChoi
+PASS  TC_BJK_DEAL_2_VanCharlie_NguoiChoiNhanLaThap
+PASS  TC_BJK_DEAL_3_NguoiChoiNatural_NhaCaiKhong
+PASS  TC_BJK_DEAL_4_HaiBenCungNatural_Hoa
+PASS  TC_BJK_HIT_1_ChuaChiaVan_KhongRut
+PASS  TC_BJK_HIT_2_Du21_KhongRutThem
+PASS  TC_BJK_HIT_3_RutKhongQua21_VanTiepTuc
+PASS  TC_BJK_HIT_4_RutQua21_ThuaNgay
+PASS  TC_BJK_DBL_1_ChuaChiaVan_KhongGapDoi
+PASS  TC_BJK_DBL_2_Co3La_TuChoi
+PASS  TC_BJK_DBL_3_GapDoiKhongQua21_TuDungVaThang
+PASS  TC_BJK_DBL_4_GapDoiQua21_ThuaNgay
+PASS  TC_BJK_STD_1_NhaCai18KhongRut_NhaCaiThang
+PASS  TC_BJK_STD_2_ChuaChiaVan_KhongLamGi
+PASS  TC_BJK_STD_3_NhaCaiRutRoiThang
+PASS  TC_BJK_STD_4_NhaCaiRutQua21
+PASS  TC_BJK_STD_5_NguoiChoiCaoHon_NguoiChoiThang
+PASS  TC_BJK_STD_6_BangDiem_Hoa
+PASS  TC_BJK_SET_1_Thang_KhongGapDoi
+PASS  TC_BJK_SET_2_Thang_CoGapDoi
+PASS  TC_BJK_SET_3_Natural
+PASS  TC_BJK_SET_4_NhaCaiQua21_ChuoiThang2_CoThuongHotTable
+PASS  TC_BJK_SET_5_Hoa_GiuNguyenChuoi
+PASS  TC_BJK_SET_6_NhaCaiThang_MatChuoi
+PASS  TC_BJK_SET_7_Hoa_CoGapDoi
+PASS  TC_BJK_RIG_1_BoBaiRong
+PASS  TC_BJK_RIG_2_ChiCoLaCao_KhongXep
+PASS  TC_BJK_RIG_3_MotLa2_DuocXep
+PASS  TC_BJK_RIG_4_MotLa3_DuocXep
+PASS  TC_BJK_RIG_5_HaiLaThap_XaoRoiXepCa2
+PASS  TC_BJK_RIG_6_Count0_TraLaVeBoBai
+PASS  TC_BJK_RIG_7_BoBaiDay_Count7_NhuKhiChoi
+PASS  TC_BJK_RIG_LP0_Lap0Lan
+PASS  TC_BJK_RIG_LP1_Lap1Lan
+PASS  TC_BJK_RIG_LP2_Lap2Lan
+PASS  TC_BJK_RIG_LPk_Lap4Lan
+PASS  TC_BJK_RIG_LP7_LapNTru1Lan
+PASS  TC_BJK_RIG_LP8_LapNLan
+Total 48: 48 passed, 0 failed

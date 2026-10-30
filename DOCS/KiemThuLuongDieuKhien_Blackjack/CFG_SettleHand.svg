@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 720" width="520" height="720" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect width="520" height="720" fill="#fff"/>
+<g fill="none" stroke="#000" stroke-width="1.6" marker-end="url(#arr)">
+<polyline points="200.0,38.0 200.0,71.0"/>
+<polyline points="186.5,101.9 134.3,147.5"/>
+<polyline points="213.5,101.9 265.7,147.5"/>
+<polyline points="133.5,171.9 185.7,217.5"/>
+<polyline points="266.5,171.9 214.3,217.5"/>
+<polyline points="216.3,237.7 352.8,301.9"/>
+<polyline points="200.0,248.0 200.0,291.0"/>
+<polyline points="218.0,310.0 351.0,310.0"/>
+<polyline points="200.0,328.0 200.0,371.0"/>
+<polyline points="216.3,382.3 352.8,318.1"/>
+<polyline points="200.0,408.0 200.0,451.0"/>
+<polyline points="187.3,482.7 133.4,536.6"/>
+<polyline points="212.7,482.7 266.6,536.6"/>
+<polyline points="360.0,325.0 320.5,384.2"/>
+<polyline points="381.1,324.2 428.3,385.0"/>
+<polyline points="320.8,414.4 358.6,464.8"/>
+<polyline points="428.1,413.5 382.5,465.7"/>
+<polyline points="370.0,498.0 370.0,630.0 219.0,630.0"/>
+<polyline points="132.7,562.7 186.6,616.6"/>
+<polyline points="267.3,562.7 213.4,616.6"/>
+<polyline points="200.0,648.0 200.0,668.0"/>
+</g>
+<g stroke="#000" stroke-width="1.6" fill="#fff">
+<circle cx="200" cy="30" r="8" fill="#000"/>
+<circle cx="200" cy="90" r="18"/>
+<circle cx="120" cy="160" r="18"/>
+<circle cx="280" cy="160" r="18"/>
+<circle cx="200" cy="230" r="18"/>
+<circle cx="200" cy="310" r="18"/>
+<circle cx="200" cy="390" r="18"/>
+<circle cx="200" cy="470" r="18"/>
+<circle cx="370" cy="310" r="18"/>
+<circle cx="310" cy="400" r="18"/>
+<circle cx="440" cy="400" r="18"/>
+<circle cx="370" cy="480" r="18"/>
+<circle cx="120" cy="550" r="18"/>
+<circle cx="280" cy="550" r="18"/>
+<circle cx="200" cy="630" r="18"/>
+<circle cx="200" cy="680" r="11"/><circle cx="200" cy="680" r="6" fill="#000"/>
+</g><g font-size="14" text-anchor="middle" dominant-baseline="central" fill="#000">
+<text x="200" y="90">1</text>
+<text x="120" y="160">2</text>
+<text x="280" y="160">3</text>
+<text x="200" y="230">4a</text>
+<text x="200" y="310">4b</text>
+<text x="200" y="390">4c</text>
+<text x="200" y="470">4d</text>
+<text x="370" y="310">5</text>
+<text x="310" y="400">6</text>
+<text x="440" y="400">7</text>
+<text x="370" y="480">8</text>
+<text x="120" y="550">9</text>
+<text x="280" y="550">10</text>
+<text x="200" y="630">11</text>
+</g><g font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central" fill="#c00">
+<text x="152.5" y="115.6">T</text>
+<text x="247.5" y="115.6">F</text>
+<text x="289.7" y="258.9">T</text>
+<text x="188.0" y="269.5">F</text>
+<text x="284.5" y="298.0">T</text>
+<text x="188.0" y="349.5">F</text>
+<text x="289.7" y="361.1">T</text>
+<text x="188.0" y="429.5">F</text>
+<text x="151.9" y="501.2">T</text>
+<text x="248.1" y="501.2">F</text>
+<text x="330.3" y="347.9">T</text>
+<text x="414.2" y="347.2">F</text>
+</g>
+<text x="260.0" y="710" font-size="12" text-anchor="middle" fill="#555">SettleHand(cfg, result, doubled, ref streak): P = 6, C(Vg) = 7</text>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 590" width="380" height="590" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect width="380" height="590" fill="#fff"/>
+<g fill="none" stroke="#000" stroke-width="1.6" marker-end="url(#arr)">
+<polyline points="200.0,38.0 200.0,71.0"/>
+<polyline points="200.0,108.0 200.0,151.0"/>
+<polyline points="182.0,90.0 70.0,90.0 70.0,231.0"/>
+<polyline points="184.7,179.4 86.2,240.0"/>
+<polyline points="200.0,188.0 200.0,231.0"/>
+<polyline points="70.0,268.0 70.0,490.0 181.0,490.0"/>
+<polyline points="200.0,268.0 200.0,311.0"/>
+<polyline points="214.1,341.2 285.2,398.1"/>
+<polyline points="200.0,348.0 200.0,391.0"/>
+<polyline points="285.9,421.2 214.8,478.1"/>
+<polyline points="200.0,428.0 200.0,471.0"/>
+<polyline points="200.0,508.0 200.0,538.0"/>
+</g>
+<g stroke="#000" stroke-width="1.6" fill="#fff">
+<circle cx="200" cy="30" r="8" fill="#000"/>
+<circle cx="200" cy="90" r="18"/>
+<circle cx="200" cy="170" r="18"/>
+<circle cx="70" cy="250" r="18"/>
+<circle cx="200" cy="250" r="18"/>
+<circle cx="200" cy="330" r="18"/>
+<circle cx="300" cy="410" r="18"/>
+<circle cx="200" cy="410" r="18"/>
+<circle cx="200" cy="490" r="18"/>
+<circle cx="200" cy="550" r="11"/><circle cx="200" cy="550" r="6" fill="#000"/>
+</g><g font-size="14" text-anchor="middle" dominant-baseline="central" fill="#000">
+<text x="200" y="90">1a</text>
+<text x="200" y="170">1b</text>
+<text x="70" y="250">2</text>
+<text x="200" y="250">3</text>
+<text x="200" y="330">4</text>
+<text x="300" y="410">5</text>
+<text x="200" y="410">6</text>
+<text x="200" y="490">7</text>
+</g><g font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central" fill="#c00">
+<text x="212.0" y="129.5">T</text>
+<text x="126.0" y="78.0">F</text>
+<text x="129.1" y="199.5">F</text>
+<text x="212.0" y="209.5">T</text>
+<text x="257.1" y="360.3">T</text>
+<text x="188.0" y="369.5">F</text>
+</g>
+<text x="190.0" y="580" font-size="12" text-anchor="middle" fill="#555">DoubleDown(): P = 3, C(Vg) = 4</text>
+</svg>
