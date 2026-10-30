@@ -443,7 +443,7 @@ Luật mới (A23): thưởng = làm tròn của Σ trên mọi biểu tượng 
 | TC-TKT-13 | Chỉ trả khi Cash Out, chỉ tính ô đã lộ | Bảng quyết định | PM | Cao | Money = 100; mua 1 vé Triple Match (Money = 75) có 3 ô hệ số 1,2 | (a) Cào lộ cả 3 ô, chưa Cash Out; (b) Cash Out khi mới lộ 2 ô; (c) Cash Out khi chưa cào ô nào | (a) Money vẫn 75 (cào hết không tự trả); (b) Money = 75 + 66 (55 × 1 × 1,2); (c) Money = 75 (\$0) | | |
 | TC-TKT-14 | Pool 2 vé mỗi loại | Giá trị biên | PM | TB | Money = 100; chưa có vé nào trên bàn | Mua Triple Match 3 lần, không Cash Out | Lần 1, 2: phát vé, Money = 50; lần 3: không trừ tiền, hiện “Too many tickets on the desk. Cash one out first.” | | |
 | TC-TKT-15 | Giá vé với hai thẻ Ticket Up Sale (nhân theo khóa) | Bảng quyết định | PM | TB | Hệ số thẻ ×1,5 (asset TicketCostModifier) | Đặt thẻ 1 → đọc giá; đặt thẻ 2 → đọc giá; Pawn thẻ 1; Pawn thẻ 2 | \$38 (37,5 → 38) → \$56 (56,25 → 56) → \$38 → \$25; Lucky Nine cùng lúc: \$83 → \$124 → \$83 → \$55 | | |
-| TC-TKT-16 | Bảng thưởng cạnh panel khớp asset | Phân vùng tương đương | TC | TB | Mở NinePanel và TriplePanel | So từng dòng TicketPayoutTable với asset biểu tượng | Mỗi biểu tượng một dòng, tỷ lệ = trọng số / tổng trọng số, hệ số đúng asset; Lucky Nine có thêm dòng “9x rarest symbol = Win the game” | | |
+| TC-TKT-16 | Bảng thưởng cạnh panel khớp asset | Phân vùng tương đương | PM | TB | Mở NinePanel và TriplePanel | So từng dòng TicketPayoutTable với asset biểu tượng | Mỗi biểu tượng một dòng, tỷ lệ = trọng số / tổng trọng số, hệ số đúng asset; Lucky Nine có thêm dòng “9x rarest symbol = Win the game” | | |
 | TC-TKT-17 | Giá trị kỳ vọng (RTP) | Thống kê | PM | TB | Seed cố định (chạy thêm 3–5 seed); cheat tắt Jackpot/Curse | Mua và lộ hết 10.000 vé mỗi loại, Cash Out | Trung bình thưởng Triple Match ≈ \$22,25 (RTP 89,0%), Lucky Nine ≈ \$48,62 (RTP 88,4%), sai lệch trong ngưỡng 4.1.4; Lucky Nine không bao giờ trả \$0 (tối thiểu \$16), tối đa \$250; Triple Match \$0 ≈ 17% | | |
 | TC-TSK-7 | Thời gian hồi Egg Timer | Giá trị biên | PM | Cao | Clock = 100; eggTimerCooldown = 0,75 s | Giữ 1 s (nhận +3 s); thả; giữ lại sau (a) 0,70 s; (b) 0,75 s; (c) 0,80 s | (a) Không có tiến trình, không cộng giờ; (b), (c) Bắt đầu giữ bình thường, giữ đủ 1 s được +3 s | | |
 | TC-TSK-8 | Egg Timer không cầm đồ được | Phân vùng tương đương | PM | TB | Money = 0 | Kéo Pawn lên Egg Timer | Money = 0; Egg Timer vẫn trên bàn; hiện gợi ý CannotPawn | | |
@@ -467,7 +467,7 @@ Bốn kết thúc mới đã cài đặt (A22), thay thế các ca \[Dự kiến
 | TC-ALT-11 | Double hủy Charlie | Bảng quyết định | EM | TB | BlackjackGame với tay đã gian lận (rigged) | Double ở hai lá đầu | Hàng đợi lá gian lận bị xóa; ván kết thúc bình thường sau 1 lá, không có Charlie | | |
 | TC-ALT-12 | Tỷ lệ tay Charlie | Thống kê | PM | Thấp | Seed cố định | 10.000 lần Deal | Tay được gian lận 4% ± 0,6%; các tay còn lại phân phối bài như cũ | | |
 | TC-ALT-13 | Điểm RunRating cho kết thúc cơ chế | Bảng quyết định | PM | TB | Trọng số 0,5/0,3/0,2; ratingMechanicWin 0,95; ratingMechanicLoss 0; mốc tiền \$300 | (a) TicketJackpotWin, kiếm \$300; (b) TicketCurseLoss, Clock cao nhất 300 s, kiếm \$0 | (a) 87,5 (100 × (0,5 × 0,95 + 0,3 × 1 + 0,2 × 0,5)); (b) 15 | | |
-| TC-ALT-14 | Lịch sử ván với kết thúc mới | Phân vùng tương đương | TC | TB | Đã chơi 4 ván kết thúc lần lượt bằng 4 EndReason mới (cheat tab Endings) | Mở bảng lịch sử ván | 4 dòng; 3 ván thắng (Jackpot, Mother Lode, Charlie) hiện “WIN”, ván Curse hiện “LOSE”; tên kết thúc hiển thị đúng; tải lại trang vẫn còn | | |
+| TC-ALT-14 | Lịch sử ván với kết thúc mới | Phân vùng tương đương | PM | TB | Đã chơi 4 ván kết thúc lần lượt bằng 4 EndReason mới (cheat tab Endings) | Mở bảng lịch sử ván | 4 dòng; 3 ván thắng (Jackpot, Mother Lode, Charlie) hiện “WIN”, ván Curse hiện “LOSE”; tên kết thúc hiển thị đúng; tải lại trang vẫn còn | | |
 
 ### 4.3.8 Kiểm thử luồng điều khiển chức năng Blackjack (hộp trắng, bổ sung 29/10)
 
@@ -656,7 +656,7 @@ Shop là một ứng dụng trên Phone. Lõi là C# thuần (Ownership, ShopCar
 | TC-SHP-11 | Kiểm tra catalog | Bảng quyết định | EM | TB | Danh sách ItemDefCheck dựng tay | (a) Trùng id; (b) hàng số có pawnable; (c) hàng cầm được nằm layer ≠ 3; (d) binding dùng id lạ; (e) catalog thật trong Scene | (a)–(d) Mỗi trường hợp trả đúng 1 thông báo lỗi tương ứng; (e) FindProblems rỗng, Console không có cảnh báo “\[Shop\]” | | |
 | TC-SHP-12 | Giá cầm đồ theo catalog | Bảng quyết định | PM | Cao | Money = 0 trước mỗi lần; Power Bank, Card Box, Lucky Nine stack đã mua đúng giá | Kéo Pawn lên: Power Bank / Card Box / Lucky Nine stack / Laptop / Egg Timer / Bear / Picture / Triple stack / Phone | +\$20 / +\$32 / +\$24 / +\$108; 5 vật còn lại: \$0 và gợi ý CannotPawn, vật vẫn trên bàn | | |
 | TC-SHP-13 | Chặn cầm đồ khi đang dùng | Bảng quyết định | PM | TB | (a) Panel mở gói của Card Box đang mở; (b) có một vé Lucky Nine đang trên bàn | Kéo Pawn lên Card Box / Lucky Nine stack | Cả hai bị từ chối; tiền không đổi | | |
-| TC-SHP-14 | Vật đã cầm đồ trong Shop | Phân vùng tương đương | TC | TB | Đã cầm đồ Power Bank | Mở tab SHOP | Power Bank hiện “PAWNED”, không thêm vào giỏ được; tab PAWNED có Power Bank | | |
+| TC-SHP-14 | Vật đã cầm đồ trong Shop | Phân vùng tương đương | PM | TB | Đã cầm đồ Power Bank | Mở tab SHOP | Power Bank hiện “PAWNED”, không thêm vào giỏ được; tab PAWNED có Power Bank | | |
 | TC-SHP-15 | Gợi ý lần đầu cầm đồ | Luồng điều khiển | PM | Thấp | PlayerPrefs đã sao lưu, chưa có HintSeen_FirstPawn | Cầm đồ 2 vật | Lần 1 hiện “The Printer pays for what you drop on it. A pawned item is gone.”; lần 2 không hiện | | |
 
 ### 4.5.5 Mua lại vật đã cầm đồ (Buyback)
@@ -697,7 +697,7 @@ AnnoyanceManager và lớp Phone cũ **đã bị xóa**; thay bằng CallSchedul
 | TC-PHN-16 | Lịch sử cuộc gọi | Giá trị biên | PM | TB | Ván đang chạy | Tạo 31 cuộc gọi (trả lời, từ chối, nhỡ) bằng cheat | Mọi cuộc gọi có CallRecord, mới nhất ở đầu; chỉ giữ 30 dòng; cuộc nhỡ và từ chối cũng vào Inbox, cuộc đã trả lời thì không | | |
 | TC-PHN-17 | Inbox | Phân vùng tương đương | EM | TB | Inbox mới | Add 3 tin; MarkRead tin thứ 2 | All\[0\] là tin mới nhất; Unread = 2; id tăng dần | | |
 | TC-PHN-18 | Hàng đợi banner | Giá trị biên | EM | Thấp | BannerQueue(4 s) | Push 4 tin; Tick(4); Clear | Sau Push: 3 hiện, 1 chờ; sau 4 s: 3 tin đầu ẩn, tin 4 hiện; Clear: không còn gì. **Sẽ bỏ**: logic banner sẽ bị xóa (Phụ lục B, B4); khi đó loại ca này | | |
-| TC-PHN-19 | Nhãn “Incoming call” khi đang ở ứng dụng Laptop | Luồng điều khiển | TC | TB | Đang mở Mining | Phone reo; nhấp nhãn | Nhãn hiện ở trên cùng; nhấp mở màn chỉ có Phone, hiện ACCEPT / DECLINE | | |
+| TC-PHN-19 | Nhãn “Incoming call” khi đang ở ứng dụng Laptop | Luồng điều khiển | PM | TB | Đang mở Mining | Phone reo; nhấp nhãn | Nhãn hiện ở trên cùng; nhấp mở màn chỉ có Phone, hiện ACCEPT / DECLINE | | |
 | TC-PHN-20 | GameOver/Restart giữa cuộc gọi | Luồng điều khiển | PM | Cao | Đang trong cuộc gọi Client (Clock dừng, Laptop khóa) | Cheat GameOver; Restart | Ván mới: Clock chạy, Laptop không khóa, Phone bật, không còn cuộc gọi treo | | |
 
 ### 4.5.7 Thuế mới: hạn trả, ứng dụng Taxes, thư thuế
@@ -959,8 +959,8 @@ Camera cuộn dọc cũ **đã bị xóa** (Invariant I9 mới): chỉ có ba g�
 | TC-CAM-2 | Gọi chuyển khi đang chuyển hoặc trùng góc nhìn | Bảng quyết định | PM | TB | Đang ở Room | GoTo(Desk) rồi GoTo(Door) ngay khi đang tween; ở Desk gọi GoTo(Desk) | GoTo(Door) và GoTo(Desk) thứ hai trả false; camera dừng ở Desk | | |
 | TC-CAM-3 | Chặn input khi đang chuyển, Clock vẫn chạy | Bảng quyết định | PM | Cao | Clock = 100 | Trong lúc tween, nhấp vào Egg Timer / Phone | Không có phản ứng; InputGate bị chặn đến khi tween xong; Clock giảm bình thường | | |
 | TC-CAM-4 | Vật chỉ phản hồi ở góc nhìn cho phép | Bảng quyết định | PM | TB | Đang ở góc nhìn Room | Nhấp lần lượt: bàn, cửa, Picture, Egg Timer, Phone, Printer, Bear, Triple Match stack | Theo DESIGN §4.1: chỉ bàn, cửa, Picture, Egg Timer phản hồi; các vật còn lại không phản hồi (chỉ dùng được ở Desk). Highlight Hover theo cùng quy tắc. Ghi chú: danh sách ViewGate thực tế trong Scene chưa được xác minh trong Editor (PROJECT.md §20) | | |
-| TC-CAM-5 | Không cuộn, không zoom, không kéo | Phân vùng tương đương | TC | Cao | Ở mỗi góc nhìn | Lăn chuột; kéo nền; giữ chuột ở mép màn hình | Camera không di chuyển; không có nút cuộn (Invariant I9) | | |
-| TC-CAM-6 | Bố cục DeviceLayer | Luồng điều khiển | TC | TB | Laptop có điện | Mở Laptop; nhấp Phone gắn bên phải; đóng Phone; mở Mining; đóng Mining | Mở Laptop: nền mờ, Phone gắn bên phải; nhấp Phone: Laptop trượt sang trái, Phone ra giữa (0,25 s); mở Mining: Laptop ra giữa, Phone trượt khỏi màn hình; đóng app: cả hai trở về. Đã chốt theo code (Phụ lục B, B6) | | |
+| TC-CAM-5 | Không cuộn, không zoom, không kéo | Phân vùng tương đương | PM | Cao | Ở mỗi góc nhìn | Lăn chuột; kéo nền; giữ chuột ở mép màn hình | Camera không di chuyển; không có nút cuộn (Invariant I9) | | |
+| TC-CAM-6 | Bố cục DeviceLayer | Luồng điều khiển | PM | TB | Laptop có điện | Mở Laptop; nhấp Phone gắn bên phải; đóng Phone; mở Mining; đóng Mining | Mở Laptop: nền mờ, Phone gắn bên phải; nhấp Phone: Laptop trượt sang trái, Phone ra giữa (0,25 s); mở Mining: Laptop ra giữa, Phone trượt khỏi màn hình; đóng app: cả hai trở về. Đã chốt theo code (Phụ lục B, B6) | | |
 | TC-CAM-7 | Khóa Laptop theo khóa | Bảng quyết định | PM | Cao | Cable Eater đang hiệu lực (còn 15 s) | Nhận cuộc gọi Client rồi cúp sau 5 s | Sau cuộc gọi Laptop vẫn khóa (khóa của Cable Eater còn); mở khóa khi Cable Eater hết hạn | | |
 | TC-CAM-8 | Khóa Laptop chặn thao tác trong ứng dụng | Phân vùng tương đương | PM | TB | (a) Đang đào Mining; (b) cú bida đang lăn | Khóa Laptop (cuộc gọi Client) | (a) Cuốc không gây sát thương khi khóa; (b) bi dừng mô phỏng đến khi mở khóa, rồi chạy tiếp, kết quả cú đánh như không bị ngắt | | |
 | TC-CAM-9 | Làm mờ nền trên WebGL | Phân vùng tương đương | TC | Thấp | Bản WebGL | Mở Laptop | Nền phía sau bị làm mờ; nếu deviceBlurEnabled = false thì chỉ phủ màu tối; Meter phía sau không nhấp được | | |
@@ -975,8 +975,8 @@ Camera cuộn dọc cũ **đã bị xóa** (Invariant I9 mới): chỉ có ba g�
 | TC-FBK-4 | Chặn phát lặp quá nhanh | Giá trị biên | PM | Thấp | Một id có minInterval = T > 0 trong AudioCatalog.asset (các giá trị hiện có 0,03 / 0,05 / 0,1 s) | Gọi Play hai lần cách nhau T − 0,01 s và T | Lần thứ hai: bị bỏ / được phát; id có minInterval = 0 thì luôn phát | | |
 | TC-FBK-5 | Nhạc thắng/thua khi GameOver | Bảng quyết định | PM | TB | AudioListener.pause = true sau GameOver | Kết thúc ván (a) thắng; (b) thua | (a) WinStinger phát dù listener đang tạm dừng; (b) LoseStinger (hiện chưa có clip: im lặng, không lỗi) | | |
 | TC-FBK-6 | Âm thanh không làm lệch dãy ngẫu nhiên | Phân vùng tương đương | PM | Cao | RngService seed cố định | Chạy kịch bản 60 s hai lần: lần 1 tắt âm thanh, lần 2 phát nhiều âm thanh nhiều clip | Dãy số từ RngService (vein, vé, người gọi) giống hệt nhau giữa hai lần (Invariant I10) | | |
-| TC-FBK-7 | Reward Popup | Bảng quyết định | TC | TB | – | (a) Hoàn thành Click Task; (b) Egg Timer; (c) thắng Billiards; (d) nhận hai khoản trong 0,25 s; (e) nhận tiền sau GameOver; (f) nạp Meter, mua vé, trả thuế; (g) 9 khoản liên tiếp | (a) “+\$5” xanh lá tại con trỏ; (b) “+3s” xanh dương; (c) chỉ hiện phần lời, không hiện tiền hoàn cược; (d) hai popup xếp chồng; (e) không hiện; (f) không hiện (chỉ khoản thu mới có popup); (g) tối đa 8 popup cùng lúc, popup cũ nhất được tái dùng; popup không chặn nhấp chuột (DESIGN §5.17) | | |
-| TC-FBK-8 | Highlight Hover | Bảng quyết định | TC | Thấp | – | Rê chuột lên: vật tương tác được; vật bị Cat chặn; vật khi có panel mở; vùng Back; vật vừa bị cầm đồ; ở Room rê lên Egg Timer và Phone; kéo Cat rồi rê ra ngoài | Chỉ vật tương tác được phát sáng viền (hiện 0,1 s, tắt 0,15 s); ở Room Egg Timer sáng, Phone không; Cat đang kéo vẫn sáng đến khi thả (DESIGN §4.2); các trường hợp còn lại không phát sáng | | |
+| TC-FBK-7 | Reward Popup | Bảng quyết định | PM | TB | – | (a) Hoàn thành Click Task; (b) Egg Timer; (c) thắng Billiards; (d) nhận hai khoản trong 0,25 s; (e) nhận tiền sau GameOver; (f) nạp Meter, mua vé, trả thuế; (g) 9 khoản liên tiếp | (a) “+\$5” xanh lá tại con trỏ; (b) “+3s” xanh dương; (c) chỉ hiện phần lời, không hiện tiền hoàn cược; (d) hai popup xếp chồng; (e) không hiện; (f) không hiện (chỉ khoản thu mới có popup); (g) tối đa 8 popup cùng lúc, popup cũ nhất được tái dùng; popup không chặn nhấp chuột (DESIGN §5.17) | | |
+| TC-FBK-8 | Highlight Hover | Bảng quyết định | PM | Thấp | – | Rê chuột lên: vật tương tác được; vật bị Cat chặn; vật khi có panel mở; vùng Back; vật vừa bị cầm đồ; ở Room rê lên Egg Timer và Phone; kéo Cat rồi rê ra ngoài | Chỉ vật tương tác được phát sáng viền (hiện 0,1 s, tắt 0,15 s); ở Room Egg Timer sáng, Phone không; Cat đang kéo vẫn sáng đến khi thả (DESIGN §4.2); các trường hợp còn lại không phát sáng | | |
 
 ## 4.8 Tổng hợp kết quả kiểm thử
 
@@ -1229,7 +1229,7 @@ Số tiền mong đợi tính từ asset theo công thức thưởng (làm tròn
 
 | Ca | Test có sẵn | Phần chưa kiểm tự động |
 |---|---|---|
-| TC-ALT-1 | ScratchTicketTests.Jackpot_ChinOGiongNhau_LaBieuTuongHeSoCaoNhat, Jackpot_ThangKhiCaoHetCaChinO | mưa xu (EndingFlourish); RunRecord: GameLifecycleTests.TC_GAM_1a_TicketJackpotWin |
+| TC-ALT-1 | ScratchTicketTests.Jackpot_ChinOGiongNhau_LaBieuTuongHeSoCaoNhat, Jackpot_ThangKhiCaoHetCaChinO | mưa xu (EndingFlourish). RunRecord ghi “TicketJackpotWin”: UiLogicTests.TC_ALT_14_LichSuVanVoiKetThucMoi (ghi qua GameOver, không qua cào vé; TC_GAM_1a chỉ kiểm LastEndReason) |
 | TC-ALT-3 | ScratchTicketTests.Curse_DenONguongDiemBao_HienGoiYTicketCursed, Curse_CaoHetCaChinO_KhoaCashOutRoiThuaSauNhipRung | vé rung, nhãn đỏ (hình ảnh) |
 | TC-ALT-6 | MotherLodeTests.DuSoVeinDayLienTiep_Thang | số tiền \$94 của vein thắng; mưa xu |
 | TC-ALT-7 | MotherLodeTests.VeinNganHonChenGiua_PhaChuoi (a), VeinTruot_PhaChuoi_DuLaVeinDay (b), RoiApp_MatChuoi (c) | – |
@@ -1246,7 +1246,29 @@ Số tiền mong đợi tính từ asset theo công thức thưởng (làm tròn
 | TC-GAM-9 | GameLifecycleTests.TC_GAM_1a_* (10 hàm, mỗi EndReason một hàm) | EndingFlourish, cutscene Timeline |
 | TC-TAX-7 | AnnoyanceTests.TC_ANN_2_KhongPhatHoaDonMoiKhiDangCoHoaDonMo | hóa đơn kế đến đúng 45 s sau khi xử lý |
 
-**Kiểm thử thủ công (cột Mức = TC), không tự động hóa:** TC-ALT-14, TC-CAM-5, TC-CAM-6, TC-CAM-9, TC-FBK-7, TC-FBK-8, TC-PHN-19, TC-SHP-14, TC-TKT-16. Các phần “chưa kiểm tự động” ở bảng trên cũng kiểm thủ công.
+**Play Mode – đợt 9 (phần logic của các ca trước đây kiểm thủ công): 8 ca, 10 hàm test** (PlayMode/UiLogicTests.cs, PlayMode/HoverInputTests.cs):
+
+| Ca | Hàm test | Phần vẫn kiểm thủ công |
+|---|---|---|
+| TC-ALT-14 | UiLogicTests.TC_ALT_14_LichSuVanVoiKetThucMoi | tải lại trang WebGL thật (test chỉ nạp lại scene, PlayerPrefs còn nguyên) |
+| TC-SHP-14 | UiLogicTests.TC_SHP_14_VatDaCamDoTrongShop | – |
+| TC-TKT-16 | UiLogicTests.TC_TKT_16_BangThuongKhopAsset | bố cục, cỡ chữ của bảng |
+| TC-FBK-7 | UiLogicTests.TC_FBK_7_RewardPopup | (a) vị trí “tại con trỏ”, hoạt ảnh bay lên và mờ dần; (c) dùng khoản hoàn cược trực tiếp (StakeRefundReason) thay cho một ván Billiards thắng |
+| TC-CAM-6 | UiLogicTests.TC_CAM_6_BoCucDeviceLayer | độ mờ của nền, độ mượt và thời gian trượt 0,25 s |
+| TC-PHN-19 | UiLogicTests.TC_PHN_19_NhanIncomingCallKhiDangOUngDungLaptop | nhãn nằm “ở trên cùng” (thứ tự vẽ) |
+| TC-CAM-5 | HoverInputTests.TC_CAM_5_KhongCuonKhongZoomKhongKeo | – |
+| TC-FBK-8 | HoverInputTests.TC_FBK_8a_Room_EggTimerSang_PhoneKhong, TC_FBK_8b_Desk_VatBiChan_PanelMo_VungBack, TC_FBK_8c_VatVuaBiCamDo_TatSang | màu, độ dày viền sáng; “kéo Cat rồi rê ra ngoài”; vật bị chặn được giả lập bằng SetInteractable(false) thay cho Cat thật |
+
+HoverInputTests dùng một chuột ảo của Input System (InputSystem.AddDevice&lt;Mouse&gt;, InputState.Change), nên con trỏ đi đúng đường của chuột thật qua InputManager. Asmdef OverTimer.Tests.PlayMode được thêm tham chiếu Unity.InputSystem. Action “&lt;Mouse&gt;/position” của InputManager là kiểu Value: khi có nhiều chuột, control có độ lớn hơn thắng, nên test tạm tắt các chuột thật trong lúc chạy và bật lại ở TearDown. Ở góc Room, Phone nằm trên mặt bàn: rê vào chỗ Phone thì vùng bàn (DeskZone) sáng, chính Phone không sáng; đúng DESIGN §4.2 (“In the Room view only the desk, the door, the Picture and the Egg Timer glow”).
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 30/10/2026): **10/10 Đạt**; Console không có lỗi mới. Chạy toàn bộ Play Mode (251 hàm): 248 Đạt, 3 Lỗi. TC_SHP_12b (N19) và TC_TKT_15 (N20) là lỗi game đã biết. TC_WIN_3 hết thời gian 180 s khi nạp scene lúc Editor không có focus; chạy lại thì Đạt (không phải lỗi game).
+- Kiểm tra độ nhạy: bỏ điều kiện “PointerReceiver không tương tác được thì không sáng” trong HoverHighlighter.Pick thì TC-FBK-8b báo Lỗi. Đã hoàn tác.
+- Đã sửa trong test (không phải lỗi game):
+  - TC-SHP-14 và TC-FBK-8c ban đầu dùng GiveItem; món chưa mua có giá gốc 0 nên cầm đồ bị từ chối. Nay mua thật qua Shop.
+  - TC-ALT-14: bảng lịch sử nằm trong màn kết thúc ván (EndGamePanel), chỉ hiện sau GameOver. Ván thứ 4 bỏ cutscene để màn kết thúc hiện ngay.
+  - TC-FBK-8: điểm “rời đi” và điểm vùng Back được chọn theo vật mà InputManager thật sự trúng.
+
+**Kiểm thử thủ công (cột Mức = TC), không tự động hóa:** TC-CAM-9 (làm mờ trên bản WebGL). Các phần “chưa kiểm tự động” / “vẫn kiểm thủ công” ở hai bảng trên cũng kiểm thủ công.
 
 **Chờ:** TC-DOR-10 (B5), TC-TAX-10 (B7); TC-PHN-18 sẽ bỏ (B4).
 
