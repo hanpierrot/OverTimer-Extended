@@ -36,14 +36,14 @@ Kết quả chọn được **7 hàm**:
 
 | # | Hàm | Bước trong ván | P | C(Vg) | Số ca |
 |---|---|---|---|---|---|
-| 1 | `BlackjackGame.Value` | Tính điểm (dùng ở mọi bước) | 4 | 5 | 5 + 5 vòng lặp |
+| 1 | `BlackjackGame.Value` | Tính điểm (dùng ở mọi bước) | 4 | 5 | 5 + 7 vòng lặp |
 | 2 | `BlackjackGame.Deal` | Chia bài | 3 | 4 | 4 |
 | 3 | `BlackjackGame.Hit` | Rút thêm | 3 | 4 | 4 |
 | 4 | `BlackjackGame.DoubleDown` | Gấp đôi | 3 | 4 | 4 |
 | 5 | `BlackjackGame.Stand` | Nhà cái chơi, phân thắng thua | 5 | 6 | 6 |
 | 6 | `BlackjackApp.SettleHand` | Trả thưởng, Hot Table | 6 | 7 | 7 |
 | 7 | `BlackjackGame.RigPlayerCards` | Xếp bài cho kết thúc "Charlie" | 6 | 7 | 7 + 6 vòng lặp |
-| | **Tổng** | | | | **48 ca** |
+| | **Tổng** | | | | **50 ca** |
 
 ### 0.4 Quy ước
 - **Đánh số:** mỗi câu lệnh hoặc khối lệnh có một số. Một điều kiện ghép (`&&`, `||`) được tách thành các nút a, b (giống `5c1`, `5c2` trong bài giảng), để đồ thị là **nhị phân**.
@@ -90,6 +90,13 @@ public static int Value(IReadOnlyList<Card> hand)
 ### Độ phức tạp
 P = 4, nên **C(Vg) = 5**. Kiểm tra: N = 10, E = 13, C = 13 − 10 + 2 = 5.
 
+### Đường thi hành tuyến tính độc lập
+1. Start → 1 → 2 → 7a → 9 → End
+2. Start → 1 → 2 → 3 → 5 → 6 → 2 → 7a → 9 → End
+3. Start → 1 → 2 → 3 → 4 → 6 → 2 → 7a → 9 → End
+4. Start → 1 → (2 → 3 → 5 → 6)×3 → 2 → 7a → 7b → 9 → End
+5. Start → 1 → (2 → 3 → 4 → 6)×2 → 2 → 7a → 7b → 8 → 7a → 9 → End
+
 ### Test case
 | ID | Test Path | Inputs (hand) | Expected | RO | Note |
 |---|---|---|---|---|---|
@@ -107,7 +114,20 @@ P = 4, nên **C(Vg) = 5**. Kiểm tra: N = 10, E = 13, C = 13 − 10 + 2 = 5.
 | (7a) `total > 21` | VAL-4 | VAL-1 |
 | (7b) `aces > 0` | VAL-5 | VAL-4 |
 
-### Kiểm thử vòng lặp `while` (số lần hạ Át từ 11 xuống 1)
+### Kiểm thử vòng lặp
+`Value` có hai **lặp đơn liền kề nhau**: vòng `for` (nút 2–6) rồi vòng `while` (nút 7–8). Theo bài giảng, mỗi vòng được kiểm bằng bộ ca của lặp đơn (0, 1, 2, k, n − 1, n, n + 1), vòng còn lại giữ giá trị mặc định.
+
+#### Vòng `for` (số lá trên tay); vòng `while` giữ mặc định: lặp 0 lần (không có Át)
+Hàm nhận danh sách lá bất kỳ, không giới hạn số lá, nên **không xác định được n**. Theo chú ý của bài giảng, chỉ cần 4 ca đầu: 0, 1, 2, k.
+
+| ID | Số lần lặp | Inputs | Expected | RO | Note |
+|---|---|---|---|---|---|
+| TC-BJK-VAL-1 | 0 | [ ] | 0 | Pass | Trùng ca đường 1 |
+| TC-BJK-VAL-2 | 1 | [10] | 10 | Pass | Trùng ca đường 2 |
+| TC-BJK-VAL-FOR-L2 | 2 | [10, 7] | 17 | Pass | |
+| TC-BJK-VAL-FOR-Lk | k = 5 | [2, 3, 4, 5, 6] | 20 | Pass | |
+
+#### Vòng `while` (số lần hạ Át từ 11 xuống 1); vòng `for` chạy theo tay bài của ca
 Vòng lặp chạy tối đa bằng số Át trên tay. Một bộ bài có 4 Át nên **n = 4**.
 
 | ID | Số lần lặp | Inputs | Diễn giải | Expected | RO |
@@ -441,20 +461,21 @@ Window → General → Test Runner → tab **EditMode** → chọn `BlackjackCon
 - **Cách chạy:** chính file test `BlackjackControlFlowTests.cs` được biên dịch với bản build game (`Library/ScriptAssemblies/OverTimer.dll`) và NUnit của Unity, rồi chạy bằng .NET 9 bên ngoài Editor. `GameConfig` được đọc từ `GameConfig.asset`.
 - **Kiểm tra bộ chạy:** một kỳ vọng cố ý sai (A + 5 = 17) bị báo lỗi đúng ("Expected: 17 But was: 16"). Như vậy các kết quả Pass là thật, không phải do bỏ qua Assert.
 - Nhật ký đầy đủ nằm trong `KetQuaChayKiemThu.txt`.
+- **Bổ sung 30/10/2026:** thêm 2 ca vòng `for` của `Value` (FOR-L2, FOR-Lk). Chạy lại 12 ca `Value` theo cùng cách: 12/12 Pass, kiểm tra độ nhạy vẫn báo lỗi đúng. 38 ca của 6 hàm còn lại không đổi mã nên không chạy lại.
 
 | Hàm | Số ca | Pass | Fail |
 |---|---|---|---|
-| Value | 10 | 10 | 0 |
+| Value | 12 | 12 | 0 |
 | Deal | 4 | 4 | 0 |
 | Hit | 4 | 4 | 0 |
 | DoubleDown | 4 | 4 | 0 |
 | Stand | 6 | 6 | 0 |
 | SettleHand | 7 | 7 | 0 |
 | RigPlayerCards | 13 | 13 | 0 |
-| **Tổng** | **48** | **48** | **0** |
+| **Tổng** | **50** | **50** | **0** |
 
 ### Kết luận và phát hiện
 1. **Cả 7 hàm đạt phủ cấp 3 và không phát hiện lỗi.** Mọi điều kiện con đều đã nhận cả giá trị True và False. Phủ cấp 3 bao hàm phủ cấp 2 (mọi nhánh) và cấp 1 (mọi câu lệnh).
 2. **Đường không khả thi.** Có 4 chỗ không thể đổi nhánh độc lập: `Deal` 2(T)→5(T), `Stand` 4(F)→6(T), `SettleHand` 4a(T)→5(F), và phần lớn `RigPlayerCards` khi gọi qua `Deal`. Kiểm thử luồng điều khiển phải kết hợp đọc đặc tả, không chỉ đếm đường trên đồ thị.
 3. **Hàm `Payout` không được game dùng.** Tiền thưởng thật do `BlackjackApp.SettleHand` tính, có cộng Hot Table. `BlackjackGame.Payout` chỉ được công cụ Editor và các ca TC-BJK-6 cũ gọi. Nên chuyển TC-BJK-6 sang kiểm `SettleHand`, nếu không thì ca đó đang kiểm một hàm không chạy khi chơi.
-4. **Ca n + 1 của cả hai vòng lặp không sinh được.** `Value` vì chỉ có 4 Át, `RigPlayerCards` vì chỉ có 8 lá 2 và 3. Đây đúng là trường hợp "chú ý" trong bài giảng.
+4. **Ca n + 1 của vòng `while` (`Value`) và vòng chính của `RigPlayerCards` không sinh được.** Vòng `for` của `Value` không xác định được n nên chỉ cần 4 ca 0, 1, 2, k. `Value` vì chỉ có 4 Át, `RigPlayerCards` vì chỉ có 8 lá 2 và 3. Đây đúng là trường hợp "chú ý" trong bài giảng.
