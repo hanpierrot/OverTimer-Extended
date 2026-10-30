@@ -103,6 +103,8 @@ public class GameConfig : ScriptableObject
     public int doorParcelSlots = 4;
     [Tooltip("Clicks on a parcel before it springs open.")]
     public int parcelClicksToOpen = 3;
+    [Tooltip("How many empty boxes (left by unboxed parcels) can lie in the room at once. A new one recycles the oldest.")]
+    public int doorEmptyBoxSlots = 5;
     [Tooltip("Game seconds after a bill is issued before its tax letter lands at the door.")]
     public float taxLetterDelay = 10f;
     [Tooltip("How many letters can lie at the door at once. A new one pushes the oldest junk letter off.")]

@@ -212,6 +212,7 @@ public class CheatMenuController : MonoBehaviour
         AddCheat(TabAnnoyance, "Ring phone now", () => { if (PhoneController.Instance != null) PhoneController.Instance.Calls.ForceRingNow(); });
         AddCheat(TabAnnoyance, "Tax bill now", () => { if (ITRSService.Instance != null) ITRSService.Instance.ForceBillNow(); });
         AddCheat(TabAnnoyance, "Junk flyer now", () => { if (DoorController.Instance != null) DoorController.Instance.DropJunk(); });
+        AddCheat(TabAnnoyance, "Empty box now", () => { if (DoorController.Instance != null) DoorController.Instance.SpawnEmptyBox(); });
         AddCheat(TabAnnoyance, "Package arrives (empty box)", () => { if (ShopService.Instance != null) ShopService.Instance.Delivery.ShipJunk(0f); });
         AddCheat(TabAnnoyance, "Cat blocks Laptop", () => CatBlock(FindFirstObjectByType<DeskLaptopOpener>()));
         AddCheat(TabAnnoyance, "Cat blocks Phone", () => { if (PhoneController.Instance != null) CatBlock(PhoneController.Instance.GetComponent<PointerReceiver>()); });

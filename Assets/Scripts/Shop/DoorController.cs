@@ -2,19 +2,6 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-/// <summary>
-/// The door end of delivery (DESIGN §5.7). When an order arrives the doorbell rings and, unless the order was shipped
-/// "Leave it opened &amp; ready", a cardboard box joins the tower on the left of the door (Door view). The player clicks the
-/// box a few times (shake and sound), it springs open in a puff of smoke, the box goes back to the pool for the next
-/// delivery, and the items are Delivered: each one appears on the desk in a poof the next time the player looks at the
-/// Desk view (or at once if they already are). Nothing here blocks anything and nothing is lost: if the tower is full the
-/// order waits for a free spot.
-///
-/// Letters (Phase 3.2) lie scattered on the carpet to the right: a TAX letter shows up taxLetterDelay seconds after a bill
-/// is issued (clicking it opens the paper copy of the bill; it is recalled in a puff when the bill is settled anywhere),
-/// and junk mail arrives every 60-120 s of running clock (clicking it shows a joke flyer and throws it away). Each arrival
-/// rings the doorbell.
-/// </summary>
 public class DoorController : MonoBehaviour
 {
     public static DoorController Instance { get; private set; }
@@ -26,6 +13,14 @@ public class DoorController : MonoBehaviour
     [SerializeField] private float towerWobble = 0.25f;
     [SerializeField] private float shakeSeconds = 0.25f;
     [SerializeField] private float shakeStrength = 0.18f;
+
+    [Header("Empty boxes (Room view)")]
+    [SerializeField] private EmptyBox emptyBoxPrefab;
+    [Tooltip("Two opposite corners of the area where empty boxes can lie (world units, Room view). Any two diagonal points work. Defaults: the strip between the Door zone and the Desk zone, 1.5 inside each edge.")]
+    [SerializeField] private Vector2 emptyBoxCornerA = new Vector2(-5.3f, -4.45f);
+    [SerializeField] private Vector2 emptyBoxCornerB = new Vector2(7.78f, 2.5f);
+    [Tooltip("Scene view only: draw where empty boxes can appear (green), the bottom edge boxes drop to (yellow) and the boxes now lying there (cyan).")]
+    [SerializeField] private bool drawEmptyBoxGizmos = true;
 
     [Header("Effects and sound (all optional)")]
     [SerializeField] private PoofEffect poofPrefab;
@@ -61,9 +56,18 @@ public class DoorController : MonoBehaviour
     private readonly List<ShopItemBinding> _pendingReveal = new List<ShopItemBinding>();
     private float _boxHeight = 2f;
 
+    private readonly List<EmptyBox> _emptyBoxes = new List<EmptyBox>();
+    private readonly List<EmptyBox> _emptyBoxAge = new List<EmptyBox>(); 
+    private Vector3 _emptyBoxScale = Vector3.one;
+    private bool _hasEmptyBoxArea;
+    
+    public EmptyBoxArea EmptyBoxArea { get; private set; }
+    public bool HasEmptyBoxArea => _hasEmptyBoxArea;
+    public IReadOnlyList<EmptyBox> EmptyBoxes => _emptyBoxes;
+
     private readonly List<LetterView> _letterPool = new List<LetterView>();
     private JunkMailTimer _junkTimer;
-    private float _taxLetterLeft = -1f;     // game seconds until the tax letter lands (-1 = none coming)
+    private float _taxLetterLeft = -1f;
     private float _taxLetterDelay;
 
     private void Awake()
@@ -82,7 +86,6 @@ public class DoorController : MonoBehaviour
 
         if (parcelPrefab == null) { Debug.LogWarning("[Door] No parcel prefab assigned: parcels will not show."); return; }
 
-        // The pool is built once at the start of the run (one box per tower spot) and recycled for every delivery.
         for (int i = 0; i < Depot.Capacity; i++)
         {
             var view = Instantiate(parcelPrefab, transform);
@@ -91,7 +94,7 @@ public class DoorController : MonoBehaviour
             view.gameObject.SetActive(false);
             _pool.Add(view);
         }
-        var sr = _pool.Count > 0 ? _pool[0].GetComponentInChildren<SpriteRenderer>() : null;   // measured on a real instance (a prefab asset has no scene bounds)
+        var sr = _pool.Count > 0 ? _pool[0].GetComponentInChildren<SpriteRenderer>() : null;
         if (sr != null) _boxHeight = sr.bounds.size.y;
 
         if (poofPrefab != null)
@@ -102,12 +105,15 @@ public class DoorController : MonoBehaviour
                 _poofs.Add(puff);
             }
 
+        BuildEmptyBoxes(config);
+
         if (CameraRig.Instance != null) CameraRig.Instance.ViewChanged += HandleViewChanged;
     }
 
     private void OnDestroy()
     {
         DOTween.Kill(this);
+        foreach (var box in _emptyBoxes) if (box != null) box.Dropped -= HandleEmptyBoxDropped;
         if (CameraRig.Instance != null) CameraRig.Instance.ViewChanged -= HandleViewChanged;
         if (ITRSService.Instance != null)
         {
@@ -120,7 +126,7 @@ public class DoorController : MonoBehaviour
     private void Update()
     {
         if (Letters == null || GameManager.Instance.IsGameOver) return;
-        float dt = ClockService.Instance.GameDelta;                    // only while the clock runs
+        float dt = ClockService.Instance.GameDelta;
         if (dt <= 0f) return;
 
         if (_taxLetterLeft >= 0f)
@@ -131,9 +137,6 @@ public class DoorController : MonoBehaviour
         if (_junkTimer != null && _junkTimer.Tick(dt)) DropJunk();
     }
 
-    // ---- Arrivals ----
-
-    /// <summary>An order reached the door. Rings the bell; a "left opened" order goes straight to the desk.</summary>
     public void Receive(Order order)
     {
         if (order.leaveOpen)
@@ -146,17 +149,15 @@ public class DoorController : MonoBehaviour
         if (!order.leaveOpen && HintService.Instance != null) HintService.Instance.ShowOnce(HintId.PackageArrived);
     }
 
-    // ---- Tower ----
-
     private void HandleParcelAdded(Parcel parcel)
     {
         var view = _pool.Find(v => !v.gameObject.activeSelf);
-        if (view == null) return;                           // cannot happen: the pool is as big as the tower
+        if (view == null) return;
         view.Bind(parcel);
         view.gameObject.SetActive(true);
 
         Vector3 target = SpotOf(Depot.IndexOf(parcel));
-        view.transform.position = target + Vector3.up * 5f;  // drops in from above
+        view.transform.position = target + Vector3.up * 5f; 
         view.transform.DOMove(target, 0.35f).SetEase(Ease.OutBounce);
         AudioService.Play(SfxId.ParcelSlide);
     }
@@ -183,13 +184,13 @@ public class DoorController : MonoBehaviour
         {
             Poof(view.transform.position);
             view.transform.DOKill();
-            view.Unbind();                                  // the box goes back to the pool
+            view.Unbind();          
         }
         if (audioSource != null && boxOpenSound != null) audioSource.PlayOneShot(boxOpenSound);
 
+        SpawnEmptyBox();
         if (ShopService.Instance != null) ShopService.Instance.Deliver(parcel.itemIds);
 
-        // The boxes above slide down.
         for (int i = 0; i < Depot.Tower.Count; i++)
         {
             var v = _pool.Find(x => x.Data == Depot.Tower[i]);
@@ -204,9 +205,55 @@ public class DoorController : MonoBehaviour
         return new Vector3(b.x + wobble, b.y + index * _boxHeight * 0.98f, b.z);
     }
 
-    // ---- Items appearing on the desk ----
+    private void BuildEmptyBoxes(GameConfig config)
+    {
+        if (emptyBoxPrefab == null) { Debug.LogWarning("[Door] No empty box prefab assigned: unboxed parcels will leave no box."); return; }
 
-    /// <summary>An item was delivered: it pops onto the desk in a poof when the player is looking at the Desk view.</summary>
+        EmptyBoxArea = new EmptyBoxArea(emptyBoxCornerA, emptyBoxCornerB);
+        _hasEmptyBoxArea = true;
+        _emptyBoxScale = emptyBoxPrefab.transform.localScale;
+
+        for (int i = 0; i < Mathf.Max(1, config.doorEmptyBoxSlots); i++)
+        {
+            var box = Instantiate(emptyBoxPrefab, transform);
+            box.gameObject.name = "EmptyBox" + i;
+            box.Dropped += HandleEmptyBoxDropped;
+            box.gameObject.SetActive(false);
+            _emptyBoxes.Add(box);
+        }
+    }
+
+    /// <summary>Puts an empty box somewhere in the area. Uses a free one, else recycles the oldest (the unboxing flow calls this; tests and the cheat menu can too).</summary>
+    public EmptyBox SpawnEmptyBox()
+    {
+        if (!_hasEmptyBoxArea || _emptyBoxes.Count == 0) return null;
+
+        var box = _emptyBoxes.Find(b => !b.gameObject.activeSelf);
+        if (box == null) box = _emptyBoxAge.Find(b => b.gameObject.activeSelf); 
+        if (box == null) box = _emptyBoxes[0];
+        _emptyBoxAge.Remove(box);
+        _emptyBoxAge.Add(box);
+
+        box.transform.DOKill();
+        box.gameObject.SetActive(true);
+        Vector2 point = EmptyBoxArea.RandomPoint(RngService.Instance.Random);
+        box.transform.SetPositionAndRotation(new Vector3(point.x, point.y, box.transform.position.z), Quaternion.identity);
+        box.transform.localScale = _emptyBoxScale * 0.2f;
+        box.transform.DOScale(_emptyBoxScale, 0.25f).SetEase(Ease.OutBack).SetTarget(box.transform);
+
+        if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.EmptyBoxFirst);
+        return box;
+    }
+
+    private void HandleEmptyBoxDropped(EmptyBox box)
+    {
+        Vector2 at = box.transform.position;
+        if (EmptyBoxArea.Contains(at)) return;
+        Vector2 landing = EmptyBoxArea.DropPoint(at);                 // down to the bottom edge, x clamped into the area
+        box.transform.DOKill();
+        box.transform.DOMove(new Vector3(landing.x, landing.y, box.transform.position.z), 0.3f).SetEase(Ease.OutQuad).SetTarget(box.transform);
+    }
+
     public void RevealOnDesk(ShopItemBinding binding)
     {
         if (binding == null) return;
@@ -244,11 +291,9 @@ public class DoorController : MonoBehaviour
     {
         if (poofPrefab == null) return;
         var puff = _poofs.Find(p => !p.gameObject.activeSelf);
-        if (puff == null) puff = _poofs[0];                  // all busy (several items at once): restart the oldest
+        if (puff == null) puff = _poofs[0]; 
         puff.Play(position);
     }
-
-    // ---- Letters (tax letter, junk mail) ----
 
     private void StartLetters(GameConfig config)
     {
@@ -280,9 +325,9 @@ public class DoorController : MonoBehaviour
 
     private void HandleBillResolved()
     {
-        _taxLetterLeft = -1f;                                  // settled before the letter came
+        _taxLetterLeft = -1f;                       
         var letter = Letters.FirstOf(LetterKind.Tax);
-        if (letter != null) Letters.Remove(letter);            // an unopened or opened letter is recalled in a puff
+        if (letter != null) Letters.Remove(letter);    
     }
 
     private void DropTaxLetter()
@@ -294,7 +339,6 @@ public class DoorController : MonoBehaviour
         if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.MailTrayFirstBill);
     }
 
-    /// <summary>A piece of junk mail lands at the door now (the timer calls this; tests and the cheat menu can too).</summary>
     public void DropJunk()
     {
         var rng = RngService.Instance.Random;
@@ -313,7 +357,6 @@ public class DoorController : MonoBehaviour
         if (view == null) return;
         view.Bind(letter);
 
-        // Scattered on the carpet, not too far from the centre, each a little crooked (deterministic: RngService).
         var rng = RngService.Instance.Random;
         Vector3 c = letterCenter != null ? letterCenter.position : transform.position;
         float x = c.x + ((float)rng.NextDouble() * 2f - 1f) * letterSpread.x;
@@ -322,7 +365,6 @@ public class DoorController : MonoBehaviour
         view.transform.SetPositionAndRotation(new Vector3(x, y, c.z), Quaternion.Euler(0f, 0f, tilt));
         view.gameObject.SetActive(true);
 
-        // Newer letters lie on top.
         foreach (var sr in view.GetComponentsInChildren<SpriteRenderer>()) sr.sortingOrder = 4 + letter.id % 100 * 2 + (sr.transform == view.transform ? 0 : 1);
 
         Vector3 full = letterPrefab.transform.localScale;
@@ -346,12 +388,33 @@ public class DoorController : MonoBehaviour
 
         if (letter.kind == LetterKind.Tax)
         {
-            // The paper copy of the SAME bill the Taxes app shows; paying here or there settles both.
             if (taxPanel != null && ITRSService.Instance != null && ITRSService.Instance.HasPendingAssessment) taxPanel.Show();
             return;
         }
 
         if (HintService.Instance != null) HintService.Instance.Show(HintId.JunkFlyer, letter.text);
-        Letters.Remove(letter);                                // read it, bin it
+        Letters.Remove(letter);   
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!drawEmptyBoxGizmos) return;
+
+        // Play mode uses the built area; in Edit mode the corners are read live so moving them updates the picture.
+        EmptyBoxArea area = _hasEmptyBoxArea ? EmptyBoxArea : new EmptyBoxArea(emptyBoxCornerA, emptyBoxCornerB);
+
+        Vector3 centre = new Vector3((area.Min.x + area.Max.x) * 0.5f, (area.Min.y + area.Max.y) * 0.5f, 0f);
+        Vector3 size = new Vector3(area.Max.x - area.Min.x, area.Max.y - area.Min.y, 0.1f);
+        Gizmos.color = new Color(0.2f, 1f, 0.3f, 0.15f);
+        Gizmos.DrawCube(centre, size);
+        Gizmos.color = new Color(0.2f, 1f, 0.3f, 1f);
+        Gizmos.DrawWireCube(centre, size);
+
+        Gizmos.color = Color.yellow;   
+        Gizmos.DrawLine(new Vector3(area.Min.x, area.Min.y, 0f), new Vector3(area.Max.x, area.Min.y, 0f));
+
+        Gizmos.color = Color.cyan;
+        foreach (var box in _emptyBoxes)
+            if (box != null && box.gameObject.activeSelf) Gizmos.DrawWireCube(box.transform.position, new Vector3(2.5f, 2.5f, 0.1f));
     }
 }

@@ -2475,6 +2475,10 @@ MonoBehaviour:
   towerWobble: 0.25
   shakeSeconds: 0.25
   shakeStrength: 0.18
+  emptyBoxPrefab: {fileID: 617110815113577557, guid: bf2b2a89d6fa46d0a91626363318d156, type: 3}
+  emptyBoxCornerA: {x: -5.3, y: -8}
+  emptyBoxCornerB: {x: 7.78, y: -5}
+  drawEmptyBoxGizmos: 1
   poofPrefab: {fileID: 6895010090408375707, guid: 898fbb0e68f035b43bfc03c9ae95ddc5, type: 3}
   audioSource: {fileID: 2147219721}
   doorbellSound: {fileID: 8300000, guid: e9f00fd3e8f991246921db06b0e4f157, type: 3}

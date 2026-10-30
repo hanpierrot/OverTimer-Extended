@@ -26,7 +26,7 @@ public static class HintCatalog
             case HintId.BlackjackLeaveMidHand: return "Leaving now forfeits your ante and hand.";
             case HintId.WireOpen: return "Drag each plug to the socket of the same colour.";
             case HintId.PhoneFirstRing: return "The phone is ringing! Click it. The clock runs faster until it stops.";
-            case HintId.MailTrayFirstBill: return "A tax bill arrived. Pay it in the Taxes app or click the mail tray.";
+            case HintId.MailTrayFirstBill: return "A tax bill arrived. Pay it in the Taxes app or open the letter at the door.";
             case HintId.CatFirstBlock: return "Drag the cat to move it.";
             case HintId.ShopPurchased: return "Your item is on the desk.";
             case HintId.PackageArrived: return "A package is at the door. Click the door.";
@@ -37,6 +37,7 @@ public static class HintCatalog
             case HintId.ShopFirstOpen: return "Add items to the cart, pick shipping, then Buy.";
             case HintId.LicenseBought: return "The license is in your Inbox. Press Activate to unlock the app.";
             case HintId.DebuffDismissCost: return "Not enough money to dismiss it. Pawning an active debuff costs ${0}.";
+            case HintId.EmptyBoxFirst: return "An empty box is left in the room. In the Room view, drag it onto the Printer to sell it.";
             case HintId.FirstPawn: return "The Printer pays for what you drop on it. A pawned item is gone.";
             case HintId.MotherLodeTease: return "The ore is singing. One more full vein.";
             case HintId.TicketCursed: return "Something is wrong with this ticket. Cash Out now.";
