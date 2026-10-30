@@ -422,4 +422,95 @@ public class DoorTaxTests : GameSceneTest
             "Hóa đơn kế tính bình thường");
         Assert.Greater(due, 0);
     }
+
+    // ---------- TC-DOR-10 ----------
+
+    [UnityTest]
+    public IEnumerator TC_DOR_10_HopRongSauKhiMoBuuKien_KeoLenPrinter()
+    {
+        PhoneOff();
+        Buy("power_bank");                                          // giao Standard
+        yield return WaitForArrival();
+        yield return GoTo(CameraView.Door);
+        var view = ViewOf(Door.Depot.Tower[0]);
+        for (int i = 0; i < Config.parcelClicksToOpen; i++) Click(view);
+        Assert.AreEqual(0, Door.Depot.Tower.Count, "Bưu kiện đã mở");
+
+        var boxes = Door.EmptyBoxes.Where(b => b.gameObject.activeSelf).ToArray();
+        Assert.AreEqual(1, boxes.Length, "Mở bưu kiện để lại đúng một hộp rỗng");
+        var box = boxes[0];
+        Assert.IsTrue(Door.EmptyBoxArea.Contains(box.transform.position), "Hộp nằm trên sàn giữa vùng cửa và vùng bàn");
+        Assert.AreEqual(JunkTier.Small, TestHooks.GetField<JunkTier>(box.GetComponent<JunkItem>(), "tier"), "Hộp rỗng là Junk nhỏ");
+
+        // Ở góc Room, cú nhấp tại hộp trúng chính hộp (hộp nhấp được ở Room, DESIGN §4.1).
+        yield return GoTo(CameraView.Room);
+        var col = box.GetComponent<Collider2D>();
+        Assert.AreEqual(col, (Collider2D)TestHooks.Call(InputManager.Instance, "PickTarget", (Vector2)col.bounds.center), "Room: nhấp trúng hộp rỗng");
+
+        // Kéo lên Printer: cầm đồ như Junk nhỏ.
+        int before = MoneyService.Instance.Current;
+        Pawning.PawnOnto(box);
+        Assert.AreEqual(before + Config.junkSmallPawnValue, MoneyService.Instance.Current, "Money + giá Junk nhỏ");
+        Assert.IsFalse(box.gameObject.activeSelf, "Hộp biến mất sau khi bán");
+    }
+
+    // ---------- TC-TAX-10 ----------
+
+    [UnityTest]
+    public IEnumerator TC_TAX_10_ThongBaoHoaDon_InboxBadgeVaGoiY()
+    {
+        Assert.AreEqual(PhonePower.State.On, Phone.Power.Current, "Phone bật");
+        int due = IssueBill(earned: 0);                              // không có thu nhập: hóa đơn tối thiểu
+        Assert.AreEqual(Config.billMinimum, due, "Hóa đơn tối thiểu");
+
+        var msg = Phone.Inbox.All[0];
+        Assert.AreEqual(MessageKind.Tax, msg.kind);
+        Assert.AreEqual($"Tax bill ${due}", msg.title, "Inbox có “Tax bill $<số tiền>” ở đầu");
+        Assert.AreEqual("app:taxes", msg.actionId, "Hành động mở ứng dụng Taxes");
+
+        // Inbox: chọn thư, nút hành động mở Taxes.
+        DeviceLayer.Instance.OpenPhone();
+        yield return Seconds(0.5f);
+        Assert.IsFalse(Phone.IsRinging, "Không có cuộc gọi chen vào");
+        Home.OpenApp("inbox");
+        yield return Frames(2);
+        var inbox = TestHooks.Find<InboxScreen>();
+        TestHooks.Call(inbox, "Select", 0);
+        yield return Frames(2);
+        var action = TestHooks.GetField<UnityEngine.UI.Button>(inbox, "actionButton");
+        Assert.IsTrue(action.gameObject.activeInHierarchy && action.interactable, "Thư thuế có nút hành động");
+        Assert.AreEqual("Open", TestHooks.GetField<TMPro.TMP_Text>(inbox, "actionLabel").text);
+        action.onClick.Invoke();
+        yield return Frames(2);
+        Assert.IsTrue(TestHooks.GetField<GameObject>(Home, "taxesWindow").activeInHierarchy, "Nút Open mở ứng dụng Taxes");
+
+        // Badge Taxes bật đến khi trả.
+        Assert.IsTrue(TaxesBadge.activeSelf, "Badge Taxes bật khi có hóa đơn");
+        yield return Seconds(1f);
+        Assert.IsTrue(TaxesBadge.activeSelf, "Badge vẫn bật khi chưa trả");
+        TestHooks.SetMoney(due);
+        yield return null;
+        TestHooks.ClickButton(TestHooks.Find<TaxesScreen>(), "payButton");
+        yield return Frames(2);
+        Assert.IsFalse(Itrs.HasPendingAssessment, "Đã trả");
+        Assert.IsFalse(TaxesBadge.activeSelf, "Badge Taxes tắt sau khi trả");
+    }
+
+    [Test]
+    public void TC_TAX_10b_GoiYHoaDonDauTien_TheoCauMoi()
+    {
+        IssueBill();
+        TestHooks.Call(Door, "DropTaxLetter");                       // thư thuế đến cửa
+        Assert.AreEqual(1, HintCount(HintId.MailTrayFirstBill), "Gợi ý hóa đơn đầu tiên hiện một lần");
+        string text = HintCatalog.Get(HintId.MailTrayFirstBill);
+        StringAssert.Contains("Taxes app", text);
+        StringAssert.Contains("letter at the door", text, "Câu mới chỉ tới thư ở cửa (B7)");
+        StringAssert.DoesNotContain("mail tray", text, "Không còn nhắc Mail Tray");
+
+        TestHooks.SetMoney(10000);
+        Assert.IsTrue(Itrs.Pay(), "Trả hóa đơn đầu");                 // hết hóa đơn, thư thuế bị gỡ
+        IssueBill();
+        TestHooks.Call(Door, "DropTaxLetter");
+        Assert.AreEqual(1, HintCount(HintId.MailTrayFirstBill), "Hóa đơn thứ hai không hiện lại (ShowOnce)");
+    }
 }

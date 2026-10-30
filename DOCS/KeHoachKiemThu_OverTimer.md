@@ -715,7 +715,7 @@ Nút Ignore **đã bị bỏ**. Mỗi hóa đơn có TaxDeadline 30 s Clock ch�
 | TC-TAX-7 | Không phát hóa đơn chồng | Luồng điều khiển | PM | Cao | Hóa đơn đang mở | Chờ 45 s Clock chạy (trả hóa đơn ở giây thứ 25 của hạn) | Không có hóa đơn thứ hai khi hóa đơn đầu còn mở; hóa đơn kế đến 45 s sau khi hóa đơn đầu được xử lý | | |
 | TC-TAX-8 | Trả ở một nơi, cả hai nơi đều xong | Bảng quyết định | PM | Cao | Hóa đơn \$30; thư thuế đã nằm ở cửa | (a) Trả ở ứng dụng Taxes; (b) trả ở panel Tax giấy | Cả hai: Money − 30; thư thuế biến mất (puff); badge Taxes tắt; panel Tax nếu đang mở tự đóng | | |
 | TC-TAX-9 | Nút Pay theo số dư | Giá trị biên | PM | TB | Hóa đơn \$30 | Money = 29 / 30 | Nút Pay bị vô hiệu / được bật (cả ở ứng dụng Taxes và panel giấy) | | |
-| TC-TAX-10 | Thông báo hóa đơn | Phân vùng tương đương | PM | TB | Phone bật | ITRS phát hóa đơn \$20 | Inbox có “Tax bill \$20” với hành động “Open Taxes”; icon Taxes có badge đến khi trả | | |
+| TC-TAX-10 | Thông báo hóa đơn | Phân vùng tương đương | PM | TB | Phone bật | ITRS phát hóa đơn \$20; thư thuế đến cửa | Inbox có “Tax bill \$20” với nút “Open” mở ứng dụng Taxes; icon Taxes có badge đến khi trả; gợi ý hóa đơn đầu tiên hiện một lần với câu mới “A tax bill arrived. Pay it in the Taxes app or open the letter at the door.” (Phụ lục B, B7) | | |
 | TC-TAX-11 | Fvck The Tax và Tax Increase | Bảng quyết định | PM | TB | (a) Không có hóa đơn; (b) hóa đơn \$30 đang mở | Đặt Fvck The Tax; đặt Tax Increase; Pawn Fvck The Tax trước khi hóa đơn kế đến | Fvck The Tax: hóa đơn kế \$0, xử lý như hóa đơn thường; Pawn trước: hóa đơn kế tính bình thường. Tax Increase: (a) hóa đơn xuất hiện ngay; (b) thành \$60 và panel Tax hiện \$60 ngay | | |
 
 ### 4.5.8 Cửa, bưu kiện và thư
@@ -733,7 +733,7 @@ Góc nhìn Door có tháp bưu kiện (tối đa 4, nhấp 3 lần để mở) v
 | TC-DOR-7 | Thư thuế | Bảng quyết định | PM | Cao | Hóa đơn vừa phát | (a) Chờ 10 s; (b) trả hóa đơn sau 5 s | (a) Thư thuế dấu đỏ nằm trên thảm; nhấp mở panel Tax; (b) thư không bao giờ xuất hiện | | |
 | TC-DOR-8 | Thư rác | Phân vùng tương đương | PM | Thấp | Ván đã chạy > 60 s | Chờ thư rác dấu xanh; nhấp vào | Chuông cửa reo; nhấp hiện tờ rơi đùa (gợi ý JunkFlyer), thư bị bỏ đi | | |
 | TC-DOR-9 | Restart xóa thư, bưu kiện, đơn hàng | Luồng điều khiển | PM | TB | Có bưu kiện ở cửa, thư trên thảm, một đơn đang giao | Restart | Cửa trống; không còn đơn đang giao; Shop như đầu ván | | |
-| TC-DOR-10 | **\[Dự kiến\]** Hộp rỗng sau khi mở bưu kiện | Phân vùng tương đương | PM | Thấp | Vừa mở một bưu kiện (giao Standard) | Kéo hộp rỗng lên Printer | Theo DESIGN §5.7, §5.11: hộp rỗng là Junk nhỏ, Money + \$5. Mã chưa có hộp rỗng, đang được bổ sung (Phụ lục B, B5) | | |
+| TC-DOR-10 | Hộp rỗng sau khi mở bưu kiện | Phân vùng tương đương | PM | Thấp | Vừa mở một bưu kiện (giao Standard) | Về góc Room; kéo hộp rỗng lên Printer | Theo DESIGN v2.4 §4.1, §5.7, §5.11: hộp rỗng nằm trên sàn giữa vùng cửa và vùng bàn, nhấp được ở góc Room; là Junk nhỏ; thả lên Printer: Money + \$5 (junkSmallPawnValue), hộp biến mất | | |
 
 ## 4.6 Kiểm thử vòng đời ván chơi và lưu dữ liệu
 
@@ -985,7 +985,7 @@ Camera cuộn dọc cũ **đã bị xóa** (Invariant I9 mới): chỉ có ba g�
 | Core Services (4.2) | 30 | | | | 21 cũ + 9 lõi Clock (4.2.4) |
 | Kiếm tiền (4.3) | 76 | | | 4 cũ không chạy (xem Phụ lục A) | 53 cũ (gồm 19 ca Billiards) + 23 mới: vé số/Egg Timer 9 (4.3.6), kết thúc cơ chế 14 (4.3.7). TC-MIN-4, TC-TKT-9, TC-BJK-10 được thay bằng 4.3.7; TC-MIN-8 bị bỏ (CaveInLoss đã cắt) |
 | Thẻ bài (4.4) | 36 | | | 2 treo (TC-CRD-10, TC-WIN-9) | 24 cũ + 12 mới (4.4.4). Treo: xem Phụ lục A, DESIGN v2.1 (I5) đã cho phép panel thông tin và cutscene đóng băng Clock |
-| Gây nhiễu, Pawn, Shop (4.5) | 79 | | | 1 (TC-DOR-10) | 16 cũ + Shop 15, Buyback 7, Phone 20, thuế 11, cửa/thư 10. Các ca từng lệch đặc tả: xem Phụ lục B (đã chốt) |
+| Gây nhiễu, Pawn, Shop (4.5) | 79 | | | | 16 cũ + Shop 15, Buyback 7, Phone 20, thuế 11, cửa/thư 10. Các ca từng lệch đặc tả: xem Phụ lục B (đã chốt) |
 | Vòng đời, lưu ván (4.6) | 13 | | | | 9 cũ (4.6.1) + 4 mới (4.6.2); TC-GAM-1b nay chạy được (cả 10 EndReason đã cài đặt) |
 | Hệ thống WebGL (4.7.5) | 5 | | | | |
 | Hints & Tutorial (4.7.6) | 7 | | | 1 treo (TC-HNT-7) | Treo: xem Phụ lục A |
@@ -1034,13 +1034,13 @@ Nguyên tắc: kết quả mong đợi lấy từ đặc tả. Các ca bổ sung
 
 | # | Nội dung | DESIGN.md nói | Mã nguồn làm | Ca liên quan | Quyết định |
 |---|---|---|---|---|---|
-| B1 | Trọng số người gọi | §5.9: Telemarketer 40 / Client 25 / Unknown 25 / ITRS 10 | 25 / 25 / 40 / 10 (PhoneConfig, GameConfig). PROJECT.md ghi là vấn đề mở N16, chưa quyết | TC-PHN-8 | Theo code (đã chốt 29/10) |
+| B1 | Trọng số người gọi | §5.9: Telemarketer 40 / Client 25 / Unknown 25 / ITRS 10 | 25 / 25 / 40 / 10 (PhoneConfig, GameConfig). N16 đã đóng: DESIGN v2.3 theo code (28/10) | TC-PHN-8 | Theo code (đã chốt 29/10) |
 | B2 | Cuộc gọi đến hạn khi máy tắt | §5.9: một cuộc gọi bị từ chối “được thử lại sau, không bao giờ bị bỏ”; có hàng đợi | Ghi là cuộc gọi nhỡ và lên lịch cuộc mới, không xếp hàng (CallScheduler) | TC-PHN-5 | Theo code (đã chốt 29/10) |
 | B3 | Phone sau khi Cable Eater hết hạn | §5.4: “Phone và Laptop cùng tắt trong 20 s” | Laptop mở lại sau 20 s, còn Phone vẫn tắt đến khi người chơi bấm nguồn (PhonePower.ReleaseForceOff) | TC-CRD-20 | Theo code (đã chốt 29/10) |
 | B4 | Banner thông báo | §5.9: banner hiện tối đa 3, mỗi cái 4 s | Logic BannerQueue còn, nhưng giao diện banner đã bị gỡ (quyết định A12 của Ari) | TC-PHN-18 | Bỏ logic banner; TC-PHN-18 sẽ bị loại |
-| B5 | Hộp rỗng sau khi mở bưu kiện | §5.7, §5.11: để lại hộp các-tông là Junk nhỏ, cầm đồ được \$5 | Chưa cài đặt (PROJECT.md A16: “làm sau khi có hình”) | TC-DOR-10 \[Dự kiến\] | Đang bổ sung vào code; TC-DOR-10 chạy khi xong |
+| B5 | Hộp rỗng sau khi mở bưu kiện | §5.7, §5.11: để lại hộp các-tông là Junk nhỏ, cầm đồ được \$5 | Đã cài đặt (commit 88e77ae của Han, 29/10; PROJECT.md A31; DESIGN v2.4) | TC-DOR-10 | Theo code (đã cài 29/10); TC-DOR-10 đã chạy |
 | B6 | Bố cục Laptop và Phone | §5.9: hai thiết bị đặt cạnh nhau | Phone gắn ở mép phải Laptop, nhấp Phone thì Laptop trượt đi (quyết định A3 của Ari); DESIGN chưa cập nhật | TC-CAM-6 | Theo code (đã chốt 29/10) |
-| B7 | Gợi ý hóa đơn đầu tiên | §5.16: MailTrayFirstBill nhắc “click the mail tray” | Mail Tray đã bỏ, thư thuế ở cửa; câu gợi ý có thể gây hiểu nhầm | (kiểm tra cùng TC-TAX-10) | Sửa câu gợi ý; TC-TAX-10 kiểm theo câu mới |
+| B7 | Gợi ý hóa đơn đầu tiên | §5.16: MailTrayFirstBill nhắc “click the mail tray” | Mail Tray đã bỏ, thư thuế ở cửa. Câu gợi ý đã sửa thành “…or open the letter at the door.” (commit 88e77ae, DESIGN v2.3) | TC-TAX-10 | Đã sửa câu gợi ý; TC-TAX-10 kiểm theo câu mới |
 
 ### Phụ lục C. Mã kiểm thử tự động cho các ca mới (cập nhật 29/10/2026)
 
@@ -1268,9 +1268,20 @@ HoverInputTests dùng một chuột ảo của Input System (InputSystem.AddDevi
   - TC-ALT-14: bảng lịch sử nằm trong màn kết thúc ván (EndGamePanel), chỉ hiện sau GameOver. Ván thứ 4 bỏ cutscene để màn kết thúc hiện ngay.
   - TC-FBK-8: điểm “rời đi” và điểm vùng Back được chọn theo vật mà InputManager thật sự trúng.
 
+**Play Mode – đợt 10 (sau khi merge main 88e77ae: hộp rỗng và câu gợi ý hóa đơn): 2 ca, 3 hàm test** (thêm vào PlayMode/DoorTaxTests.cs):
+
+| Ca | Hàm test |
+|---|---|
+| TC-DOR-10 | DoorTaxTests.TC_DOR_10_HopRongSauKhiMoBuuKien_KeoLenPrinter (luồng thật: mua, giao Standard, mở ở cửa, về Room, cầm đồ). Các chi tiết khác của hộp rỗng (giới hạn 5 hộp, tái dùng hộp cũ nhất, thả ngoài vùng, đơn Leave open không có hộp, gợi ý EmptyBoxFirst) do test của Han phủ: PlayMode/EmptyBoxTests.cs (8 hàm), EditMode/EmptyBoxAreaTests.cs |
+| TC-TAX-10 | DoorTaxTests.TC_TAX_10_ThongBaoHoaDon_InboxBadgeVaGoiY, TC_TAX_10b_GoiYHoaDonDauTien_TheoCauMoi |
+
+Nút hành động của thư thuế trong Inbox ghi “Open” (không phải “Open Taxes” như bản cũ của ca); nhấp vào thì mở ứng dụng Taxes. Gợi ý hóa đơn đầu tiên hiện khi thư thuế đến cửa (DoorController.DropTaxLetter), không hiện ngay lúc ITRS phát hóa đơn.
+
+**Kết quả chạy:** Unity Test Runner (Play Mode, 30/10/2026): **3/3 Đạt**; EmptyBoxTests của Han 8/8 Đạt, Edit Mode 173/173 Đạt (gồm EmptyBoxAreaTests); Console không có lỗi mới. Đây là lần đầu code hộp rỗng được biên dịch và chạy trong Editor. Đợt này không làm kiểm tra độ nhạy riêng.
+
 **Kiểm thử thủ công (cột Mức = TC), không tự động hóa:** TC-CAM-9 (làm mờ trên bản WebGL). Các phần “chưa kiểm tự động” / “vẫn kiểm thủ công” ở hai bảng trên cũng kiểm thủ công.
 
-**Chờ:** TC-DOR-10 (B5), TC-TAX-10 (B7); TC-PHN-18 sẽ bỏ (B4).
+**Chờ:** TC-PHN-18 sẽ bỏ (B4).
 
 **Kiểm thử luồng điều khiển Blackjack (4.3.8) – 48 ca, 48 hàm test:**
 
