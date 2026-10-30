@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 640" width="740" height="640" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
+    </marker>
+  </defs>
+  <rect width="740" height="640" fill="#fff"/>
+
+  <!-- Mũi tên -->
+  <g fill="none" stroke="#000" stroke-width="1.6" marker-end="url(#arr)">
+    <line x1="140" y1="50" x2="189" y2="50"/>
+    <line x1="340" y1="50" x2="394" y2="50"/>
+    <polyline points="505,50 705,50 705,360 526,360"/>
+    <line x1="450" y1="78" x2="450" y2="119"/>
+    <line x1="420" y1="160" x2="262" y2="219"/>
+    <line x1="450" y1="160" x2="450" y2="219"/>
+    <line x1="480" y1="160" x2="628" y2="219"/>
+    <polyline points="220,220 220,140 374,140"/>
+    <polyline points="255,260 255,350 374,350"/>
+    <line x1="450" y1="260" x2="450" y2="329"/>
+    <polyline points="635,260 635,340 526,340"/>
+    <line x1="450" y1="370" x2="450" y2="419"/>
+    <line x1="450" y1="460" x2="450" y2="509"/>
+    <polyline points="375,530 85,530 85,71"/>
+  </g>
+
+  <!-- Trạng thái ván (khung trắng bo góc) -->
+  <g stroke="#000" stroke-width="1.6" fill="#fff">
+    <rect x="30" y="30" width="110" height="40" rx="18"/>
+    <rect x="375" y="120" width="150" height="40" rx="18"/>
+    <rect x="375" y="330" width="150" height="40" rx="18"/>
+    <polygon points="450,22 505,50 450,78 395,50"/>
+  </g>
+
+  <!-- Hàm được kiểm thử luồng điều khiển (khung xanh) -->
+  <g stroke="#1f4e9c" stroke-width="1.8" fill="#e8f0ff">
+    <rect x="190" y="30" width="150" height="40"/>
+    <rect x="190" y="220" width="130" height="40"/>
+    <rect x="385" y="220" width="130" height="40"/>
+    <rect x="580" y="220" width="110" height="40"/>
+    <rect x="345" y="420" width="210" height="40"/>
+  </g>
+  <g stroke="#000" stroke-width="1.6" fill="#fff">
+    <rect x="375" y="510" width="150" height="40"/>
+  </g>
+
+  <g font-size="14" text-anchor="middle" dominant-baseline="central" fill="#000">
+    <text x="85" y="50">Idle (chờ)</text>
+    <text x="265" y="50" font-weight="bold">Deal()</text>
+    <text x="450" y="50">Natural?</text>
+    <text x="450" y="140">PlayerTurn</text>
+    <text x="255" y="240" font-weight="bold">Hit()</text>
+    <text x="450" y="240" font-weight="bold">DoubleDown()</text>
+    <text x="635" y="240" font-weight="bold">Stand()</text>
+    <text x="450" y="350">Resolved</text>
+    <text x="450" y="440" font-weight="bold">SettleHand()</text>
+    <text x="450" y="530">Reset()</text>
+  </g>
+
+  <!-- Nhãn nhánh, đặt cách xa đường kẻ -->
+  <g font-size="12" fill="#c00" font-weight="bold">
+    <text x="600" y="40" text-anchor="middle">có</text>
+    <text x="462" y="102">không</text>
+    <text x="210" y="185" text-anchor="end">≤ 21</text>
+    <text x="300" y="340" text-anchor="middle">&gt; 21</text>
+  </g>
+
+  <!-- Ghi chú -->
+  <g font-size="12" fill="#333" font-style="italic">
+    <text x="265" y="92" text-anchor="middle">gọi RigPlayerCards() khi ván Charlie</text>
+    <text x="565" y="440">trả tiền, Hot Table</text>
+    <text x="30" y="590">Khung xanh: hàm được kiểm thử luồng điều khiển.</text>
+    <text x="30" y="610">Value() (tính điểm) được gọi bên trong Deal, Hit, DoubleDown và Stand.</text>
+  </g>
+</svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 825" width="480" height="825" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect width="480" height="825" fill="#fff"/>
+<g fill="none" stroke="#000" stroke-width="1.6" marker-end="url(#arr)">
+<polyline points="200.0,38.0 200.0,71.0"/>
+<polyline points="182.0,90.0 89.0,90.0"/>
+<polyline points="200.0,108.0 200.0,151.0"/>
+<polyline points="70.0,108.0 70.0,720.0 181.0,720.0"/>
+<polyline points="200.0,188.0 200.0,231.0"/>
+<path d="M214.8,239.8 Q265,205 314.4,239.2"/>
+<path d="M315.2,260.2 Q265,295 215.6,260.8"/>
+<polyline points="200.0,268.0 200.0,311.0"/>
+<polyline points="218.0,330.0 301.0,330.0"/>
+<polyline points="200.0,348.0 200.0,391.0"/>
+<polyline points="218.0,410.0 301.0,410.0"/>
+<polyline points="200.0,428.0 200.0,471.0"/>
+<polyline points="218.0,490.0 301.0,490.0"/>
+<polyline points="200.0,508.0 200.0,551.0"/>
+<polyline points="338.0,330.0 420.0,330.0 420.0,650.0 219.0,650.0"/>
+<polyline points="338.0,410.0 420.0,410.0 420.0,650.0 219.0,650.0"/>
+<polyline points="338.0,490.0 420.0,490.0 420.0,650.0 219.0,650.0"/>
+<polyline points="200.0,588.0 200.0,631.0"/>
+<polyline points="200.0,668.0 200.0,701.0"/>
+<polyline points="200.0,738.0 200.0,758.0"/>
+</g>
+<g stroke="#000" stroke-width="1.6" fill="#fff">
+<circle cx="200" cy="30" r="8" fill="#000"/>
+<circle cx="200" cy="90" r="18"/>
+<circle cx="70" cy="90" r="18"/>
+<circle cx="200" cy="170" r="18"/>
+<circle cx="200" cy="250" r="18"/>
+<circle cx="330" cy="250" r="18"/>
+<circle cx="200" cy="330" r="18"/>
+<circle cx="320" cy="330" r="18"/>
+<circle cx="200" cy="410" r="18"/>
+<circle cx="320" cy="410" r="18"/>
+<circle cx="200" cy="490" r="18"/>
+<circle cx="320" cy="490" r="18"/>
+<circle cx="200" cy="570" r="18"/>
+<circle cx="200" cy="650" r="18"/>
+<circle cx="200" cy="720" r="18"/>
+<circle cx="200" cy="770" r="11"/><circle cx="200" cy="770" r="6" fill="#000"/>
+</g><g font-size="14" text-anchor="middle" dominant-baseline="central" fill="#000">
+<text x="200" y="90">1</text>
+<text x="70" y="90">2</text>
+<text x="200" y="170">3</text>
+<text x="200" y="250">4</text>
+<text x="330" y="250">5</text>
+<text x="200" y="330">6</text>
+<text x="320" y="330">7</text>
+<text x="200" y="410">8</text>
+<text x="320" y="410">9</text>
+<text x="200" y="490">10</text>
+<text x="320" y="490">11</text>
+<text x="200" y="570">12</text>
+<text x="200" y="650">13</text>
+<text x="200" y="720">14</text>
+</g><g font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central" fill="#c00">
+<text x="135.5" y="78.0">T</text>
+<text x="212.0" y="129.5">F</text>
+<text x="264.9" y="234.2">T</text>
+<text x="212.0" y="289.5">F</text>
+<text x="259.5" y="342.0">T</text>
+<text x="212.0" y="369.5">F</text>
+<text x="259.5" y="422.0">T</text>
+<text x="212.0" y="449.5">F</text>
+<text x="259.5" y="502.0">T</text>
+<text x="212.0" y="529.5">F</text>
+</g>
+<text x="240.0" y="815" font-size="12" text-anchor="middle" fill="#555">Stand(): P = 5, C(Vg) = 6</text>
+</svg>
