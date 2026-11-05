@@ -7934,7 +7934,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000002, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.3
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000002, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7974,7 +7974,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000003, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_Size.y
-      value: 16.5
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000005, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: target
@@ -8003,7 +8003,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000002, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000002, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8043,7 +8043,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000003, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_Size.y
-      value: 8
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000006, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: 'allowedViews.Array.data[0]'
@@ -8072,7 +8072,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000002, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000002, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8112,7 +8112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000003, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: m_Size.y
-      value: 8
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000006, guid: c1a4e7d2b9f34a60a5d8e3b7f2c91d04, type: 3}
       propertyPath: 'allowedViews.Array.data[0]'
@@ -9402,5 +9402,5 @@ SceneRoots:
   - {fileID: 518587556}
   - {fileID: 799374795}
   - {fileID: 1283844560}
-  - {fileID: 1647024598}
   - {fileID: 7500000000000000002}
+  - {fileID: 1647024598}

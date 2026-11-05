@@ -32,6 +32,7 @@ public class Pawn : MonoBehaviour
         receiver.DragStart -= HandleDragStart;
         receiver.DragUpdate -= HandleDragUpdate;
         receiver.DragEnd -= HandleDragEnd;
+        StopDragSound();                       // a disabled Printer must not leave its loop running
     }
 
     private void HandleDragStart(Vector2 worldPos)
@@ -43,6 +44,13 @@ public class Pawn : MonoBehaviour
         audioSource.Play();
     }
 
+    private void StopDragSound()
+    {
+        if (audioSource == null) return;
+        audioSource.Stop();
+        audioSource.loop = false;              // the shared "Audio" source must not stay looping for other users
+    }
+
     private void HandleDragUpdate(Vector2 worldPos)
     {
         transform.position = worldPos;
@@ -50,7 +58,7 @@ public class Pawn : MonoBehaviour
 
     private void HandleDragEnd(Vector2 worldPos)
     {
-        if (audioSource != null) audioSource.Stop();
+        StopDragSound();
         transform.position = _initialPosition;
     }
 

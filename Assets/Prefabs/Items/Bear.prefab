@@ -168,7 +168,7 @@ MonoBehaviour:
   wobbleAngle: 5
   wobbleDuration: 0.4
   wobbleCycles: 3
-  pawnable: 0
+  pawnable: 1
 --- !u!114 &5817505227374069763
 MonoBehaviour:
   m_ObjectHideFlags: 0

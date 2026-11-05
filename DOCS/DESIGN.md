@@ -580,10 +580,11 @@ Drag the **Printer** (the Pawn object) onto a pawnable object, or drag a small p
 | Card Box | $32 (80% of $40) | catalog |
 | Lucky Nine stack | $24 (80% of $30) | catalog |
 | Power Bank | $20 (80% of $25) | catalog |
+| Bear (Click Task, starting kit) | $32 (80% of its $40 catalog value) | `bear.asset` `catalogValue` |
 | Junk (small / medium / large), including the empty boxes of unboxed parcels | $5 / $15 / $30 | `junkSmallPawnValue` / `junkMediumPawnValue` / `junkLargePawnValue` |
 | A card on the desk | the card's `pawnValue` | `CardSO` |
 
-**Not pawnable:** the starting kit except the Laptop (Egg Timer, Bear, Picture, Triple Match stack, Wire Task, Printer, Collection), licenses, Meter, Clock, Phone, Mail Tray, Cat, and a **triggered Final Countdown card** (§5.14). Pawning the Phone would delete an entire pressure system. Trying to Pawn a protected object shows a hint. A debuff that is still active is the exception to "a card pays its `pawnValue`": see §5.4 (it costs `debuffDismissFee`).
+**Not pawnable:** the starting kit except the Laptop and the Bear (Egg Timer, Picture, Triple Match stack, Wire Task, Printer, Collection), licenses, Meter, Clock, Phone, Mail Tray, Cat, and a **triggered Final Countdown card** (§5.14). Pawning the Phone would delete an entire pressure system. Trying to Pawn a protected object shows a hint. A debuff that is still active is the exception to "a card pays its `pawnValue`": see §5.4 (it costs `debuffDismissFee`).
 
 **Pawnable interface.** `IPawnable` exposes `PawnValue`, `CanBePawned` and `OnPawned()`. After paying out, `Pawn` calls `OnPawned()`. Most objects deactivate themselves there; `CardItem` returns to its pool instead.
 

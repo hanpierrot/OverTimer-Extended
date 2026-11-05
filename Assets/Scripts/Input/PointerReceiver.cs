@@ -23,6 +23,12 @@ public class PointerReceiver : MonoBehaviour, IPointerInputHandler
     private HintId? _blockedReason;
 
     public bool IsInteractable { get; private set; } = true;
+
+    // True from a forwarded DragStart until the matching DragEnd. The Cat reads it so it never blocks an object that is
+    // being dragged, and the end of a drag is always delivered even if the object became non-interactable meanwhile
+    // (otherwise a looping sound or a held position would never be released).
+    private bool _dragActive;
+    public bool IsDragging => _dragActive;
     public void SetInteractable(bool value, HintId? reason = null)
     {
         IsInteractable = value;
@@ -43,9 +49,23 @@ public class PointerReceiver : MonoBehaviour, IPointerInputHandler
             AnyClickRejected?.Invoke(_blockedReason.Value);
         }
     }
-    public void OnDragStart(Vector2 worldPos) { if (IsInteractable) DragStart?.Invoke(worldPos); }
-    public void OnDragUpdate(Vector2 worldPos) { if (IsInteractable) DragUpdate?.Invoke(worldPos); }
-    public void OnDragEnd(Vector2 worldPos) { if (IsInteractable) DragEnd?.Invoke(worldPos); }
+    public void OnDragStart(Vector2 worldPos)
+    {
+        if (!IsInteractable) return;
+        _dragActive = true;
+        DragStart?.Invoke(worldPos);
+    }
+
+    public void OnDragUpdate(Vector2 worldPos) { if (IsInteractable || _dragActive) DragUpdate?.Invoke(worldPos); }
+
+    public void OnDragEnd(Vector2 worldPos)
+    {
+        if (!IsInteractable && !_dragActive) return;
+        _dragActive = false;
+        DragEnd?.Invoke(worldPos);
+    }
+
+    private void OnDisable() => _dragActive = false;
     
     public void OnPressStart(Vector2 worldPos) { if (IsInteractable) PressStart?.Invoke(worldPos); }
     public void OnPressUpdate(Vector2 worldPos) { if (IsInteractable) PressUpdate?.Invoke(worldPos); }

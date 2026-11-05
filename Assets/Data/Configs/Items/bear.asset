@@ -18,9 +18,9 @@ MonoBehaviour:
   description: A click task.
   kind: 0
   price: 0
-  catalogValue: 0
+  catalogValue: 40
   startsOwned: 1
-  pawnable: 0
+  pawnable: 1
   sold: 0
   sceneObject: 1
   appName: 

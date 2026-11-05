@@ -99,13 +99,6 @@ MonoBehaviour:
     pitchJitter: 0.05
     minInterval: 0.05
     ignoreListenerPause: 0
-  - id: 12
-    clips:
-    - {fileID: 8300000, guid: b3736e663148a7b47a1676c9ed39e977, type: 3}
-    volume: 0.8
-    pitchJitter: 0.03
-    minInterval: 0.1
-    ignoreListenerPause: 0
   - id: 13
     clips:
     - {fileID: 8300000, guid: 0c5635e9f6db49c4ca9006c0ab3b1359, type: 3}

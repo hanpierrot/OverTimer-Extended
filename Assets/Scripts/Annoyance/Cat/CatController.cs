@@ -132,6 +132,7 @@ public class CatController : MonoBehaviour
 
         if (!other.TryGetComponent(out PointerReceiver target)) return;
         if (!target.IsInteractable) return;
+        if (target.IsDragging) return;   // never sit on something the player is holding (Printer, cards)
         
         if (RngService.Instance.Random.NextDouble() >= BlockChance) return;
         

@@ -76,7 +76,7 @@ public class HoverHighlighter : MonoBehaviour
         Collider2D c = InputManager.Instance.PeekTarget();
         if (c == null) return null;
 
-        if (c.TryGetComponent(out PointerReceiver receiver) && !receiver.IsInteractable) return null;
+        if (!c.TryGetComponent(out PointerReceiver receiver) || !receiver.IsInteractable) return null;
         if (c.TryGetComponent(out CameraViewButton button) && button.Target == CameraView.Room) return null;
         return c;
     }
