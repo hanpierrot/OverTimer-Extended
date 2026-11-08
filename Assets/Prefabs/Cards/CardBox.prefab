@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7259119799785052089}
   - component: {fileID: 7728571898344087166}
   - component: {fileID: 2862411274051262212}
+  - component: {fileID: 7800000000000000008}
   m_Layer: 3
   m_Name: CardBox
   m_TagString: Untagged
@@ -168,3 +169,16 @@ MonoBehaviour:
   revealPanel: {fileID: 0}
   cardResourcesPath: CardSO
   pawnValue: 20
+--- !u!114 &7800000000000000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850593755755435569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abab7ab2783e4d08afaa59755b90f607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropShadow
+  style: 1

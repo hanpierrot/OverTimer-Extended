@@ -7,6 +7,9 @@ public class PowerBankTask : HoldTask
     [Header("Charge Frames")]
     [SerializeField] private SpriteRenderer chargeRenderer;
     [SerializeField] private Sprite[] chargeSprites;
+    [Tooltip("Soft light around the bars; its alpha follows the charge.")]
+    [SerializeField] private SpriteRenderer chargeGlow;
+    [SerializeField, Range(0f, 1f)] private float glowMaxAlpha = 0.5f;
     
     protected override int ConfigPawnValue => GameManager.Instance.GameConfig.powerBankPawnValue;
     protected override bool ResetProgressOnRelease => false;
@@ -16,6 +19,12 @@ public class PowerBankTask : HoldTask
     
     protected override void UpdateHoldSprite()
     {
+        if (chargeGlow != null)
+        {
+            Color c = chargeGlow.color;
+            c.a = Mathf.Clamp01(holdTimer / CrankTime) * glowMaxAlpha;
+            chargeGlow.color = c;
+        }
         if (chargeRenderer == null || chargeSprites == null || chargeSprites.Length == 0) return;
 
         float progress = Mathf.Clamp01(holdTimer / CrankTime);

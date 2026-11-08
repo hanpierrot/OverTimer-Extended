@@ -17,6 +17,8 @@ public class PhoneController : DeskObject
     public static PhoneController Instance { get; private set; }
 
     [SerializeField] private GameObject ringingVisual;
+    [Tooltip("Soft light around the phone while it rings.")]
+    [SerializeField] private GameObject ringGlow;
     [SerializeField] private AudioClip ringSound;
     [Tooltip("The phone's OWN source (it used to share one with the tax notice, so stopping the ring cut the tax nag).")]
     [SerializeField] private AudioSource audioSource;
@@ -263,6 +265,7 @@ public class PhoneController : DeskObject
         call.profileSeed = RngService.Instance.Random.Next(0, 1 << 20);   // which name/picture the caller shows
         ClockService.Instance.SetSpeed(this, Config.ringClockMultiplier);
         if (ringingVisual != null) ringingVisual.SetActive(true);
+        if (ringGlow != null) ringGlow.SetActive(true);
         PlayRingSound();
         if (HintService.Instance != null) HintService.Instance.ShowOnce(HintId.PhoneFirstRing);
         Version++;
@@ -272,6 +275,7 @@ public class PhoneController : DeskObject
     {
         ClockService.Instance.ClearSpeed(this);
         if (ringingVisual != null) ringingVisual.SetActive(false);
+        if (ringGlow != null) ringGlow.SetActive(false);
         StopRingSound();
 
         if (how == CallEnd.Answered) BeginCall(call);

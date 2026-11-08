@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3248204791647093535}
   - component: {fileID: 6116656837708868383}
   - component: {fileID: 4193115759304318195}
+  - component: {fileID: 7800000000000000012}
   m_Layer: 3
   m_Name: TripleStack
   m_TagString: Untagged
@@ -170,3 +171,16 @@ MonoBehaviour:
   spawnRangeMin: {x: -4, y: -2}
   spawnRangeMax: {x: 4, y: 0}
   pawnValue: 20
+--- !u!114 &7800000000000000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5671463630271275149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abab7ab2783e4d08afaa59755b90f607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropShadow
+  style: 0

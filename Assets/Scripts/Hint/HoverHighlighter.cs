@@ -89,8 +89,11 @@ public class HoverHighlighter : MonoBehaviour
         if (target == null) return;
 
         target.GetComponentsInChildren(false, _targets);
+        _targets.RemoveAll(IsHoverIgnored);      // glows and shadows are decoration, not part of the object
     }
     
+    private static bool IsHoverIgnored(SpriteRenderer sr) => sr != null && sr.GetComponent<HoverGlowIgnore>() != null;
+
     private void Render()
     {
         if (_shown == null || _amount <= 0f || _camera == null) { HideAll(); return; }
