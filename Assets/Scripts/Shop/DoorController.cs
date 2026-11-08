@@ -187,6 +187,7 @@ public class DoorController : MonoBehaviour
             view.Unbind();          
         }
         if (audioSource != null && boxOpenSound != null) audioSource.PlayOneShot(boxOpenSound);
+        if (CameraRig.Instance != null) CameraRig.Instance.Shake();      // a small knock as the box opens
 
         SpawnEmptyBox();
         if (ShopService.Instance != null) ShopService.Instance.Deliver(parcel.itemIds);

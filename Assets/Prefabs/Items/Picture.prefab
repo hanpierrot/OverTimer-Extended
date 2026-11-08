@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3212747497556712805}
   - component: {fileID: 2537331384723510736}
   - component: {fileID: 6691136558603050560}
+  - component: {fileID: 7900000000000000001}
   m_Layer: 3
   m_Name: Picture
   m_TagString: Untagged
@@ -201,3 +202,17 @@ MonoBehaviour:
   allowedViews:
   - 0
   - 1
+--- !u!114 &7900000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4962157898269455889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abab7ab2783e4d08afaa59755b90f607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropShadow
+  style: 2
+  alpha: 0.28

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 997940979462606652}
   - component: {fileID: 6396986754379342037}
   - component: {fileID: 3568857574912920941}
+  - component: {fileID: 7900000000000000002}
   m_Layer: 0
   m_Name: Cat
   m_TagString: Untagged
@@ -223,3 +224,17 @@ MonoBehaviour:
   sleepDurationMin: 3
   sleepDurationMax: 6
   animator: {fileID: 4622738176802775948}
+--- !u!114 &7900000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4779131662061088501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abab7ab2783e4d08afaa59755b90f607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropShadow
+  style: 1
+  useOpaqueBounds: 1

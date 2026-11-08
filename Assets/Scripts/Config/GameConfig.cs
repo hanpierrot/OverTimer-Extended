@@ -227,6 +227,9 @@ public class GameConfig : ScriptableObject
     public float deskCameraSize = 6f;
     public float doorCameraSize = 7f;
     public float cameraFocusSeconds = 0.5f;
+    [Tooltip("How far the camera is knocked (world units) when something lands, e.g. a parcel being opened. 0 turns the knock off.")]
+    public float cameraShakeStrength = 0.12f;
+    public float cameraShakeSeconds = 0.2f;
 
     [Header("Run Rating")]
     public float ratingOutcomeWeight = 0.5f;

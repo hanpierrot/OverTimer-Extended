@@ -205,4 +205,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abab7ab2783e4d08afaa59755b90f607, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropShadow
-  style: 1
+  style: 2
+  alpha: 0.28

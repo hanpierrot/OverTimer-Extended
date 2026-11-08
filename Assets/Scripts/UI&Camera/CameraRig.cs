@@ -18,6 +18,7 @@ public class CameraRig : MonoBehaviour
     public event Action<CameraView> ViewChanged;
 
     private Tween _tween;
+    private Tween _shake;
     private bool _blocking;
     
     private void Awake()
@@ -35,12 +36,14 @@ public class CameraRig : MonoBehaviour
     private void OnDisable()
     {
         if (_tween != null) _tween.Kill();
+        if (_shake != null) _shake.Kill(true);      // complete = the camera goes back to where it rested
         EndBlock();
     }
 
     public bool GoTo(CameraView view)
     {
         if (IsMoving || view == CurrentView) return false;
+        if (_shake != null && _shake.IsActive()) _shake.Kill(true);   // finish the knock first so the move starts from the resting spot
         
         var config = GameManager.Instance.GameConfig;
         Transform anchor = AnchorOf(view);
@@ -65,6 +68,21 @@ public class CameraRig : MonoBehaviour
         return true;
     }
     
+    /// <summary>
+    /// A short camera knock (a parcel being opened). Strength and length come from GameConfig; <paramref name="strengthMultiplier"/>
+    /// scales it for bigger or smaller events. Ignored while the camera is moving between views. Purely visual: no input is blocked.
+    /// </summary>
+    public void Shake(float strengthMultiplier = 1f)
+    {
+        if (IsMoving || cam == null) return;
+        var config = GameManager.Instance.GameConfig;
+        float strength = config.cameraShakeStrength * strengthMultiplier;
+        if (strength <= 0f || config.cameraShakeSeconds <= 0f) return;
+
+        if (_shake != null && _shake.IsActive()) _shake.Kill(true);
+        _shake = cam.transform.DOShakePosition(config.cameraShakeSeconds, new Vector3(strength, strength, 0f), 18, 90f, false, true);
+    }
+
     private void Place(Transform anchor, float size)
     {
         if (anchor != null)
