@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1874439943149883826}
   - component: {fileID: 6676554402428947792}
   - component: {fileID: 7499359382831813137}
+  - component: {fileID: 7900000000000000003}
   m_Layer: 0
   m_Name: CardCollection
   m_TagString: Untagged
@@ -165,3 +166,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeskObjectFocus
   panel: {fileID: 0}
+--- !u!114 &7900000000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7296286294974096035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abab7ab2783e4d08afaa59755b90f607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropShadow
+  style: 0
