@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -10,8 +11,27 @@ public class DeskLaptopOpener : DeskObject, IPawnable, IRestorable
     [SerializeField] private GameObject laptopPanel;
     [SerializeField] private LaptopController laptopController;
     
+    [Header("Sprite")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Sprite offSprite;
+    [SerializeField] private Sprite onSprite;
+    [Tooltip("Soft light around the screen. Shown only while the Laptop is usable (WireTask solved).")]
+    [SerializeField] private GameObject glow;
+    
     public int PawnValue => GameManager.Instance.GameConfig.laptopPawnValue;
     public bool CanBePawned => true;
+
+    private void Start()
+    {
+        if (laptopController == null) return;
+        laptopController.DisabledChanged += ApplySprite;
+        ApplySprite(laptopController.Disabled);
+    }
+
+    private void OnDestroy()
+    {
+        if (laptopController != null) laptopController.DisabledChanged -= ApplySprite;
+    }
 
     protected override void OnClicked(Vector2 worldPos)
     {
@@ -36,5 +56,14 @@ public class DeskLaptopOpener : DeskObject, IPawnable, IRestorable
     public void OnRestored()
     {
         if (laptopPanel != null) laptopPanel.SetActive(false);
+        if (laptopController != null) ApplySprite(laptopController.Disabled);
+    }
+
+    private void ApplySprite(bool disabled)
+    {
+        if (glow != null) glow.SetActive(!disabled);
+        if (spriteRenderer == null) return;
+        Sprite s = disabled ? offSprite : onSprite;
+        if (s != null) spriteRenderer.sprite = s;
     }
 }

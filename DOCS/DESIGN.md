@@ -4,7 +4,7 @@
 **Team:** Ari · Han (+ Extended team)
 **Engine:** Unity (2D, URP) · mouse only · single scene
 **Platform:** WebGL, published on itch.io (custom template `Custom1080`). Windows `.exe` and mobile builds are possible targets; nothing in the design depends on them.
-**Version:** 2.4 (2026-10-29) — v2.4 adds the empty boxes left by unboxed parcels (§4.1, §5.7, §5.11, §5.16). v2.3 (2026-10-28) aligns §5.9 and §5.4 with the build (call weights 25/25/40/10, a call due while the Phone is off is a missed call and is not queued, the banner view is gone, the Phone is docked on the Laptop, the Phone stays off after Cable Eater) and fixes the first-bill hint (§5.16). v2.2 (2026-10-22) — v2.1 added Highlight Hover (§4.2) and Reward Popup (§5.17). v2.2 syncs the spec with what was built: the four mechanic endings and their cuts (§5.14 D), the ticket reward formula and symbol sets (§5.3), the licensed-card pool and the debuff dismiss fee (§5.4), pay-before-reveal in Blackjack (§5.5), keyed cost modifiers, hints instead of tutorial panels (§5.16), the Reward Popup config (§5.17) and the debug-only cheat menu (§7).
+**Version:** 2.5 (2026-11-08) — v2.5 adds the room look: warm night post-processing, soft glow on the lit items and contact shadows (§5.18); the Laptop sprite now shows whether it is usable (§5.5). v2.4 adds the empty boxes left by unboxed parcels (§4.1, §5.7, §5.11, §5.16). v2.3 (2026-10-28) aligns §5.9 and §5.4 with the build (call weights 25/25/40/10, a call due while the Phone is off is a missed call and is not queued, the banner view is gone, the Phone is docked on the Laptop, the Phone stays off after Cable Eater) and fixes the first-bill hint (§5.16). v2.2 (2026-10-22) — v2.1 added Highlight Hover (§4.2) and Reward Popup (§5.17). v2.2 syncs the spec with what was built: the four mechanic endings and their cuts (§5.14 D), the ticket reward formula and symbol sets (§5.3), the licensed-card pool and the debuff dismiss fee (§5.4), pay-before-reveal in Blackjack (§5.5), keyed cost modifiers, hints instead of tutorial panels (§5.16), the Reward Popup config (§5.17) and the debug-only cheat menu (§7).
 
 ---
 
@@ -861,6 +861,15 @@ When the player is **paid**, a small floating text appears **at the mouse pointe
 - The text and its animation use DOTween with the tween killed in `OnDisable` / `OnDestroy`.
 
 ---
+
+### 5.18 Room look (post-processing, glow, shadows)
+
+Visual only: nothing here touches the clock, money, input or any config value.
+
+- **Warm night grade.** A global Volume (`WarmNight`) tints the whole room warm, lowers saturation and exposure slightly and darkens the corners (vignette). It affects the world sprites only: the UI Canvas is Screen Space Overlay and is not post-processed.
+- **Glow on lit items.** A soft light sits behind the items that give off light. The Laptop glows blue only once the wire puzzle is solved (its sprite also switches from dark to lit, driven by `LaptopController.Disabled`); the Power Bank glows with its charge; the Phone glows pink while it rings.
+- **Contact shadows.** Every desk item except the Picture, the wall socket and the Printer gets a soft shadow (`DropShadow`). Lying items (cards, tickets, letters) cast an offset blob; standing items (Laptop, Phone, Power Bank, boxes, toys) a flat ellipse under the base. While the player drags an item its shadow grows, moves away and fades, so it looks lifted. A shadow is pooled and pawned together with its item.
+- The hover outline (§4.2) ignores glows and shadows.
 
 ## 6. Interfaces & ownership
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,13 +16,25 @@ public class LaptopController : MonoBehaviour
     [SerializeField] private List<LaptopApp> apps = new List<LaptopApp>();
     [SerializeField] private GameObject switchingOverlay;
 
+    public event Action<bool> DisabledChanged;
+    
     private LaptopApp _current;
     private bool _switching;
     private Coroutine _switchRoutine;
-
+    private bool _disabled;
+    
     // Set by a whole-laptop debuff, if one is ever added. Default design does
     // NOT use this - see BLACKJACK.md §2.1 (Dead Battery split into two apps).
-    public bool Disabled { get; set; }
+    public bool Disabled
+    {
+        get => _disabled;
+        set
+        {
+            if (_disabled == value) return;
+            _disabled = value;
+            if (DisabledChanged != null) DisabledChanged(value);
+        }
+    }
 
     /// <summary>True while a paused call holds the Laptop (DeviceLayer.LockLaptop). Apps stop acting: no Mining hits, no rolling Billiards shot.</summary>
     public static bool IsLocked => DeviceLayer.Instance != null && DeviceLayer.Instance.IsLaptopLocked;
